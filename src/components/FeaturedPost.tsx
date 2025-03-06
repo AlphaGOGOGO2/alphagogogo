@@ -47,13 +47,13 @@ export function FeaturedPosts() {
   const [hoveredPost, setHoveredPost] = useState<number | null>(null);
   
   return (
-    <section className="py-20 px-6 md:px-8 bg-white">
+    <section className="py-20 px-6 md:px-8 bg-gradient-to-b from-white to-purple-50/50">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 text-center">
-          <span className="inline-block px-3 py-1 mb-4 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">
+          <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-gradient bg-white rounded-full shadow-md">
             주요 콘텐츠
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-700 via-purple-700 to-indigo-700">
             AI 뉴스 최신 소식
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-balance">
@@ -67,8 +67,8 @@ export function FeaturedPosts() {
               key={post.id}
               className={cn(
                 "group rounded-2xl overflow-hidden bg-white transition-all duration-300 h-full flex flex-col",
-                "border border-gray-100 hover:border-purple-200 shadow-sm hover:shadow-md",
-                "transform hover:-translate-y-1"
+                "border border-transparent hover:border-purple-300 shadow-lg hover:shadow-xl hover:shadow-purple-200/50",
+                "transform hover:-translate-y-2"
               )}
               onMouseEnter={() => setHoveredPost(post.id)}
               onMouseLeave={() => setHoveredPost(null)}
@@ -77,26 +77,26 @@ export function FeaturedPosts() {
                 <img 
                   src={post.image} 
                   alt={post.title}
-                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                 />
-                <div className="absolute top-4 left-4 px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full">
+                <div className="absolute top-4 left-4 px-3 py-1 bg-gradient-to-r from-violet-600 to-indigo-600 text-white text-xs font-medium rounded-full shadow-md">
                   {post.category}
                 </div>
               </div>
               
-              <div className="p-6 flex-1 flex flex-col">
+              <div className="p-6 flex-1 flex flex-col bg-gradient-to-b from-white to-purple-50/30">
                 <div className="flex items-center text-sm text-gray-500 mb-3 gap-4">
                   <div className="flex items-center gap-1">
-                    <Calendar size={14} />
+                    <Calendar size={14} className="text-purple-500" />
                     <span>{post.date}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Clock size={14} />
+                    <Clock size={14} className="text-purple-500" />
                     <span>{post.readTime} 소요</span>
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
+                <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-gradient text-balance">
                   {post.title}
                 </h3>
                 
@@ -107,8 +107,8 @@ export function FeaturedPosts() {
                 <div className="mt-auto">
                   <button 
                     className={cn(
-                      "flex items-center text-sm font-medium gap-1 transition-colors",
-                      hoveredPost === post.id ? "text-purple-700" : "text-gray-900"
+                      "flex items-center text-sm font-medium gap-1 transition-all",
+                      hoveredPost === post.id ? "text-gradient" : "text-gray-900"
                     )}
                   >
                     더 읽기
@@ -127,7 +127,7 @@ export function FeaturedPosts() {
         </div>
         
         <div className="mt-12 text-center">
-          <button className="px-6 py-3 rounded-lg border border-purple-200 text-purple-700 font-medium hover:bg-purple-50 transition-colors">
+          <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-violet-100 to-indigo-100 text-purple-700 font-medium hover:shadow-lg hover:shadow-purple-200/50 transition-all transform hover:-translate-y-0.5 border border-purple-200">
             모든 기사 보기
           </button>
         </div>
