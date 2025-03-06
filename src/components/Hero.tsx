@@ -49,11 +49,9 @@ export function Hero() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <button className="group animated-button px-6 py-3 rounded-lg bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] text-white font-medium transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#6a1b9a]/30">
-              <span className="relative z-10 flex items-center justify-center">
-                지금 시작하기
-                <span className="absolute inset-0 shimmer"></span>
-              </span>
+            <button className="group relative px-6 py-3 rounded-lg bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] text-white font-medium transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#6a1b9a]/30 overflow-hidden">
+              <span className="relative z-10">지금 시작하기</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
             </button>
             <button className="animated-button px-6 py-3 rounded-lg bg-[#6a1b9a]/20 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-[#6a1b9a]/30 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#6a1b9a]/20">
               인기 주제 둘러보기
