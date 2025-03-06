@@ -39,9 +39,9 @@ export function Hero() {
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
-            <span className="relative text-gradient">알파블로그</span>
+            <span className="relative purple-text-gradient animate-sparkle">알파블로그</span>
             <br className="hidden md:block" />
-            AI를 바라보는 시선,<br />
+            AI를 바라보는 시선<br />
             이제는 미래가 아닌 현재
           </h1>
           
@@ -69,6 +69,41 @@ export function Hero() {
           <span className="text-white/70 text-xs mt-2 font-light">더 알아보기</span>
         </div>
       </div>
+
+      {/* Add sparkle effect styles */}
+      <style jsx>{`
+        @keyframes sparkle {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; }
+        }
+        .purple-text-gradient {
+          background: linear-gradient(to right, #9c27b0, #6a1b9a, #8e24aa);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          display: inline-block;
+          position: relative;
+        }
+        .animate-sparkle::after {
+          content: '';
+          position: absolute;
+          top: -10%;
+          left: -10%;
+          right: -10%;
+          bottom: -10%;
+          background: linear-gradient(45deg, 
+                        rgba(255,255,255,0) 45%, 
+                        rgba(255,255,255,0.7) 50%, 
+                        rgba(255,255,255,0) 55%);
+          background-size: 200% 200%;
+          pointer-events: none;
+          animation: sparkleEffect 4s ease-in-out infinite;
+        }
+        @keyframes sparkleEffect {
+          0% { background-position: -100% -100%; }
+          100% { background-position: 200% 200%; }
+        }
+      `}</style>
     </section>
   );
 }
