@@ -41,11 +41,11 @@ export function Hero() {
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
             <span className="relative text-gradient">알파블로그</span>
             <br className="hidden md:block" />
-            인공지능의 미래가 시작되는 곳
+            AI로 시작하는 퍼스널 브랜딩
           </h1>
           
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in text-balance">
-            복잡한 AI 세계를 명확하게 풀어내는 통찰력 있는 콘텐츠를 만나보세요
+            당신만의 브랜드를 AI의 힘으로 구축하고 성장시켜 보세요
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
