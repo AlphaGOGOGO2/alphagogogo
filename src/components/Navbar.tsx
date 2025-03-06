@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X, Search } from "lucide-react";
@@ -23,7 +22,7 @@ export function Navbar() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-8",
         isScrolled 
           ? "bg-white/90 backdrop-blur-md shadow-sm" 
-          : "bg-transparent"
+          : "bg-gradient-to-r from-black/50 via-[#401264]/50 to-black/50 backdrop-blur-md border-b border-white/10"
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -38,10 +37,7 @@ export function Navbar() {
               className="w-full h-full object-contain"
             />
           </div>
-          <span className={cn(
-            "transition-colors duration-300",
-            isScrolled ? "text-foreground" : "text-white"
-          )}>알파블로그</span>
+          <span className="text-white">알파블로그</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
@@ -55,35 +51,25 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-sm font-medium relative transition-colors duration-300 hover:text-[#6a1b9a]",
-                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-[#6a1b9a] after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
-                isScrolled ? "text-foreground" : "text-white"
+                "text-sm font-medium relative transition-colors duration-300 text-white hover:text-[#f0c4ff]",
+                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-[#f0c4ff] after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left"
               )}
             >
               {item.name}
             </Link>
           ))}
           <button 
-            className={cn(
-              "p-2 rounded-full transition-colors duration-300",
-              isScrolled ? "hover:bg-[#6a1b9a]/10 text-foreground" : "hover:bg-white/10 text-white"
-            )}
+            className="p-2 rounded-full hover:bg-white/10 text-white transition-colors duration-300"
           >
             <Search size={18} />
           </button>
         </nav>
         
         <button 
-          className="md:hidden"
+          className="md:hidden text-white"
           onClick={() => setIsMobileMenuOpen(true)}
         >
-          <Menu 
-            size={24} 
-            className={cn(
-              "transition-colors duration-300",
-              isScrolled ? "text-foreground" : "text-white"
-            )} 
-          />
+          <Menu size={24} /> 
         </button>
       </div>
       
