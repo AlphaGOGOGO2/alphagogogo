@@ -29,15 +29,15 @@ export function NewsletterSignup() {
             <div className="text-center max-w-2xl mx-auto">
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 mb-6 text-sm font-medium bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full shadow-lg">
                 <Sparkles size={14} className="animate-pulse" />
-                최신 정보 받기
+                블로그 업데이트 받기
               </span>
               
               <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-purple-800">
-                AI 인사이트를 받아보세요
+                알파블로그 소식을 받아보세요
               </h2>
               
               <p className="text-gray-600 mb-8 text-balance">
-                가장 중요한 AI 개발, 분석 및 독점 콘텐츠에 대한 주간 업데이트를 위해 뉴스레터를 구독하세요.
+                새로운 글이 업로드되면 가장 먼저 알려드립니다. 인공지능 세계의 최신 소식을 놓치지 마세요.
               </p>
               
               {isSubmitted ? (
