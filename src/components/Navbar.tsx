@@ -53,7 +53,7 @@ export function Navbar() {
             { name: "홈", path: "/" },
             { name: "블로그", path: "/blog" },
             { name: "GPTS 이용하기", path: "/gpts" },
-            { name: "다운로드", path: "/downloads" },
+            { name: "서비스", path: "/services" },
             { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
@@ -149,7 +149,7 @@ export function Navbar() {
             { name: "홈", path: "/" },
             { name: "블로그", path: "/blog" },
             { name: "GPTS 이용하기", path: "/gpts" },
-            { name: "다운로드", path: "/downloads" },
+            { name: "서비스", path: "/services" },
             { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
