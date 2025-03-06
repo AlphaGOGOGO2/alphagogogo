@@ -70,7 +70,7 @@ export function Navbar() {
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-0.5 transform origin-left transition-transform duration-300",
-                isScrolled ? "bg-[#4a148c]" : "bg-[#6E59A5]",
+                isScrolled ? "bg-[#8B5CF6]" : "bg-[#D946EF]",
                 location.pathname === item.path 
                   ? "scale-x-100" 
                   : "scale-x-0 group-hover:scale-x-100"
@@ -165,7 +165,7 @@ export function Navbar() {
             >
               {item.name}
               {location.pathname === item.path && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#4a148c] rounded-r-full" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#8B5CF6] rounded-r-full" />
               )}
             </Link>
           ))}
@@ -175,7 +175,7 @@ export function Navbar() {
             className="flex items-center gap-2 text-[#4a148c] bg-purple-50 p-3 rounded-md hover:bg-purple-100 transition-colors mt-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <TrendingUp size={18} className="text-[#4a148c]" />
+            <TrendingUp size={18} className="text-[#8B5CF6]" />
             <span className="font-medium">인기 콘텐츠 보기</span>
           </Link>
           
@@ -183,7 +183,7 @@ export function Navbar() {
             <input 
               type="text" 
               placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#4a148c] transition-all"
+              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#8B5CF6] transition-all"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
