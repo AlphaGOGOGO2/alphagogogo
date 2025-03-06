@@ -156,8 +156,8 @@ export default {
 				'float': 'float 6s infinite ease-in-out'
 			},
 			fontFamily: {
-				sans: ['Inter', 'sans-serif'],
-				heading: ['SF Pro Display', 'Inter', 'sans-serif']
+				sans: ['Paperlogy', 'Inter', 'sans-serif'],
+				heading: ['Paperlogy', 'SF Pro Display', 'Inter', 'sans-serif']
 			}
 		}
 	},
