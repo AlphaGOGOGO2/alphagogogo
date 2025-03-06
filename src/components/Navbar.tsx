@@ -1,12 +1,13 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Search, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const location = useLocation();
   
   useEffect(() => {
     const handleScroll = () => {
@@ -59,16 +60,20 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md",
+                "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group",
                 isScrolled 
-                  ? "text-[#4a148c] hover:text-[#4a148c]/80 hover:bg-purple-100/50" 
-                  : "text-white/90 hover:text-white hover:bg-white/10"
+                  ? "text-[#4a148c] hover:text-[#4a148c]/80" 
+                  : "text-white/90 hover:text-white",
+                location.pathname === item.path && "nav-active"
               )}
             >
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
-                "absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left",
-                isScrolled ? "bg-[#4a148c]" : "bg-white/70"
+                "absolute bottom-0 left-0 w-full h-0.5 transform origin-left transition-transform duration-300",
+                isScrolled ? "bg-[#9b87f5]" : "bg-white",
+                location.pathname === item.path 
+                  ? "scale-x-100" 
+                  : "scale-x-0 group-hover:scale-x-100"
               )}></span>
             </Link>
           ))}
@@ -150,10 +155,18 @@ export function Navbar() {
             <Link
               key={item.name}
               to={item.path}
-              className="text-xl font-medium text-[#4a148c] hover:text-[#4a148c]/80 p-2 hover:bg-purple-50 rounded-md transition-colors"
+              className={cn(
+                "text-xl font-medium text-[#4a148c] p-2 rounded-md transition-all duration-300 relative",
+                location.pathname === item.path 
+                  ? "bg-purple-50 pl-4" 
+                  : "hover:bg-purple-50/50 hover:pl-4"
+              )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
+              {location.pathname === item.path && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#9b87f5] rounded-r-full" />
+              )}
             </Link>
           ))}
           
