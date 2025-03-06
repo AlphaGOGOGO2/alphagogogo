@@ -5,11 +5,27 @@ import { cn } from "@/lib/utils";
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] overflow-hidden">
-      {/* Background with more modern gradient */}
-      <div className="absolute inset-0 hero-gradient"></div>
+      {/* Video Background */}
+      <div className="absolute inset-0 w-full h-full z-0">
+        <video 
+          className="w-full h-full object-cover"
+          autoPlay
+          muted
+          loop
+          playsInline
+          src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos//background%20video.mp4"
+        >
+          <source 
+            src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos//background%20video.mp4" 
+            type="video/mp4"
+          />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute inset-0 bg-[#6a1b9a]/60 backdrop-blur-[2px]"></div>
+      </div>
       
       {/* Enhanced animated shapes with more vibrant colors */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden z-[1]">
         <div className="absolute top-16 right-[10%] w-80 h-80 rounded-full bg-[#8e24aa]/30 blur-3xl animate-float purple-glow"></div>
         <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#9c27b0]/30 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
         <div className="absolute top-[40%] left-[20%] w-60 h-60 rounded-full bg-[#6a1b9a]/30 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
