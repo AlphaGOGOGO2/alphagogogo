@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -47,7 +46,7 @@ export function FeaturedPosts() {
   const [hoveredPost, setHoveredPost] = useState<number | null>(null);
   
   return (
-    <section className="py-20 px-6 md:px-8 bg-gradient-to-b from-white to-purple-50/50">
+    <section id="featured-posts" className="py-20 px-6 md:px-8 bg-gradient-to-b from-white to-purple-50/50">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 text-center">
           <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-white bg-purple-600 rounded-full shadow-md">

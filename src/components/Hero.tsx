@@ -3,6 +3,13 @@ import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Hero() {
+  const scrollToFeaturedPosts = () => {
+    const featuredPostsSection = document.getElementById('featured-posts');
+    if (featuredPostsSection) {
+      featuredPostsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative h-screen overflow-hidden">
       {/* Video Background */}
@@ -50,7 +57,10 @@ export function Hero() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
-            <button className="group relative px-6 py-3 rounded-lg bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] text-white font-medium transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#6a1b9a]/30 overflow-hidden">
+            <button 
+              onClick={scrollToFeaturedPosts}
+              className="group relative px-6 py-3 rounded-lg bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] text-white font-medium transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#6a1b9a]/30 overflow-hidden"
+            >
               <span className="relative z-10">최신글 확인하기</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
             </button>
