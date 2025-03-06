@@ -18,25 +18,25 @@ export function Hero() {
       <div className="relative max-w-7xl mx-auto px-6 md:px-8 pt-32 pb-24 md:pt-40 md:pb-32 flex flex-col items-center justify-center text-center z-10">
         <div className="stagger-animation">
           <div className="inline-block mb-6 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 animate-fade-in">
-            <span className="text-white/90 text-sm font-medium">The Future of AI - Simplified</span>
+            <span className="text-white/90 text-sm font-medium">AI의 미래 - 간단하게 알아보기</span>
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance">
-            Explore the Latest Innovations in <span className="relative">Artificial Intelligence
+            최신 <span className="relative">인공지능 혁신
               <div className="absolute -bottom-2 left-0 right-0 h-1 bg-white/30 rounded-full"></div>
-            </span>
+            </span>을 탐색하세요
           </h1>
           
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in text-balance">
-            Stay ahead of the curve with our curated insights on breakthrough AI technologies, research, and applications transforming our world.
+            우리 세계를 변화시키는 획기적인 AI 기술, 연구 및 응용 프로그램에 대한 엄선된 인사이트로 트렌드를 앞서가세요.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
             <button className="animated-button px-6 py-3 rounded-lg bg-white text-purple-800 font-medium hover:bg-white/95 transition-all transform hover:-translate-y-0.5">
-              Explore Latest Articles
+              최신 기사 살펴보기
             </button>
             <button className="animated-button px-6 py-3 rounded-lg bg-purple-500/20 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-purple-500/30 transition-all flex items-center justify-center gap-2">
-              Subscribe to Newsletter
+              뉴스레터 구독하기
               <ArrowRight size={16} />
             </button>
           </div>
@@ -48,7 +48,7 @@ export function Hero() {
             <div className="absolute top-0 left-0 right-0 bottom-0 bg-white/50"></div>
             <div className="absolute top-0 left-0 right-0 h-5 bg-white animate-[pulse_1.5s_ease-in-out_infinite]"></div>
           </div>
-          <span className="text-white/70 text-xs mt-2">Scroll Down</span>
+          <span className="text-white/70 text-xs mt-2">아래로 스크롤</span>
         </div>
       </div>
     </section>

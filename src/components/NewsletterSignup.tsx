@@ -28,28 +28,28 @@ export function NewsletterSignup() {
           <div className="bg-white/80 backdrop-blur-md p-8 md:p-12 lg:p-16">
             <div className="text-center max-w-2xl mx-auto">
               <span className="inline-block px-3 py-1 mb-6 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">
-                Stay Updated
+                최신 정보 받기
               </span>
               
               <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
-                Get AI Insights Delivered 
+                AI 인사이트를 받아보세요
               </h2>
               
               <p className="text-gray-600 mb-8 text-balance">
-                Subscribe to our newsletter for curated weekly updates on the most significant AI developments, analysis, and exclusive content.
+                가장 중요한 AI 개발, 분석 및 독점 콘텐츠에 대한 주간 업데이트를 위해 뉴스레터를 구독하세요.
               </p>
               
               {isSubmitted ? (
                 <div className="flex items-center justify-center gap-2 text-green-600 bg-green-50 p-4 rounded-lg animate-fade-in">
                   <CheckCircle size={20} />
-                  <span className="font-medium">Thank you for subscribing!</span>
+                  <span className="font-medium">구독해 주셔서 감사합니다!</span>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="max-w-md mx-auto">
                   <div className="relative">
                     <input
                       type="email"
-                      placeholder="Enter your email"
+                      placeholder="이메일 주소 입력"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-3 pl-5 pr-14 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent transition-all"
@@ -58,13 +58,13 @@ export function NewsletterSignup() {
                     <button 
                       type="submit" 
                       className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-purple-600 text-white p-2 rounded-lg hover:bg-purple-700 transition-colors"
-                      aria-label="Subscribe"
+                      aria-label="구독하기"
                     >
                       <Send size={18} />
                     </button>
                   </div>
                   <p className="mt-3 text-xs text-gray-500">
-                    We respect your privacy. Unsubscribe at any time.
+                    개인정보를 존중합니다. 언제든지 구독 취소 가능합니다.
                   </p>
                 </form>
               )}

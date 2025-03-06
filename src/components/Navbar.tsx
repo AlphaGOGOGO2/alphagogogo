@@ -37,21 +37,26 @@ export function Navbar() {
           <span className={cn(
             "transition-colors duration-300",
             isScrolled ? "text-foreground" : "text-white"
-          )}>AI.Pulse</span>
+          )}>알파블로그</span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
-          {["Home", "News", "Topics", "About"].map((item) => (
+          {[
+            { name: "홈", path: "/" },
+            { name: "뉴스", path: "/news" },
+            { name: "주제", path: "/topics" },
+            { name: "소개", path: "/about" }
+          ].map((item) => (
             <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+              key={item.name}
+              to={item.path}
               className={cn(
                 "text-sm font-medium relative transition-colors duration-300 hover:text-purple-600",
                 "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-purple-600 after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
                 isScrolled ? "text-foreground" : "text-white"
               )}
             >
-              {item}
+              {item.name}
             </Link>
           ))}
           <button 
@@ -88,7 +93,7 @@ export function Navbar() {
         <div className="flex justify-between items-center p-6">
           <Link to="/" className="flex items-center gap-2 font-heading text-xl font-semibold">
             <Zap size={24} className="text-purple-600" />
-            <span>AI.Pulse</span>
+            <span>알파블로그</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(false)}>
             <X size={24} className="text-foreground" />
@@ -96,20 +101,25 @@ export function Navbar() {
         </div>
         
         <nav className="flex flex-col p-6 space-y-6">
-          {["Home", "News", "Topics", "About"].map((item) => (
+          {[
+            { name: "홈", path: "/" },
+            { name: "뉴스", path: "/news" },
+            { name: "주제", path: "/topics" },
+            { name: "소개", path: "/about" }
+          ].map((item) => (
             <Link
-              key={item}
-              to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
+              key={item.name}
+              to={item.path}
               className="text-lg font-medium hover:text-purple-600 transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              {item}
+              {item.name}
             </Link>
           ))}
           <div className="relative mt-6">
             <input 
               type="text" 
-              placeholder="Search..." 
+              placeholder="검색..." 
               className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-600"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />

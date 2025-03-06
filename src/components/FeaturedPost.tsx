@@ -16,29 +16,29 @@ interface Post {
 const featuredPosts: Post[] = [
   {
     id: 1,
-    title: "How Generative AI is Transforming Creative Industries",
-    excerpt: "An exploration of how AI tools are revolutionizing design, content creation, and artistic expression.",
-    category: "Technology",
-    readTime: "5 min",
-    date: "May 28, 2023",
+    title: "생성형 AI가 창작 산업을 어떻게 변화시키고 있는가",
+    excerpt: "AI 도구가 디자인, 콘텐츠 제작 및 예술적 표현을 혁신하는 방식에 대한 탐구.",
+    category: "기술",
+    readTime: "5분",
+    date: "2023년 5월 28일",
     image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"
   },
   {
     id: 2,
-    title: "The Ethics of Advanced AI: Navigating the Future",
-    excerpt: "Discussing the ethical considerations and frameworks needed as AI systems become more powerful.",
-    category: "Ethics",
-    readTime: "8 min",
-    date: "May 22, 2023",
+    title: "고급 AI의 윤리: 미래 탐색하기",
+    excerpt: "AI 시스템이 더 강력해짐에 따라 필요한 윤리적 고려사항과 프레임워크에 대한 논의.",
+    category: "윤리",
+    readTime: "8분",
+    date: "2023년 5월 22일",
     image: "https://images.unsplash.com/photo-1655720828018-edd2daec9349?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTB8fGFpJTIwcm9ib3R8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"
   },
   {
     id: 3,
-    title: "AI in Healthcare: Breakthrough Diagnostic Tools",
-    excerpt: "How machine learning models are enhancing diagnostic accuracy and patient care across medical specialties.",
-    category: "Healthcare",
-    readTime: "6 min",
-    date: "May 15, 2023",
+    title: "의료분야의 AI: 혁신적인 진단 도구",
+    excerpt: "머신러닝 모델이 의료 전문 분야 전반에 걸쳐 진단 정확도와 환자 치료를 향상시키는 방법.",
+    category: "의료",
+    readTime: "6분",
+    date: "2023년 5월 15일",
     image: "https://images.unsplash.com/photo-1576670159052-9ea5550ca474?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTh8fGhlYWx0aGNhcmUlMjB0ZWNofGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=800&q=60"
   }
 ];
@@ -51,13 +51,13 @@ export function FeaturedPosts() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 text-center">
           <span className="inline-block px-3 py-1 mb-4 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">
-            Featured Content
+            주요 콘텐츠
           </span>
           <h2 className="text-3xl md:text-4xl font-bold mb-4 tracking-tight">
-            Latest in AI News
+            AI 뉴스 최신 소식
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-balance">
-            Discover trending topics and breakthrough developments in artificial intelligence from around the globe.
+            전 세계의 인공지능 관련 트렌드 토픽과 획기적인 개발 사항을 발견하세요.
           </p>
         </div>
         
@@ -92,7 +92,7 @@ export function FeaturedPosts() {
                   </div>
                   <div className="flex items-center gap-1">
                     <Clock size={14} />
-                    <span>{post.readTime} read</span>
+                    <span>{post.readTime} 소요</span>
                   </div>
                 </div>
                 
@@ -111,7 +111,7 @@ export function FeaturedPosts() {
                       hoveredPost === post.id ? "text-purple-700" : "text-gray-900"
                     )}
                   >
-                    Read More
+                    더 읽기
                     <ArrowRight 
                       size={16} 
                       className={cn(
@@ -128,7 +128,7 @@ export function FeaturedPosts() {
         
         <div className="mt-12 text-center">
           <button className="px-6 py-3 rounded-lg border border-purple-200 text-purple-700 font-medium hover:bg-purple-50 transition-colors">
-            View All Articles
+            모든 기사 보기
           </button>
         </div>
       </div>
