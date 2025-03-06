@@ -21,7 +21,7 @@ export function Hero() {
           />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute inset-0 bg-[#6a1b9a]/60 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-[#1A1F2C]/80 backdrop-blur-[3px]"></div>
       </div>
       
       {/* Enhanced animated shapes with more vibrant colors */}
