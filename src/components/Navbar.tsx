@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search, Sparkles, TrendingUp } from "lucide-react";
+import { Menu, X, Search, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -45,18 +45,15 @@ export function Navbar() {
               ? "from-[#6E59A5] to-[#9b87f5]" 
               : "from-white to-purple-200"
           )}>알파블로그</span>
-          <Sparkles size={16} className={cn(
-            "text-yellow-400 animate-pulse-slow",
-            isScrolled ? "opacity-100" : "opacity-90"
-          )} />
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
           {[
             { name: "홈", path: "/" },
-            { name: "뉴스", path: "/news" },
-            { name: "주제", path: "/topics" },
-            { name: "소개", path: "/about" }
+            { name: "블로그", path: "/blog" },
+            { name: "GPTS 이용하기", path: "/gpts" },
+            { name: "다운로드", path: "/downloads" },
+            { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
               key={item.name}
@@ -133,7 +130,6 @@ export function Navbar() {
               />
             </div>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4a148c] to-[#9b87f5]">알파블로그</span>
-            <Sparkles size={14} className="text-yellow-400 animate-pulse-slow" />
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
@@ -146,9 +142,10 @@ export function Navbar() {
         <nav className="flex flex-col p-6 space-y-4">
           {[
             { name: "홈", path: "/" },
-            { name: "뉴스", path: "/news" },
-            { name: "주제", path: "/topics" },
-            { name: "소개", path: "/about" }
+            { name: "블로그", path: "/blog" },
+            { name: "GPTS 이용하기", path: "/gpts" },
+            { name: "다운로드", path: "/downloads" },
+            { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
               key={item.name}
