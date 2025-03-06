@@ -39,7 +39,7 @@ export function Hero() {
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
-            <span className="brand-text-gradient inline-block relative">알파블로그</span>
+            <span className="brand-text-gradient sparkle-text inline-block relative">알파블로그</span>
             <br className="hidden md:block" />
             AI를 바라보는 시선<br />
             이제는 미래가 아닌 현재
@@ -70,7 +70,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Updated styles with smoother animations and improved brand text gradient */}
+      {/* Updated styles with improved sparkle effects */}
       <style>
         {`
         .brand-text-gradient {
@@ -81,22 +81,54 @@ export function Hero() {
           position: relative;
         }
         
-        .brand-text-gradient::after {
+        .sparkle-text::before {
           content: '';
           position: absolute;
           inset: 0;
           background: linear-gradient(45deg, 
                       rgba(255,255,255,0) 0%, 
-                      rgba(255,255,255,0.4) 50%, 
+                      rgba(255,255,255,0.8) 50%, 
                       rgba(255,255,255,0) 100%);
           background-size: 200% 200%;
           -webkit-background-clip: text;
           background-clip: text;
           color: transparent;
-          filter: blur(0.5px);
+          filter: blur(1px);
           opacity: 0.8;
-          animation: shimmer 4s linear infinite;
+          animation: shimmer 3s linear infinite;
           pointer-events: none;
+        }
+        
+        .sparkle-text::after {
+          content: '';
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          border-radius: 50%;
+          background-color: white;
+          box-shadow: 
+            0 0 10px 2px rgba(255,255,255,0.8),
+            0 0 20px 4px rgba(214,188,250,0.6);
+          top: 10%;
+          left: 15%;
+          opacity: 0;
+          animation: sparkle-dots 4s ease infinite;
+        }
+        
+        .sparkle-text::before {
+          content: '';
+          position: absolute;
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background-color: white;
+          box-shadow: 
+            0 0 8px 2px rgba(255,255,255,0.8),
+            0 0 16px 4px rgba(214,188,250,0.6);
+          top: 20%;
+          right: 20%;
+          opacity: 0;
+          animation: sparkle-dots 4s ease infinite 1s;
         }
         
         @keyframes shimmer {
@@ -106,6 +138,29 @@ export function Hero() {
           100% {
             background-position: 200% 200%;
           }
+        }
+        
+        @keyframes sparkle-dots {
+          0%, 100% { opacity: 0; transform: scale(0.5); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .brand-text-gradient::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(45deg, 
+                      rgba(255,255,255,0) 0%, 
+                      rgba(255,255,255,0.6) 50%, 
+                      rgba(255,255,255,0) 100%);
+          background-size: 200% 200%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          filter: blur(0.5px);
+          opacity: 0.9;
+          animation: shimmer 4s linear infinite;
+          pointer-events: none;
         }
         `}
       </style>
