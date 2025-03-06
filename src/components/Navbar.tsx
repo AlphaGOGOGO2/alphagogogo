@@ -70,7 +70,7 @@ export function Navbar() {
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-0.5 transform origin-left transition-transform duration-300",
-                isScrolled ? "bg-[#9b87f5]" : "bg-white",
+                isScrolled ? "bg-[#4a148c]" : "bg-[#6E59A5]",
                 location.pathname === item.path 
                   ? "scale-x-100" 
                   : "scale-x-0 group-hover:scale-x-100"
@@ -165,7 +165,7 @@ export function Navbar() {
             >
               {item.name}
               {location.pathname === item.path && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#9b87f5] rounded-r-full" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#4a148c] rounded-r-full" />
               )}
             </Link>
           ))}
