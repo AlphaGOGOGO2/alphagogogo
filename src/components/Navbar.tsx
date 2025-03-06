@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Search, TrendingUp } from "lucide-react";
+import { Menu, X, Youtube } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -54,6 +54,7 @@ export function Navbar() {
             { name: "블로그", path: "/blog" },
             { name: "GPTS 이용하기", path: "/gpts" },
             { name: "서비스", path: "/services" },
+            { name: "유튜브", path: "/youtube" },
             { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
@@ -77,32 +78,6 @@ export function Navbar() {
               )}></span>
             </Link>
           ))}
-          
-          <div className="flex items-center gap-3">
-            <Link
-              to="/trending"
-              className={cn(
-                "flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-300",
-                isScrolled 
-                  ? "text-red-800 bg-red-50 hover:bg-red-100" 
-                  : "text-white/90 bg-white/10 hover:bg-white/20"
-              )}
-            >
-              <TrendingUp size={14} className="animate-pulse-slow" />
-              <span>인기</span>
-            </Link>
-            
-            <button 
-              className={cn(
-                "p-2 rounded-full transition-all duration-300 hover:rotate-12",
-                isScrolled 
-                  ? "bg-gray-100 text-red-800 hover:bg-gray-200" 
-                  : "bg-white/10 text-white hover:bg-white/20"
-              )}
-            >
-              <Search size={18} />
-            </button>
-          </div>
         </nav>
         
         <button 
@@ -150,6 +125,7 @@ export function Navbar() {
             { name: "블로그", path: "/blog" },
             { name: "GPTS 이용하기", path: "/gpts" },
             { name: "서비스", path: "/services" },
+            { name: "유튜브", path: "/youtube" },
             { name: "커뮤니티", path: "/community" }
           ].map((item) => (
             <Link
@@ -164,29 +140,14 @@ export function Navbar() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
+              {item.name === "유튜브" && (
+                <Youtube size={16} className="inline-block ml-2 text-red-600" />
+              )}
               {location.pathname === item.path && (
                 <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-red-600 rounded-r-full" />
               )}
             </Link>
           ))}
-          
-          <Link
-            to="/trending"
-            className="flex items-center gap-2 text-red-800 bg-red-50 p-3 rounded-md hover:bg-red-100 transition-colors mt-2"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            <TrendingUp size={18} className="text-red-600" />
-            <span className="font-medium">인기 콘텐츠 보기</span>
-          </Link>
-          
-          <div className="relative mt-6">
-            <input 
-              type="text" 
-              placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all"
-            />
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
-          </div>
         </nav>
       </div>
     </header>
