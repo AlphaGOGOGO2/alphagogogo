@@ -46,7 +46,7 @@ export function Hero() {
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
-            <span className="brand-text-gradient sparkle-text inline-block relative">알파블로그</span>
+            <span className="text-white">알파블로그</span>
             <br className="hidden md:block" />
             AI를 바라보는 시선<br />
             이제는 미래가 아닌 현재
@@ -80,97 +80,25 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Updated styles with improved sparkle effects */}
+      {/* Removed all sparkle effects styles */}
       <style>
         {`
-        .brand-text-gradient {
-          background: linear-gradient(to bottom, #ffffff, #d6bcfa);
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          position: relative;
+        .animate-float {
+          animation: float 6s ease-in-out infinite;
         }
         
-        .sparkle-text::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(45deg, 
-                      rgba(255,255,255,0) 0%, 
-                      rgba(255,255,255,0.8) 50%, 
-                      rgba(255,255,255,0) 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          filter: blur(1px);
-          opacity: 0.8;
-          animation: shimmer 3s linear infinite;
-          pointer-events: none;
+        @keyframes float {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-20px); }
         }
         
-        .sparkle-text::after {
-          content: '';
-          position: absolute;
-          width: 4px;
-          height: 4px;
-          border-radius: 50%;
-          background-color: white;
-          box-shadow: 
-            0 0 10px 2px rgba(255,255,255,0.8),
-            0 0 20px 4px rgba(214,188,250,0.6);
-          top: 10%;
-          left: 15%;
-          opacity: 0;
-          animation: sparkle-dots 4s ease infinite;
+        .animate-pulse-slow {
+          animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
         
-        .sparkle-text::before {
-          content: '';
-          position: absolute;
-          width: 3px;
-          height: 3px;
-          border-radius: 50%;
-          background-color: white;
-          box-shadow: 
-            0 0 8px 2px rgba(255,255,255,0.8),
-            0 0 16px 4px rgba(214,188,250,0.6);
-          top: 20%;
-          right: 20%;
-          opacity: 0;
-          animation: sparkle-dots 4s ease infinite 1s;
-        }
-        
-        @keyframes shimmer {
-          0% {
-            background-position: -100% -100%;
-          }
-          100% {
-            background-position: 200% 200%;
-          }
-        }
-        
-        @keyframes sparkle-dots {
-          0%, 100% { opacity: 0; transform: scale(0.5); }
-          50% { opacity: 1; transform: scale(1.2); }
-        }
-        
-        .brand-text-gradient::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: linear-gradient(45deg, 
-                      rgba(255,255,255,0) 0%, 
-                      rgba(255,255,255,0.6) 50%, 
-                      rgba(255,255,255,0) 100%);
-          background-size: 200% 200%;
-          -webkit-background-clip: text;
-          background-clip: text;
-          color: transparent;
-          filter: blur(0.5px);
-          opacity: 0.9;
-          animation: shimmer 4s linear infinite;
-          pointer-events: none;
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
         }
         `}
       </style>
