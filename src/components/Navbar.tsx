@@ -43,8 +43,8 @@ export function Navbar() {
           <span className={cn(
             "bg-clip-text text-transparent bg-gradient-to-r transition-all duration-300",
             isScrolled 
-              ? "from-[#6E59A5] to-[#9b87f5]" 
-              : "from-white to-purple-200"
+              ? "from-red-700 to-red-500" 
+              : "from-white to-red-200"
           )}>알파블로그</span>
         </Link>
         
@@ -62,7 +62,7 @@ export function Navbar() {
               className={cn(
                 "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group",
                 isScrolled 
-                  ? "text-[#4a148c] hover:text-[#4a148c]/80" 
+                  ? "text-red-900 hover:text-red-800" 
                   : "text-white/90 hover:text-white",
                 location.pathname === item.path && "nav-active"
               )}
@@ -70,7 +70,7 @@ export function Navbar() {
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
-                isScrolled ? "bg-purple-700" : "bg-purple-300",
+                isScrolled ? "bg-red-600" : "bg-red-300",
                 location.pathname === item.path 
                   ? "scale-x-100" 
                   : "scale-x-0 group-hover:scale-x-100"
@@ -84,7 +84,7 @@ export function Navbar() {
               className={cn(
                 "flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-300",
                 isScrolled 
-                  ? "text-purple-800 bg-purple-100 hover:bg-purple-200" 
+                  ? "text-red-800 bg-red-50 hover:bg-red-100" 
                   : "text-white/90 bg-white/10 hover:bg-white/20"
               )}
             >
@@ -96,7 +96,7 @@ export function Navbar() {
               className={cn(
                 "p-2 rounded-full transition-all duration-300 hover:rotate-12",
                 isScrolled 
-                  ? "bg-gray-100 text-purple-800 hover:bg-gray-200" 
+                  ? "bg-gray-100 text-red-800 hover:bg-gray-200" 
                   : "bg-white/10 text-white hover:bg-white/20"
               )}
             >
@@ -109,7 +109,7 @@ export function Navbar() {
           className={cn(
             "md:hidden p-2 rounded-full transition-colors duration-300",
             isScrolled 
-              ? "text-purple-800 hover:bg-gray-100" 
+              ? "text-red-800 hover:bg-gray-100" 
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
@@ -134,13 +134,13 @@ export function Navbar() {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-700 to-purple-400">알파블로그</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-700 to-red-500">알파블로그</span>
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           >
-            <X size={20} className="text-purple-800" />
+            <X size={20} className="text-red-800" />
           </button>
         </div>
         
@@ -156,26 +156,26 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative",
+                "text-xl font-medium text-red-800 p-2 rounded-md transition-all duration-300 relative",
                 location.pathname === item.path 
-                  ? "bg-purple-50 pl-4" 
-                  : "hover:bg-purple-50/50 hover:pl-4"
+                  ? "bg-red-50 pl-4" 
+                  : "hover:bg-red-50/50 hover:pl-4"
               )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
               {location.pathname === item.path && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-700 rounded-r-full" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-red-600 rounded-r-full" />
               )}
             </Link>
           ))}
           
           <Link
             to="/trending"
-            className="flex items-center gap-2 text-purple-800 bg-purple-50 p-3 rounded-md hover:bg-purple-100 transition-colors mt-2"
+            className="flex items-center gap-2 text-red-800 bg-red-50 p-3 rounded-md hover:bg-red-100 transition-colors mt-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <TrendingUp size={18} className="text-purple-600" />
+            <TrendingUp size={18} className="text-red-600" />
             <span className="font-medium">인기 콘텐츠 보기</span>
           </Link>
           
@@ -183,7 +183,7 @@ export function Navbar() {
             <input 
               type="text" 
               placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-600 transition-all"
+              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-red-600 transition-all"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
