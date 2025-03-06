@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] overflow-hidden">
+    <section className="relative h-screen overflow-hidden">
       {/* Video Background */}
       <div className="absolute inset-0 w-full h-full z-0">
         <video 
@@ -32,7 +32,7 @@ export function Hero() {
         <div className="absolute top-[30%] right-[30%] w-40 h-40 rounded-full bg-[#8e24aa]/20 blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
-      <div className="relative max-w-7xl mx-auto px-6 md:px-8 pt-32 pb-24 md:pt-40 md:pb-32 flex flex-col items-center justify-center text-center z-10">
+      <div className="relative w-full h-full max-w-7xl mx-auto px-6 md:px-8 flex flex-col items-center justify-center text-center z-10">
         <div className="stagger-animation">
           <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 animate-fade-in shadow-lg shadow-[#6a1b9a]/20">
             <span className="text-white/90 text-sm font-medium">AI를 이해하는 새로운 관점</span>
