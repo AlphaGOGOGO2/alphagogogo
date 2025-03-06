@@ -22,8 +22,8 @@ export function Hero() {
             <span className="text-white/90 text-sm font-medium">AI의 미래 - 간단하게 알아보기</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance">
-            최신 <span className="text-gradient relative">인공지능 혁신</span>을 탐색하세요
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
+            최신 <span className="relative">인공지능 혁신</span>을 탐색하세요
           </h1>
           
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in text-balance">

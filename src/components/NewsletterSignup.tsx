@@ -32,7 +32,7 @@ export function NewsletterSignup() {
                 최신 정보 받기
               </span>
               
-              <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gradient">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-purple-800">
                 AI 인사이트를 받아보세요
               </h2>
               

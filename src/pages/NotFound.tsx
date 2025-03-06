@@ -19,7 +19,7 @@ const NotFound = () => {
         <div className="inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-red-50 text-red-500">
           <AlertCircle size={32} />
         </div>
-        <h1 className="text-6xl font-bold mb-4 text-gradient">404</h1>
+        <h1 className="text-6xl font-bold mb-4 text-purple-800">404</h1>
         <p className="text-xl text-gray-600 mb-8">이런! 페이지를 찾을 수 없습니다</p>
         <Link 
           to="/" 
@@ -31,6 +31,6 @@ const NotFound = () => {
       </div>
     </div>
   );
-};
+}
 
 export default NotFound;

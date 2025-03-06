@@ -50,10 +50,10 @@ export function FeaturedPosts() {
     <section className="py-20 px-6 md:px-8 bg-gradient-to-b from-white to-purple-50/50">
       <div className="max-w-7xl mx-auto">
         <div className="mb-12 text-center">
-          <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-gradient bg-white rounded-full shadow-md">
+          <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-white bg-purple-600 rounded-full shadow-md">
             주요 콘텐츠
           </span>
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-violet-700 via-purple-700 to-indigo-700">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-purple-800">
             AI 뉴스 최신 소식
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-balance">
@@ -96,7 +96,7 @@ export function FeaturedPosts() {
                   </div>
                 </div>
                 
-                <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-gradient text-balance">
+                <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
                   {post.title}
                 </h3>
                 
@@ -108,7 +108,7 @@ export function FeaturedPosts() {
                   <button 
                     className={cn(
                       "flex items-center text-sm font-medium gap-1 transition-all",
-                      hoveredPost === post.id ? "text-gradient" : "text-gray-900"
+                      hoveredPost === post.id ? "text-purple-700" : "text-gray-900"
                     )}
                   >
                     더 읽기
@@ -127,7 +127,7 @@ export function FeaturedPosts() {
         </div>
         
         <div className="mt-12 text-center">
-          <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-violet-100 to-indigo-100 text-purple-700 font-medium hover:shadow-lg hover:shadow-purple-200/50 transition-all transform hover:-translate-y-0.5 border border-purple-200">
+          <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium hover:shadow-lg hover:shadow-purple-200/50 transition-all transform hover:-translate-y-0.5">
             모든 기사 보기
           </button>
         </div>
