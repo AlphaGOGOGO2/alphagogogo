@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Zap, Twitter, Linkedin, Github, Instagram } from "lucide-react";
+import { Twitter, Linkedin, Github, Instagram } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -11,23 +11,27 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold mb-4">
-              <Zap size={24} className="text-purple-600" />
-              <span>알파블로그</span>
+              <img 
+                src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+                alt="알파블로그 로고" 
+                className="w-8 h-8 object-contain"
+              />
+              <span className="text-[#6a1b9a]">알파블로그</span>
             </Link>
             <p className="text-gray-600 mb-6 text-balance">
               심층 보도와 분석을 통해 인공지능의 미래를 탐색합니다.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-gray-500 hover:text-purple-700 transition-colors" aria-label="Twitter">
+              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="Twitter">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-gray-500 hover:text-purple-700 transition-colors" aria-label="LinkedIn">
+              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
-              <a href="#" className="text-gray-500 hover:text-purple-700 transition-colors" aria-label="GitHub">
+              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="GitHub">
                 <Github size={20} />
               </a>
-              <a href="#" className="text-gray-500 hover:text-purple-700 transition-colors" aria-label="Instagram">
+              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
             </div>
@@ -45,7 +49,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link 
                     to={item.path}
-                    className="text-gray-600 hover:text-purple-700 transition-colors"
+                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -68,7 +72,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link 
                     to={`/topics/${item.path}`}
-                    className="text-gray-600 hover:text-purple-700 transition-colors"
+                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -89,7 +93,7 @@ export function Footer() {
                 <li key={item.name}>
                   <Link 
                     to={`/legal/${item.path}`}
-                    className="text-gray-600 hover:text-purple-700 transition-colors"
+                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
                     {item.name}
                   </Link>
@@ -104,13 +108,13 @@ export function Footer() {
             © {currentYear} 알파블로그. 모든 권리 보유.
           </p>
           <div className="flex gap-6 text-sm order-1 md:order-2">
-            <Link to="#" className="text-gray-600 hover:text-purple-700 transition-colors">
+            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
               개인정보
             </Link>
-            <Link to="#" className="text-gray-600 hover:text-purple-700 transition-colors">
+            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
               이용약관
             </Link>
-            <Link to="#" className="text-gray-600 hover:text-purple-700 transition-colors">
+            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
               문의하기
             </Link>
           </div>

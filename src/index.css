@@ -16,24 +16,24 @@
     --popover: 0 0% 100%;
     --popover-foreground: 280 10% 10%;
 
-    --primary: 265 89% 65%;
-    --primary-foreground: 265 10% 98%;
+    --primary: 282 72% 36%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 265 20% 96%;
-    --secondary-foreground: 265 89% 65%;
+    --secondary: 282 20% 96%;
+    --secondary-foreground: 282 72% 36%;
 
-    --muted: 265 20% 96%;
+    --muted: 282 20% 96%;
     --muted-foreground: 280 5% 45%;
 
-    --accent: 265 30% 94%;
-    --accent-foreground: 265 89% 65%;
+    --accent: 282 30% 94%;
+    --accent-foreground: 282 72% 36%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 265 20% 92%;
-    --input: 265 20% 92%;
-    --ring: 265 89% 65%;
+    --border: 282 20% 92%;
+    --input: 282 20% 92%;
+    --ring: 282 72% 36%;
 
     --radius: 0.75rem;
   }
@@ -57,7 +57,7 @@
 
 @layer components {
   .hero-gradient {
-    @apply bg-gradient-to-br from-violet-500/95 via-purple-600/95 to-indigo-700/95 bg-opacity-90;
+    @apply bg-gradient-to-br from-[#6a1b9a]/95 via-[#8e24aa]/95 to-[#6a1b9a]/95 bg-opacity-90;
   }
   
   .glass-card {
@@ -65,7 +65,7 @@
   }
   
   .purple-glow {
-    @apply shadow-[0_0_30px_rgba(139,92,246,0.5)];
+    @apply shadow-[0_0_30px_rgba(106,27,154,0.5)];
   }
   
   .gradient-border {
@@ -82,7 +82,7 @@
     right: -1px;
     bottom: -1px;
     left: -1px;
-    background: linear-gradient(135deg, #8B5CF6, #C084FC, #A855F7);
+    background: linear-gradient(135deg, #6a1b9a, #8e24aa, #6a1b9a);
     border-radius: var(--radius);
     z-index: -1;
   }
@@ -96,7 +96,7 @@
   }
   
   .animated-button {
-    @apply relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-purple-500/20;
+    @apply relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-[#6a1b9a]/20;
   }
   
   .animated-button::after {
@@ -114,7 +114,7 @@
   
   .glow-effect::before {
     content: '';
-    @apply absolute -inset-1 rounded-lg blur-md bg-gradient-to-r from-violet-600 to-indigo-600 opacity-50 group-hover:opacity-75 transition duration-300;
+    @apply absolute -inset-1 rounded-lg blur-md bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] opacity-50 group-hover:opacity-75 transition duration-300;
     z-index: -1;
   }
 }

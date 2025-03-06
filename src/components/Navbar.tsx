@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search, Zap } from "lucide-react";
+import { Menu, X, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -31,8 +31,12 @@ export function Navbar() {
           to="/" 
           className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold"
         >
-          <div className="relative">
-            <Zap size={24} className="text-purple-600" />
+          <div className="relative w-8 h-8 md:w-10 md:h-10">
+            <img 
+              src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+              alt="알파블로그 로고" 
+              className="w-full h-full object-contain"
+            />
           </div>
           <span className={cn(
             "transition-colors duration-300",
@@ -51,8 +55,8 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-sm font-medium relative transition-colors duration-300 hover:text-purple-600",
-                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-purple-600 after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
+                "text-sm font-medium relative transition-colors duration-300 hover:text-[#6a1b9a]",
+                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-[#6a1b9a] after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left",
                 isScrolled ? "text-foreground" : "text-white"
               )}
             >
@@ -62,7 +66,7 @@ export function Navbar() {
           <button 
             className={cn(
               "p-2 rounded-full transition-colors duration-300",
-              isScrolled ? "hover:bg-purple-100 text-foreground" : "hover:bg-white/10 text-white"
+              isScrolled ? "hover:bg-[#6a1b9a]/10 text-foreground" : "hover:bg-white/10 text-white"
             )}
           >
             <Search size={18} />
@@ -92,7 +96,11 @@ export function Navbar() {
       >
         <div className="flex justify-between items-center p-6">
           <Link to="/" className="flex items-center gap-2 font-heading text-xl font-semibold">
-            <Zap size={24} className="text-purple-600" />
+            <img 
+              src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+              alt="알파블로그 로고" 
+              className="w-8 h-8 object-contain"
+            />
             <span>알파블로그</span>
           </Link>
           <button onClick={() => setIsMobileMenuOpen(false)}>
@@ -110,7 +118,7 @@ export function Navbar() {
             <Link
               key={item.name}
               to={item.path}
-              className="text-lg font-medium hover:text-purple-600 transition-colors"
+              className="text-lg font-medium hover:text-[#6a1b9a] transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
@@ -120,7 +128,7 @@ export function Navbar() {
             <input 
               type="text" 
               placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#6a1b9a]"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
