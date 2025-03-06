@@ -70,8 +70,9 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Add sparkle effect styles */}
-      <style jsx>{`
+      {/* Add sparkle effect styles using regular style tag without jsx prop */}
+      <style>
+        {`
         @keyframes sparkle {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }
@@ -103,7 +104,8 @@ export function Hero() {
           0% { background-position: -100% -100%; }
           100% { background-position: 200% 200%; }
         }
-      `}</style>
+        `}
+      </style>
     </section>
   );
 }
