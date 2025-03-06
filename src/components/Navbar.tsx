@@ -1,6 +1,7 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search } from "lucide-react";
+import { Menu, X, Search, Sparkles, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -19,25 +20,35 @@ export function Navbar() {
   return (
     <header 
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-8",
+        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
         isScrolled 
-          ? "bg-white/90 backdrop-blur-md shadow-sm" 
-          : "bg-gradient-to-r from-black/50 via-[#401264]/50 to-black/50 backdrop-blur-md border-b border-white/10"
+          ? "bg-white/95 backdrop-blur-md shadow-md" 
+          : "bg-gradient-to-r from-[#1A1F2C]/90 via-[#7E69AB]/90 to-[#403E43]/90 backdrop-blur-lg border-b border-white/10"
       )}
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link 
           to="/" 
-          className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold"
+          className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold group"
         >
-          <div className="relative w-8 h-8 md:w-10 md:h-10">
+          <div className="relative w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-lg group-hover:scale-105 transition-transform duration-300">
             <img 
               src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
               alt="알파블로그 로고" 
               className="w-full h-full object-contain"
             />
+            <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           </div>
-          <span className="text-white">알파블로그</span>
+          <span className={cn(
+            "bg-clip-text text-transparent bg-gradient-to-r transition-all duration-300",
+            isScrolled 
+              ? "from-[#6E59A5] to-[#9b87f5]" 
+              : "from-white to-purple-200"
+          )}>알파블로그</span>
+          <Sparkles size={16} className={cn(
+            "text-yellow-400 animate-pulse-slow",
+            isScrolled ? "opacity-100" : "opacity-90"
+          )} />
         </Link>
         
         <nav className="hidden md:flex items-center gap-8">
@@ -51,50 +62,88 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-sm font-medium relative transition-colors duration-300 text-white hover:text-[#f0c4ff]",
-                "after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-[#f0c4ff] after:scale-x-0 after:origin-right after:transition-transform after:duration-300 hover:after:scale-x-100 hover:after:origin-left"
+                "text-sm font-medium relative transition-all duration-300 px-2 py-1 rounded-md",
+                isScrolled 
+                  ? "text-gray-800 hover:text-[#6E59A5] hover:bg-purple-100/50" 
+                  : "text-white/90 hover:text-white hover:bg-white/10"
               )}
             >
-              {item.name}
+              <span className="relative z-10">{item.name}</span>
+              <span className={cn(
+                "absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left",
+                isScrolled ? "bg-[#6E59A5]" : "bg-white/70"
+              )}></span>
             </Link>
           ))}
-          <button 
-            className="p-2 rounded-full hover:bg-white/10 text-white transition-colors duration-300"
-          >
-            <Search size={18} />
-          </button>
+          
+          <div className="flex items-center gap-3">
+            <Link
+              to="/trending"
+              className={cn(
+                "flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-300",
+                isScrolled 
+                  ? "text-[#6E59A5] bg-purple-100 hover:bg-purple-200" 
+                  : "text-white/90 bg-white/10 hover:bg-white/20"
+              )}
+            >
+              <TrendingUp size={14} className="animate-pulse-slow" />
+              <span>인기</span>
+            </Link>
+            
+            <button 
+              className={cn(
+                "p-2 rounded-full transition-all duration-300 hover:rotate-12",
+                isScrolled 
+                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200" 
+                  : "bg-white/10 text-white hover:bg-white/20"
+              )}
+            >
+              <Search size={18} />
+            </button>
+          </div>
         </nav>
         
         <button 
-          className="md:hidden text-white"
+          className={cn(
+            "md:hidden p-2 rounded-full transition-colors duration-300",
+            isScrolled 
+              ? "text-gray-800 hover:bg-gray-100" 
+              : "text-white hover:bg-white/10"
+          )}
           onClick={() => setIsMobileMenuOpen(true)}
         >
-          <Menu size={24} /> 
+          <Menu size={20} /> 
         </button>
       </div>
       
       {/* Mobile Menu */}
       <div 
         className={cn(
-          "fixed inset-0 bg-white z-50 transform transition-transform duration-300 ease-in-out",
+          "fixed inset-0 bg-white/95 backdrop-blur-md z-50 transform transition-transform duration-300 ease-in-out",
           isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
-        <div className="flex justify-between items-center p-6">
-          <Link to="/" className="flex items-center gap-2 font-heading text-xl font-semibold">
-            <img 
-              src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
-              alt="알파블로그 로고" 
-              className="w-8 h-8 object-contain"
-            />
-            <span>알파블로그</span>
+        <div className="flex justify-between items-center p-6 border-b">
+          <Link to="/" className="flex items-center gap-2 font-heading text-xl font-semibold" onClick={() => setIsMobileMenuOpen(false)}>
+            <div className="relative w-8 h-8 overflow-hidden rounded-lg">
+              <img 
+                src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+                alt="알파블로그 로고" 
+                className="w-full h-full object-contain"
+              />
+            </div>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6E59A5] to-[#9b87f5]">알파블로그</span>
+            <Sparkles size={14} className="text-yellow-400 animate-pulse-slow" />
           </Link>
-          <button onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={24} className="text-foreground" />
+          <button 
+            onClick={() => setIsMobileMenuOpen(false)}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+          >
+            <X size={20} className="text-gray-700" />
           </button>
         </div>
         
-        <nav className="flex flex-col p-6 space-y-6">
+        <nav className="flex flex-col p-6 space-y-4">
           {[
             { name: "홈", path: "/" },
             { name: "뉴스", path: "/news" },
@@ -104,17 +153,27 @@ export function Navbar() {
             <Link
               key={item.name}
               to={item.path}
-              className="text-lg font-medium hover:text-[#6a1b9a] transition-colors"
+              className="text-lg font-medium text-gray-800 hover:text-[#6E59A5] p-2 hover:bg-purple-50 rounded-md transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
             </Link>
           ))}
+          
+          <Link
+            to="/trending"
+            className="flex items-center gap-2 text-[#6E59A5] bg-purple-50 p-3 rounded-md hover:bg-purple-100 transition-colors mt-2"
+            onClick={() => setIsMobileMenuOpen(false)}
+          >
+            <TrendingUp size={18} className="text-[#6E59A5]" />
+            <span className="font-medium">인기 콘텐츠 보기</span>
+          </Link>
+          
           <div className="relative mt-6">
             <input 
               type="text" 
               placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#6a1b9a]"
+              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#6E59A5] transition-all"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
