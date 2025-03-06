@@ -62,16 +62,16 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-sm font-medium relative transition-all duration-300 px-2 py-1 rounded-md",
+                "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md",
                 isScrolled 
-                  ? "text-gray-800 hover:text-[#6E59A5] hover:bg-purple-100/50" 
+                  ? "text-[#4a148c] hover:text-[#4a148c]/80 hover:bg-purple-100/50" 
                   : "text-white/90 hover:text-white hover:bg-white/10"
               )}
             >
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-0.5 transform scale-x-0 transition-transform duration-300 origin-left",
-                isScrolled ? "bg-[#6E59A5]" : "bg-white/70"
+                isScrolled ? "bg-[#4a148c]" : "bg-white/70"
               )}></span>
             </Link>
           ))}
@@ -82,7 +82,7 @@ export function Navbar() {
               className={cn(
                 "flex items-center gap-1 text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-300",
                 isScrolled 
-                  ? "text-[#6E59A5] bg-purple-100 hover:bg-purple-200" 
+                  ? "text-[#4a148c] bg-purple-100 hover:bg-purple-200" 
                   : "text-white/90 bg-white/10 hover:bg-white/20"
               )}
             >
@@ -94,7 +94,7 @@ export function Navbar() {
               className={cn(
                 "p-2 rounded-full transition-all duration-300 hover:rotate-12",
                 isScrolled 
-                  ? "bg-gray-100 text-gray-700 hover:bg-gray-200" 
+                  ? "bg-gray-100 text-[#4a148c] hover:bg-gray-200" 
                   : "bg-white/10 text-white hover:bg-white/20"
               )}
             >
@@ -107,7 +107,7 @@ export function Navbar() {
           className={cn(
             "md:hidden p-2 rounded-full transition-colors duration-300",
             isScrolled 
-              ? "text-gray-800 hover:bg-gray-100" 
+              ? "text-[#4a148c] hover:bg-gray-100" 
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
@@ -132,14 +132,14 @@ export function Navbar() {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#6E59A5] to-[#9b87f5]">알파블로그</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4a148c] to-[#9b87f5]">알파블로그</span>
             <Sparkles size={14} className="text-yellow-400 animate-pulse-slow" />
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           >
-            <X size={20} className="text-gray-700" />
+            <X size={20} className="text-[#4a148c]" />
           </button>
         </div>
         
@@ -153,7 +153,7 @@ export function Navbar() {
             <Link
               key={item.name}
               to={item.path}
-              className="text-lg font-medium text-gray-800 hover:text-[#6E59A5] p-2 hover:bg-purple-50 rounded-md transition-colors"
+              className="text-xl font-medium text-[#4a148c] hover:text-[#4a148c]/80 p-2 hover:bg-purple-50 rounded-md transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
@@ -162,10 +162,10 @@ export function Navbar() {
           
           <Link
             to="/trending"
-            className="flex items-center gap-2 text-[#6E59A5] bg-purple-50 p-3 rounded-md hover:bg-purple-100 transition-colors mt-2"
+            className="flex items-center gap-2 text-[#4a148c] bg-purple-50 p-3 rounded-md hover:bg-purple-100 transition-colors mt-2"
             onClick={() => setIsMobileMenuOpen(false)}
           >
-            <TrendingUp size={18} className="text-[#6E59A5]" />
+            <TrendingUp size={18} className="text-[#4a148c]" />
             <span className="font-medium">인기 콘텐츠 보기</span>
           </Link>
           
@@ -173,7 +173,7 @@ export function Navbar() {
             <input 
               type="text" 
               placeholder="검색..." 
-              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#6E59A5] transition-all"
+              className="w-full bg-gray-100 rounded-lg py-3 px-4 pl-10 focus:outline-none focus:ring-2 focus:ring-[#4a148c] transition-all"
             />
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
           </div>
