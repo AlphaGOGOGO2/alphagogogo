@@ -1,5 +1,6 @@
 
 import { toast } from "@/hooks/use-toast";
+import React from "react";
 
 /**
  * 인앱 알림 메시지를 표시하고 특정 액션을 수행하는 유틸리티 함수
