@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -7,11 +6,13 @@ import { getBlogPostBySlug } from "@/services/blogService";
 import { Loader2, Calendar, Clock, User, Pencil } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   
   // Fetch the blog post by slug
   const { data: post, isLoading, error } = useQuery({
@@ -38,8 +39,15 @@ export default function BlogPostPage() {
   }, []);
   
   const handleEdit = () => {
-    if (post) {
+    // Check if user is already authenticated for blog editing
+    const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
+    
+    if (isAuthorized && post) {
+      // If already authenticated, navigate directly to edit page
       navigate(`/blog/edit/${post.slug}`, { state: { post } });
+    } else {
+      // Otherwise show the auth modal
+      setShowAuthModal(true);
     }
   };
   
@@ -133,6 +141,12 @@ export default function BlogPostPage() {
           )}
         </div>
       </article>
+      
+      {/* Password Authentication Modal */}
+      <BlogPasswordModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </BlogLayout>
   );
 }

@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { BlogForm } from "@/components/blog/BlogForm";
 import { BlogPreview } from "@/components/blog/BlogPreview";
 import { BlogPost } from "@/types/blog";
+import { openInfoPopup } from "@/utils/popupUtils";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
@@ -22,6 +23,20 @@ export default function BlogWritePage() {
   const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [postId, setPostId] = useState<string | null>(null);
+
+  // Check authentication status
+  useEffect(() => {
+    const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
+    
+    if (!isAuthorized) {
+      openInfoPopup({
+        title: "접근 권한 없음",
+        message: "글쓰기 페이지에 접근할 권한이 없습니다. 먼저 관리자 인증을 해주세요.",
+      });
+      
+      navigate("/blog");
+    }
+  }, [navigate]);
 
   // Fetch categories
   const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({

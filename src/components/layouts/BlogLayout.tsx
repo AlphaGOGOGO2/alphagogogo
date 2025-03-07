@@ -1,5 +1,4 @@
-
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link, useLocation } from "react-router-dom";
@@ -7,6 +6,7 @@ import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PenLine } from "lucide-react";
+import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -16,6 +16,7 @@ interface BlogLayoutProps {
 export function BlogLayout({ children, title }: BlogLayoutProps) {
   const location = useLocation();
   const isWritePage = location.pathname === "/blog/write";
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Add animation effect when component mounts
   useEffect(() => {
@@ -33,6 +34,19 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
       }, 100 + (index * 50)); // Stagger each tab by 50ms
     });
   }, [location.pathname]);
+
+  const handleWriteButtonClick = () => {
+    // Check if user is already authenticated for blog writing
+    const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
+    
+    if (isAuthorized) {
+      // If already authenticated, navigate directly
+      window.location.href = "/blog/write";
+    } else {
+      // Otherwise show the auth modal
+      setShowAuthModal(true);
+    }
+  };
   
   return (
     <div className="min-h-screen flex flex-col">
@@ -67,15 +81,14 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
             </div>
             
             {location.pathname !== "/blog/write" && (
-              <Link to="/blog/write">
-                <Button 
-                  className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 opacity-0 animate-fade-in" 
-                  style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-                >
-                  <PenLine size={16} />
-                  글쓰기
-                </Button>
-              </Link>
+              <Button 
+                onClick={handleWriteButtonClick}
+                className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 opacity-0 animate-fade-in" 
+                style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+              >
+                <PenLine size={16} />
+                글쓰기
+              </Button>
             )}
           </header>
           
@@ -86,6 +99,12 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
       </main>
       
       <Footer />
+      
+      {/* Password Authentication Modal */}
+      <BlogPasswordModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </div>
   );
 }
