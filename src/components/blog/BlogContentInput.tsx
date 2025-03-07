@@ -2,7 +2,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Loader2, FileVideo } from "lucide-react";
+import { ImageIcon, Loader2 } from "lucide-react";
 import { useState, useRef } from "react";
 import { uploadBlogImage } from "@/services/blogMediaService";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ interface BlogContentInputProps {
 export function BlogContentInput({ content, setContent }: BlogContentInputProps) {
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -40,15 +41,35 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
       const mediaUrl = await uploadBlogImage(file);
       
       if (mediaUrl) {
-        // Insert media HTML at cursor position or at the end
-        let mediaHtml = '';
-        if (isImage) {
-          mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
-        } else if (isVideo) {
-          mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+        // Insert media HTML at cursor position
+        const textarea = textareaRef.current;
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          
+          let mediaHtml = '';
+          if (isImage) {
+            mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
+          } else if (isVideo) {
+            mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+          }
+          
+          const newContent = content.substring(0, start) + mediaHtml + content.substring(end);
+          setContent(newContent);
+          
+          // Set cursor position after the inserted media
+          setTimeout(() => {
+            if (textarea) {
+              const newPosition = start + mediaHtml.length;
+              textarea.focus();
+              textarea.setSelectionRange(newPosition, newPosition);
+            }
+          }, 0);
+        } else {
+          // Fallback if textarea ref is not available
+          setContent(content ? `${content}\n${mediaHtml}` : mediaHtml);
         }
         
-        setContent(content ? `${content}\n${mediaHtml}` : mediaHtml);
         toast.success(`${isImage ? '이미지' : '동영상'}가 업로드되었습니다`);
       }
     } catch (error) {
@@ -101,6 +122,7 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
       </div>
       <Textarea 
         id="content" 
+        ref={textareaRef}
         value={content} 
         onChange={(e) => setContent(e.target.value)} 
         placeholder="내용을 입력하세요" 
