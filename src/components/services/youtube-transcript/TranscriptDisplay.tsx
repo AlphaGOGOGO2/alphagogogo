@@ -16,11 +16,16 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
   const formatTranscript = (text: string): string => {
     if (!text) return "";
     
-    // Add line breaks after sentence-ending punctuation
-    const formattedText = text
-      .replace(/([.!?])\s+/g, "$1\n\n") // Add double line break after sentence endings
-      .replace(/([.!?])([A-Z])/g, "$1\n\n$2") // Handle cases where there's no space after period
-      .replace(/\n{3,}/g, "\n\n"); // Remove excessive line breaks
+    // Split the text into sentences
+    const sentences = text
+      .replace(/([.!?])\s*/g, "$1|SPLIT|")  // Mark sentence boundaries
+      .split("|SPLIT|");                    // Split at those boundaries
+    
+    // Join sentences with line breaks
+    const formattedText = sentences
+      .filter(sentence => sentence.trim().length > 0)  // Remove empty sentences
+      .join("\n\n")
+      .trim();
     
     return formattedText;
   };
@@ -93,7 +98,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
         id="transcript"
         value={formatTranscript(transcript)}
         readOnly
-        className="min-h-[300px] font-mono text-sm bg-white border-purple-100 rounded-lg focus-visible:ring-purple-400"
+        className="min-h-[300px] font-mono text-sm bg-white border-purple-100 rounded-lg focus-visible:ring-purple-400 whitespace-pre-wrap"
       />
     </div>
   );
