@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
@@ -19,6 +19,7 @@ export function useCommunityChat() {
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
   const { toast } = useToast();
+  const channelRef = useRef<any>(null);
 
   // Generate random nickname and color when hook is initialized
   useEffect(() => {
@@ -33,23 +34,39 @@ export function useCommunityChat() {
     // Load recent messages
     loadRecentMessages();
     
-    // Subscribe to new messages
-    const channel = supabase
-      .channel('public:community_messages')
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'community_messages' 
-        }, 
-        (payload) => {
-          const newMsg = payload.new as ChatMessage;
-          setMessages(prev => [...prev, newMsg]);
-        })
-      .subscribe();
+    // Subscribe to new messages - Only initialize subscription once
+    const setupSubscription = () => {
+      if (channelRef.current !== null) return; // Don't set up another subscription if one exists
+
+      channelRef.current = supabase
+        .channel('public:community_messages')
+        .on('postgres_changes', 
+          { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'community_messages' 
+          }, 
+          (payload) => {
+            const newMsg = payload.new as ChatMessage;
+            setMessages(prev => {
+              // Check if message already exists to prevent duplicates
+              if (prev.some(msg => msg.id === newMsg.id)) {
+                return prev;
+              }
+              return [...prev, newMsg];
+            });
+          })
+        .subscribe();
+    };
+    
+    setupSubscription();
       
     return () => {
-      supabase.removeChannel(channel);
+      // Clean up subscription when component unmounts
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        channelRef.current = null;
+      }
     };
   }, []);
 
