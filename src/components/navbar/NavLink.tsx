@@ -1,7 +1,6 @@
 
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ExternalLink } from "lucide-react";
 
 interface NavLinkProps {
   name: string;
@@ -29,7 +28,6 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
         onClick={onClick}
       >
         <span className="relative z-10">{name}</span>
-        <ExternalLink size={14} className="ml-1 opacity-70" />
       </a>
     );
   }

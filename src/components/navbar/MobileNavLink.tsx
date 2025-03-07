@@ -1,7 +1,6 @@
 
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { ExternalLink } from "lucide-react";
 
 interface MobileNavLinkProps {
   name: string;
@@ -23,7 +22,6 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
         onClick={onClick}
       >
         <span>{name}</span>
-        <ExternalLink size={14} className="ml-1 opacity-70" />
       </a>
     );
   }
