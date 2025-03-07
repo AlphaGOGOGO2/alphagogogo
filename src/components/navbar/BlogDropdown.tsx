@@ -11,16 +11,17 @@ interface BlogDropdownProps {
   isActive: boolean;
   categories: BlogCategory[];
   onCategoryClick?: () => void;
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
 }
 
-export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick }: BlogDropdownProps) {
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick, isOpen, onOpenChange }: BlogDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsDropdownOpen(false);
+        onOpenChange(false);
       }
     };
     
@@ -28,21 +29,21 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [onOpenChange]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Escape') {
-      setIsDropdownOpen(false);
+      onOpenChange(false);
     }
     if (e.key === 'Enter' || e.key === ' ') {
-      setIsDropdownOpen((prev) => !prev);
+      onOpenChange(!isOpen);
     }
   };
   
   let closeTimer: ReturnType<typeof setTimeout>;
   
   const handleMouseLeave = () => {
-    closeTimer = setTimeout(() => setIsDropdownOpen(false), 500);
+    closeTimer = setTimeout(() => onOpenChange(false), 500);
   };
   
   const handleMouseEnter = () => {
@@ -56,16 +57,19 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
       className="relative inline-block"
       ref={dropdownRef}
       onMouseLeave={handleMouseLeave}
-      onMouseEnter={handleMouseEnter}
+      onMouseEnter={() => {
+        handleMouseEnter();
+        onOpenChange(true);
+      }}
       onKeyDown={handleKeyDown}
     >
       <div
         role="button"
         tabIndex={0}
-        aria-expanded={isDropdownOpen}
+        aria-expanded={isOpen}
         aria-haspopup="true"
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        onMouseEnter={() => setIsDropdownOpen(true)}
+        onClick={() => onOpenChange(!isOpen)}
+        onMouseEnter={() => onOpenChange(true)}
         className="inline-flex items-center"
       >
         <NavLink 
@@ -78,7 +82,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
               size={16} 
               className={cn(
                 "transition-transform duration-300", 
-                isDropdownOpen ? "rotate-180" : "rotate-0",
+                isOpen ? "rotate-180" : "rotate-0",
                 isScrolled ? "text-purple-700" : "text-white/80"
               )}
               aria-hidden="true"
@@ -90,12 +94,12 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
       <div 
         className={cn(
           "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
-          isDropdownOpen 
+          isOpen 
             ? "transform scale-100 opacity-100" 
             : "transform scale-95 opacity-0 pointer-events-none",
           isScrolled 
             ? "bg-white border border-gray-200" 
-            : "bg-black/40 backdrop-blur-lg border border-white/20"
+            : "bg-black/70 backdrop-blur-lg border border-white/20"
         )}
         role="menu"
         aria-orientation="vertical"
@@ -112,10 +116,11 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
                 "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
                 isScrolled 
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
-                  : "text-white/90 hover:bg-white/20 hover:text-white"
+                  : "text-white hover:bg-white/20 hover:text-white"
               )}
               onClick={() => {
                 onCategoryClick?.();
+                onOpenChange(false);
               }}
               role="menuitem"
             >
