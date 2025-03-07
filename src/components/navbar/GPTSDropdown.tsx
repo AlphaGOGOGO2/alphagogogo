@@ -52,6 +52,26 @@ export function GPTSDropdown({
     };
   }, [closeTimeout]);
 
+  // Handle scrolling to section when clicking on an anchor link
+  const handleSectionClick = (sectionId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Close the dropdown
+    onOpenChange(false);
+    onCategoryClick?.();
+    
+    // If we're already on the GPTS page, scroll to the section
+    if (window.location.pathname === '/gpts') {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      // Navigate to the GPTS page with the hash in the URL
+      window.location.href = `/gpts#${sectionId}`;
+    }
+  };
+
   return (
     <div 
       className="relative inline-block"
@@ -105,26 +125,27 @@ export function GPTSDropdown({
           onMouseLeave={handleMouseLeave}
         >
           <div className="py-2">
-            {categories.map((category) => (
-              <Link
-                key={category.path}
-                to={category.path}
-                className={cn(
-                  "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
-                  isScrolled 
-                    ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
-                    : "text-white hover:bg-white/20 hover:text-white"
-                )}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCategoryClick?.();
-                  onOpenChange(false);
-                }}
-                role="menuitem"
-              >
-                {category.name}
-              </Link>
-            ))}
+            {categories.map((category) => {
+              // Extract the section ID from the path (e.g., "/gpts#blog" -> "blog")
+              const sectionId = category.path.split('#')[1];
+              
+              return (
+                <a
+                  key={category.path}
+                  href={category.path}
+                  className={cn(
+                    "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
+                    isScrolled 
+                      ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
+                      : "text-white hover:bg-white/20 hover:text-white"
+                  )}
+                  onClick={(e) => handleSectionClick(sectionId, e)}
+                  role="menuitem"
+                >
+                  {category.name}
+                </a>
+              );
+            })}
           </div>
         </div>
       )}

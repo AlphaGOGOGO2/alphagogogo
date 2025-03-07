@@ -1,13 +1,35 @@
 
+import { useEffect, useRef } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";
 import { GPTSOtherSection } from "@/components/gpts/GPTSOtherSection";
 import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 export default function GPTSPage() {
+  const location = useLocation();
+  const blogSectionRef = useRef<HTMLDivElement>(null);
+  const otherSectionRef = useRef<HTMLDivElement>(null);
+  const downloadSectionRef = useRef<HTMLDivElement>(null);
+
+  // Handle scrolling to sections when the page loads with a hash in the URL
+  useEffect(() => {
+    // Get the hash from the URL (e.g., #blog, #other, #download)
+    const hash = location.hash.slice(1); // Remove the # character
+    
+    if (hash) {
+      // Add a slight delay to ensure the page is fully loaded
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    }
+  }, [location.hash]);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -29,9 +51,17 @@ export default function GPTSPage() {
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
           
-          <GPTSBlogSection />
-          <GPTSOtherSection />
-          <GPTSDownloadSection />
+          <div id="blog" ref={blogSectionRef}>
+            <GPTSBlogSection />
+          </div>
+          
+          <div id="other" ref={otherSectionRef}>
+            <GPTSOtherSection />
+          </div>
+          
+          <div id="download" ref={downloadSectionRef}>
+            <GPTSDownloadSection />
+          </div>
         </div>
       </main>
       
