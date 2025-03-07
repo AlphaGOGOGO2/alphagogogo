@@ -37,25 +37,36 @@ export default function BlogWritePage() {
       // Add console logs to help debug
       console.log("Attempting to create blog post:", { title, content, category, tags });
       
-      // Create the blog post
+      // Parse tags properly
+      const parsedTags = tags
+        .split(',')
+        .map(tag => tag.trim())
+        .filter(tag => tag !== "");
+      
+      console.log("Parsed tags:", parsedTags);
+      
+      // Create the blog post with additional error handling
       const newPost = await createBlogPost({
         title,
         content,
         category,
-        tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag !== "")
+        tags: parsedTags
       });
       
       if (newPost) {
         console.log("Post created successfully:", newPost);
         toast.success("블로그 포스트가 성공적으로 저장되었습니다");
-        navigate(`/blog`);
+        // Navigate after a short delay to ensure toast is visible
+        setTimeout(() => {
+          navigate(`/blog`);
+        }, 1000);
       } else {
         console.error("Blog post creation returned null or undefined");
-        throw new Error("블로그 포스트 작성에 실패했습니다");
+        toast.error("블로그 포스트 작성에 실패했습니다");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error("블로그 포스트 작성에 실패했습니다");
+      toast.error(`블로그 포스트 작성에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
     } finally {
       setIsSubmitting(false);
     }

@@ -89,24 +89,39 @@ export const createBlogPost = async (
       coverImageUrl
     });
     
+    // Create the blog post object with all required fields properly defined
+    const blogPostData = {
+      title: post.title!,
+      content: post.content!,
+      category: post.category!,
+      cover_image: coverImageUrl,
+      slug,
+      read_time: readTime,
+      excerpt,
+      author_name: "알파GOGOGO", // Default author name
+      author_avatar: "https://i.pravatar.cc/150?img=10", // Default avatar
+      published_at: new Date().toISOString() // Explicitly set published_at
+    };
+    
+    console.log("Final blog post data for insert:", blogPostData);
+    
     const { data, error } = await supabase
       .from("blog_posts")
-      .insert({
-        title: post.title!,
-        content: post.content!,
-        category: post.category!,
-        cover_image: coverImageUrl,
-        slug,
-        read_time: readTime,
-        excerpt,
-        author_name: "알파GOGOGO", // Using default value
-        author_avatar: "https://i.pravatar.cc/150?img=10" // Using default value
-      })
+      .insert(blogPostData)
       .select()
       .single();
 
     if (error) {
       console.error("Supabase insert error:", error);
+      
+      // Handle specific error cases
+      if (error.code === '42501') {
+        // Permission denied error
+        console.error("Permission denied error. RLS policy might be blocking the operation.");
+        toast.error("권한 오류: 블로그 포스트 작성 권한이 없습니다");
+        return null;
+      }
+      
       throw error;
     }
 
@@ -114,14 +129,26 @@ export const createBlogPost = async (
 
     // Handle tags if the blog_tags and blog_post_tags tables exist
     if (post.tags && post.tags.length > 0 && data) {
-      await handleBlogTags(data.id, post.tags);
+      try {
+        await handleBlogTags(data.id, post.tags);
+      } catch (tagError) {
+        // We don't want tag errors to prevent post creation
+        console.error("Error handling tags, but post was created:", tagError);
+      }
     }
 
     toast.success("블로그 포스트가 성공적으로 작성되었습니다");
     return data;
   } catch (error) {
     console.error("Error creating blog post:", error);
-    toast.error("블로그 포스트 작성에 실패했습니다");
+    
+    // Provide more specific error messages based on the error type
+    if (error.message && error.message.includes("violates row-level security policy")) {
+      toast.error("권한 오류: 데이터베이스 정책에 의해 저장이 거부되었습니다");
+    } else {
+      toast.error("블로그 포스트 작성에 실패했습니다");
+    }
+    
     return null;
   }
 };
