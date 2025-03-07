@@ -27,4 +27,14 @@ export const handleBlogServiceError = (error: any, customMessage: string): void 
   if (error.details) {
     console.error(`Error details: ${error.details}`);
   }
+  
+  // Add specific handling for network errors
+  if (error instanceof TypeError && error.message.includes('network')) {
+    console.error('Network error detected. Please check your internet connection.');
+  }
+  
+  // Add specific handling for timeout errors
+  if (error.message && error.message.includes('timeout')) {
+    console.error('Request timed out. The server might be busy or unavailable.');
+  }
 };

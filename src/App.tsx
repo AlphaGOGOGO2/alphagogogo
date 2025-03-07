@@ -14,6 +14,7 @@ import LifestylePage from "./pages/blog/LifestylePage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
+import ServicesPage from "./pages/ServicesPage";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/gpts" element={<GPTSPage />} />
+          <Route path="/services" element={<ServicesPage />} />
           <Route path="/blog" element={<AllBlogPage />} />
           <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
           <Route path="/blog/trending" element={<TrendingPage />} />
