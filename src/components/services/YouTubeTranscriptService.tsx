@@ -36,7 +36,8 @@ export function YouTubeTranscriptService() {
                 <div className="text-sm text-yellow-700">
                   <p>자막이 있는 영상에서만 동작합니다. 유효한 YouTube URL을 입력해주세요.</p>
                   <p className="text-xs mt-1">예시: https://www.youtube.com/watch?v=VIDEO_ID 또는 https://youtu.be/VIDEO_ID</p>
-                  <p className="text-xs mt-1">참고: CORS 정책으로 인해 일부 영상의 자막을 가져오지 못할 수 있습니다.</p>
+                  <p className="text-xs mt-1">추천: 영어 교육 콘텐츠, TED 강연, 자막이 제공되는 공식 채널의 영상을 시도해보세요.</p>
+                  <p className="text-xs mt-1">참고: 브라우저의 CORS 정책으로 인해 일부 영상의 자막을 가져오지 못할 수 있습니다.</p>
                 </div>
               </div>
             </div>
