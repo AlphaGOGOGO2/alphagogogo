@@ -39,27 +39,6 @@ export function CommunityDropdown({
     };
   }, [onOpenChange]);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      onOpenChange(false);
-    }
-    if (e.key === 'Enter' || e.key === ' ') {
-      onOpenChange(!isOpen);
-    }
-  };
-
-  let closeTimer: ReturnType<typeof setTimeout>;
-  
-  const handleMouseLeave = () => {
-    closeTimer = setTimeout(() => onOpenChange(false), 300);
-  };
-  
-  const handleMouseEnter = () => {
-    if (closeTimer) {
-      clearTimeout(closeTimer);
-    }
-  };
-
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
     
@@ -91,21 +70,14 @@ export function CommunityDropdown({
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onMouseLeave={handleMouseLeave}
-      onMouseEnter={() => {
-        handleMouseEnter();
-        onOpenChange(true);
-      }}
-      onKeyDown={handleKeyDown}
     >
-      <div
-        role="button"
-        tabIndex={0}
+      <button
+        type="button"
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={() => onOpenChange(!isOpen)}
         onMouseEnter={() => onOpenChange(true)}
-        className="inline-flex items-center"
+        className="inline-flex items-center focus:outline-none"
       >
         <NavLink 
           name="커뮤니티"
@@ -124,7 +96,7 @@ export function CommunityDropdown({
             /> 
           }
         />
-      </div>
+      </button>
       
       <div 
         className={cn(
@@ -139,8 +111,7 @@ export function CommunityDropdown({
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="community-menu"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
+        onMouseLeave={() => onOpenChange(false)}
       >
         <CommunityDropdownItems 
           categories={categories} 

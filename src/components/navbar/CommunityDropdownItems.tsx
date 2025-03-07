@@ -28,6 +28,7 @@ export function CommunityDropdownItems({
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
             onClick={(e) => onItemClick(category, e)}
+            type="button"
             role="menuitem"
           >
             <CommunityIcon categoryName={category.name} />

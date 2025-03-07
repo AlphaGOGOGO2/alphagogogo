@@ -51,6 +51,7 @@ export function MobileCommunityItems({ onClose, locationPathname }: MobileCommun
             key={category.path}
             className="text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-blue-50/50 hover:pl-4 w-full text-left"
             onClick={(e) => handleCommunityItemClick(category, e)}
+            type="button"
           >
             - {category.name}
           </button>
