@@ -5,6 +5,7 @@ import { Hero } from "@/components/landing/Hero";
 import { FeaturedPosts } from "@/components/landing/FeaturedPost";
 import { GPTSUsage } from "@/components/landing/GPTSUsage";
 import { Services } from "@/components/landing/Services";
+import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -31,6 +32,7 @@ const Index = () => {
         <FeaturedPosts />
         <GPTSUsage />
         <Services />
+        <Community />
       </main>
       <Footer />
     </div>
