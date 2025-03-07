@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPresence } from "@/types/chat";
 
@@ -7,17 +7,8 @@ export function usePresence(nickname: string, userColor: string) {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const presenceChannelRef = useRef<any>(null);
 
-  useEffect(() => {
-    if (!nickname || !userColor) return;
-    
-    setupPresenceChannel();
-    
-    return () => {
-      cleanupPresenceChannel();
-    };
-  }, [nickname, userColor]);
-
-  const setupPresenceChannel = () => {
+  // Setup presence channel
+  const setupPresenceChannel = useCallback(() => {
     if (presenceChannelRef.current !== null) return;
 
     presenceChannelRef.current = supabase.channel('room:community', {
@@ -51,16 +42,27 @@ export function usePresence(nickname: string, userColor: string) {
           });
         }
       });
-  };
+  }, [nickname, userColor]);
 
-  const cleanupPresenceChannel = () => {
+  // Cleanup presence channel
+  const cleanupPresenceChannel = useCallback(() => {
     if (presenceChannelRef.current) {
       supabase.removeChannel(presenceChannelRef.current);
       presenceChannelRef.current = null;
     }
-  };
+  }, []);
 
-  const updatePresence = async () => {
+  useEffect(() => {
+    if (!nickname || !userColor) return;
+    
+    setupPresenceChannel();
+    
+    return () => {
+      cleanupPresenceChannel();
+    };
+  }, [nickname, userColor, setupPresenceChannel, cleanupPresenceChannel]);
+
+  const updatePresence = useCallback(async () => {
     if (presenceChannelRef.current) {
       await presenceChannelRef.current.track({
         nickname,
@@ -68,7 +70,7 @@ export function usePresence(nickname: string, userColor: string) {
         online_at: new Date().toISOString(),
       });
     }
-  };
+  }, [nickname, userColor]);
 
   return {
     activeUsers,
