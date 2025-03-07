@@ -40,7 +40,7 @@ export const MessageList: FC<MessageListProps> = ({ messages, isLoading }) => {
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-gray-500">
+      <div className="flex flex-col items-center justify-center h-full text-gray-500 animate-fade-in">
         <p>아직 메시지가 없습니다.</p>
         <p>첫 메시지를 보내보세요!</p>
       </div>
@@ -49,16 +49,21 @@ export const MessageList: FC<MessageListProps> = ({ messages, isLoading }) => {
 
   return (
     <div className="space-y-3">
-      {messages.map((msg) => (
-        <MessageBubble
+      {messages.map((msg, index) => (
+        <div 
           key={msg.id}
-          nickname={msg.nickname}
-          content={msg.content}
-          timestamp={msg.created_at}
-          color={msg.color}
-        />
+          className="animate-fade-in"
+          style={{ animationDelay: `${index * 50}ms` }}
+        >
+          <MessageBubble
+            nickname={msg.nickname}
+            content={msg.content}
+            timestamp={msg.created_at}
+            color={msg.color}
+          />
+        </div>
       ))}
       <div ref={messagesEndRef} />
     </div>
   );
-};
+}

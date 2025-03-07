@@ -20,10 +20,10 @@ export const MessageBubble: FC<MessageBubbleProps> = ({
   };
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col transform transition-all hover:translate-x-1 duration-200">
       <div className="flex items-start gap-2">
         <div 
-          className="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold"
+          className="h-8 w-8 rounded-full flex items-center justify-center text-white font-bold shadow-sm"
           style={{ backgroundColor: color }}
         >
           {nickname.substring(0, 1)}
@@ -33,7 +33,7 @@ export const MessageBubble: FC<MessageBubbleProps> = ({
             <span className="font-medium mr-2">{nickname}</span>
             <span className="text-xs text-gray-500">{formatTime(timestamp)}</span>
           </div>
-          <div className="bg-gray-100 rounded-lg p-2 mt-1 text-gray-800 inline-block">
+          <div className="bg-gray-100 rounded-lg p-2 mt-1 text-gray-800 inline-block shadow-sm hover:bg-gray-200 transition-colors duration-200">
             {content}
           </div>
         </div>
