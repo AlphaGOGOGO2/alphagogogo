@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
+
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
-import { containsForbiddenWords, censorMessage } from "@/utils/chatFilterUtils";
+import { containsForbiddenWords } from "@/utils/chatFilterUtils";
 
 interface ChatMessage {
   id: string;
@@ -20,15 +21,16 @@ interface UserPresence {
 
 export function useCommunityChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const { toast } = useToast();
   const channelRef = useRef<any>(null);
   const presenceChannelRef = useRef<any>(null);
+  const messagesLoaded = useRef(false);
 
-  // Generate random nickname and color when hook is initialized
+  // Generate random nickname and color only once when hook is initialized
   useEffect(() => {
     const randomNickname = `익명${Math.floor(Math.random() * 10000)}`;
     setNickname(randomNickname);
@@ -37,96 +39,100 @@ export function useCommunityChat() {
     const hue = Math.floor(Math.random() * 360);
     const pastelColor = `hsl(${hue}, 70%, 80%)`;
     setUserColor(pastelColor);
+  }, []);
+  
+  // Load messages only once
+  useEffect(() => {
+    if (!messagesLoaded.current) {
+      loadRecentMessages();
+      messagesLoaded.current = true;
+    }
+  }, []);
+  
+  // Set up subscriptions
+  useEffect(() => {
+    if (!nickname || !userColor) return;
     
-    // Load recent messages
-    loadRecentMessages();
+    // Only initialize subscription once
+    setupMessageSubscription();
+    setupPresenceChannel();
     
-    // Subscribe to new messages - Only initialize subscription once
-    const setupSubscription = () => {
-      if (channelRef.current !== null) return; // Don't set up another subscription if one exists
-
-      channelRef.current = supabase
-        .channel('public:community_messages')
-        .on('postgres_changes', 
-          { 
-            event: 'INSERT', 
-            schema: 'public', 
-            table: 'community_messages' 
-          }, 
-          (payload) => {
-            const newMsg = payload.new as ChatMessage;
-            setMessages(prev => {
-              // Check if message already exists to prevent duplicates
-              if (prev.some(msg => msg.id === newMsg.id)) {
-                return prev;
-              }
-              return [...prev, newMsg];
-            });
-          })
-        .subscribe();
-    };
-    
-    setupSubscription();
-
-    // Setup presence channel for active users tracking
-    const setupPresence = () => {
-      if (presenceChannelRef.current !== null) return;
-
-      presenceChannelRef.current = supabase.channel('room:community', {
-        config: {
-          presence: {
-            key: nickname,
-          },
-        },
-      });
-
-      presenceChannelRef.current
-        .on('presence', { event: 'sync' }, () => {
-          const state = presenceChannelRef.current.presenceState();
-          const users: UserPresence[] = [];
-          
-          Object.keys(state).forEach(key => {
-            state[key].forEach((presence: UserPresence) => {
-              users.push(presence);
-            });
-          });
-          
-          setActiveUsers(users);
-        })
-        .on('presence', { event: 'join' }, ({ key, newPresences }: { key: string, newPresences: UserPresence[] }) => {
-          // 새 사용자가 입장했을 때 activeUsers 상태를 업데이트
-          console.log('User joined:', key, newPresences);
-        })
-        .on('presence', { event: 'leave' }, ({ key, leftPresences }: { key: string, leftPresences: UserPresence[] }) => {
-          // 사용자가 퇴장했을 때 activeUsers 상태를 업데이트
-          console.log('User left:', key, leftPresences);
-        })
-        .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
-            // Send presence data when successfully subscribed
-            await presenceChannelRef.current.track({
-              nickname: nickname,
-              color: userColor,
-              online_at: new Date().toISOString(),
-            });
-          }
-        });
-    };
-
-    setupPresence();
-      
     return () => {
-      // Clean up subscription when component unmounts
-      if (channelRef.current) {
-        supabase.removeChannel(channelRef.current);
-        channelRef.current = null;
-      }
-      if (presenceChannelRef.current) {
-        supabase.removeChannel(presenceChannelRef.current);
-        presenceChannelRef.current = null;
-      }
+      // Clean up subscriptions when component unmounts
+      cleanupChannels();
     };
   }, [nickname, userColor]);
+
+  const cleanupChannels = () => {
+    if (channelRef.current) {
+      supabase.removeChannel(channelRef.current);
+      channelRef.current = null;
+    }
+    if (presenceChannelRef.current) {
+      supabase.removeChannel(presenceChannelRef.current);
+      presenceChannelRef.current = null;
+    }
+  };
+
+  const setupMessageSubscription = () => {
+    if (channelRef.current !== null) return; // Don't set up another subscription if one exists
+
+    channelRef.current = supabase
+      .channel('public:community_messages')
+      .on('postgres_changes', 
+        { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'community_messages' 
+        }, 
+        (payload) => {
+          const newMsg = payload.new as ChatMessage;
+          setMessages(prev => {
+            // Check if message already exists to prevent duplicates
+            if (prev.some(msg => msg.id === newMsg.id)) {
+              return prev;
+            }
+            return [...prev, newMsg];
+          });
+        })
+      .subscribe();
+  };
+  
+  const setupPresenceChannel = () => {
+    if (presenceChannelRef.current !== null) return;
+
+    presenceChannelRef.current = supabase.channel('room:community', {
+      config: {
+        presence: {
+          key: nickname,
+        },
+      },
+    });
+
+    presenceChannelRef.current
+      .on('presence', { event: 'sync' }, () => {
+        const state = presenceChannelRef.current.presenceState();
+        const users: UserPresence[] = [];
+        
+        Object.keys(state).forEach(key => {
+          state[key].forEach((presence: UserPresence) => {
+            users.push(presence);
+          });
+        });
+        
+        setActiveUsers(users);
+      })
+      .subscribe(async (status: string) => {
+        if (status === 'SUBSCRIBED') {
+          // Send presence data when successfully subscribed
+          await presenceChannelRef.current.track({
+            nickname: nickname,
+            color: userColor,
+            online_at: new Date().toISOString(),
+          });
+        }
+      });
+  };
 
   const loadRecentMessages = async () => {
     setIsLoading(true);
@@ -154,7 +160,7 @@ export function useCommunityChat() {
     }
   };
 
-  const sendMessage = async (messageContent: string) => {
+  const sendMessage = useCallback(async (messageContent: string) => {
     // 금지된 단어 확인
     if (containsForbiddenWords(messageContent)) {
       toast({
@@ -166,16 +172,15 @@ export function useCommunityChat() {
     }
 
     const messageId = uuidv4();
+    const timestamp = new Date().toISOString();
+    
     const tempMessage: ChatMessage = {
       id: messageId,
       nickname,
       content: messageContent,
-      created_at: new Date().toISOString(),
+      created_at: timestamp,
       color: userColor
     };
-    
-    // Optimistically add message to UI
-    setMessages(prev => [...prev, tempMessage]);
     
     try {
       const { error } = await supabase
@@ -195,22 +200,29 @@ export function useCommunityChat() {
         description: "메시지를 전송하는데 실패했습니다. 다시 시도해주세요.",
         variant: "destructive"
       });
-      
-      // Remove the optimistically added message
-      setMessages(prev => prev.filter(msg => msg.id !== messageId));
     }
-  };
+  }, [nickname, userColor, toast]);
 
-  const changeNickname = () => {
+  const changeNickname = useCallback(() => {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);
     if (newNickname && newNickname.trim()) {
       setNickname(newNickname.trim());
+      
+      // Update presence with new nickname
+      if (presenceChannelRef.current) {
+        presenceChannelRef.current.track({
+          nickname: newNickname.trim(),
+          color: userColor,
+          online_at: new Date().toISOString(),
+        });
+      }
+      
       toast({
         title: "닉네임 변경 완료",
         description: `닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`
       });
     }
-  };
+  }, [nickname, userColor, toast]);
 
   return {
     messages,
