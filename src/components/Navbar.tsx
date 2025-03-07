@@ -1,12 +1,14 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Youtube } from "lucide-react";
+import { Menu, X, Youtube, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   
   useEffect(() => {
@@ -17,6 +19,25 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const blogCategories = [
+    { name: "최신 업데이트 소식", path: "/blog/latest-updates" },
+    { name: "화제의 이슈", path: "/blog/trending" },
+    { name: "일상 라이프", path: "/blog/lifestyle" }
+  ];
   
   return (
     <header 
@@ -50,8 +71,98 @@ export function Navbar() {
         
         <nav className="hidden md:flex items-center gap-8">
           {[
-            { name: "홈", path: "/" },
-            { name: "블로그", path: "/blog" },
+            { name: "홈", path: "/" }
+          ].map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={cn(
+                "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group",
+                isScrolled 
+                  ? "text-purple-900 hover:text-purple-800" 
+                  : "text-white/90 hover:text-white",
+                location.pathname === item.path && "nav-active"
+              )}
+            >
+              <span className="relative z-10">{item.name}</span>
+              <span className={cn(
+                "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
+                isScrolled ? "bg-purple-600" : "bg-red-300",
+                location.pathname === item.path 
+                  ? "scale-x-100" 
+                  : "scale-x-0 group-hover:scale-x-100"
+              )}></span>
+            </Link>
+          ))}
+          
+          {/* Blog Dropdown */}
+          <div 
+            className="relative"
+            ref={dropdownRef}
+            onMouseEnter={() => setIsDropdownOpen(true)}
+            onMouseLeave={() => setIsDropdownOpen(false)}
+          >
+            <Link
+              to="/blog"
+              className={cn(
+                "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
+                isScrolled 
+                  ? "text-purple-900 hover:text-purple-800" 
+                  : "text-white/90 hover:text-white",
+                location.pathname.startsWith("/blog") && "nav-active"
+              )}
+            >
+              <span className="relative z-10">블로그</span>
+              <ChevronDown 
+                size={16} 
+                className={cn(
+                  "ml-1 transition-transform duration-300", 
+                  isDropdownOpen ? "rotate-180" : "rotate-0",
+                  isScrolled ? "text-purple-700" : "text-white/80"
+                )} 
+              />
+              <span className={cn(
+                "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
+                isScrolled ? "bg-purple-600" : "bg-red-300",
+                location.pathname.startsWith("/blog") 
+                  ? "scale-x-100" 
+                  : "scale-x-0 group-hover:scale-x-100"
+              )}></span>
+            </Link>
+            
+            {/* Dropdown Menu */}
+            <div 
+              className={cn(
+                "absolute top-full left-0 mt-1 w-48 rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
+                isDropdownOpen 
+                  ? "transform scale-100 opacity-100" 
+                  : "transform scale-95 opacity-0 pointer-events-none",
+                isScrolled 
+                  ? "bg-white border border-gray-200" 
+                  : "bg-white/10 backdrop-blur-lg border border-white/20"
+              )}
+            >
+              <div className="py-1">
+                {blogCategories.map((category) => (
+                  <Link
+                    key={category.name}
+                    to={category.path}
+                    className={cn(
+                      "block px-4 py-2 text-sm transition-colors duration-150",
+                      isScrolled 
+                        ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
+                        : "text-white/90 hover:bg-white/20 hover:text-white"
+                    )}
+                    onClick={() => setIsDropdownOpen(false)}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          {[
             { name: "GPTS 이용하기", path: "/gpts" },
             { name: "서비스", path: "/services" },
             { name: "유튜브", path: "/youtube" },
@@ -122,7 +233,46 @@ export function Navbar() {
         <nav className="flex flex-col p-6 space-y-4">
           {[
             { name: "홈", path: "/" },
-            { name: "블로그", path: "/blog" },
+            { name: "블로그", path: "/blog" }
+          ].map((item) => (
+            <Link
+              key={item.name}
+              to={item.path}
+              className={cn(
+                "text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative",
+                location.pathname === item.path 
+                  ? "bg-purple-50 pl-4" 
+                  : "hover:bg-purple-50/50 hover:pl-4"
+              )}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              {item.name}
+              {item.name === "블로그" && (
+                <ChevronDown size={16} className="inline-block ml-2 text-purple-600" />
+              )}
+              {location.pathname === item.path && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-600 rounded-r-full" />
+              )}
+            </Link>
+          ))}
+          
+          {/* Mobile Blog Categories */}
+          <div className="pl-6 space-y-2">
+            {item.name === "블로그" && 
+              blogCategories.map((category) => (
+                <Link
+                  key={category.name}
+                  to={category.path}
+                  className="block text-base text-purple-700 p-2 hover:bg-purple-50/50 rounded-md transition-all duration-200"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  - {category.name}
+                </Link>
+              ))
+            }
+          </div>
+          
+          {[
             { name: "GPTS 이용하기", path: "/gpts" },
             { name: "서비스", path: "/services" },
             { name: "유튜브", path: "/youtube" },
