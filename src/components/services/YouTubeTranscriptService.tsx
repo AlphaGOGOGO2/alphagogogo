@@ -5,6 +5,7 @@ import { useYoutubeTranscript } from "@/hooks/useYoutubeTranscript";
 import { TranscriptForm } from "./youtube-transcript/TranscriptForm";
 import { ErrorMessage } from "./youtube-transcript/ErrorMessage";
 import { TranscriptDisplay } from "./youtube-transcript/TranscriptDisplay";
+import { useEffect, useState } from "react";
 
 export function YouTubeTranscriptService() {
   const {
@@ -15,10 +16,20 @@ export function YouTubeTranscriptService() {
     error,
     handleExtractTranscript
   } = useYoutubeTranscript();
+  
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <section id="youtube-transcript" className="mb-16">
-      <Card className="shadow-lg overflow-hidden border-0">
+      <Card className={`shadow-lg overflow-hidden border-0 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg py-8">
           <CardTitle className="flex items-center gap-3 text-2xl md:text-3xl">
             <Youtube size={32} className="text-white" />
@@ -30,16 +41,26 @@ export function YouTubeTranscriptService() {
         </CardHeader>
         <CardContent className="pt-8 pb-6 px-8">
           <div className="flex flex-col gap-6">
-            <TranscriptForm
-              youtubeUrl={youtubeUrl}
-              setYoutubeUrl={setYoutubeUrl}
-              isLoading={isLoading}
-              onSubmit={handleExtractTranscript}
-            />
+            <div className={`transition-all duration-300 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <TranscriptForm
+                youtubeUrl={youtubeUrl}
+                setYoutubeUrl={setYoutubeUrl}
+                isLoading={isLoading}
+                onSubmit={handleExtractTranscript}
+              />
+            </div>
             
-            {error && <ErrorMessage error={error} />}
+            {error && (
+              <div className="animate-fade-in">
+                <ErrorMessage error={error} />
+              </div>
+            )}
             
-            {transcript && <TranscriptDisplay transcript={transcript} />}
+            {transcript && (
+              <div className="animate-fade-in">
+                <TranscriptDisplay transcript={transcript} />
+              </div>
+            )}
           </div>
         </CardContent>
         <CardFooter className="bg-gray-50 py-4 px-8 rounded-b-lg">

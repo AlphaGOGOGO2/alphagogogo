@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -12,6 +12,15 @@ export function URLShortenerService() {
   const [shortUrl, setShortUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   const validateUrl = (url: string) => {
     try {
@@ -90,7 +99,7 @@ export function URLShortenerService() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <Card className="shadow-lg border-0 overflow-hidden bg-white rounded-2xl">
+      <Card className={`shadow-lg border-0 overflow-hidden bg-white rounded-2xl transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="p-8">
           <div className="flex flex-col space-y-6">
             <div className="space-y-3">
@@ -107,7 +116,7 @@ export function URLShortenerService() {
               </p>
             </div>
 
-            <div className="space-y-3">
+            <div className={`space-y-3 transition-all duration-300 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
               <Label htmlFor="url" className="text-gray-700 text-base">
                 단축할 URL
               </Label>
@@ -131,7 +140,7 @@ export function URLShortenerService() {
                 </Button>
               </div>
               {error && (
-                <p className="text-red-500 text-sm mt-2">{error}</p>
+                <p className="text-red-500 text-sm mt-2 animate-fade-in">{error}</p>
               )}
             </div>
 

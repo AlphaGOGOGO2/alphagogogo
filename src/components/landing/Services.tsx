@@ -7,10 +7,40 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { servicesCategories } from "@/config/navigation";
+import { useEffect, useState, useRef } from "react";
 
 export function Services() {
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.1 } // Trigger when at least 10% of the element is visible
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.disconnect();
+      }
+    };
+  }, []);
+
   return (
-    <section id="services" className="py-24 px-6 md:px-8 bg-white relative">
+    <section 
+      id="services" 
+      ref={sectionRef}
+      className="py-24 px-6 md:px-8 bg-white relative"
+    >
       {/* Section separator - top wavy line */}
       <div className="absolute top-0 left-0 right-0 h-12 overflow-hidden">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 w-full h-16 text-white fill-current">
@@ -21,7 +51,7 @@ export function Services() {
       </div>
       
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16 text-center">
+        <div className={`mb-16 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-white bg-purple-600 rounded-full shadow-md">
             알파블로그 서비스
           </span>
@@ -34,74 +64,54 @@ export function Services() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
-            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
-              <Youtube className="text-purple-600" size={24} />
+          {[
+            {
+              title: "유튜브 자막 추출기",
+              description: "YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다. 영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.",
+              icon: <Youtube className="text-purple-600" size={24} />,
+              path: "/youtube-transcript"
+            },
+            {
+              title: "URL 단축기",
+              description: "복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
+              icon: <Link2 className="text-purple-600" size={24} />,
+              path: "/url-shortener"
+            },
+            {
+              title: "블로그 버튼 생성기",
+              description: "색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 매력적인 버튼 HTML 코드를 생성합니다.",
+              icon: <MousePointerClick className="text-purple-600" size={24} />,
+              path: "/blog-button-creator"
+            }
+          ].map((service, index) => (
+            <div 
+              key={index}
+              className={`bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
+              style={{ animationDelay: `${(index + 1) * 150}ms` }}
+            >
+              <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
+                {service.icon}
+              </div>
+              <h3 className="text-xl font-bold mb-3 text-gray-800">
+                {service.title}
+              </h3>
+              <p className="text-gray-600 mb-6 flex-grow">
+                {service.description}
+              </p>
+              <div className="mt-auto">
+                <Link 
+                  to={service.path}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
+                >
+                  <ExternalLink size={16} />
+                  서비스 이용하기
+                </Link>
+              </div>
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">
-              유튜브 자막 추출기
-            </h3>
-            <p className="text-gray-600 mb-6 flex-grow">
-              YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다.
-              영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.
-            </p>
-            <div className="mt-auto">
-              <Link 
-                to="/youtube-transcript"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-              >
-                <ExternalLink size={16} />
-                서비스 이용하기
-              </Link>
-            </div>
-          </div>
-          
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
-            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
-              <Link2 className="text-purple-600" size={24} />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">
-              URL 단축기
-            </h3>
-            <p className="text-gray-600 mb-6 flex-grow">
-              복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다.
-              단축된 URL은 영구적으로 사용할 수 있습니다.
-            </p>
-            <div className="mt-auto">
-              <Link 
-                to="/url-shortener"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-              >
-                <ExternalLink size={16} />
-                서비스 이용하기
-              </Link>
-            </div>
-          </div>
-          
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
-            <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
-              <MousePointerClick className="text-purple-600" size={24} />
-            </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-800">
-              블로그 버튼 생성기
-            </h3>
-            <p className="text-gray-600 mb-6 flex-grow">
-              색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 
-              매력적인 버튼 HTML 코드를 생성합니다.
-            </p>
-            <div className="mt-auto">
-              <Link 
-                to="/blog-button-creator"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-              >
-                <ExternalLink size={16} />
-                서비스 이용하기
-              </Link>
-            </div>
-          </div>
+          ))}
         </div>
         
-        <div className="text-center">
+        <div className={`text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '500ms' }}>
           <Link 
             to="/services" 
             className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all hover:shadow-lg hover:shadow-purple-600/30"
