@@ -74,12 +74,12 @@ export function CommunityChat() {
         .from('community_messages')
         .select('*')
         .order('created_at', { ascending: true })
-        .limit(50);
+        .limit(50) as { data: ChatMessage[] | null, error: any };
         
       if (error) throw error;
       
       if (data) {
-        setMessages(data as ChatMessage[]);
+        setMessages(data);
       }
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -114,14 +114,12 @@ export function CommunityChat() {
     try {
       const { error } = await supabase
         .from('community_messages')
-        .insert([
-          {
-            id: messageId,
-            nickname,
-            content: newMessage,
-            color: userColor
-          }
-        ]);
+        .insert({
+          id: messageId,
+          nickname,
+          content: newMessage,
+          color: userColor
+        } as any);
         
       if (error) throw error;
     } catch (error) {

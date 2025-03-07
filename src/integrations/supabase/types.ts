@@ -135,6 +135,30 @@ export type Database = {
         }
         Relationships: []
       }
+      community_messages: {
+        Row: {
+          color: string
+          content: string
+          created_at: string
+          id: string
+          nickname: string
+        }
+        Insert: {
+          color: string
+          content: string
+          created_at?: string
+          id: string
+          nickname: string
+        }
+        Update: {
+          color?: string
+          content?: string
+          created_at?: string
+          id?: string
+          nickname?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
