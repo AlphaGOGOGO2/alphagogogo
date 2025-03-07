@@ -41,7 +41,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
   
   return (
     <div 
-      className="relative"
+      className="relative inline-block"
       ref={dropdownRef}
       onMouseEnter={() => setIsDropdownOpen(true)}
       onMouseLeave={() => setIsDropdownOpen(false)}
@@ -53,6 +53,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         aria-expanded={isDropdownOpen}
         aria-haspopup="true"
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="inline-flex items-center"
       >
         <NavLink 
           name="블로그"
@@ -63,7 +64,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
             <ChevronDown 
               size={16} 
               className={cn(
-                "ml-1 transition-transform duration-300", 
+                "transition-transform duration-300", 
                 isDropdownOpen ? "rotate-180" : "rotate-0",
                 isScrolled ? "text-purple-700" : "text-white/80"
               )}
@@ -76,13 +77,13 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
       {/* Dropdown Menu */}
       <div 
         className={cn(
-          "absolute top-full left-0 mt-1 w-48 rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
+          "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
           isDropdownOpen 
             ? "transform scale-100 opacity-100" 
             : "transform scale-95 opacity-0 pointer-events-none",
           isScrolled 
             ? "bg-white border border-gray-200" 
-            : "bg-white/10 backdrop-blur-lg border border-white/20"
+            : "bg-black/40 backdrop-blur-lg border border-white/20"
         )}
         role="menu"
         aria-orientation="vertical"
@@ -94,7 +95,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
               key={category.path}
               to={category.path}
               className={cn(
-                "block px-4 py-2 text-sm transition-colors duration-150",
+                "block px-4 py-2 text-sm transition-colors duration-150 whitespace-nowrap",
                 isScrolled 
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                   : "text-white/90 hover:bg-white/20 hover:text-white"

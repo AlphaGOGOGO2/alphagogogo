@@ -24,7 +24,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight }: Mobi
       aria-current={isActive ? "page" : undefined}
     >
       <span>{name}</span>
-      {iconRight}
+      {iconRight && <span className="ml-1">{iconRight}</span>}
       {isActive && (
         <span 
           className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-600 rounded-r-full" 

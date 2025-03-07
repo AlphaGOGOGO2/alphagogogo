@@ -16,7 +16,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
     <Link
       to={path}
       className={cn(
-        "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group",
+        "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
         isScrolled 
           ? "text-purple-900 hover:text-purple-800" 
           : "text-white/90 hover:text-white",
@@ -26,7 +26,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
       aria-current={isActive ? "page" : undefined}
     >
       <span className="relative z-10">{name}</span>
-      {iconRight}
+      {iconRight && <span className="ml-1">{iconRight}</span>}
       <span 
         className={cn(
           "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",

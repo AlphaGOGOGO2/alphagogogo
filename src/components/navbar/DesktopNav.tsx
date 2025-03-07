@@ -13,7 +13,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
   
   return (
-    <nav className="hidden md:flex items-center gap-8">
+    <nav className="hidden md:flex items-center gap-6">
       <NavLink 
         name="홈" 
         path="/" 
