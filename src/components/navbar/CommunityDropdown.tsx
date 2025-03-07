@@ -1,4 +1,3 @@
-
 import { useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, MessageCircle, ExternalLink, Mail } from "lucide-react";
@@ -6,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
 import { type CommunityCategory } from "@/config/navigation";
 import { useToast } from "@/hooks/use-toast";
+import { openInfoPopup } from "@/utils/popupUtils";
 
 interface CommunityDropdownProps {
   isScrolled: boolean;
@@ -63,112 +63,30 @@ export function CommunityDropdown({
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
     
-    // 일반 링크 클릭은 기본 동작 그대로 유지
     if (!category.action) {
       navigate(category.path);
       return;
     }
     
-    // 팝업 액션이 있는 경우 기본 동작 중단
     event.preventDefault();
     
     if (category.action === 'popup' && category.actionData) {
-      // 팝업창 열기
-      const width = 400;
-      const height = 250; // 높이 약간 증가
-      const left = (window.innerWidth - width) / 2;
-      const top = (window.innerHeight - height) / 2;
+      const title = category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내";
+      const action = category.name === "오픈 채팅방" ? 'link' : 'email';
       
-      const popup = window.open(
-        "about:blank",
-        "popup",
-        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
-      );
+      const isPopupOpened = openInfoPopup({
+        title,
+        message: category.actionData,
+        action,
+        actionData: category.path
+      });
       
-      if (popup) {
-        popup.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <title>안내</title>
-            <meta charset="UTF-8">
-            <style>
-              body {
-                font-family: 'Noto Sans KR', sans-serif;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-                background-color: #f8f9fa;
-              }
-              .container {
-                background-color: white;
-                padding: 2rem;
-                border-radius: 0.5rem;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                text-align: center;
-                max-width: 80%;
-              }
-              h2 {
-                color: #6200ee;
-                margin-bottom: 1rem;
-              }
-              p {
-                color: #333;
-                font-size: 1.1rem;
-                margin-bottom: 1.5rem;
-              }
-              button {
-                background-color: #6200ee;
-                color: white;
-                border: none;
-                padding: 0.5rem 1.5rem;
-                border-radius: 0.25rem;
-                cursor: pointer;
-                font-size: 1rem;
-                transition: background-color 0.2s;
-              }
-              button:hover {
-                background-color: #5000d6;
-              }
-              .info-icon {
-                font-size: 2.5rem;
-                color: #6200ee;
-                margin-bottom: 1rem;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="info-icon">ℹ️</div>
-              <h2>${category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내"}</h2>
-              <p>${category.actionData}</p>
-              <button onclick="handleButtonClick()">확인</button>
-            </div>
-            <script>
-              function handleButtonClick() {
-                ${category.name === "오픈 채팅방" ? 
-                  `window.opener.location.href = "${category.path}";` : 
-                  category.name === "비즈니스 문의" ? 
-                  `window.open("mailto:${category.actionData}", "_blank");` : 
-                  ''}
-                window.close();
-              }
-            </script>
-          </body>
-          </html>
-        `);
-        popup.document.close();
-      } else {
-        // 팝업이 차단된 경우 직접 이동
+      if (!isPopupOpened) {
         window.location.href = category.path;
       }
     }
   };
   
-  // 각 카테고리에 맞는 아이콘 가져오기
   const getCategoryIcon = (categoryName: string) => {
     switch (categoryName) {
       case "실시간 채팅":
