@@ -72,6 +72,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             path={item.path} 
             isActive={location.pathname === item.path}
             onClick={onClose}
+            isExternal={item.isExternal}
           />
         ))}
       </nav>

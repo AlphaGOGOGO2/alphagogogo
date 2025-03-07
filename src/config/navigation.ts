@@ -3,6 +3,7 @@ export interface NavItem {
   name: string;
   path: string;
   icon?: React.ReactNode;
+  isExternal?: boolean;
 }
 
 export interface BlogCategory {
@@ -14,7 +15,7 @@ export const mainNavItems: NavItem[] = [
   { name: "홈", path: "/" },
   { name: "GPTS 이용하기", path: "/gpts" },
   { name: "서비스", path: "/services" },
-  { name: "유튜브", path: "/youtube" },
+  { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
   { name: "커뮤니티", path: "/community" }
 ];
 

@@ -50,6 +50,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
           path={item.path}
           isScrolled={isScrolled}
           isActive={location.pathname === item.path}
+          isExternal={item.isExternal}
         />
       ))}
     </nav>

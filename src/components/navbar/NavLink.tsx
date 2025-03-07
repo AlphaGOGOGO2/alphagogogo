@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { ExternalLink } from "lucide-react";
 
 interface NavLinkProps {
   name: string;
@@ -9,9 +10,30 @@ interface NavLinkProps {
   isActive: boolean;
   onClick?: () => void;
   iconRight?: React.ReactNode;
+  isExternal?: boolean;
 }
 
-export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }: NavLinkProps) {
+export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, isExternal }: NavLinkProps) {
+  if (isExternal) {
+    return (
+      <a
+        href={path}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
+          isScrolled 
+            ? "text-purple-900 hover:text-purple-800" 
+            : "text-white/90 hover:text-white"
+        )}
+        onClick={onClick}
+      >
+        <span className="relative z-10">{name}</span>
+        <ExternalLink size={14} className="ml-1 opacity-70" />
+      </a>
+    );
+  }
+
   return (
     <Link
       to={path}
