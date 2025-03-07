@@ -5,7 +5,7 @@ import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
 import { CommunityDropdown } from "./CommunityDropdown";
-import { mainNavItems, blogCategories, gptsCategories, communityCategories } from "@/config/navigation";
+import { mainNavItems, blogCategories, gptsCategories, communityCategories, servicesCategories } from "@/config/navigation";
 
 interface DesktopNavProps {
   isScrolled: boolean;
@@ -14,6 +14,11 @@ interface DesktopNavProps {
 export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | "community" | null>(null);
+  
+  // Check if current path is a service page
+  const isServicePage = servicesCategories.some(service => 
+    location.pathname === service.path || location.pathname === "/services"
+  );
   
   const filteredMainNavItems = mainNavItems.filter(
     item => item.name !== "홈" && item.name !== "GPTS 이용하기" && item.name !== "커뮤니티"
@@ -49,7 +54,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       
       <BlogDropdown 
         isScrolled={isScrolled}
-        isActive={location.pathname.startsWith("/blog")}
+        isActive={location.pathname.startsWith("/blog") && !isServicePage}
         categories={blogCategories}
         isOpen={activeDropdown === "blog"}
         onOpenChange={handleBlogDropdownChange}
@@ -77,10 +82,11 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
           name={item.name}
           path={item.path}
           isScrolled={isScrolled}
-          isActive={location.pathname === item.path}
+          isActive={item.name === "서비스" ? isServicePage : location.pathname === item.path}
           isExternal={item.isExternal}
         />
       ))}
     </nav>
   );
 }
+

@@ -25,3 +25,4 @@ export function MobileBlogItems({ onClose, locationPathname, showCategories }: M
     </div>
   );
 }
+

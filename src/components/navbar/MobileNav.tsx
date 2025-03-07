@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
-import { mainNavItems } from "@/config/navigation";
+import { mainNavItems, servicesCategories } from "@/config/navigation";
 import { MobileBlogItems } from "./MobileBlogItems";
 import { MobileCommunityItems } from "./MobileCommunityItems";
 
@@ -15,6 +15,11 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
+  
+  // Check if current path is a service page
+  const isServicePage = servicesCategories.some(service => 
+    location.pathname === service.path || location.pathname === "/services"
+  );
   
   return (
     <div 
@@ -48,14 +53,14 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         <MobileNavLink 
           name="블로그" 
           path="/blog" 
-          isActive={location.pathname.startsWith("/blog")}
+          isActive={location.pathname.startsWith("/blog") && !isServicePage}
           onClick={onClose}
         />
         
         <MobileBlogItems 
           onClose={onClose} 
           locationPathname={location.pathname}
-          showCategories={location.pathname.startsWith("/blog")}
+          showCategories={location.pathname.startsWith("/blog") && !isServicePage}
         />
 
         <MobileNavLink 
@@ -75,7 +80,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             key={item.path}
             name={item.name} 
             path={item.path} 
-            isActive={location.pathname === item.path}
+            isActive={item.name === "서비스" ? isServicePage : location.pathname === item.path}
             onClick={onClose}
             isExternal={item.isExternal}
           />
@@ -84,3 +89,4 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     </div>
   );
 }
+
