@@ -1,6 +1,7 @@
 
 import { ButtonStyle } from "./BlogButtonCreator";
 import { CSSProperties } from "react";
+import { ZoomIn } from "lucide-react";
 
 interface ButtonPreviewProps {
   buttonStyle: ButtonStyle;
@@ -141,7 +142,7 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
     let className = buttonStyle.hoverEffect ? "hover:opacity-90 " : "";
     
     if (buttonStyle.buttonTypes.includes('grow')) {
-      className += "hover:scale-105 active:scale-103 transform transition-transform duration-300 ";
+      className += "hover:scale-125 active:scale-115 transform transition-transform duration-300 ";
     }
     
     if (buttonStyle.buttonTypes.includes('shiny')) {
@@ -170,11 +171,11 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
               background-size: 200% 100%;
               background-position: -100% 0;
             }
-            .hover\\:scale-105:hover {
-              transform: scale(1.05);
+            .hover\\:scale-125:hover {
+              transform: scale(1.25);
             }
-            .active\\:scale-103:active {
-              transform: scale(1.03);
+            .active\\:scale-115:active {
+              transform: scale(1.15);
             }
           `}
         </style>
@@ -186,6 +187,9 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
           rel="noopener noreferrer"
           onClick={(e) => e.preventDefault()}
         >
+          {buttonStyle.buttonTypes.includes('grow') && (
+            <ZoomIn className="mr-1" size={16} />
+          )}
           {buttonStyle.text}
         </a>
       </div>

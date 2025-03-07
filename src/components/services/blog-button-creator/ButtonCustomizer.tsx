@@ -82,16 +82,6 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
       
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="buttonName">버튼 이름 (관리용)</Label>
-          <Input
-            id="buttonName"
-            value={buttonStyle.name}
-            onChange={(e) => handleChange('name', e.target.value)}
-            placeholder="버튼 이름 (관리용)"
-          />
-        </div>
-        
-        <div className="space-y-2">
           <Label htmlFor="buttonText">버튼 텍스트</Label>
           <Input
             id="buttonText"
@@ -263,3 +253,4 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
     </div>
   );
 }
+
