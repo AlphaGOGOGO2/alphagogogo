@@ -43,8 +43,6 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onMouseEnter={() => setIsDropdownOpen(true)}
-      onMouseLeave={() => setIsDropdownOpen(false)}
       onKeyDown={handleKeyDown}
     >
       <div
@@ -53,6 +51,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         aria-expanded={isDropdownOpen}
         aria-haspopup="true"
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        onMouseEnter={() => setIsDropdownOpen(true)}
         className="inline-flex items-center"
       >
         <NavLink 
