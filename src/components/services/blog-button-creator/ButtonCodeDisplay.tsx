@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonStyle } from "./BlogButtonCreator";
@@ -18,7 +19,7 @@ export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
     
     // Add animation keyframes for shiny button
     let keyframes = "";
-    if (buttonStyle.buttonType === 'shiny') {
+    if (buttonStyle.buttonTypes.includes('shiny')) {
       keyframes = `
         @keyframes shiny {
           0% { background-position: -200% 0; }
@@ -42,91 +43,96 @@ export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
       transition: all 0.3s ease;
     `;
     
-    switch (buttonStyle.buttonType) {
-      case 'primary':
-        styles = `
-          ${baseStyles}
-          background-color: ${buttonStyle.backgroundColor};
-          color: ${buttonStyle.textColor};
-          border: none;
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
-          ${buttonStyle.hoverEffect ? ':hover { opacity: 0.9; }' : ''}
+    // Apply styles based on button types
+    const types = buttonStyle.buttonTypes;
+    
+    // Base appearance (primary, outline, ghost)
+    if (types.includes('primary')) {
+      styles = `
+        ${baseStyles}
+        background-color: ${buttonStyle.backgroundColor};
+        color: ${buttonStyle.textColor};
+        border: none;
+      `;
+    } else if (types.includes('outline')) {
+      styles = `
+        ${baseStyles}
+        background-color: transparent;
+        color: ${buttonStyle.backgroundColor};
+        border: 2px solid ${buttonStyle.backgroundColor};
+      `;
+    } else if (types.includes('ghost')) {
+      styles = `
+        ${baseStyles}
+        background-color: transparent;
+        color: ${buttonStyle.backgroundColor};
+        border: none;
+      `;
+    }
+    
+    // Link style
+    if (types.includes('link')) {
+      styles = `
+        ${baseStyles}
+        background-color: transparent;
+        color: ${buttonStyle.backgroundColor};
+        padding: 0;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        border: none;
+      `;
+    }
+    
+    // Full Width
+    if (types.includes('fullWidth')) {
+      styles += `
+        width: 100%;
+        padding: 12px 20px;
+      `;
+    }
+    
+    // Hover effect
+    if (buttonStyle.hoverEffect) {
+      styles += `
+        :hover { opacity: 0.9; }
+      `;
+    }
+    
+    // Box shadow
+    if (buttonStyle.boxShadow && !types.includes('link')) {
+      styles += `
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      `;
+    }
+    
+    // Shiny effect
+    if (types.includes('shiny')) {
+      styles += `
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+        background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+        background-size: 200% 100%;
+        background-position: -100% 0;
+        animation: shiny 3s infinite linear;
+      `;
+    }
+    
+    // Grow effect
+    if (types.includes('grow')) {
+      styles += `
+        transform: scale(1);
+        transition: transform 0.3s ease;
+      `;
+      
+      if (!styles.includes(':hover')) {
+        styles += `
+          :hover { transform: scale(1.05); }
         `;
-        break;
-      case 'outline':
-        styles = `
-          ${baseStyles}
-          background-color: transparent;
-          color: ${buttonStyle.backgroundColor};
-          border: 2px solid ${buttonStyle.backgroundColor};
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
-          ${buttonStyle.hoverEffect ? ':hover { background-color: rgba(0, 0, 0, 0.05); }' : ''}
-        `;
-        break;
-      case 'ghost':
-        styles = `
-          ${baseStyles}
-          background-color: transparent;
-          color: ${buttonStyle.backgroundColor};
-          border: none;
-          ${buttonStyle.hoverEffect ? ':hover { background-color: rgba(0, 0, 0, 0.05); }' : ''}
-        `;
-        break;
-      case 'link':
-        styles = `
-          ${baseStyles}
-          background-color: transparent;
-          color: ${buttonStyle.backgroundColor};
-          padding: 0;
-          text-decoration: underline;
-          text-underline-offset: 4px;
-          border: none;
-          ${buttonStyle.hoverEffect ? ':hover { opacity: 0.7; }' : ''}
-        `;
-        break;
-      case 'fullWidth':
-        styles = `
-          ${baseStyles}
-          background-color: ${buttonStyle.backgroundColor};
-          color: ${buttonStyle.textColor};
-          border: none;
-          width: 100%;
-          padding: 12px 20px;
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
-          ${buttonStyle.hoverEffect ? ':hover { opacity: 0.9; }' : ''}
-        `;
-        break;
-      case 'shiny':
-        styles = `
-          ${baseStyles}
-          position: relative;
-          background-color: ${buttonStyle.backgroundColor};
-          color: ${buttonStyle.textColor};
-          border: none;
-          overflow: hidden;
-          z-index: 1;
-          background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-          background-size: 200% 100%;
-          background-position: -100% 0;
-          animation: shiny 3s infinite linear;
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
-        `;
-        break;
-      case 'grow':
-        styles = `
-          ${baseStyles}
-          background-color: ${buttonStyle.backgroundColor};
-          color: ${buttonStyle.textColor};
-          border: none;
-          transform: scale(1);
-          transition: transform 0.3s ease;
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
-          :hover {
-            transform: scale(1.05);
-            ${buttonStyle.hoverEffect ? 'opacity: 0.9;' : ''}
-          }
-        `;
-        break;
+      } else {
+        // If we already have a hover effect, add to it
+        styles = styles.replace(':hover { opacity: 0.9; }', ':hover { opacity: 0.9; transform: scale(1.05); }');
+      }
     }
 
     // Clean up the CSS (remove extra whitespace)

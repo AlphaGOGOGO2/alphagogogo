@@ -9,6 +9,8 @@ import { ButtonPreview } from "./ButtonPreview";
 import { ButtonCodeDisplay } from "./ButtonCodeDisplay";
 import { v4 as uuidv4 } from "uuid";
 
+export type ButtonType = 'primary' | 'outline' | 'ghost' | 'link' | 'fullWidth' | 'shiny' | 'grow';
+
 export type ButtonStyle = {
   id: string;
   name: string;
@@ -21,7 +23,7 @@ export type ButtonStyle = {
   padding: string;
   boxShadow: boolean;
   hoverEffect: boolean;
-  buttonType: 'primary' | 'outline' | 'ghost' | 'link' | 'fullWidth' | 'shiny' | 'grow';
+  buttonTypes: ButtonType[];
 };
 
 const defaultButtonStyle: Omit<ButtonStyle, 'id' | 'name'> = {
@@ -34,7 +36,7 @@ const defaultButtonStyle: Omit<ButtonStyle, 'id' | 'name'> = {
   padding: "10px 20px",
   boxShadow: true,
   hoverEffect: true,
-  buttonType: 'primary'
+  buttonTypes: ['primary']
 };
 
 export function BlogButtonCreator() {

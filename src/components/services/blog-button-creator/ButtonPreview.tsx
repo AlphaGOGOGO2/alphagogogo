@@ -54,78 +54,79 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       transition: 'all 0.3s ease',
     };
 
-    // Apply style based on button type
-    switch (buttonStyle.buttonType) {
-      case 'primary':
-        styles = {
-          ...styles,
-          backgroundColor: buttonStyle.backgroundColor,
-          border: 'none',
-        };
-        break;
-      case 'outline':
-        styles = {
-          ...styles,
-          backgroundColor: 'transparent',
-          border: `2px solid ${buttonStyle.backgroundColor}`,
-          color: buttonStyle.backgroundColor,
-        };
-        break;
-      case 'ghost':
-        styles = {
-          ...styles,
-          backgroundColor: 'transparent',
-          border: 'none',
-          color: buttonStyle.backgroundColor,
-        };
-        break;
-      case 'link':
-        styles = {
-          ...styles,
-          backgroundColor: 'transparent',
-          border: 'none',
-          color: buttonStyle.backgroundColor,
-          padding: '0',
-          textDecoration: 'underline',
-          textUnderlineOffset: '4px',
-        };
-        break;
-      case 'fullWidth':
-        styles = {
-          ...styles,
-          backgroundColor: buttonStyle.backgroundColor,
-          border: 'none',
-          width: '100%',
-          padding: '12px 20px',
-        };
-        break;
-      case 'shiny':
-        styles = {
-          ...styles,
-          backgroundColor: buttonStyle.backgroundColor,
-          border: 'none',
-          overflow: 'hidden',
-          position: 'relative',
-          zIndex: '1',
-          backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%)`,
-          backgroundSize: '200% 100%',
-          backgroundPosition: '-100% 0',
-          animation: 'shiny 3s infinite linear',
-        };
-        break;
-      case 'grow':
-        styles = {
-          ...styles,
-          backgroundColor: buttonStyle.backgroundColor,
-          border: 'none',
-          transform: 'scale(1)',
-          transition: 'transform 0.3s ease',
-        };
-        break;
+    // Apply styles based on button types
+    const types = buttonStyle.buttonTypes;
+    
+    // Base appearance (primary, outline, ghost)
+    if (types.includes('primary')) {
+      styles = {
+        ...styles,
+        backgroundColor: buttonStyle.backgroundColor,
+        border: 'none',
+      };
+    } else if (types.includes('outline')) {
+      styles = {
+        ...styles,
+        backgroundColor: 'transparent',
+        border: `2px solid ${buttonStyle.backgroundColor}`,
+        color: buttonStyle.backgroundColor,
+      };
+    } else if (types.includes('ghost')) {
+      styles = {
+        ...styles,
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: buttonStyle.backgroundColor,
+      };
+    }
+    
+    // Link style
+    if (types.includes('link')) {
+      styles = {
+        ...styles,
+        backgroundColor: 'transparent',
+        border: 'none',
+        color: buttonStyle.backgroundColor,
+        padding: '0',
+        textDecoration: 'underline',
+        textUnderlineOffset: '4px',
+      };
+    }
+    
+    // Full Width
+    if (types.includes('fullWidth')) {
+      styles = {
+        ...styles,
+        width: '100%',
+        padding: '12px 20px',
+      };
+    }
+    
+    // Shiny effect
+    if (types.includes('shiny')) {
+      styles = {
+        ...styles,
+        overflow: 'hidden',
+        position: 'relative',
+        zIndex: '1',
+        backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%)`,
+        backgroundSize: '200% 100%',
+        backgroundPosition: '-100% 0',
+        animation: 'shiny 3s infinite linear',
+      };
+    }
+    
+    // Grow effect is handled with CSS classes
+    if (types.includes('grow')) {
+      styles = {
+        ...styles,
+        transform: 'scale(1)',
+        transition: 'transform 0.3s ease',
+      };
     }
 
     // Add box shadow if enabled
-    if (buttonStyle.boxShadow && buttonStyle.buttonType !== 'link') {
+    if (buttonStyle.boxShadow && !types.includes('link')) {
       styles = {
         ...styles,
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
@@ -139,11 +140,11 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
   const getButtonClass = () => {
     let className = buttonStyle.hoverEffect ? "hover:opacity-90 " : "";
     
-    if (buttonStyle.buttonType === 'grow') {
+    if (buttonStyle.buttonTypes.includes('grow')) {
       className += "hover:scale-105 active:scale-103 transform transition-transform duration-300 ";
     }
     
-    if (buttonStyle.buttonType === 'shiny') {
+    if (buttonStyle.buttonTypes.includes('shiny')) {
       className += "shiny-button ";
     }
     
