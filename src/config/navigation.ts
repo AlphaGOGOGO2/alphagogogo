@@ -59,3 +59,17 @@ export const communityCategories: CommunityCategory[] = [
     actionData: "skssk01033@naver.com"
   }
 ];
+
+export interface ServicesCategory {
+  name: string;
+  path: string;
+  description: string;
+}
+
+export const servicesCategories: ServicesCategory[] = [
+  { 
+    name: "유튜브 자막 추출", 
+    path: "/youtube-transcript",
+    description: "YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다."
+  }
+];

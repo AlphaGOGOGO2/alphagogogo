@@ -15,6 +15,7 @@ import BlogPostPage from "./pages/blog/BlogPostPage";
 import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
 import ServicesPage from "./pages/ServicesPage";
+import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/gpts" element={<GPTSPage />} />
           <Route path="/services" element={<ServicesPage />} />
+          <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
           <Route path="/blog" element={<AllBlogPage />} />
           <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
           <Route path="/blog/trending" element={<TrendingPage />} />

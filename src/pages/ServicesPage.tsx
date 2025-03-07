@@ -1,9 +1,11 @@
 
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { YouTubeTranscriptService } from "@/components/services/YouTubeTranscriptService";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Youtube } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function ServicesPage() {
   return (
@@ -27,7 +29,31 @@ export default function ServicesPage() {
             알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요.
           </p>
           
-          <YouTubeTranscriptService />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg py-8">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <Youtube size={28} className="text-white" />
+                  유튜브 자막 추출 서비스
+                </CardTitle>
+                <CardDescription className="text-white/90 text-base mt-2">
+                  YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 pb-6 px-6">
+                <p className="text-gray-700 mb-6">
+                  YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다.
+                  영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.
+                </p>
+                <Link to="/youtube-transcript">
+                  <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white">
+                    <ExternalLink size={16} className="mr-2" />
+                    서비스 이용하기
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
       
