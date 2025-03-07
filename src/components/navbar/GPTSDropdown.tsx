@@ -38,18 +38,24 @@ export function GPTSDropdown({
     };
   }, [onOpenChange]);
 
+  // Console log to debug dropdown state
+  console.log("GPTS dropdown isOpen:", isOpen);
+
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
+      onClick={(e) => e.stopPropagation()} // Stop propagation at container level
     >
       <button
         type="button" 
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={(e) => {
-          e.stopPropagation(); // 이벤트 버블링 방지
+          e.preventDefault();
+          e.stopPropagation();
           onOpenChange(!isOpen);
+          console.log("GPTS dropdown clicked, new state:", !isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >
@@ -72,43 +78,42 @@ export function GPTSDropdown({
         />
       </button>
       
-      <div 
-        className={cn(
-          "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
-          isOpen 
-            ? "transform scale-100 opacity-100" 
-            : "transform scale-95 opacity-0 pointer-events-none",
-          isScrolled 
-            ? "bg-white border border-gray-200" 
-            : "bg-black/80 backdrop-blur-lg border border-white/20"
-        )}
-        role="menu"
-        aria-orientation="vertical"
-        aria-labelledby="gpts-menu"
-      >
-        <div className="py-2">
-          {categories.map((category) => (
-            <Link
-              key={category.path}
-              to={category.path}
-              className={cn(
-                "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
-                isScrolled 
-                  ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
-                  : "text-white hover:bg-white/20 hover:text-white"
-              )}
-              onClick={(e) => {
-                e.stopPropagation(); // 이벤트 버블링 방지
-                onCategoryClick?.();
-                onOpenChange(false);
-              }}
-              role="menuitem"
-            >
-              {category.name}
-            </Link>
-          ))}
+      {isOpen && (
+        <div 
+          className={cn(
+            "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden",
+            isScrolled 
+              ? "bg-white border border-gray-200" 
+              : "bg-black/80 backdrop-blur-lg border border-white/20"
+          )}
+          role="menu"
+          aria-orientation="vertical"
+          aria-labelledby="gpts-menu"
+        >
+          <div className="py-2">
+            {categories.map((category) => (
+              <Link
+                key={category.path}
+                to={category.path}
+                className={cn(
+                  "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
+                  isScrolled 
+                    ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
+                    : "text-white hover:bg-white/20 hover:text-white"
+                )}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCategoryClick?.();
+                  onOpenChange(false);
+                }}
+                role="menuitem"
+              >
+                {category.name}
+              </Link>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

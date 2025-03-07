@@ -1,5 +1,5 @@
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
@@ -20,19 +20,54 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   );
   
   const handleBlogDropdownChange = useCallback((isOpen: boolean) => {
-    setActiveDropdown(isOpen ? "blog" : null);
-  }, []);
+    console.log("Blog dropdown change callback called with:", isOpen);
+    if (isOpen) {
+      setActiveDropdown("blog");
+    } else if (activeDropdown === "blog") {
+      setActiveDropdown(null);
+    }
+  }, [activeDropdown]);
   
   const handleGPTSDropdownChange = useCallback((isOpen: boolean) => {
-    setActiveDropdown(isOpen ? "gpts" : null);
-  }, []);
+    console.log("GPTS dropdown change callback called with:", isOpen);
+    if (isOpen) {
+      setActiveDropdown("gpts");
+    } else if (activeDropdown === "gpts") {
+      setActiveDropdown(null);
+    }
+  }, [activeDropdown]);
 
   const handleCommunityDropdownChange = useCallback((isOpen: boolean) => {
-    setActiveDropdown(isOpen ? "community" : null);
-  }, []);
+    console.log("Community dropdown change callback called with:", isOpen);
+    if (isOpen) {
+      setActiveDropdown("community");
+    } else if (activeDropdown === "community") {
+      setActiveDropdown(null);
+    }
+  }, [activeDropdown]);
+
+  // Add click outside handler to close all dropdowns
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (activeDropdown) {
+        setActiveDropdown(null);
+      }
+    };
+    
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [activeDropdown]);
+  
+  // Debug current state
+  console.log("Current active dropdown:", activeDropdown);
   
   return (
-    <nav className="hidden md:flex items-center gap-6" onClick={() => setActiveDropdown(null)}>
+    <nav 
+      className="hidden md:flex items-center gap-6" 
+      onClick={(e) => e.stopPropagation()}
+    >
       <NavLink 
         name="홈" 
         path="/" 

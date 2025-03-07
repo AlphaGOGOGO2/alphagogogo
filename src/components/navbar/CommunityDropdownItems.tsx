@@ -28,6 +28,7 @@ export function CommunityDropdownItems({
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation(); // 이벤트 버블링 방지
               onItemClick(category, e);
             }}
