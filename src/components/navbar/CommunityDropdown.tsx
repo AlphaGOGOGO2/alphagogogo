@@ -1,11 +1,12 @@
+
 import { useRef, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, MessageCircle, ExternalLink, Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
 import { type CommunityCategory } from "@/config/navigation";
-import { useToast } from "@/hooks/use-toast";
 import { openInfoPopup } from "@/utils/popupUtils";
+import { CommunityDropdownItems } from "./CommunityDropdownItems";
 
 interface CommunityDropdownProps {
   isScrolled: boolean;
@@ -24,7 +25,6 @@ export function CommunityDropdown({
 }: CommunityDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
-  const { toast } = useToast();
   
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -87,19 +87,6 @@ export function CommunityDropdown({
     }
   };
   
-  const getCategoryIcon = (categoryName: string) => {
-    switch (categoryName) {
-      case "실시간 채팅":
-        return <MessageCircle size={16} />;
-      case "오픈 채팅방":
-        return <ExternalLink size={16} />;
-      case "비즈니스 문의":
-        return <Mail size={16} />;
-      default:
-        return null;
-    }
-  };
-  
   return (
     <div 
       className="relative inline-block"
@@ -155,42 +142,11 @@ export function CommunityDropdown({
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="py-2">
-          {categories.map((category) => (
-            category.action === 'popup' ? (
-              <button
-                key={category.path}
-                className={cn(
-                  "block w-full text-left px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap flex items-center gap-2",
-                  isScrolled 
-                    ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
-                    : "text-white hover:bg-white/20 hover:text-white"
-                )}
-                onClick={(e) => handleCategoryClick(category, e)}
-                role="menuitem"
-              >
-                {getCategoryIcon(category.name)}
-                {category.name}
-              </button>
-            ) : (
-              <Link
-                key={category.path}
-                to={category.path}
-                className={cn(
-                  "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap flex items-center gap-2",
-                  isScrolled 
-                    ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
-                    : "text-white hover:bg-white/20 hover:text-white"
-                )}
-                onClick={(e) => handleCategoryClick(category, e)}
-                role="menuitem"
-              >
-                {getCategoryIcon(category.name)}
-                {category.name}
-              </Link>
-            )
-          ))}
-        </div>
+        <CommunityDropdownItems 
+          categories={categories} 
+          isScrolled={isScrolled} 
+          onItemClick={handleCategoryClick}
+        />
       </div>
     </div>
   );

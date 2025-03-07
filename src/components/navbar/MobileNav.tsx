@@ -1,10 +1,12 @@
-import { useLocation, useNavigate } from "react-router-dom";
+
+import { useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
-import { mainNavItems, blogCategories, communityCategories } from "@/config/navigation";
-import { openInfoPopup } from "@/utils/popupUtils";
+import { mainNavItems } from "@/config/navigation";
+import { MobileBlogItems } from "./MobileBlogItems";
+import { MobileCommunityItems } from "./MobileCommunityItems";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -13,38 +15,6 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
-  const navigate = useNavigate();
-  
-  const handleCommunityItemClick = (category: typeof communityCategories[0], event: React.MouseEvent) => {
-    onClose();
-    
-    // 일반 링크 클릭은 기본 동작 그대로 유지
-    if (!category.action) {
-      navigate(category.path);
-      return;
-    }
-    
-    // 팝업 액션이 있는 경우 기본 동작 중단
-    event.preventDefault();
-    
-    if (category.action === 'popup' && category.actionData) {
-      const title = category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내";
-      const action = category.name === "오픈 채팅방" ? 'link' : 'email';
-      
-      // 팝업 열기 시도
-      const isPopupOpened = openInfoPopup({
-        title,
-        message: category.actionData,
-        action,
-        actionData: category.path
-      });
-      
-      // 팝업이 차단된 경우 직접 이동
-      if (!isPopupOpened) {
-        window.location.href = category.path;
-      }
-    }
-  };
   
   return (
     <div 
@@ -82,19 +52,11 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           onClick={onClose}
         />
         
-        <div className="pl-6 space-y-2">
-          {location.pathname.startsWith("/blog") && 
-            blogCategories.map((category) => (
-              <MobileNavLink
-                key={category.path}
-                name={`- ${category.name}`}
-                path={category.path}
-                isActive={location.pathname === category.path}
-                onClick={onClose}
-              />
-            ))
-          }
-        </div>
+        <MobileBlogItems 
+          onClose={onClose} 
+          locationPathname={location.pathname}
+          showCategories={location.pathname.startsWith("/blog")}
+        />
 
         <MobileNavLink 
           name="커뮤니티" 
@@ -103,27 +65,10 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           onClick={onClose}
         />
         
-        <div className="pl-6 space-y-2">
-          {communityCategories.map((category) => (
-            category.action === 'popup' ? (
-              <button
-                key={category.path}
-                className="text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-blue-50/50 hover:pl-4 w-full text-left"
-                onClick={(e) => handleCommunityItemClick(category, e)}
-              >
-                - {category.name}
-              </button>
-            ) : (
-              <MobileNavLink
-                key={category.path}
-                name={`- ${category.name}`}
-                path={category.path}
-                isActive={location.pathname === category.path && category.name === "실시간 채팅"}
-                onClick={onClose}
-              />
-            )
-          ))}
-        </div>
+        <MobileCommunityItems 
+          onClose={onClose} 
+          locationPathname={location.pathname} 
+        />
         
         {mainNavItems.filter(item => item.name !== "홈" && item.name !== "커뮤니티").map((item) => (
           <MobileNavLink 
