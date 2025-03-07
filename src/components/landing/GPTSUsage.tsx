@@ -1,4 +1,3 @@
-
 import { RocketIcon, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 

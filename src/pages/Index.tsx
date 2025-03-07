@@ -1,10 +1,10 @@
 
 import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
-import { Hero } from "@/components/Hero";
-import { FeaturedPosts } from "@/components/FeaturedPost";
-import { GPTSUsage } from "@/components/GPTSUsage";
-import { Services } from "@/components/Services";
+import { Hero } from "@/components/landing/Hero";
+import { FeaturedPosts } from "@/components/landing/FeaturedPost";
+import { GPTSUsage } from "@/components/landing/GPTSUsage";
+import { Services } from "@/components/landing/Services";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
