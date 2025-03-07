@@ -65,13 +65,13 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">커뮤니티</h3>
+            <h3 className="font-medium text-gray-900 mb-4">서비스</h3>
             <ul className="space-y-3">
               {[
-                { name: "포럼", path: "/community/forum" },
-                { name: "이벤트", path: "/community/events" },
-                { name: "스터디 그룹", path: "/community/study-groups" },
-                { name: "기여하기", path: "/community/contribute" }
+                { name: "AI 상담", path: "/services/consultation" },
+                { name: "기업 솔루션", path: "/services/enterprise" },
+                { name: "교육 프로그램", path: "/services/education" },
+                { name: "리서치 분석", path: "/services/research" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
