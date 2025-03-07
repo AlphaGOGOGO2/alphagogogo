@@ -4,16 +4,20 @@ import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
-import { type BlogCategory } from "@/config/navigation";
 
-interface BlogDropdownProps {
+interface GPTSCategory {
+  name: string;
+  path: string;
+}
+
+interface GPTSDropdownProps {
   isScrolled: boolean;
   isActive: boolean;
-  categories: BlogCategory[];
+  categories: GPTSCategory[];
   onCategoryClick?: () => void;
 }
 
-export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick }: BlogDropdownProps) {
+export function GPTSDropdown({ isScrolled, isActive, categories, onCategoryClick }: GPTSDropdownProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   
@@ -69,8 +73,8 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         className="inline-flex items-center"
       >
         <NavLink 
-          name="블로그"
-          path="/blog"
+          name="GPTS 이용하기"
+          path="/gpts"
           isScrolled={isScrolled}
           isActive={isActive}
           iconRight={
@@ -99,7 +103,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         )}
         role="menu"
         aria-orientation="vertical"
-        aria-labelledby="blog-menu"
+        aria-labelledby="gpts-menu"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >

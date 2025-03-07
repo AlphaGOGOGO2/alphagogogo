@@ -24,3 +24,14 @@ export const blogCategories: BlogCategory[] = [
   { name: "화제의 이슈", path: "/blog/trending" },
   { name: "라이프스타일", path: "/blog/lifestyle" }
 ];
+
+export interface GPTSCategory {
+  name: string;
+  path: string;
+}
+
+export const gptsCategories: GPTSCategory[] = [
+  { name: "블로그 GPTS", path: "/gpts#blog" },
+  { name: "그 외 GPTS", path: "/gpts#other" },
+  { name: "다운로드", path: "/gpts#download" }
+];

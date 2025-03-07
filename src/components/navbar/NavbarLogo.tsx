@@ -20,13 +20,13 @@ export function NavbarLogo({ isScrolled, onClick }: NavbarLogoProps) {
           alt="알파블로그 로고" 
           className="w-full h-full object-contain"
         />
-        <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
       </div>
       <span className={cn(
         "bg-clip-text text-transparent bg-gradient-to-r transition-all duration-300",
         isScrolled 
-          ? "from-blue-800 to-blue-600" 
-          : "from-white to-blue-200"
+          ? "from-purple-800 to-purple-600" 
+          : "from-white to-purple-200"
       )}>알파블로그</span>
     </Link>
   );

@@ -36,7 +36,7 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
         isScrolled 
-          ? "bg-white shadow-md" 
+          ? "bg-purple-50 shadow-md" 
           : "bg-[#1E293B] backdrop-blur-lg border-b border-white/10"
       )}
       role="banner"
@@ -50,7 +50,7 @@ export function Navbar() {
           className={cn(
             "md:hidden p-2 rounded-full transition-colors duration-300",
             isScrolled 
-              ? "text-blue-800 hover:bg-gray-100" 
+              ? "text-purple-800 hover:bg-purple-100" 
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
