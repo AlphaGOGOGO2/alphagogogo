@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";
@@ -13,6 +13,7 @@ export default function GPTSPage() {
   const blogSectionRef = useRef<HTMLDivElement>(null);
   const otherSectionRef = useRef<HTMLDivElement>(null);
   const downloadSectionRef = useRef<HTMLDivElement>(null);
+  const [isVisible, setIsVisible] = useState(false);
 
   // Handle scrolling to sections when the page loads with a hash in the URL
   useEffect(() => {
@@ -30,12 +31,21 @@ export default function GPTSPage() {
     }
   }, [location.hash]);
 
+  // Set visibility after component mounts for animation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ease-out ${isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
           <div className="mb-8">
             <Link 
               to="/" 
@@ -51,16 +61,18 @@ export default function GPTSPage() {
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
           
-          <div id="blog" ref={blogSectionRef}>
-            <GPTSBlogSection />
-          </div>
-          
-          <div id="other" ref={otherSectionRef}>
-            <GPTSOtherSection />
-          </div>
-          
-          <div id="download" ref={downloadSectionRef}>
-            <GPTSDownloadSection />
+          <div className={`stagger-animation ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
+            <div id="blog" ref={blogSectionRef} className="transition-all duration-500 delay-100">
+              <GPTSBlogSection />
+            </div>
+            
+            <div id="other" ref={otherSectionRef} className="transition-all duration-500 delay-200">
+              <GPTSOtherSection />
+            </div>
+            
+            <div id="download" ref={downloadSectionRef} className="transition-all duration-500 delay-300">
+              <GPTSDownloadSection />
+            </div>
           </div>
         </div>
       </main>
