@@ -13,4 +13,5 @@ export interface BlogPost {
   readTime: number;
   coverImage: string;
   slug: string;
+  tags?: string[]; // Added optional tags field
 }

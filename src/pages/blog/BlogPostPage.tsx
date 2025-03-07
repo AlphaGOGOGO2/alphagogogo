@@ -104,6 +104,23 @@ export default function BlogPostPage() {
             {/* Render the content safely */}
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
+          
+          {/* Display tags if available */}
+          {post.tags && post.tags.length > 0 && (
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <h3 className="text-lg font-medium text-gray-800 mb-3">태그</h3>
+              <div className="flex flex-wrap gap-2">
+                {post.tags.map((tag, index) => (
+                  <span 
+                    key={index} 
+                    className="px-3 py-1 bg-purple-100 text-purple-600 text-sm rounded-full"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </article>
     </BlogLayout>
