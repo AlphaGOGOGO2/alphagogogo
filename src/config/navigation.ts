@@ -67,6 +67,11 @@ export interface ServicesCategory {
 
 export const servicesCategories: ServicesCategory[] = [
   { 
+    name: "전체서비스", 
+    path: "/services",
+    description: "알파블로그에서 제공하는 모든 서비스를 확인하세요."
+  },
+  { 
     name: "유튜브 자막 추출", 
     path: "/youtube-transcript",
     description: "YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다."
