@@ -1,5 +1,5 @@
 
-import { BlogPost } from "@/types/blog";
+import { BlogPost } from "@/types/supabase";
 import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
@@ -11,13 +11,15 @@ interface BlogCardProps {
 export function BlogCard({ post }: BlogCardProps) {
   return (
     <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
-      <Link to={`/blog/${post.slug}`} className="block overflow-hidden h-48">
-        <img 
-          src={post.coverImage} 
-          alt={post.title} 
-          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-        />
-      </Link>
+      {post.cover_image && (
+        <Link to={`/blog/${post.slug}`} className="block overflow-hidden h-48">
+          <img 
+            src={post.cover_image} 
+            alt={post.title} 
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+          />
+        </Link>
+      )}
       <div className="p-5 flex-grow flex flex-col">
         <div className="mb-3">
           <span className="text-xs px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
@@ -35,20 +37,20 @@ export function BlogCard({ post }: BlogCardProps) {
         <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
           <div className="flex items-center">
             <img 
-              src={post.author.avatar} 
-              alt={post.author.name} 
+              src={post.author_avatar} 
+              alt={post.author_name} 
               className="w-6 h-6 rounded-full mr-2 object-cover" 
             />
-            <span>{post.author.name}</span>
+            <span>{post.author_name}</span>
           </div>
           <div className="flex gap-3">
             <div className="flex items-center">
               <Calendar size={14} className="mr-1" />
-              <span>{formatDate(post.publishedAt)}</span>
+              <span>{formatDate(post.published_at)}</span>
             </div>
             <div className="flex items-center">
               <Clock size={14} className="mr-1" />
-              <span>{post.readTime}분</span>
+              <span>{post.read_time}분</span>
             </div>
           </div>
         </div>

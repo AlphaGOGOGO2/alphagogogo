@@ -1,207 +1,223 @@
 
-import { useState, useRef } from "react";
+import { useState, useRef, ChangeEvent, FormEvent } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { toast } from "sonner";
-import { blogPosts, getPostsByCategory } from "@/data/blogPosts";
-import { BlogPost } from "@/types/blog";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useQuery } from "@tanstack/react-query";
+import { getAllBlogCategories, createBlogPost, uploadBlogImage } from "@/services/blogService";
 import { useNavigate } from "react-router-dom";
-import { Image, FileText, Heading, List } from "lucide-react";
+import { toast } from "sonner";
+import { Loader2, Upload } from "lucide-react";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
   const [excerpt, setExcerpt] = useState("");
-  const [category, setCategory] = useState("최신 AI소식");
-  const [coverImage, setCoverImage] = useState("");
+  const [content, setContent] = useState("");
+  const [category, setCategory] = useState("");
   const [readTime, setReadTime] = useState(5);
+  const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // In a real app, we would upload to a storage service
-      // For now, we'll use a placeholder or create an object URL
-      const imageUrl = URL.createObjectURL(file);
-      setCoverImage(imageUrl);
-      toast.success("이미지가 업로드되었습니다.");
+
+  // Fetch categories
+  const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
+    queryKey: ["blog-categories"],
+    queryFn: getAllBlogCategories
+  });
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setCoverImage(file);
+      
+      // Preview the image
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCoverImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
-  
+
   const triggerFileInput = () => {
-    fileInputRef.current?.click();
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
   };
-  
-  const handleSubmit = (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
-    if (!title || !content || !category || !coverImage) {
-      toast.error("모든 필드를 채워주세요.");
+    // Form validation
+    if (!title || !content || !category) {
+      toast.error("제목, 내용, 카테고리는 필수입력 항목입니다");
       return;
     }
-    
-    // Generate a random ID and slug
-    const id = (blogPosts.length + 1).toString();
-    const slug = title.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
-    
-    // Create new blog post
-    const newPost: BlogPost = {
-      id,
-      title,
-      excerpt: excerpt || title.substring(0, 100) + "...",
-      content,
-      category,
-      author: {
-        name: "알파GOGOGO",
-        avatar: "https://i.pravatar.cc/150?img=10"
-      },
-      publishedAt: new Date().toISOString().split('T')[0],
-      readTime,
-      coverImage: coverImage || "https://images.unsplash.com/photo-1620712943543-bcc4688e7485",
-      slug
-    };
-    
-    // In a real app, we would send this to a database
-    // For now, we'll just add it to our local array
-    blogPosts.unshift(newPost);
-    
-    toast.success("게시물이 성공적으로 작성되었습니다!");
-    navigate(`/blog`);
+
+    setIsSubmitting(true);
+
+    try {
+      let coverImageUrl = null;
+      
+      // If there's an image, upload it first
+      if (coverImage) {
+        coverImageUrl = await uploadBlogImage(coverImage);
+        if (!coverImageUrl) {
+          throw new Error("이미지 업로드에 실패했습니다");
+        }
+      }
+      
+      // Create the blog post
+      const newPost = await createBlogPost({
+        title,
+        excerpt: excerpt || null,
+        content,
+        category,
+        read_time: readTime,
+        cover_image: coverImageUrl
+      });
+      
+      if (newPost) {
+        navigate(`/blog`);
+      } else {
+        throw new Error("블로그 포스트 작성에 실패했습니다");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast.error("블로그 포스트 작성에 실패했습니다");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-  
+
   return (
-    <BlogLayout title="새 글 작성하기">
-      <div className="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <BlogLayout title="글쓰기">
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
+        <div className="space-y-4">
           <div className="space-y-2">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
-              제목
-            </label>
-            <Input
-              id="title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="게시물 제목을 입력하세요"
-              className="w-full"
+            <Label htmlFor="title">제목</Label>
+            <Input 
+              id="title" 
+              value={title} 
+              onChange={(e) => setTitle(e.target.value)} 
+              placeholder="제목을 입력하세요" 
+              required 
             />
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="excerpt" className="block text-sm font-medium text-gray-700">
-              요약 (선택사항)
-            </label>
-            <Input
-              id="excerpt"
-              value={excerpt}
-              onChange={(e) => setExcerpt(e.target.value)}
-              placeholder="게시물의 간단한 요약을 입력하세요"
-              className="w-full"
+            <Label htmlFor="excerpt">요약 (선택)</Label>
+            <Textarea 
+              id="excerpt" 
+              value={excerpt} 
+              onChange={(e) => setExcerpt(e.target.value)} 
+              placeholder="글의 요약을 입력하세요 (선택사항)" 
+              rows={3} 
             />
           </div>
           
           <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
-              카테고리
-            </label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="카테고리 선택" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="최신 AI소식">최신 AI소식</SelectItem>
-                <SelectItem value="화제의 이슈">화제의 이슈</SelectItem>
-                <SelectItem value="라이프스타일">라이프스타일</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="readTime" className="block text-sm font-medium text-gray-700">
-              읽는 시간 (분)
-            </label>
-            <Input
-              id="readTime"
-              type="number"
-              min="1"
-              max="60"
-              value={readTime}
-              onChange={(e) => setReadTime(parseInt(e.target.value))}
-              className="w-32"
+            <Label htmlFor="content">내용</Label>
+            <Textarea 
+              id="content" 
+              value={content} 
+              onChange={(e) => setContent(e.target.value)} 
+              placeholder="내용을 입력하세요" 
+              rows={15} 
+              required 
             />
+            <p className="text-sm text-gray-500">HTML 형식으로 작성 가능합니다.</p>
           </div>
           
-          <div className="space-y-2">
-            <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700">
-              커버 이미지
-            </label>
-            <div className="flex items-center space-x-4">
-              <Button type="button" onClick={triggerFileInput} variant="outline" className="flex items-center gap-2">
-                <Image size={18} />
-                이미지 업로드
-              </Button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleImageUpload}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="category">카테고리</Label>
+              {isCategoriesLoading ? (
+                <Select disabled>
+                  <SelectTrigger>
+                    <SelectValue placeholder="카테고리 로딩 중..." />
+                  </SelectTrigger>
+                </Select>
+              ) : (
+                <Select value={category} onValueChange={setCategory} required>
+                  <SelectTrigger id="category">
+                    <SelectValue placeholder="카테고리 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.name}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="readTime">예상 읽기 시간 (분)</Label>
+              <Input 
+                id="readTime" 
+                type="number" 
+                value={readTime} 
+                onChange={(e) => setReadTime(Number(e.target.value))} 
+                min={1} 
+                required 
               />
-              {coverImage && (
-                <div className="relative w-24 h-24 rounded-md overflow-hidden">
-                  <img src={coverImage} alt="미리보기" className="w-full h-full object-cover" />
+            </div>
+          </div>
+          
+          <div className="space-y-2">
+            <Label>커버 이미지</Label>
+            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer" onClick={triggerFileInput}>
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageChange} 
+                accept="image/*" 
+                className="hidden" 
+              />
+              
+              {coverImagePreview ? (
+                <div className="w-full space-y-2">
+                  <img 
+                    src={coverImagePreview} 
+                    alt="Cover preview" 
+                    className="w-full h-48 object-cover rounded-lg" 
+                  />
+                  <p className="text-sm text-center text-gray-500">이미지를 변경하려면 클릭하세요</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center">
+                  <Upload className="w-10 h-10 text-gray-400 mb-2" />
+                  <p className="text-sm font-medium text-gray-500">이미지를 업로드하려면 클릭하세요</p>
+                  <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF 파일 지원</p>
                 </div>
               )}
             </div>
           </div>
-          
-          <div className="space-y-2">
-            <label htmlFor="content" className="block text-sm font-medium text-gray-700">
-              본문
-            </label>
-            <div className="border rounded-md p-2 bg-white">
-              <div className="flex gap-2 mb-2 pb-2 border-b">
-                <Button type="button" variant="outline" size="sm" className="p-2 h-8 w-8">
-                  <Heading size={14} />
-                </Button>
-                <Button type="button" variant="outline" size="sm" className="p-2 h-8 w-8">
-                  <FileText size={14} />
-                </Button>
-                <Button type="button" variant="outline" size="sm" className="p-2 h-8 w-8">
-                  <List size={14} />
-                </Button>
-                <Button type="button" variant="outline" size="sm" className="p-2 h-8 w-8" onClick={triggerFileInput}>
-                  <Image size={14} />
-                </Button>
-              </div>
-              <textarea
-                id="content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                placeholder="HTML 형식으로 본문을 작성하세요"
-                className="w-full h-64 p-2 border rounded-md resize-y focus:outline-none focus:ring-2 focus:ring-purple-500"
-              />
-            </div>
-          </div>
-          
-          <div className="flex justify-end space-x-4">
-            <Button type="button" variant="outline" onClick={() => navigate("/blog")}>
-              취소
-            </Button>
-            <Button type="submit" className="bg-purple-600 hover:bg-purple-700 text-white">
-              게시하기
-            </Button>
-          </div>
-        </form>
-      </div>
+        </div>
+        
+        <div className="flex justify-end">
+          <Button 
+            type="submit" 
+            className="bg-purple-600 hover:bg-purple-700" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                저장 중...
+              </>
+            ) : "글 저장하기"}
+          </Button>
+        </div>
+      </form>
     </BlogLayout>
   );
 }
