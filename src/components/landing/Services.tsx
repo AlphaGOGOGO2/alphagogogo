@@ -34,7 +34,7 @@ export function Services() {
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300">
+          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
             <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
               <Youtube className="text-purple-600" size={24} />
             </div>
@@ -45,16 +45,18 @@ export function Services() {
               YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다.
               영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.
             </p>
-            <Link 
-              to="/youtube-transcript"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-            >
-              <ExternalLink size={16} />
-              서비스 이용하기
-            </Link>
+            <div className="mt-auto">
+              <Link 
+                to="/youtube-transcript"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
+              >
+                <ExternalLink size={16} />
+                서비스 이용하기
+              </Link>
+            </div>
           </div>
           
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300">
+          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
             <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
               <Link2 className="text-purple-600" size={24} />
             </div>
@@ -65,16 +67,18 @@ export function Services() {
               복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다.
               단축된 URL은 영구적으로 사용할 수 있습니다.
             </p>
-            <Link 
-              to="/url-shortener"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-            >
-              <ExternalLink size={16} />
-              서비스 이용하기
-            </Link>
+            <div className="mt-auto">
+              <Link 
+                to="/url-shortener"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
+              >
+                <ExternalLink size={16} />
+                서비스 이용하기
+              </Link>
+            </div>
           </div>
           
-          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300">
+          <div className="bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col">
             <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
               <MousePointerClick className="text-purple-600" size={24} />
             </div>
@@ -85,13 +89,15 @@ export function Services() {
               색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 
               매력적인 버튼 HTML 코드를 생성합니다.
             </p>
-            <Link 
-              to="/blog-button-creator"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
-            >
-              <ExternalLink size={16} />
-              서비스 이용하기
-            </Link>
+            <div className="mt-auto">
+              <Link 
+                to="/blog-button-creator"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all"
+              >
+                <ExternalLink size={16} />
+                서비스 이용하기
+              </Link>
+            </div>
           </div>
         </div>
         
