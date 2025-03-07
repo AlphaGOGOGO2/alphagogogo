@@ -1,42 +1,19 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #f9f5ff; /* 매우 연한 보라색 배경 */
+  font-family: 'Paperlogy', 'Inter', sans-serif;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+/* 블로그 포스트 카테고리 스타일 */
+.blog-category {
+  @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+/* 퍼플 그라데이션 텍스트 */
+.text-gradient-purple {
+  @apply bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent;
 }
