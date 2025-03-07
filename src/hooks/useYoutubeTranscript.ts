@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { extractYoutubeVideoId } from "@/utils/youtubeUtils";
+import { extractYouTubeVideoId } from "@/utils/youtubeUtils";
 
 export function useYoutubeTranscript() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -14,7 +14,7 @@ export function useYoutubeTranscript() {
     setTranscript("");
     setError("");
     
-    const videoId = extractYoutubeVideoId(youtubeUrl);
+    const videoId = extractYouTubeVideoId(youtubeUrl);
     
     if (!videoId) {
       setError("유효한 YouTube URL을 입력해주세요.");
