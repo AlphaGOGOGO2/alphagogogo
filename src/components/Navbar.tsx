@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Youtube, ChevronDown } from "lucide-react";
@@ -258,7 +257,7 @@ export function Navbar() {
           
           {/* Mobile Blog Categories */}
           <div className="pl-6 space-y-2">
-            {item.name === "블로그" && 
+            {location.pathname.startsWith("/blog") && 
               blogCategories.map((category) => (
                 <Link
                   key={category.name}
