@@ -98,7 +98,7 @@ export const createBlogPost = async (
       read_time: readTime,
       excerpt,
       author_name: "알파GOGOGO", // Default author name
-      author_avatar: "https://i.pravatar.cc/150?img=10", // Default avatar
+      author_avatar: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png", // Updated profile image URL
       published_at: new Date().toISOString() // Explicitly set published_at
     };
     

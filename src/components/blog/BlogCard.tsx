@@ -9,6 +9,9 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
+  // Use the specified profile image URL instead of the one from the post data
+  const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
+  
   return (
     <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col">
       {post.coverImage && (
@@ -37,7 +40,7 @@ export function BlogCard({ post }: BlogCardProps) {
         <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
           <div className="flex items-center">
             <img 
-              src={post.author.avatar} 
+              src={authorAvatarUrl} 
               alt={post.author.name} 
               className="w-6 h-6 rounded-full mr-2 object-cover" 
             />
