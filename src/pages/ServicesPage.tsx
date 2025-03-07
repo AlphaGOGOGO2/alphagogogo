@@ -70,8 +70,12 @@ export default function ServicesPage() {
             ].map((service, index) => (
               <Card 
                 key={index} 
-                className={`shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col animate-fade-in`}
-                style={{ animationDelay: `${index * 150}ms` }}
+                className={`shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col`}
+                style={{ 
+                  animation: `fade-in 0.6s ease-out forwards`,
+                  animationDelay: `${index * 150}ms`, 
+                  opacity: 0 
+                }}
               >
                 <CardHeader className={`bg-gradient-to-r ${service.gradient} text-white rounded-t-lg py-8`}>
                   <CardTitle className="flex items-center gap-3 text-2xl">
@@ -87,7 +91,7 @@ export default function ServicesPage() {
                     {service.detailedDescription}
                   </p>
                   <Link to={service.path}>
-                    <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white">
+                    <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white transition-all duration-300">
                       <ExternalLink size={16} className="mr-2" />
                       서비스 이용하기
                     </Button>

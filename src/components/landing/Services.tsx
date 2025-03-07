@@ -86,8 +86,11 @@ export function Services() {
           ].map((service, index) => (
             <div 
               key={index}
-              className={`bg-white border-2 border-purple-100 p-8 rounded-xl transition-all hover:shadow-lg hover:border-purple-300 flex flex-col ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}
-              style={{ animationDelay: `${(index + 1) * 150}ms` }}
+              className={`bg-white border-2 border-purple-100 p-8 rounded-xl transition-all duration-500 hover:shadow-lg hover:border-purple-300 flex flex-col ${isVisible ? '' : 'opacity-0'}`}
+              style={{ 
+                animation: isVisible ? `fade-in 0.8s ease-out forwards` : 'none',
+                animationDelay: `${(index + 1) * 200}ms`
+              }}
             >
               <div className="w-12 h-12 bg-purple-50 rounded-full flex items-center justify-center mb-6 shadow-sm">
                 {service.icon}

@@ -25,12 +25,12 @@ export function GPTSCard({
     <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative">
       {isHot && (
         <div className="absolute -top-1 -right-1 z-10">
-          <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-br-xl rounded-tl-xl shadow-md text-sm font-bold animate-[pulse_3s_ease-in-out_infinite]">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-br-xl rounded-tl-xl shadow-md text-sm font-bold">
             <div className="relative">
-              <Sparkle size={18} className="animate-spin text-yellow-300" style={{ animationDuration: '3s' }} />
-              <Sparkle size={16} className="absolute top-0 left-0 animate-ping text-white" style={{ animationDuration: '1.5s' }} />
+              <Sparkle size={18} className="text-yellow-300" style={{ animation: 'spin 5s linear infinite' }} />
+              <Sparkle size={16} className="absolute top-0 left-0 text-white" style={{ animation: 'ping 3s ease-in-out infinite' }} />
             </div>
-            <span className="animate-[scale_2s_ease-in-out_infinite]">HOT</span>
+            <span style={{ animation: 'pulse 3s ease-in-out infinite' }}>HOT</span>
           </div>
         </div>
       )}
