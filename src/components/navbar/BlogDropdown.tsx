@@ -39,14 +39,27 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     }
   };
   
+  // Add a timer variable for better control of the dropdown closing
+  let closeTimer: ReturnType<typeof setTimeout>;
+  
+  const handleMouseLeave = () => {
+    // Use a longer delay (500ms) to prevent accidental closing
+    closeTimer = setTimeout(() => setIsDropdownOpen(false), 500);
+  };
+  
+  const handleMouseEnter = () => {
+    // Clear the timer if mouse re-enters the dropdown area
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+    }
+  };
+  
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onMouseLeave={() => {
-        // Add a small delay before closing to improve user experience
-        setTimeout(() => setIsDropdownOpen(false), 150);
-      }}
+      onMouseLeave={handleMouseLeave}
+      onMouseEnter={handleMouseEnter}
       onKeyDown={handleKeyDown}
     >
       <div
@@ -91,15 +104,17 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="blog-menu"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        {/* Add padding to create larger hit area */}
-        <div className="py-1">
+        {/* Increase padding to create larger hit area */}
+        <div className="py-2">
           {categories.map((category) => (
             <Link
               key={category.path}
               to={category.path}
               className={cn(
-                "block px-4 py-2.5 text-sm transition-colors duration-150 whitespace-nowrap",
+                "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
                 isScrolled 
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                   : "text-white/90 hover:bg-white/20 hover:text-white"
