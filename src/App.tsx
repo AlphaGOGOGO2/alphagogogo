@@ -11,6 +11,7 @@ import LatestAIUpdates from "./pages/blog/LatestAIUpdates";
 import BlogWritePage from "./pages/blog/BlogWritePage";
 import TrendingPage from "./pages/blog/TrendingPage";
 import LifestylePage from "./pages/blog/LifestylePage";
+import BlogPostPage from "./pages/blog/BlogPostPage";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/blog/trending" element={<TrendingPage />} />
           <Route path="/blog/lifestyle" element={<LifestylePage />} />
           <Route path="/blog/write" element={<BlogWritePage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
