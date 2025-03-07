@@ -57,8 +57,8 @@ export default function BlogWritePage() {
 
   return (
     <BlogLayout title="글쓰기">
-      <div className="flex flex-col lg:flex-row gap-6">
-        <div className="w-full lg:w-1/2">
+      <div className="flex flex-col lg:flex-row gap-8">
+        <div className="w-full lg:w-3/5">
           <BlogForm
             title={title}
             setTitle={setTitle}
@@ -74,7 +74,7 @@ export default function BlogWritePage() {
             onSubmit={handleSubmit}
           />
         </div>
-        <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-sm border border-gray-100">
+        <div className="w-full lg:w-2/5 bg-white rounded-lg shadow-sm border border-gray-100">
           <BlogPreview 
             title={title} 
             content={content} 

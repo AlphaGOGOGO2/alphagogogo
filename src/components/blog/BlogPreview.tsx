@@ -22,9 +22,9 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
   }, [tags]);
 
   return (
-    <div className="p-6">
+    <div className="p-8 h-full">
       <h2 className="text-xl font-semibold text-purple-800 mb-4">미리보기</h2>
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden h-[calc(100%-3rem)] flex flex-col">
         {category && (
           <div className="p-4 pb-0">
             <span className="blog-category">{category}</span>
@@ -35,7 +35,7 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
             {title || "제목을 입력하세요"}
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 overflow-auto flex-grow">
           {content ? (
             <div 
               className="prose prose-purple max-w-none" 

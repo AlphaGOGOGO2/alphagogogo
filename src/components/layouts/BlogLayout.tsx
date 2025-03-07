@@ -15,13 +15,17 @@ interface BlogLayoutProps {
 
 export function BlogLayout({ children, title }: BlogLayoutProps) {
   const location = useLocation();
+  const isWritePage = location.pathname === "/blog/write";
   
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className={cn(
+          "mx-auto px-4 sm:px-6 lg:px-8",
+          isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
+        )}>
           <header className="py-8 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">{title}</h1>
