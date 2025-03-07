@@ -43,6 +43,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     <div 
       className="relative inline-block"
       ref={dropdownRef}
+      onMouseLeave={() => setIsDropdownOpen(false)}
       onKeyDown={handleKeyDown}
     >
       <div

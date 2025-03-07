@@ -19,7 +19,8 @@ export const mainNavItems: NavItem[] = [
 ];
 
 export const blogCategories: BlogCategory[] = [
-  { name: "최신 업데이트 소식", path: "/blog/latest-updates" },
+  { name: "전체보기", path: "/blog" },
+  { name: "최신 AI소식", path: "/blog/latest-updates" },
   { name: "화제의 이슈", path: "/blog/trending" },
   { name: "일상 라이프", path: "/blog/lifestyle" }
 ];
