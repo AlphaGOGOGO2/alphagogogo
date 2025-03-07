@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Sparkle } from "lucide-react";
 
 interface GPTSCardProps {
   title: string;
@@ -9,6 +9,7 @@ interface GPTSCardProps {
   imageUrl: string;
   colorClass?: string;
   buttonColorClass?: string;
+  isHot?: boolean; // New prop to indicate if the card should have a HOT badge
 }
 
 export function GPTSCard({ 
@@ -17,10 +18,20 @@ export function GPTSCard({
   url, 
   imageUrl, 
   colorClass,
-  buttonColorClass = "bg-purple-600 hover:bg-purple-700" // Default to purple if not specified
+  buttonColorClass = "bg-purple-600 hover:bg-purple-700", // Default to purple if not specified
+  isHot = false
 }: GPTSCardProps) {
   return (
-    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300">
+    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative">
+      {isHot && (
+        <div className="absolute top-3 right-3 z-10">
+          <div className="flex items-center gap-1 bg-red-500 text-white px-2 py-0.5 rounded-full text-xs font-bold animate-pulse-slow">
+            <Sparkle size={12} className="animate-pulse" />
+            HOT
+          </div>
+        </div>
+      )}
+      
       <CardHeader className={`p-6 pb-4 ${colorClass || "bg-white"}`}>
         <div className="flex items-center gap-3 mb-2">
           <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
