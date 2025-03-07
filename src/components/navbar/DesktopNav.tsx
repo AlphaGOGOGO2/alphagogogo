@@ -1,5 +1,5 @@
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
@@ -19,29 +19,17 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     item => item.name !== "홈" && item.name !== "GPTS 이용하기" && item.name !== "커뮤니티"
   );
   
-  const handleBlogDropdownChange = useCallback((isOpen: boolean) => {
-    if (isOpen) {
-      setActiveDropdown("blog");
-    } else if (activeDropdown === "blog") {
-      setActiveDropdown(null);
-    }
-  }, [activeDropdown]);
+  const handleBlogDropdownChange = (isOpen: boolean) => {
+    setActiveDropdown(isOpen ? "blog" : null);
+  };
   
-  const handleGPTSDropdownChange = useCallback((isOpen: boolean) => {
-    if (isOpen) {
-      setActiveDropdown("gpts");
-    } else if (activeDropdown === "gpts") {
-      setActiveDropdown(null);
-    }
-  }, [activeDropdown]);
+  const handleGPTSDropdownChange = (isOpen: boolean) => {
+    setActiveDropdown(isOpen ? "gpts" : null);
+  };
 
-  const handleCommunityDropdownChange = useCallback((isOpen: boolean) => {
-    if (isOpen) {
-      setActiveDropdown("community");
-    } else if (activeDropdown === "community") {
-      setActiveDropdown(null);
-    }
-  }, [activeDropdown]);
+  const handleCommunityDropdownChange = (isOpen: boolean) => {
+    setActiveDropdown(isOpen ? "community" : null);
+  };
 
   // Close dropdowns when route changes
   useEffect(() => {
@@ -51,16 +39,20 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   // Close dropdowns when clicking outside navigation
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      // Only close if clicking outside the nav components
-      const target = e.target as HTMLElement;
-      if (!target.closest('nav') && !target.closest('[role="menu"]')) {
+      if (!e.target) return;
+      // Check if the click is outside any dropdown
+      const target = e.target as Node;
+      const isInsideNav = document.querySelector('nav')?.contains(target);
+      const isInsideDropdown = document.querySelector('[role="menu"]')?.contains(target);
+      
+      if (!isInsideNav && !isInsideDropdown) {
         setActiveDropdown(null);
       }
     };
     
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
   

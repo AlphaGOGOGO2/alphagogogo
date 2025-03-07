@@ -71,6 +71,7 @@ export function GPTSDropdown({
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="gpts-menu"
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="py-2">
             {categories.map((category) => (

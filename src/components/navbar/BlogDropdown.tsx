@@ -71,6 +71,7 @@ export function BlogDropdown({
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="blog-menu"
+          onClick={(e) => e.stopPropagation()}
         >
           <div className="py-2">
             {categories.map((category) => (
