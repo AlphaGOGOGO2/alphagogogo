@@ -1,17 +1,28 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
+import { toast } from "sonner";
 
 export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
-  const { data, error } = await supabase
-    .from('community_messages')
-    .select('*')
-    .order('created_at', { ascending: true })
-    .limit(50) as { data: ChatMessage[] | null, error: any };
+  try {
+    const { data, error } = await supabase
+      .from('community_messages')
+      .select('*')
+      .order('created_at', { ascending: true })
+      .limit(50) as { data: ChatMessage[] | null, error: any };
+      
+    if (error) {
+      console.error("Error fetching recent messages:", error);
+      toast.error("메시지를 불러오는데 실패했습니다");
+      throw error;
+    }
     
-  if (error) throw error;
-  
-  return data || [];
+    return data || [];
+  } catch (error) {
+    console.error("Error in fetchRecentMessages:", error);
+    toast.error("메시지를 불러오는데 실패했습니다");
+    return [];
+  }
 };
 
 export const sendChatMessage = async (
@@ -19,15 +30,33 @@ export const sendChatMessage = async (
   nickname: string,
   content: string,
   color: string
-): Promise<void> => {
-  const { error } = await supabase
-    .from('community_messages')
-    .insert({
-      id: messageId,
-      nickname,
-      content,
-      color
-    } as any);
+): Promise<boolean> => {
+  try {
+    if (!messageId || !nickname || !content) {
+      console.error("Missing required fields for sending message");
+      toast.error("메시지 전송에 필요한 정보가 부족합니다");
+      return false;
+    }
     
-  if (error) throw error;
+    const { error } = await supabase
+      .from('community_messages')
+      .insert({
+        id: messageId,
+        nickname,
+        content,
+        color
+      } as any);
+      
+    if (error) {
+      console.error("Error sending chat message:", error);
+      toast.error("메시지 전송에 실패했습니다");
+      throw error;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error in sendChatMessage:", error);
+    toast.error("메시지 전송에 실패했습니다");
+    return false;
+  }
 };
