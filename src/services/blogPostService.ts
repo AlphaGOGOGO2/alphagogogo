@@ -116,31 +116,34 @@ export const createBlogPost = async (
 async function handleBlogTags(blogPostId: string, tags: string[]): Promise<void> {
   try {
     // Upsert tags first (insert if not exists)
-    const { data: tagData, error: tagError } = await supabase
-      .from("blog_tags")
-      .upsert(
-        tags.map(name => ({ name })),
-        { onConflict: 'name', ignoreDuplicates: false }
-      )
-      .select('id, name');
-
-    if (tagError) throw tagError;
-    
-    // Get all the tag IDs
-    const tagMap = new Map(tagData?.map(tag => [tag.name.toLowerCase(), tag.id]));
-    
-    // Create blog post tag relationships
-    const postTagRelations = tags.map(tag => ({
-      blog_post_id: blogPostId,
-      tag_id: tagMap.get(tag.toLowerCase())
-    })).filter(relation => relation.tag_id !== undefined);
-    
-    if (postTagRelations.length > 0) {
-      const { error: relationError } = await supabase
-        .from("blog_post_tags")
-        .upsert(postTagRelations);
-        
-      if (relationError) throw relationError;
+    for (const tagName of tags) {
+      if (!tagName.trim()) continue;
+      
+      // Insert tag if it doesn't exist
+      const { data: tagData, error: tagError } = await supabase
+        .from("blog_tags")
+        .upsert({ name: tagName.trim() }, { onConflict: 'name' })
+        .select('id, name')
+        .single();
+      
+      if (tagError) {
+        console.error("Error upserting tag:", tagError);
+        continue;
+      }
+      
+      // Create relationship between post and tag
+      if (tagData) {
+        const { error: relationError } = await supabase
+          .from("blog_post_tags")
+          .upsert({
+            blog_post_id: blogPostId,
+            tag_id: tagData.id
+          }, { onConflict: 'blog_post_id,tag_id' });
+          
+        if (relationError) {
+          console.error("Error creating tag relationship:", relationError);
+        }
+      }
     }
   } catch (error) {
     console.error("Error handling blog tags:", error);

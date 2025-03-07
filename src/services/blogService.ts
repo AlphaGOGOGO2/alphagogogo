@@ -3,5 +3,6 @@
 export * from "./blogPostService";
 export * from "./blogCategoryService";
 export * from "./blogMediaService";
+export * from "./blogTagService";
 export * from "./blogAdapters";
 export * from "@/utils/blogUtils";
