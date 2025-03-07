@@ -25,14 +25,17 @@ export function useYoutubeTranscript() {
     setIsLoading(true);
     
     try {
-      // Use the transcript API directly without language parameter to get default language
+      // Use the transcript API directly without CORS proxy
+      // Specify API URL with https to ensure secure connection
       const apiUrl = `https://youtube-transcript.vercel.app/api?videoId=${videoId}`;
       
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-        }
+        },
+        // Add credentials: 'omit' to avoid CORS preflight requests
+        credentials: 'omit'
       });
       
       if (!response.ok) {
@@ -51,7 +54,17 @@ export function useYoutubeTranscript() {
       }
     } catch (error) {
       console.error("자막 추출 오류:", error);
-      setError(error instanceof Error ? error.message : "자막을 가져오는데 실패했습니다.");
+      let errorMessage = "자막을 가져오는데 실패했습니다.";
+      
+      if (error instanceof Error) {
+        if (error.message.includes("Failed to fetch")) {
+          errorMessage = "네트워크 연결 오류: 서버에 연결할 수 없습니다.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
+      setError(errorMessage);
       toast.error("자막을 가져오는데 실패했습니다.");
     } finally {
       setIsLoading(false);

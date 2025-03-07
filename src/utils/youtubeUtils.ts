@@ -37,18 +37,3 @@ export function extractYouTubeVideoId(url: string): string | null {
   
   return null;
 }
-
-/**
- * Creates a proxy URL for the YouTube transcript API
- * 
- * @param videoId - YouTube video ID
- * @param language - Language code for the transcript
- * @returns The proxied API URL
- */
-export function createTranscriptProxyUrl(videoId: string, language: string): string {
-  // Use a CORS proxy to avoid cross-origin issues
-  const corsProxy = "https://cors-anywhere.herokuapp.com/";
-  const apiUrl = `https://youtube-transcript.vercel.app/api?videoId=${videoId}&lang=${language}`;
-  
-  return corsProxy + apiUrl;
-}

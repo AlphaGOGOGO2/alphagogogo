@@ -12,7 +12,7 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
       <div>
         <p className="font-medium">오류 발생</p>
         <p>{error}</p>
-        {error.includes("Failed to fetch") && (
+        {error.includes("네트워크 연결 오류") && (
           <p className="mt-1">
             네트워크 연결을 확인하거나 다른 YouTube 영상을 시도해보세요.
           </p>
