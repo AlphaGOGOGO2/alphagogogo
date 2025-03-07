@@ -33,7 +33,10 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
   const copyToClipboard = () => {
     if (!transcript) return;
     
-    navigator.clipboard.writeText(formatTranscript(transcript))
+    // Use the formatted transcript with line breaks for clipboard
+    const formattedText = formatTranscript(transcript);
+    
+    navigator.clipboard.writeText(formattedText)
       .then(() => {
         setCopied(true);
         toast.success("클립보드에 복사되었습니다!");
