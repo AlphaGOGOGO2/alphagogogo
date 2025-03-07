@@ -12,10 +12,23 @@ interface TranscriptDisplayProps {
 export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
   const [copied, setCopied] = useState(false);
 
+  // Format transcript with line breaks for better readability
+  const formatTranscript = (text: string): string => {
+    if (!text) return "";
+    
+    // Add line breaks after sentence-ending punctuation
+    const formattedText = text
+      .replace(/([.!?])\s+/g, "$1\n\n") // Add double line break after sentence endings
+      .replace(/([.!?])([A-Z])/g, "$1\n\n$2") // Handle cases where there's no space after period
+      .replace(/\n{3,}/g, "\n\n"); // Remove excessive line breaks
+    
+    return formattedText;
+  };
+
   const copyToClipboard = () => {
     if (!transcript) return;
     
-    navigator.clipboard.writeText(transcript)
+    navigator.clipboard.writeText(formatTranscript(transcript))
       .then(() => {
         setCopied(true);
         toast.success("클립보드에 복사되었습니다!");
@@ -31,7 +44,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
     if (!transcript) return;
     
     const element = document.createElement("a");
-    const file = new Blob([transcript], { type: 'text/plain' });
+    const file = new Blob([formatTranscript(transcript)], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = `youtube-transcript-${new Date().toISOString().slice(0, 10)}.txt`;
     document.body.appendChild(element);
@@ -78,7 +91,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
       </div>
       <Textarea
         id="transcript"
-        value={transcript}
+        value={formatTranscript(transcript)}
         readOnly
         className="min-h-[300px] font-mono text-sm bg-white border-purple-100 rounded-lg focus-visible:ring-purple-400"
       />
