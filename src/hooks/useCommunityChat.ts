@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
+import { containsForbiddenWords, censorMessage } from "@/utils/chatFilterUtils";
 
 interface ChatMessage {
   id: string;
@@ -79,6 +80,16 @@ export function useCommunityChat() {
   };
 
   const sendMessage = async (messageContent: string) => {
+    // 금지된 단어 확인
+    if (containsForbiddenWords(messageContent)) {
+      toast({
+        title: "부적절한 내용 감지",
+        description: "욕설이나 선정적인 표현이 포함된 메시지는 전송할 수 없습니다.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     const messageId = uuidv4();
     const tempMessage: ChatMessage = {
       id: messageId,
