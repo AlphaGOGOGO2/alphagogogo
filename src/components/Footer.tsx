@@ -1,9 +1,28 @@
 
 import { Link } from "react-router-dom";
-import { blogCategories, gptsCategories } from "@/config/navigation";
+import { blogCategories, gptsCategories, communityCategories } from "@/config/navigation";
+import { openInfoPopup } from "@/utils/popupUtils";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  
+  const handleCommunityLinkClick = (category: typeof communityCategories[0], event: React.MouseEvent) => {
+    // Only handle special actions for popup items
+    if (category.action === 'popup' && category.actionData) {
+      event.preventDefault();
+      
+      const title = category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내";
+      const action = category.name === "오픈 채팅방" ? 'link' : 'email';
+      
+      // Open popup with info
+      openInfoPopup({
+        title,
+        message: category.actionData,
+        action,
+        actionData: category.path
+      });
+    }
+  };
   
   return (
     <footer className="bg-gray-50 border-t border-gray-100 pt-16 pb-8 px-6 md:px-8">
@@ -79,19 +98,23 @@ export function Footer() {
           <div>
             <h3 className="font-medium text-gray-900 mb-4">커뮤니티</h3>
             <ul className="space-y-3">
-              {[
-                { name: "포럼", path: "/community/forum" },
-                { name: "이벤트", path: "/community/events" },
-                { name: "스터디 그룹", path: "/community/study-groups" },
-                { name: "자료실", path: "/community/resources" }
-              ].map((item) => (
-                <li key={item.name}>
-                  <Link 
-                    to={item.path}
-                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
-                  >
-                    {item.name}
-                  </Link>
+              {communityCategories.map((category) => (
+                <li key={category.name}>
+                  {category.action === 'popup' ? (
+                    <button
+                      className="text-gray-600 hover:text-[#6a1b9a] transition-colors bg-transparent border-none p-0 text-left cursor-pointer"
+                      onClick={(e) => handleCommunityLinkClick(category, e)}
+                    >
+                      {category.name}
+                    </button>
+                  ) : (
+                    <Link 
+                      to={category.path}
+                      className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
+                    >
+                      {category.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
