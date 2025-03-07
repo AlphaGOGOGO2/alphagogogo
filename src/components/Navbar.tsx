@@ -43,7 +43,7 @@ export function Navbar() {
           <span className={cn(
             "bg-clip-text text-transparent bg-gradient-to-r transition-all duration-300",
             isScrolled 
-              ? "from-red-700 to-red-500" 
+              ? "from-purple-800 to-purple-600" 
               : "from-white to-red-200"
           )}>알파블로그</span>
         </Link>
@@ -63,7 +63,7 @@ export function Navbar() {
               className={cn(
                 "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group",
                 isScrolled 
-                  ? "text-red-900 hover:text-red-800" 
+                  ? "text-purple-900 hover:text-purple-800" 
                   : "text-white/90 hover:text-white",
                 location.pathname === item.path && "nav-active"
               )}
@@ -71,7 +71,7 @@ export function Navbar() {
               <span className="relative z-10">{item.name}</span>
               <span className={cn(
                 "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
-                isScrolled ? "bg-red-600" : "bg-red-300",
+                isScrolled ? "bg-purple-600" : "bg-red-300",
                 location.pathname === item.path 
                   ? "scale-x-100" 
                   : "scale-x-0 group-hover:scale-x-100"
@@ -84,7 +84,7 @@ export function Navbar() {
           className={cn(
             "md:hidden p-2 rounded-full transition-colors duration-300",
             isScrolled 
-              ? "text-red-800 hover:bg-gray-100" 
+              ? "text-purple-800 hover:bg-gray-100" 
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
@@ -109,13 +109,13 @@ export function Navbar() {
                 className="w-full h-full object-contain"
               />
             </div>
-            <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-700 to-red-500">알파블로그</span>
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-800 to-purple-600">알파블로그</span>
           </Link>
           <button 
             onClick={() => setIsMobileMenuOpen(false)}
             className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           >
-            <X size={20} className="text-red-800" />
+            <X size={20} className="text-purple-800" />
           </button>
         </div>
         
@@ -132,19 +132,19 @@ export function Navbar() {
               key={item.name}
               to={item.path}
               className={cn(
-                "text-xl font-medium text-red-800 p-2 rounded-md transition-all duration-300 relative",
+                "text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative",
                 location.pathname === item.path 
-                  ? "bg-red-50 pl-4" 
-                  : "hover:bg-red-50/50 hover:pl-4"
+                  ? "bg-purple-50 pl-4" 
+                  : "hover:bg-purple-50/50 hover:pl-4"
               )}
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
               {item.name === "유튜브" && (
-                <Youtube size={16} className="inline-block ml-2 text-red-600" />
+                <Youtube size={16} className="inline-block ml-2 text-purple-600" />
               )}
               {location.pathname === item.path && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-red-600 rounded-r-full" />
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-600 rounded-r-full" />
               )}
             </Link>
           ))}
