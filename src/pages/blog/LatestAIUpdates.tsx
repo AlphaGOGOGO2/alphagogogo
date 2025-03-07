@@ -1,6 +1,6 @@
 
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { BlogGrid } from "@/components/blog/BlogGrid";
+import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogPostsByCategory } from "@/services/blogService";
 import { Loader2 } from "lucide-react";
@@ -23,7 +23,7 @@ export default function LatestAIUpdates() {
           <p className="text-gray-500 mt-2">첫 번째 글을 작성해보세요!</p>
         </div>
       ) : (
-        <BlogGrid posts={posts} />
+        <BlogGridAnimation posts={posts} />
       )}
     </BlogLayout>
   );

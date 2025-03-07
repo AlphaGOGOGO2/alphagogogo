@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [isVisible, setIsVisible] = useState(false);
   
   // Fetch the blog post by slug
   const { data: post, isLoading, error } = useQuery({
@@ -26,6 +27,15 @@ export default function BlogPostPage() {
       navigate("/blog");
     }
   }, [isLoading, post, error, navigate]);
+
+  useEffect(() => {
+    // Start animation after a slight delay
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
   
   const handleEdit = () => {
     if (post) {
@@ -55,7 +65,7 @@ export default function BlogPostPage() {
   
   return (
     <BlogLayout title={post.title}>
-      <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
+      <article className={`max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {post.coverImage && (
           <div className="w-full h-80 overflow-hidden">
             <img 
