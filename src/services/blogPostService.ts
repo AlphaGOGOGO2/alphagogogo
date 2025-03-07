@@ -80,6 +80,15 @@ export const createBlogPost = async (
     // Extract first image URL from content if any
     const coverImageUrl = extractFirstImageUrl(post.content!);
     
+    console.log("Preparing to insert blog post with data:", {
+      title: post.title,
+      category: post.category,
+      slug,
+      read_time: readTime,
+      excerpt,
+      coverImageUrl
+    });
+    
     const { data, error } = await supabase
       .from("blog_posts")
       .insert({
@@ -89,14 +98,19 @@ export const createBlogPost = async (
         cover_image: coverImageUrl,
         slug,
         read_time: readTime,
-        excerpt
+        excerpt,
+        author_name: "알파GOGOGO", // Using default value
+        author_avatar: "https://i.pravatar.cc/150?img=10" // Using default value
       })
       .select()
       .single();
 
     if (error) {
+      console.error("Supabase insert error:", error);
       throw error;
     }
+
+    console.log("Blog post inserted successfully:", data);
 
     // Handle tags if the blog_tags and blog_post_tags tables exist
     if (post.tags && post.tags.length > 0 && data) {

@@ -34,6 +34,9 @@ export default function BlogWritePage() {
     setIsSubmitting(true);
 
     try {
+      // Add console logs to help debug
+      console.log("Attempting to create blog post:", { title, content, category, tags });
+      
       // Create the blog post
       const newPost = await createBlogPost({
         title,
@@ -43,8 +46,11 @@ export default function BlogWritePage() {
       });
       
       if (newPost) {
+        console.log("Post created successfully:", newPost);
+        toast.success("블로그 포스트가 성공적으로 저장되었습니다");
         navigate(`/blog`);
       } else {
+        console.error("Blog post creation returned null or undefined");
         throw new Error("블로그 포스트 작성에 실패했습니다");
       }
     } catch (error) {
