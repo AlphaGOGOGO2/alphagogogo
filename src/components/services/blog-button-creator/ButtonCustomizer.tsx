@@ -1,9 +1,10 @@
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
+import React from "react";
 import { ButtonStyle, ButtonType } from "./BlogButtonCreator";
-import { Checkbox } from "@/components/ui/checkbox";
+import { TextInputGroup } from "./components/TextInputGroup";
+import { ColorInputGroup } from "./components/ColorInputGroup";
+import { SliderInputGroup } from "./components/SliderInputGroup";
+import { SwitchInputGroup } from "./components/SwitchInputGroup";
+import { ButtonTypeGroup } from "./components/ButtonTypeGroup";
 
 interface ButtonCustomizerProps {
   buttonStyle: ButtonStyle;
@@ -81,174 +82,73 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
       <h3 className="text-lg font-semibold text-gray-800 mb-4">버튼 커스터마이징</h3>
       
       <div className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="buttonText">버튼 텍스트</Label>
-          <Input
-            id="buttonText"
-            value={buttonStyle.text}
-            onChange={(e) => handleChange('text', e.target.value)}
-            placeholder="버튼에 표시할 텍스트"
-          />
-        </div>
+        <TextInputGroup
+          id="buttonText"
+          label="버튼 텍스트"
+          value={buttonStyle.text}
+          onChange={(value) => handleChange('text', value)}
+          placeholder="버튼에 표시할 텍스트"
+        />
         
-        <div className="space-y-2">
-          <Label htmlFor="buttonUrl">버튼 URL</Label>
-          <Input
-            id="buttonUrl"
-            value={buttonStyle.url}
-            onChange={(e) => handleChange('url', e.target.value)}
-            placeholder="https://example.com"
-            type="url"
-          />
-        </div>
+        <TextInputGroup
+          id="buttonUrl"
+          label="버튼 URL"
+          value={buttonStyle.url}
+          onChange={(value) => handleChange('url', value)}
+          placeholder="https://example.com"
+          type="url"
+        />
         
-        <div className="space-y-2">
-          <Label htmlFor="backgroundColor">배경 색상</Label>
-          <div className="flex gap-3 items-center">
-            <Input
-              id="backgroundColor"
-              type="color"
-              value={buttonStyle.backgroundColor}
-              onChange={(e) => handleChange('backgroundColor', e.target.value)}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={buttonStyle.backgroundColor}
-              onChange={(e) => handleChange('backgroundColor', e.target.value)}
-              className="flex-1"
-            />
-          </div>
-        </div>
+        <ColorInputGroup
+          id="backgroundColor"
+          label="배경 색상"
+          value={buttonStyle.backgroundColor}
+          onChange={(value) => handleChange('backgroundColor', value)}
+        />
         
-        <div className="space-y-2">
-          <Label htmlFor="textColor">텍스트 색상</Label>
-          <div className="flex gap-3 items-center">
-            <Input
-              id="textColor"
-              type="color"
-              value={buttonStyle.textColor}
-              onChange={(e) => handleChange('textColor', e.target.value)}
-              className="w-12 h-10 p-1"
-            />
-            <Input
-              type="text"
-              value={buttonStyle.textColor}
-              onChange={(e) => handleChange('textColor', e.target.value)}
-              className="flex-1"
-            />
-          </div>
-        </div>
+        <ColorInputGroup
+          id="textColor"
+          label="텍스트 색상"
+          value={buttonStyle.textColor}
+          onChange={(value) => handleChange('textColor', value)}
+        />
         
-        <div className="space-y-2">
-          <Label htmlFor="fontSize" className="flex justify-between">
-            <span>폰트 크기: {buttonStyle.fontSize}px</span>
-          </Label>
-          <Slider
-            id="fontSize"
-            value={[buttonStyle.fontSize]}
-            min={10}
-            max={32}
-            step={1}
-            onValueChange={(value) => handleChange('fontSize', value[0])}
-            className="py-2"
-          />
-        </div>
+        <SliderInputGroup
+          id="fontSize"
+          label="폰트 크기"
+          value={buttonStyle.fontSize}
+          onChange={(value) => handleChange('fontSize', value)}
+          min={10}
+          max={32}
+        />
         
-        <div className="space-y-2">
-          <Label htmlFor="borderRadius" className="flex justify-between">
-            <span>테두리 둥글기: {buttonStyle.borderRadius}px</span>
-          </Label>
-          <Slider
-            id="borderRadius"
-            value={[buttonStyle.borderRadius]}
-            min={0}
-            max={24}
-            step={1}
-            onValueChange={(value) => handleChange('borderRadius', value[0])}
-            className="py-2"
-          />
-        </div>
+        <SliderInputGroup
+          id="borderRadius"
+          label="테두리 둥글기"
+          value={buttonStyle.borderRadius}
+          onChange={(value) => handleChange('borderRadius', value)}
+          min={0}
+          max={24}
+        />
         
-        <div className="flex items-center justify-between">
-          <Label htmlFor="boxShadow" className="cursor-pointer">그림자 효과</Label>
-          <Switch
-            id="boxShadow"
-            checked={buttonStyle.boxShadow}
-            onCheckedChange={(checked) => handleChange('boxShadow', checked)}
-          />
-        </div>
+        <SwitchInputGroup
+          id="boxShadow"
+          label="그림자 효과"
+          checked={buttonStyle.boxShadow}
+          onChange={(checked) => handleChange('boxShadow', checked)}
+        />
         
-        <div className="flex items-center justify-between">
-          <Label htmlFor="hoverEffect" className="cursor-pointer">호버 효과</Label>
-          <Switch
-            id="hoverEffect"
-            checked={buttonStyle.hoverEffect}
-            onCheckedChange={(checked) => handleChange('hoverEffect', checked)}
-          />
-        </div>
+        <SwitchInputGroup
+          id="hoverEffect"
+          label="호버 효과"
+          checked={buttonStyle.hoverEffect}
+          onChange={(checked) => handleChange('hoverEffect', checked)}
+        />
         
-        <div className="space-y-2 pt-2">
-          <Label>버튼 스타일 (다중 선택 가능)</Label>
-          <div className="flex flex-col space-y-3 mt-2">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="primary" 
-                checked={buttonStyle.buttonTypes.includes('primary')}
-                onCheckedChange={() => toggleButtonType('primary')}
-              />
-              <Label htmlFor="primary" className="cursor-pointer">기본 (채워진 배경)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="outline" 
-                checked={buttonStyle.buttonTypes.includes('outline')}
-                onCheckedChange={() => toggleButtonType('outline')}
-              />
-              <Label htmlFor="outline" className="cursor-pointer">아웃라인 (테두리만)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="ghost" 
-                checked={buttonStyle.buttonTypes.includes('ghost')}
-                onCheckedChange={() => toggleButtonType('ghost')}
-              />
-              <Label htmlFor="ghost" className="cursor-pointer">고스트 (배경 없음)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="link" 
-                checked={buttonStyle.buttonTypes.includes('link')}
-                onCheckedChange={() => toggleButtonType('link')}
-              />
-              <Label htmlFor="link" className="cursor-pointer">링크 (밑줄)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="fullWidth" 
-                checked={buttonStyle.buttonTypes.includes('fullWidth')}
-                onCheckedChange={() => toggleButtonType('fullWidth')}
-              />
-              <Label htmlFor="fullWidth" className="cursor-pointer">가로 확장 (100% 너비)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="shiny" 
-                checked={buttonStyle.buttonTypes.includes('shiny')}
-                onCheckedChange={() => toggleButtonType('shiny')}
-              />
-              <Label htmlFor="shiny" className="cursor-pointer">반짝이는 버튼 (애니메이션)</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="grow" 
-                checked={buttonStyle.buttonTypes.includes('grow')}
-                onCheckedChange={() => toggleButtonType('grow')}
-              />
-              <Label htmlFor="grow" className="cursor-pointer">확대 버튼 (호버 시 5배 커짐)</Label>
-            </div>
-          </div>
-        </div>
+        <ButtonTypeGroup
+          selectedTypes={buttonStyle.buttonTypes}
+          onChange={toggleButtonType}
+        />
       </div>
     </div>
   );
