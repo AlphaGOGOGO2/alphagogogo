@@ -15,7 +15,7 @@ export function SEO({
   title = "알파블로그 - 최신 AI 소식 & 인사이트",
   description = "최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파블로그는 인공지능 발전에 대한 최신 정보를 제공합니다.",
   canonicalUrl,
-  ogImage = "/og-image.png",
+  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
   ogType = "website",
   structuredData,
   keywords = "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글",
@@ -46,6 +46,10 @@ export function SEO({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      
+      {/* Favicon Tags */}
+      <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
+      <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
       
       {/* Additional Meta Tags */}
       <meta name="author" content="알파블로그" />

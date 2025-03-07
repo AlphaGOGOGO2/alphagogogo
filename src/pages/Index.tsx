@@ -45,6 +45,7 @@ const Index = () => {
         title="알파블로그 - 최신 AI 소식 & 인사이트"
         canonicalUrl="https://alphablog.app"
         structuredData={structuredData}
+        ogImage="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"
         keywords="알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글"
       />
       <Navbar />
