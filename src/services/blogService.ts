@@ -1,12 +1,21 @@
 
-// Re-exporting all blog-related services for backward compatibility
+/**
+ * Blog Service - Main entry point for blog-related functionality
+ * 
+ * This file organizes all blog service exports by category.
+ * Import from this file to access all blog functionality.
+ */
+
+// Post management (CRUD operations)
 export * from "./blogPostService";
-export * from "./blogCategoryService";
-export * from "./blogMediaService";
+
+// Tag and category management
 export * from "./blogTagService";
-export * from "./blogPostRetrieveService";
-export * from "./blogPostCreateService";
-export * from "./blogPostUpdateService";
-export * from "./blogPostTagsService";
+export * from "./blogCategoryService";
+
+// Media handling
+export * from "./blogMediaService";
+
+// Data adapters and utilities
 export * from "./blogAdapters";
 export * from "@/utils/blogUtils";
