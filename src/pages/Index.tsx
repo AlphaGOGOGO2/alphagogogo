@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { FeaturedPosts } from "@/components/FeaturedPost";
 import { GPTSUsage } from "@/components/GPTSUsage";
+import { Services } from "@/components/Services";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -29,6 +30,7 @@ const Index = () => {
         <Hero />
         <FeaturedPosts />
         <GPTSUsage />
+        <Services />
       </main>
       <Footer />
     </div>

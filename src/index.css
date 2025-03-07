@@ -124,6 +124,38 @@
     @apply absolute -inset-1 rounded-lg blur-md bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] opacity-50 group-hover:opacity-75 transition duration-300;
     z-index: -1;
   }
+  
+  .bg-soft-purple {
+    @apply bg-[#E5DEFF];
+  }
+  
+  .bg-soft-blue {
+    @apply bg-[#D3E4FD];
+  }
+  
+  .bg-soft-yellow {
+    @apply bg-[#FEF7CD];
+  }
+  
+  .bg-soft-green {
+    @apply bg-[#F2FCE2];
+  }
+  
+  .bg-soft-peach {
+    @apply bg-[#FDE1D3];
+  }
+  
+  .bg-soft-pink {
+    @apply bg-[#FFDEE2];
+  }
+  
+  .bg-soft-orange {
+    @apply bg-[#FEC6A1];
+  }
+  
+  .bg-soft-gray {
+    @apply bg-[#F1F0FB];
+  }
 }
 
 .stagger-animation > *:nth-child(1) {
