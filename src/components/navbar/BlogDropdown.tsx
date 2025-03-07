@@ -1,5 +1,5 @@
 
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,10 +25,21 @@ export function BlogDropdown({
 }: BlogDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // 마우스 이벤트 핸들러 추가
+  const handleMouseEnter = () => {
+    onOpenChange(true);
+  };
+
+  const handleMouseLeave = () => {
+    onOpenChange(false);
+  };
+
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <button
         type="button"

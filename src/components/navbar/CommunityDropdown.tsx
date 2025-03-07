@@ -26,6 +26,15 @@ export function CommunityDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
+  // 마우스 이벤트 핸들러 추가
+  const handleMouseEnter = () => {
+    onOpenChange(true);
+  };
+
+  const handleMouseLeave = () => {
+    onOpenChange(false);
+  };
+  
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
     
@@ -57,6 +66,8 @@ export function CommunityDropdown({
     <div 
       className="relative inline-block"
       ref={dropdownRef}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <button
         type="button"

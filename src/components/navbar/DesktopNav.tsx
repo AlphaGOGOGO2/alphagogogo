@@ -35,26 +35,6 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   useEffect(() => {
     setActiveDropdown(null);
   }, [location.pathname]);
-
-  // Close dropdowns when clicking outside navigation
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (!e.target) return;
-      // Check if the click is outside any dropdown
-      const target = e.target as Node;
-      const isInsideNav = document.querySelector('nav')?.contains(target);
-      const isInsideDropdown = document.querySelector('[role="menu"]')?.contains(target);
-      
-      if (!isInsideNav && !isInsideDropdown) {
-        setActiveDropdown(null);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
   
   return (
     <nav 
