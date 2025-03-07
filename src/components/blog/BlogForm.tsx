@@ -37,7 +37,8 @@ export function BlogForm({
   onSubmit
 }: BlogFormProps) {
   return (
-    <form onSubmit={onSubmit} className="space-y-6 max-w-4xl mx-auto">
+    <form onSubmit={onSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+      <h2 className="text-xl font-semibold text-purple-800 mb-4">글 작성</h2>
       <div className="space-y-4">
         <BlogCategorySelect
           category={category}
