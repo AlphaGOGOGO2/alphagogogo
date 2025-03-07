@@ -3,6 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";
 import { GPTSOtherSection } from "@/components/gpts/GPTSOtherSection";
+import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -30,6 +31,7 @@ export default function GPTSPage() {
           
           <GPTSBlogSection />
           <GPTSOtherSection />
+          <GPTSDownloadSection />
         </div>
       </main>
       

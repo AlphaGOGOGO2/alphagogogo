@@ -43,7 +43,7 @@ export function GPTSCard({
           href={url} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-white transition-colors ${buttonColorClass}`}
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-white transition-colors bg-purple-600 hover:bg-purple-700"
         >
           이용하기
           <ExternalLink size={16} />
