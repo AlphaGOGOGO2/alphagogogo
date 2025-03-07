@@ -12,6 +12,7 @@ export default function BlogWritePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
+  const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Fetch categories
@@ -37,6 +38,7 @@ export default function BlogWritePage() {
         title,
         content,
         category,
+        tags: tags.split(',').map(tag => tag.trim()).filter(tag => tag !== "")
       });
       
       if (newPost) {
@@ -61,6 +63,8 @@ export default function BlogWritePage() {
         setContent={setContent}
         category={category}
         setCategory={setCategory}
+        tags={tags}
+        setTags={setTags}
         categories={categories}
         isCategoriesLoading={isCategoriesLoading}
         isSubmitting={isSubmitting}

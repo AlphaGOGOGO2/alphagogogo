@@ -4,6 +4,7 @@ import { BlogTitleInput } from "./BlogTitleInput";
 import { BlogContentInput } from "./BlogContentInput";
 import { BlogCategorySelect } from "./BlogCategorySelect";
 import { BlogSubmitButton } from "./BlogSubmitButton";
+import { BlogTagsInput } from "./BlogTagsInput";
 import { BlogCategory } from "@/types/supabase";
 
 interface BlogFormProps {
@@ -13,6 +14,8 @@ interface BlogFormProps {
   setContent: (content: string) => void;
   category: string;
   setCategory: (category: string) => void;
+  tags: string;
+  setTags: (tags: string) => void;
   categories: BlogCategory[];
   isCategoriesLoading: boolean;
   isSubmitting: boolean;
@@ -26,6 +29,8 @@ export function BlogForm({
   setContent,
   category,
   setCategory,
+  tags,
+  setTags,
   categories,
   isCategoriesLoading,
   isSubmitting,
@@ -34,14 +39,15 @@ export function BlogForm({
   return (
     <form onSubmit={onSubmit} className="space-y-6 max-w-4xl mx-auto">
       <div className="space-y-4">
-        <BlogTitleInput title={title} setTitle={setTitle} />
-        <BlogContentInput content={content} setContent={setContent} />
         <BlogCategorySelect
           category={category}
           setCategory={setCategory}
           categories={categories}
           isLoading={isCategoriesLoading}
         />
+        <BlogTitleInput title={title} setTitle={setTitle} />
+        <BlogContentInput content={content} setContent={setContent} />
+        <BlogTagsInput tags={tags} setTags={setTags} />
       </div>
       <BlogSubmitButton isSubmitting={isSubmitting} />
     </form>
