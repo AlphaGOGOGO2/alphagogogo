@@ -92,9 +92,6 @@ export function Community() {
               >
                 실시간 채팅 참여하기
               </Link>
-              <div className="text-center text-sm text-gray-500">
-                닉네임 설정 후 바로 참여 가능합니다
-              </div>
             </div>
           </div>
         </div>
