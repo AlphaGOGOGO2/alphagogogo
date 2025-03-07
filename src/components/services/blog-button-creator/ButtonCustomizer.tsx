@@ -245,7 +245,7 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
                 checked={buttonStyle.buttonTypes.includes('grow')}
                 onCheckedChange={() => toggleButtonType('grow')}
               />
-              <Label htmlFor="grow" className="cursor-pointer">확대 버튼 (호버 시 커짐)</Label>
+              <Label htmlFor="grow" className="cursor-pointer">확대 버튼 (호버 시 5배 커짐)</Label>
             </div>
           </div>
         </div>
@@ -253,4 +253,3 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
     </div>
   );
 }
-

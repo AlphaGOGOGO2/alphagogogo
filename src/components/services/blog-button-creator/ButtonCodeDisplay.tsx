@@ -1,9 +1,10 @@
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ButtonStyle } from "./BlogButtonCreator";
-import { Copy, Check } from "lucide-react";
-import { toast } from "sonner";
+import { AlertCircle, Check, ClipboardCopy } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ButtonCodeDisplayProps {
   buttonStyle: ButtonStyle;
@@ -11,188 +12,211 @@ interface ButtonCodeDisplayProps {
 
 export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
   const [copied, setCopied] = useState(false);
-
-  // Generate the HTML button code
-  const generateButtonHtml = () => {
-    // Create CSS styles
-    let styles = "";
+  
+  const generateCSSStyles = () => {
+    const { 
+      backgroundColor, textColor, fontSize, borderRadius, 
+      padding, boxShadow, buttonTypes
+    } = buttonStyle;
     
-    // Add animation keyframes for shiny button
-    let keyframes = "";
-    if (buttonStyle.buttonTypes.includes('shiny')) {
-      keyframes = `
-        @keyframes shiny {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-      `;
+    let css = `
+/* 버튼 기본 스타일 */
+.custom-blog-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  font-size: ${fontSize}px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: ${borderRadius}px;
+  padding: ${padding};
+  cursor: pointer;
+  transition: all 0.3s ease;
+`;
+    
+    // Apply base style (primary, outline, or ghost)
+    if (buttonTypes.includes('primary')) {
+      css += `
+  background-color: ${backgroundColor};
+  color: ${textColor};
+  border: none;
+`;
+    } else if (buttonTypes.includes('outline')) {
+      css += `
+  background-color: transparent;
+  color: ${backgroundColor};
+  border: 2px solid ${backgroundColor};
+`;
+    } else if (buttonTypes.includes('ghost')) {
+      css += `
+  background-color: transparent;
+  color: ${backgroundColor};
+  border: none;
+`;
     }
     
-    // Basic styles for all button types
-    let baseStyles = `
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: ${buttonStyle.fontSize}px;
-      font-weight: 500;
-      padding: ${buttonStyle.padding};
-      border-radius: ${buttonStyle.borderRadius}px;
-      text-decoration: none;
-      font-family: sans-serif;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    `;
-    
-    // Apply styles based on button types
-    const types = buttonStyle.buttonTypes;
-    
-    // Base appearance (primary, outline, ghost)
-    if (types.includes('primary')) {
-      styles = `
-        ${baseStyles}
-        background-color: ${buttonStyle.backgroundColor};
-        color: ${buttonStyle.textColor};
-        border: none;
-      `;
-    } else if (types.includes('outline')) {
-      styles = `
-        ${baseStyles}
-        background-color: transparent;
-        color: ${buttonStyle.backgroundColor};
-        border: 2px solid ${buttonStyle.backgroundColor};
-      `;
-    } else if (types.includes('ghost')) {
-      styles = `
-        ${baseStyles}
-        background-color: transparent;
-        color: ${buttonStyle.backgroundColor};
-        border: none;
-      `;
+    // Add box shadow if enabled
+    if (boxShadow && !buttonTypes.includes('link')) {
+      css += `
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+`;
     }
     
     // Link style
-    if (types.includes('link')) {
-      styles = `
-        ${baseStyles}
-        background-color: transparent;
-        color: ${buttonStyle.backgroundColor};
-        padding: 0;
-        text-decoration: underline;
-        text-underline-offset: 4px;
-        border: none;
-      `;
+    if (buttonTypes.includes('link')) {
+      css += `
+  background-color: transparent;
+  border: none;
+  color: ${backgroundColor};
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+`;
     }
     
-    // Full Width
-    if (types.includes('fullWidth')) {
-      styles += `
-        width: 100%;
-        padding: 12px 20px;
-      `;
+    // Full width
+    if (buttonTypes.includes('fullWidth')) {
+      css += `
+  width: 100%;
+  padding: 12px 20px;
+`;
     }
     
-    // Hover effect
+    css += `
+}`;
+    
+    // Hover effects
     if (buttonStyle.hoverEffect) {
-      styles += `
-        :hover { opacity: 0.9; }
-      `;
-    }
-    
-    // Box shadow
-    if (buttonStyle.boxShadow && !types.includes('link')) {
-      styles += `
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-      `;
-    }
-    
-    // Shiny effect
-    if (types.includes('shiny')) {
-      styles += `
-        position: relative;
-        overflow: hidden;
-        z-index: 1;
-        background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
-        background-size: 200% 100%;
-        background-position: -100% 0;
-        animation: shiny 3s infinite linear;
-      `;
+      css += `
+
+/* 호버 효과 */
+.custom-blog-button:hover {
+  opacity: 0.9;
+}
+`;
     }
     
     // Grow effect
-    if (types.includes('grow')) {
-      styles += `
-        transform: scale(1);
-        transition: transform 0.3s ease;
-      `;
-      
-      if (!styles.includes(':hover')) {
-        styles += `
-          :hover { transform: scale(1.05); }
-        `;
-      } else {
-        // If we already have a hover effect, add to it
-        styles = styles.replace(':hover { opacity: 0.9; }', ':hover { opacity: 0.9; transform: scale(1.05); }');
-      }
+    if (buttonTypes.includes('grow')) {
+      css += `
+
+/* 확대 효과 */
+.custom-blog-button {
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.custom-blog-button:hover {
+  transform: scale(5);
+}
+
+.custom-blog-button:active {
+  transform: scale(4);
+}
+`;
     }
+    
+    // Shiny effect
+    if (buttonTypes.includes('shiny')) {
+      css += `
 
-    // Clean up the CSS (remove extra whitespace)
-    styles = styles
-      .replace(/\n/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
+/* 반짝이는 효과 */
+.custom-blog-button {
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
 
-    // Add keyframes if needed
-    let htmlWithStyle = '';
-    if (keyframes) {
-      htmlWithStyle = `<style>\n${keyframes}\n</style>\n`;
-      keyframes = keyframes.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
+.custom-blog-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: all 0.6s;
+  z-index: -1;
+}
+
+.custom-blog-button:hover::before {
+  left: 100%;
+}
+`;
     }
-
-    // Create HTML button with inline styles
-    htmlWithStyle += `<a href="${buttonStyle.url}" style="${styles}" target="_blank" rel="noopener noreferrer">${buttonStyle.text}</a>`;
-
-    return htmlWithStyle;
+    
+    return css;
+  };
+  
+  const generateHTML = () => {
+    const { text, url, buttonTypes } = buttonStyle;
+    
+    const includeIcon = buttonTypes.includes('grow');
+    const iconHTML = includeIcon ? '<span style="margin-right: 4px;">⤢</span>' : '';
+    
+    return `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+${generateCSSStyles()}
+  </style>
+</head>
+<body>
+  <a href="${url}" class="custom-blog-button" target="_blank" rel="noopener noreferrer">
+    ${iconHTML}${text}
+  </a>
+</body>
+</html>`;
   };
 
-  const buttonHtmlCode = generateButtonHtml();
-
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(buttonHtmlCode)
-      .then(() => {
-        setCopied(true);
-        toast.success("HTML 코드가 클립보드에 복사되었습니다!");
-        setTimeout(() => setCopied(false), 2000);
-      })
-      .catch(err => {
-        console.error("클립보드 복사 실패:", err);
-        toast.error("복사하는데 실패했습니다. 수동으로 복사해 주세요.");
-      });
+    navigator.clipboard.writeText(generateHTML());
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    <div className="rounded-lg border bg-gray-50 border-gray-200">
-      <div className="flex items-center justify-between p-3 border-b border-gray-200 bg-gray-100">
-        <span className="text-sm font-medium text-gray-600">HTML 코드</span>
-        <Button
+    <div className="space-y-3">
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="text-sm font-medium text-gray-700">HTML 코드</h3>
+        <Button 
+          variant="outline" 
           size="sm"
-          variant="ghost"
+          className="text-xs"
           onClick={copyToClipboard}
-          className="h-8 px-2 text-gray-600"
         >
           {copied ? (
             <>
-              <Check className="h-4 w-4 mr-1" /> 복사됨
+              <Check className="h-3 w-3 mr-1" />
+              복사됨
             </>
           ) : (
             <>
-              <Copy className="h-4 w-4 mr-1" /> 복사
+              <ClipboardCopy className="h-3 w-3 mr-1" />
+              코드 복사
             </>
           )}
         </Button>
       </div>
-      <pre className="p-4 overflow-x-auto text-sm font-mono text-gray-800 bg-gray-50 max-h-60">
-        {buttonHtmlCode}
-      </pre>
+      
+      <ScrollArea className="h-60 w-full rounded-md border">
+        <pre className="p-4 text-xs text-gray-800 bg-gray-50">
+          <code>{generateHTML()}</code>
+        </pre>
+      </ScrollArea>
+      
+      <Alert variant="outline" className="bg-blue-50 border-blue-200 text-xs py-2">
+        <AlertCircle className="h-3 w-3 text-blue-500" />
+        <AlertDescription className="text-blue-700">
+          HTML 코드를 복사하여 블로그나 웹사이트에 붙여넣으세요.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 }
