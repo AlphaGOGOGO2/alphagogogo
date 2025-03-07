@@ -1,6 +1,5 @@
 
 import { useLocation } from "react-router-dom";
-import { Youtube } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { mainNavItems, blogCategories, type BlogCategory } from "@/config/navigation";
@@ -34,7 +33,6 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
           path={item.path}
           isScrolled={isScrolled}
           isActive={location.pathname === item.path}
-          iconRight={item.name === "유튜브" ? <Youtube size={16} className="inline-block ml-2 text-purple-600" /> : undefined}
         />
       ))}
     </nav>

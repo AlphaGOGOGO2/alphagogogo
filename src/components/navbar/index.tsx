@@ -37,8 +37,8 @@ export function Navbar() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
         isScrolled 
-          ? "bg-white/95 backdrop-blur-md shadow-md" 
-          : "bg-gradient-to-r from-[#1A1F2C]/90 via-[#7E69AB]/90 to-[#403E43]/90 backdrop-blur-lg border-b border-white/10"
+          ? "bg-white shadow-md" 
+          : "bg-gradient-to-r from-[#6a1b9a] via-[#8e24aa] to-[#6a1b9a] backdrop-blur-lg border-b border-white/10"
       )}
       role="banner"
     >

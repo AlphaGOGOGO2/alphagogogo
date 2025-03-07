@@ -1,6 +1,6 @@
 
 import { useLocation } from "react-router-dom";
-import { X, Youtube } from "lucide-react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
@@ -72,7 +72,6 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             path={item.path} 
             isActive={location.pathname === item.path}
             onClick={onClose}
-            iconRight={item.name === "유튜브" ? <Youtube size={16} className="inline-block ml-2 text-purple-600" /> : undefined}
           />
         ))}
       </nav>
