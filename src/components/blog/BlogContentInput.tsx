@@ -67,6 +67,14 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
           }, 0);
         } else {
           // Fallback if textarea ref is not available
+          // Define mediaHtml here as well to fix the scope issue
+          let mediaHtml = '';
+          if (isImage) {
+            mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
+          } else if (isVideo) {
+            mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+          }
+          
           setContent(content ? `${content}\n${mediaHtml}` : mediaHtml);
         }
         
