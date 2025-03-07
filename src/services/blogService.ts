@@ -135,7 +135,7 @@ export const getAllBlogCategories = async (): Promise<BlogCategory[]> => {
 
 // Create a new blog post
 export const createBlogPost = async (
-  post: Omit<Partial<BlogPost>, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt">
+  post: Omit<Partial<BlogPost>, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
 ): Promise<BlogPost | null> => {
   try {
     const slug = generateSlug(post.title!);
@@ -162,6 +162,10 @@ export const createBlogPost = async (
     if (error) {
       throw error;
     }
+
+    // If tags were provided, we could store them in a related table
+    // This would require a separate table for tags and a join table
+    // For now, we'll just return the blog post
 
     toast.success("블로그 포스트가 성공적으로 작성되었습니다");
     return data;
