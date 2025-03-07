@@ -18,6 +18,19 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isMobileMenuOpen]);
   
   return (
     <header 
@@ -27,6 +40,7 @@ export function Navbar() {
           ? "bg-white/95 backdrop-blur-md shadow-md" 
           : "bg-gradient-to-r from-[#1A1F2C]/90 via-[#7E69AB]/90 to-[#403E43]/90 backdrop-blur-lg border-b border-white/10"
       )}
+      role="banner"
     >
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <NavbarLogo isScrolled={isScrolled} />
@@ -41,8 +55,10 @@ export function Navbar() {
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
+          aria-expanded={isMobileMenuOpen}
+          aria-label="Open navigation menu"
         >
-          <Menu size={20} /> 
+          <Menu size={20} aria-hidden="true" /> 
         </button>
       </div>
       

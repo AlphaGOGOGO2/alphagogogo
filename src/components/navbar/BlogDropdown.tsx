@@ -1,3 +1,4 @@
+
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
@@ -28,6 +29,15 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsDropdownOpen(false);
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      setIsDropdownOpen((prev) => !prev);
+    }
+  };
   
   return (
     <div 
@@ -35,23 +45,33 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
       ref={dropdownRef}
       onMouseEnter={() => setIsDropdownOpen(true)}
       onMouseLeave={() => setIsDropdownOpen(false)}
+      onKeyDown={handleKeyDown}
     >
-      <NavLink 
-        name="블로그"
-        path="/blog"
-        isScrolled={isScrolled}
-        isActive={isActive}
-        iconRight={
-          <ChevronDown 
-            size={16} 
-            className={cn(
-              "ml-1 transition-transform duration-300", 
-              isDropdownOpen ? "rotate-180" : "rotate-0",
-              isScrolled ? "text-purple-700" : "text-white/80"
-            )} 
-          />
-        }
-      />
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={isDropdownOpen}
+        aria-haspopup="true"
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+      >
+        <NavLink 
+          name="블로그"
+          path="/blog"
+          isScrolled={isScrolled}
+          isActive={isActive}
+          iconRight={
+            <ChevronDown 
+              size={16} 
+              className={cn(
+                "ml-1 transition-transform duration-300", 
+                isDropdownOpen ? "rotate-180" : "rotate-0",
+                isScrolled ? "text-purple-700" : "text-white/80"
+              )}
+              aria-hidden="true"
+            /> 
+          }
+        />
+      </div>
       
       {/* Dropdown Menu */}
       <div 
@@ -64,11 +84,14 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
             ? "bg-white border border-gray-200" 
             : "bg-white/10 backdrop-blur-lg border border-white/20"
         )}
+        role="menu"
+        aria-orientation="vertical"
+        aria-labelledby="blog-menu"
       >
         <div className="py-1">
           {categories.map((category) => (
             <Link
-              key={category.name}
+              key={category.path}
               to={category.path}
               className={cn(
                 "block px-4 py-2 text-sm transition-colors duration-150",
@@ -76,7 +99,11 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                   : "text-white/90 hover:bg-white/20 hover:text-white"
               )}
-              onClick={onCategoryClick}
+              onClick={() => {
+                setIsDropdownOpen(false);
+                onCategoryClick?.();
+              }}
+              role="menuitem"
             >
               {category.name}
             </Link>

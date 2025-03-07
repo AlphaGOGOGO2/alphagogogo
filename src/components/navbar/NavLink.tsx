@@ -23,16 +23,20 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
         isActive && "nav-active"
       )}
       onClick={onClick}
+      aria-current={isActive ? "page" : undefined}
     >
       <span className="relative z-10">{name}</span>
       {iconRight}
-      <span className={cn(
-        "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
-        isScrolled ? "bg-purple-600" : "bg-red-300",
-        isActive 
-          ? "scale-x-100" 
-          : "scale-x-0 group-hover:scale-x-100"
-      )}></span>
+      <span 
+        className={cn(
+          "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
+          isScrolled ? "bg-purple-600" : "bg-red-300",
+          isActive 
+            ? "scale-x-100" 
+            : "scale-x-0 group-hover:scale-x-100"
+        )}
+        aria-hidden="true"
+      ></span>
     </Link>
   );
 }
