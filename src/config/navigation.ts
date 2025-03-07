@@ -71,5 +71,10 @@ export const servicesCategories: ServicesCategory[] = [
     name: "유튜브 자막 추출", 
     path: "/youtube-transcript",
     description: "YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다."
+  },
+  { 
+    name: "URL 단축", 
+    path: "/url-shortener",
+    description: "긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다."
   }
 ];
