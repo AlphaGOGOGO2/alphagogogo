@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -7,6 +8,9 @@ import { Loader2, Calendar, Clock, User, Pencil } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
+import { SEO } from "@/components/SEO";
+import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
+import { generateExcerpt } from "@/utils/blogUtils";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -54,6 +58,7 @@ export default function BlogPostPage() {
   if (isLoading) {
     return (
       <BlogLayout title="블로그 글 로딩중...">
+        <SEO title="블로그 글 로딩중..." />
         <div className="flex justify-center items-center py-20">
           <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
         </div>
@@ -64,6 +69,7 @@ export default function BlogPostPage() {
   if (!post) {
     return (
       <BlogLayout title="글을 찾을 수 없습니다">
+        <SEO title="글을 찾을 수 없습니다" />
         <div className="text-center py-20">
           <h3 className="text-xl font-medium text-gray-700">요청하신 블로그 글을 찾을 수 없습니다</h3>
         </div>
@@ -71,8 +77,21 @@ export default function BlogPostPage() {
     );
   }
   
+  // Prepare SEO data
+  const postUrl = `https://alphablog.app/blog/${post.slug}`;
+  const excerpt = post.excerpt || generateExcerpt(post.content);
+  
   return (
     <BlogLayout title={post.title}>
+      <SEO 
+        title={post.title}
+        description={excerpt}
+        canonicalUrl={postUrl}
+        ogImage={post.coverImage || "/og-image.png"}
+        ogType="article"
+      />
+      <BlogPostSchema post={post} url={postUrl} />
+      
       <article className={`max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {post.coverImage && (
           <div className="w-full h-80 overflow-hidden">

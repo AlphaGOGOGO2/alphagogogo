@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -52,16 +53,21 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-16">
+      <main className="flex-grow pt-24 pb-16" role="main">
         <div className={cn(
           "mx-auto px-4 sm:px-6 lg:px-8",
           isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
         )}>
           <header className="py-8 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 opacity-0 animate-fade-in" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>{title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 opacity-0 animate-fade-in" 
+                style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}
+                aria-label={`${title} 페이지`}
+              >
+                {title}
+              </h1>
               
-              <nav className="flex flex-wrap gap-2 md:gap-4 mb-8 items-center">
+              <nav aria-label="블로그 카테고리" className="flex flex-wrap gap-2 md:gap-4 mb-8 items-center">
                 {blogCategories.map((category, index) => (
                   <Link
                     key={category.path}
@@ -73,6 +79,7 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
                         : "bg-gray-100 text-gray-700 hover:bg-purple-100 hover:text-purple-700"
                     )}
                     style={{ animationDelay: `${150 + (index * 50)}ms`, animationFillMode: 'forwards' }}
+                    aria-current={location.pathname === category.path ? "page" : undefined}
                   >
                     {category.name}
                   </Link>
@@ -85,6 +92,7 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
                 onClick={handleWriteButtonClick}
                 className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 opacity-0 animate-fade-in" 
                 style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+                aria-label="블로그 글 작성하기"
               >
                 <PenLine size={16} />
                 글쓰기
@@ -92,9 +100,14 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
             )}
           </header>
           
-          <div id="blog-content" className="opacity-0" style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}>
+          <section 
+            id="blog-content" 
+            className="opacity-0" 
+            style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+            aria-live="polite"
+          >
             {children}
-          </div>
+          </section>
         </div>
       </main>
       

@@ -7,6 +7,7 @@ import { GPTSUsage } from "@/components/landing/GPTSUsage";
 import { Services } from "@/components/landing/Services";
 import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
+import { SEO } from "@/components/SEO";
 
 const Index = () => {
   useEffect(() => {
@@ -24,8 +25,26 @@ const Index = () => {
     };
   }, []);
   
+  // HomePage structured data
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "알파블로그",
+    "url": "https://alphablog.app",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://alphablog.app/search?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+  
   return (
     <div className="min-h-screen flex flex-col w-full">
+      <SEO 
+        title="알파블로그 - 최신 AI 소식 & 인사이트"
+        canonicalUrl="https://alphablog.app"
+        structuredData={structuredData}
+      />
       <Navbar />
       <main>
         <Hero />

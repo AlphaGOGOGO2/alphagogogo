@@ -1,0 +1,10 @@
+
+User-agent: *
+Allow: /
+
+# Block access to admin and sensitive areas
+Disallow: /blog/write
+Disallow: /blog/edit/
+
+# Sitemap location
+Sitemap: https://alphablog.app/sitemap.xml
