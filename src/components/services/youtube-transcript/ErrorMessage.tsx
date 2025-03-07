@@ -14,7 +14,7 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         <p>{error}</p>
         {error.includes("네트워크 연결 오류") && (
           <p className="mt-1">
-            네트워크 연결을 확인하거나 잠시 후 다시 시도해보세요.
+            네트워크 연결을 확인하거나 잠시 후 다시 시도해보세요. CORS 문제일 수 있습니다.
           </p>
         )}
         {error.includes("자막이 없거나") && (

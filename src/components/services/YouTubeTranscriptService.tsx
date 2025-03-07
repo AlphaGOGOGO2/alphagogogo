@@ -36,6 +36,7 @@ export function YouTubeTranscriptService() {
                 <div className="text-sm text-yellow-700">
                   <p>자막이 있는 영상에서만 동작합니다. 유효한 YouTube URL을 입력해주세요.</p>
                   <p className="text-xs mt-1">예시: https://www.youtube.com/watch?v=VIDEO_ID 또는 https://youtu.be/VIDEO_ID</p>
+                  <p className="text-xs mt-1">참고: CORS 정책으로 인해 일부 영상의 자막을 가져오지 못할 수 있습니다.</p>
                 </div>
               </div>
             </div>
@@ -55,6 +56,7 @@ export function YouTubeTranscriptService() {
         <CardFooter className="bg-gray-50 rounded-b-lg">
           <p className="text-xs text-gray-500">
             * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
+            브라우저의 CORS 정책으로 인해 접근이 제한될 수 있습니다.
           </p>
         </CardFooter>
       </Card>
