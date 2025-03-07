@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DownloadCloud, ClipboardCopy, Check } from "lucide-react";
+import { DownloadCloud, ClipboardCopy, Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 interface TranscriptDisplayProps {
@@ -41,16 +41,16 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
   };
 
   return (
-    <div className="mt-4">
-      <div className="flex justify-between items-center mb-2">
-        <label htmlFor="transcript" className="block text-sm font-medium text-gray-700">
+    <div className="mt-6 bg-white/60 border border-purple-100 p-5 rounded-xl shadow-sm">
+      <div className="flex justify-between items-center mb-3">
+        <label htmlFor="transcript" className="block text-base font-medium text-gray-800">
           추출된 자막
         </label>
         <div className="flex gap-2">
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800"
             onClick={copyToClipboard}
           >
             {copied ? (
@@ -60,7 +60,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
               </>
             ) : (
               <>
-                <ClipboardCopy className="h-4 w-4" /> 
+                <Copy className="h-4 w-4" /> 
                 복사하기
               </>
             )}
@@ -68,7 +68,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
           <Button 
             variant="outline" 
             size="sm" 
-            className="flex items-center gap-1"
+            className="flex items-center gap-1 border-purple-200 text-purple-700 hover:bg-purple-50 hover:text-purple-800"
             onClick={downloadTranscript}
           >
             <DownloadCloud className="h-4 w-4" /> 
@@ -80,7 +80,7 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
         id="transcript"
         value={transcript}
         readOnly
-        className="min-h-[300px] font-mono text-sm"
+        className="min-h-[300px] font-mono text-sm bg-white border-purple-100 rounded-lg focus-visible:ring-purple-400"
       />
     </div>
   );
