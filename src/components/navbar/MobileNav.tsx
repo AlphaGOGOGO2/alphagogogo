@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
-import { mainNavItems, blogCategories } from "@/config/navigation";
+import { mainNavItems, blogCategories, communityCategories } from "@/config/navigation";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -13,6 +13,97 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
+  
+  const handleCommunityItemClick = (category: typeof communityCategories[0]) => {
+    onClose();
+    
+    if (category.action === 'popup' && category.actionData) {
+      // 팝업창 열기
+      const width = 400;
+      const height = 200;
+      const left = (window.innerWidth - width) / 2;
+      const top = (window.innerHeight - height) / 2;
+      
+      const popup = window.open(
+        "",
+        "popup",
+        `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
+      );
+      
+      if (popup) {
+        popup.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>안내</title>
+            <meta charset="UTF-8">
+            <style>
+              body {
+                font-family: 'Noto Sans KR', sans-serif;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+                background-color: #f8f9fa;
+              }
+              .container {
+                background-color: white;
+                padding: 2rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                text-align: center;
+                max-width: 80%;
+              }
+              h2 {
+                color: #6200ee;
+                margin-bottom: 1rem;
+              }
+              p {
+                color: #333;
+                font-size: 1.1rem;
+                margin-bottom: 1.5rem;
+              }
+              button {
+                background-color: #6200ee;
+                color: white;
+                border: none;
+                padding: 0.5rem 1.5rem;
+                border-radius: 0.25rem;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background-color 0.2s;
+              }
+              button:hover {
+                background-color: #5000d6;
+              }
+              .info-icon {
+                font-size: 2.5rem;
+                color: #6200ee;
+                margin-bottom: 1rem;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="info-icon">ℹ️</div>
+              <h2>${category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내"}</h2>
+              <p>${category.actionData}</p>
+              <button onclick="closeAndRedirect()">확인</button>
+            </div>
+            <script>
+              function closeAndRedirect() {
+                ${category.name === "오픈 채팅방" ? `window.opener.location.href = "${category.path}";` : ''}
+                window.close();
+              }
+            </script>
+          </body>
+          </html>
+        `);
+      }
+    }
+  };
   
   return (
     <div 
@@ -64,8 +155,38 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             ))
           }
         </div>
+
+        <MobileNavLink 
+          name="커뮤니티" 
+          path="/community" 
+          isActive={location.pathname === "/community"}
+          onClick={onClose}
+        />
         
-        {mainNavItems.slice(1).map((item) => (
+        {/* Mobile Community Categories */}
+        <div className="pl-6 space-y-2">
+          {communityCategories.map((category) => (
+            category.action === 'popup' ? (
+              <button
+                key={category.path}
+                className="text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-blue-50/50 hover:pl-4 w-full text-left"
+                onClick={() => handleCommunityItemClick(category)}
+              >
+                - {category.name}
+              </button>
+            ) : (
+              <MobileNavLink
+                key={category.path}
+                name={`- ${category.name}`}
+                path={category.path}
+                isActive={location.pathname === category.path && category.name === "실시간 채팅"}
+                onClick={onClose}
+              />
+            )
+          ))}
+        </div>
+        
+        {mainNavItems.filter(item => item.name !== "홈" && item.name !== "커뮤니티").map((item) => (
           <MobileNavLink 
             key={item.path}
             name={item.name} 

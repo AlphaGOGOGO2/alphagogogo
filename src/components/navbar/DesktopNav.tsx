@@ -4,7 +4,8 @@ import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
-import { mainNavItems, blogCategories, gptsCategories } from "@/config/navigation";
+import { CommunityDropdown } from "./CommunityDropdown";
+import { mainNavItems, blogCategories, gptsCategories, communityCategories } from "@/config/navigation";
 
 interface DesktopNavProps {
   isScrolled: boolean;
@@ -12,10 +13,10 @@ interface DesktopNavProps {
 
 export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
-  const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | "community" | null>(null);
   
   const filteredMainNavItems = mainNavItems.filter(
-    item => item.name !== "홈" && item.name !== "GPTS 이용하기"
+    item => item.name !== "홈" && item.name !== "GPTS 이용하기" && item.name !== "커뮤니티"
   );
   
   const handleBlogDropdownChange = (isOpen: boolean) => {
@@ -24,6 +25,10 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   
   const handleGPTSDropdownChange = (isOpen: boolean) => {
     setActiveDropdown(isOpen ? "gpts" : null);
+  };
+
+  const handleCommunityDropdownChange = (isOpen: boolean) => {
+    setActiveDropdown(isOpen ? "community" : null);
   };
   
   return (
@@ -49,6 +54,14 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         categories={gptsCategories}
         isOpen={activeDropdown === "gpts"}
         onOpenChange={handleGPTSDropdownChange}
+      />
+
+      <CommunityDropdown
+        isScrolled={isScrolled}
+        isActive={location.pathname === "/community"}
+        categories={communityCategories}
+        isOpen={activeDropdown === "community"}
+        onOpenChange={handleCommunityDropdownChange}
       />
       
       {filteredMainNavItems.map((item) => (

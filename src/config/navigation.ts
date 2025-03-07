@@ -36,3 +36,26 @@ export const gptsCategories: GPTSCategory[] = [
   { name: "그 외 GPTS", path: "/gpts#other" },
   { name: "다운로드", path: "/gpts#download" }
 ];
+
+export interface CommunityCategory {
+  name: string;
+  path: string;
+  action?: 'popup' | 'link';
+  actionData?: string;
+}
+
+export const communityCategories: CommunityCategory[] = [
+  { name: "실시간 채팅", path: "/community" },
+  { 
+    name: "오픈 채팅방", 
+    path: "https://open.kakao.com/o/gNCJvOeh", 
+    action: 'popup',
+    actionData: "입장코드는 대문자로 GOGOGO 입니다."
+  },
+  { 
+    name: "비즈니스 문의", 
+    path: "mailto:skssk01033@naver.com", 
+    action: 'popup',
+    actionData: "skssk01033@naver.com"
+  }
+];
