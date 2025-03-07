@@ -4,14 +4,14 @@ import { X, Youtube } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
+import { mainNavItems, blogCategories } from "@/config/navigation";
 
 interface MobileNavProps {
   isOpen: boolean;
   onClose: () => void;
-  blogCategories: Array<{ name: string; path: string }>;
 }
 
-export function MobileNav({ isOpen, onClose, blogCategories }: MobileNavProps) {
+export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
   
   return (
@@ -60,31 +60,16 @@ export function MobileNav({ isOpen, onClose, blogCategories }: MobileNavProps) {
           }
         </div>
         
-        <MobileNavLink 
-          name="GPTS 이용하기" 
-          path="/gpts" 
-          isActive={location.pathname === "/gpts"}
-          onClick={onClose}
-        />
-        <MobileNavLink 
-          name="서비스" 
-          path="/services" 
-          isActive={location.pathname === "/services"}
-          onClick={onClose}
-        />
-        <MobileNavLink 
-          name="유튜브" 
-          path="/youtube" 
-          isActive={location.pathname === "/youtube"}
-          onClick={onClose}
-          iconRight={<Youtube size={16} className="inline-block ml-2 text-purple-600" />}
-        />
-        <MobileNavLink 
-          name="커뮤니티" 
-          path="/community" 
-          isActive={location.pathname === "/community"}
-          onClick={onClose}
-        />
+        {mainNavItems.slice(1).map((item) => (
+          <MobileNavLink 
+            key={item.name}
+            name={item.name} 
+            path={item.path} 
+            isActive={location.pathname === item.path}
+            onClick={onClose}
+            iconRight={item.name === "유튜브" ? <Youtube size={16} className="inline-block ml-2 text-purple-600" /> : undefined}
+          />
+        ))}
       </nav>
     </div>
   );

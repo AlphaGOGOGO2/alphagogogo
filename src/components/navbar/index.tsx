@@ -10,12 +10,6 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  const blogCategories = [
-    { name: "최신 업데이트 소식", path: "/blog/latest-updates" },
-    { name: "화제의 이슈", path: "/blog/trending" },
-    { name: "일상 라이프", path: "/blog/lifestyle" }
-  ];
-  
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
@@ -37,7 +31,7 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <NavbarLogo isScrolled={isScrolled} />
         
-        <DesktopNav isScrolled={isScrolled} blogCategories={blogCategories} />
+        <DesktopNav isScrolled={isScrolled} />
         
         <button 
           className={cn(
@@ -55,9 +49,7 @@ export function Navbar() {
       <MobileNav 
         isOpen={isMobileMenuOpen} 
         onClose={() => setIsMobileMenuOpen(false)} 
-        blogCategories={blogCategories}
       />
     </header>
   );
 }
-

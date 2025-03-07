@@ -3,13 +3,13 @@ import { useLocation } from "react-router-dom";
 import { Youtube } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
+import { mainNavItems, blogCategories, type BlogCategory } from "@/config/navigation";
 
 interface DesktopNavProps {
   isScrolled: boolean;
-  blogCategories: Array<{ name: string; path: string }>;
 }
 
-export function DesktopNav({ isScrolled, blogCategories }: DesktopNavProps) {
+export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
   
   return (
@@ -27,12 +27,7 @@ export function DesktopNav({ isScrolled, blogCategories }: DesktopNavProps) {
         categories={blogCategories}
       />
       
-      {[
-        { name: "GPTS 이용하기", path: "/gpts" },
-        { name: "서비스", path: "/services" },
-        { name: "유튜브", path: "/youtube", icon: <Youtube size={16} className="inline-block ml-2 text-purple-600" /> },
-        { name: "커뮤니티", path: "/community" }
-      ].map((item) => (
+      {mainNavItems.slice(1).map((item) => (
         <NavLink
           key={item.name}
           name={item.name}

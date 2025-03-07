@@ -1,14 +1,9 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
-
-interface BlogCategory {
-  name: string;
-  path: string;
-}
+import { type BlogCategory } from "@/config/navigation";
 
 interface BlogDropdownProps {
   isScrolled: boolean;
