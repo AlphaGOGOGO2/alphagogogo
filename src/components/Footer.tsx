@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="bg-gray-50 border-t border-gray-100 pt-16 pb-8 px-6 md:px-8">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-10 mb-12">
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold mb-4">
               <img 
@@ -72,6 +72,27 @@ export function Footer() {
                 { name: "기업 솔루션", path: "/services/enterprise" },
                 { name: "교육 프로그램", path: "/services/education" },
                 { name: "리서치 분석", path: "/services/research" }
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link 
+                    to={item.path}
+                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="font-medium text-gray-900 mb-4">커뮤니티</h3>
+            <ul className="space-y-3">
+              {[
+                { name: "포럼", path: "/community/forum" },
+                { name: "이벤트", path: "/community/events" },
+                { name: "스터디 그룹", path: "/community/study-groups" },
+                { name: "자료실", path: "/community/resources" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
