@@ -1,5 +1,5 @@
-
 import { Link } from "react-router-dom";
+import { blogCategories } from "@/config/navigation";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -25,18 +25,13 @@ export function Footer() {
           <div>
             <h3 className="font-medium text-gray-900 mb-4">블로그</h3>
             <ul className="space-y-3">
-              {[
-                { name: "최신글", path: "/blog/latest" },
-                { name: "인기글", path: "/blog/popular" },
-                { name: "에디터의 선택", path: "/blog/editors-pick" },
-                { name: "아카이브", path: "/blog/archive" }
-              ].map((item) => (
-                <li key={item.name}>
+              {blogCategories.map((category) => (
+                <li key={category.name}>
                   <Link 
-                    to={item.path}
+                    to={category.path}
                     className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
-                    {item.name}
+                    {category.name}
                   </Link>
                 </li>
               ))}
