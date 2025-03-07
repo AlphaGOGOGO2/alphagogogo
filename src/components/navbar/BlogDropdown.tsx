@@ -43,7 +43,10 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onMouseLeave={() => setIsDropdownOpen(false)}
+      onMouseLeave={() => {
+        // Add a small delay before closing to improve user experience
+        setTimeout(() => setIsDropdownOpen(false), 150);
+      }}
       onKeyDown={handleKeyDown}
     >
       <div
@@ -89,19 +92,21 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         aria-orientation="vertical"
         aria-labelledby="blog-menu"
       >
+        {/* Add padding to create larger hit area */}
         <div className="py-1">
           {categories.map((category) => (
             <Link
               key={category.path}
               to={category.path}
               className={cn(
-                "block px-4 py-2 text-sm transition-colors duration-150 whitespace-nowrap",
+                "block px-4 py-2.5 text-sm transition-colors duration-150 whitespace-nowrap",
                 isScrolled 
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                   : "text-white/90 hover:bg-white/20 hover:text-white"
               )}
               onClick={() => {
-                setIsDropdownOpen(false);
+                // Don't close dropdown when clicking category
+                // This allows users to quickly navigate between categories
                 onCategoryClick?.();
               }}
               role="menuitem"
