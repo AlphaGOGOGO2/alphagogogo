@@ -8,6 +8,7 @@ interface SEOProps {
   ogImage?: string;
   ogType?: "website" | "article" | "blog";
   structuredData?: Record<string, any>;
+  keywords?: string;
 }
 
 export function SEO({
@@ -17,6 +18,7 @@ export function SEO({
   ogImage = "/og-image.png",
   ogType = "website",
   structuredData,
+  keywords = "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글",
 }: SEOProps) {
   // Create the full title with branding
   const fullTitle = title.includes("알파블로그") ? title : `${title} | 알파블로그`;
@@ -29,6 +31,7 @@ export function SEO({
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      <meta name="keywords" content={keywords} />
       <link rel="canonical" href={canonical} />
       
       {/* Open Graph Tags */}
@@ -43,6 +46,12 @@ export function SEO({
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={ogImage} />
+      
+      {/* Additional Meta Tags */}
+      <meta name="author" content="알파블로그" />
+      <meta name="robots" content="index, follow" />
+      <meta name="language" content="Korean" />
+      <meta name="revisit-after" content="7 days" />
       
       {/* Structured Data */}
       {structuredData && (

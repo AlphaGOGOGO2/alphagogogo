@@ -5,6 +5,8 @@ Allow: /
 # Block access to admin and sensitive areas
 Disallow: /blog/write
 Disallow: /blog/edit/
+Disallow: /admin/
+Disallow: /private/
 
 # Sitemap location
 Sitemap: https://alphablog.app/sitemap.xml

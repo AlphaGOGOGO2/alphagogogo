@@ -23,7 +23,8 @@ export default function AllBlogPage() {
       "@type": "WebSite",
       "name": "알파블로그",
       "url": "https://alphablog.app"
-    }
+    },
+    "keywords": "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글"
   };
   
   return (
@@ -33,6 +34,7 @@ export default function AllBlogPage() {
         description="알파블로그의 모든 글 모음입니다. 인공지능, 기술, 라이프스타일에 관한 다양한 콘텐츠를 확인하세요."
         canonicalUrl="https://alphablog.app/blog"
         structuredData={structuredData}
+        keywords="알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글"
       />
       
       {isLoading ? (

@@ -17,7 +17,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "name": post.author.name
     },
     "datePublished": post.publishedAt,
-    "dateModified": post.updatedAt || post.publishedAt,
+    "dateModified": post.publishedAt, // Fixed the error by using publishedAt instead of updatedAt
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": url
@@ -29,7 +29,8 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
         "@type": "ImageObject",
         "url": "https://alphablog.app/logo.png"
       }
-    }
+    },
+    "keywords": "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그"
   };
 
   if (post.coverImage) {
