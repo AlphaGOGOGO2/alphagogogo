@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { blogCategories, gptsCategories, communityCategories, servicesCategories } from "@/config/navigation";
 import { openInfoPopup } from "@/utils/popupUtils";
@@ -76,17 +77,13 @@ export function Footer() {
           <div>
             <h3 className="font-medium text-gray-900 mb-4">서비스</h3>
             <ul className="space-y-3">
-              {[
-                { name: "유튜브 자막 추출기", path: "/youtube-transcript" },
-                { name: "URL 단축기", path: "/url-shortener" },
-                { name: "블로그 버튼 생성기", path: "/blog-button-creator" }
-              ].map((item) => (
-                <li key={item.name}>
+              {servicesCategories.map((service) => (
+                <li key={service.name}>
                   <Link 
-                    to={item.path}
+                    to={service.path}
                     className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
-                    {item.name}
+                    {service.name}
                   </Link>
                 </li>
               ))}
