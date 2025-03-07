@@ -1,4 +1,3 @@
-
 import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
@@ -27,7 +26,6 @@ export function CommunityDropdown({
   const navigate = useNavigate();
   const [closeTimeout, setCloseTimeout] = useState<number | null>(null);
   
-  // 마우스 이벤트 핸들러 개선
   const handleMouseEnter = () => {
     if (closeTimeout) {
       clearTimeout(closeTimeout);
@@ -44,7 +42,6 @@ export function CommunityDropdown({
     setCloseTimeout(timeout as unknown as number);
   };
 
-  // 컴포넌트 언마운트 시 타임아웃 정리
   useEffect(() => {
     return () => {
       if (closeTimeout) {
@@ -67,16 +64,12 @@ export function CommunityDropdown({
       const title = category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내";
       const action = category.name === "오픈 채팅방" ? 'link' : 'email';
       
-      const isPopupOpened = openInfoPopup({
+      openInfoPopup({
         title,
         message: category.actionData,
         action,
         actionData: category.path
       });
-      
-      if (!isPopupOpened) {
-        window.location.href = category.path;
-      }
     }
   };
   
