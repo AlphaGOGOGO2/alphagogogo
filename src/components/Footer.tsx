@@ -1,5 +1,6 @@
+
 import { Link } from "react-router-dom";
-import { blogCategories } from "@/config/navigation";
+import { blogCategories, gptsCategories } from "@/config/navigation";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -41,18 +42,13 @@ export function Footer() {
           <div>
             <h3 className="font-medium text-gray-900 mb-4">GPTS 이용하기</h3>
             <ul className="space-y-3">
-              {[
-                { name: "GPT 모델", path: "/gpts/models" },
-                { name: "사용 가이드", path: "/gpts/guide" },
-                { name: "API 연동", path: "/gpts/api" },
-                { name: "맞춤형 솔루션", path: "/gpts/custom" }
-              ].map((item) => (
-                <li key={item.name}>
+              {gptsCategories.map((category) => (
+                <li key={category.name}>
                   <Link 
-                    to={item.path}
+                    to={category.path}
                     className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
-                    {item.name}
+                    {category.name}
                   </Link>
                 </li>
               ))}

@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
-import { mainNavItems, blogCategories } from "@/config/navigation";
+import { mainNavItems, blogCategories, gptsCategories } from "@/config/navigation";
 
 interface DesktopNavProps {
   isScrolled: boolean;
@@ -11,12 +11,6 @@ interface DesktopNavProps {
 
 export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
-  
-  const gptsCategories = [
-    { name: "블로그 GPTS", path: "/gpts#blog" },
-    { name: "그 외 GPTS", path: "/gpts#other" },
-    { name: "다운로드", path: "/gpts#download" }
-  ];
   
   const filteredMainNavItems = mainNavItems.filter(
     item => item.name !== "홈" && item.name !== "GPTS 이용하기"
