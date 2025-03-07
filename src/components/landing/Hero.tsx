@@ -1,3 +1,4 @@
+
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -30,17 +31,17 @@ export function Hero() {
         <div className="absolute inset-0 bg-[#1E293B]/90 backdrop-blur-[3px]"></div>
       </div>
       
-      {/* Enhanced animated shapes with more vibrant colors */}
+      {/* Subtle animated shapes with lighter colors */}
       <div className="absolute inset-0 overflow-hidden z-[1]">
-        <div className="absolute top-16 right-[10%] w-80 h-80 rounded-full bg-[#9c27b0]/30 blur-3xl animate-float purple-glow"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#6a1b9a]/30 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-[40%] left-[20%] w-60 h-60 rounded-full bg-[#8e24aa]/30 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-[30%] right-[30%] w-40 h-40 rounded-full bg-[#7b1fa2]/20 blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-16 right-[10%] w-80 h-80 rounded-full bg-purple-500/10 blur-3xl animate-float"></div>
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-blue-500/10 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-[40%] left-[20%] w-60 h-60 rounded-full bg-indigo-500/10 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-[30%] right-[30%] w-40 h-40 rounded-full bg-violet-500/10 blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
       <div className="relative w-full h-full max-w-7xl mx-auto px-6 md:px-8 flex flex-col items-center justify-center text-center z-10">
         <div className="stagger-animation">
-          <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 animate-fade-in shadow-lg shadow-[#6a1b9a]/20">
+          <div className="inline-block mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 animate-fade-in shadow-lg">
             <span className="text-white/90 text-sm font-medium">AI를 이해하는 새로운 관점</span>
           </div>
           
@@ -58,12 +59,12 @@ export function Hero() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in">
             <button 
               onClick={scrollToFeaturedPosts}
-              className="group relative px-6 py-3 rounded-lg bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] text-white font-medium transition-all transform hover:-translate-y-0.5 shadow-lg shadow-[#6a1b9a]/30 overflow-hidden"
+              className="group relative px-6 py-3 rounded-lg bg-white text-blue-900 font-medium transition-all transform hover:-translate-y-0.5 shadow-lg overflow-hidden"
             >
               <span className="relative z-10">최신글 확인하기</span>
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-100/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
             </button>
-            <button className="animated-button px-6 py-3 rounded-lg bg-[#6a1b9a]/20 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-[#6a1b9a]/30 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#6a1b9a]/20">
+            <button className="animated-button px-6 py-3 rounded-lg bg-[#1E293B]/70 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-[#1E293B]/80 transition-all flex items-center justify-center gap-2 shadow-lg">
               무료 GPTS 이용하기
               <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
@@ -79,7 +80,7 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Removed all sparkle effects styles */}
+      {/* Animation styles */}
       <style>
         {`
         .animate-float {
