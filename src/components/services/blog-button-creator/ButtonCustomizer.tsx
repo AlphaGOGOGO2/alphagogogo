@@ -8,15 +8,12 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 interface ButtonCustomizerProps {
   buttonStyle: ButtonStyle;
-  setButtonStyle: React.Dispatch<React.SetStateAction<ButtonStyle>>;
+  setButtonStyle: (updatedStyle: Partial<ButtonStyle>) => void;
 }
 
 export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomizerProps) {
   const handleChange = (field: keyof ButtonStyle, value: any) => {
-    setButtonStyle(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setButtonStyle({ [field]: value });
   };
 
   return (
@@ -24,6 +21,16 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
       <h3 className="text-lg font-semibold text-gray-800 mb-4">버튼 커스터마이징</h3>
       
       <div className="space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="buttonName">버튼 이름 (관리용)</Label>
+          <Input
+            id="buttonName"
+            value={buttonStyle.name}
+            onChange={(e) => handleChange('name', e.target.value)}
+            placeholder="버튼 이름 (관리용)"
+          />
+        </div>
+        
         <div className="space-y-2">
           <Label htmlFor="buttonText">버튼 텍스트</Label>
           <Input
