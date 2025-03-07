@@ -15,6 +15,24 @@ const generateSlug = (title: string): string => {
     .trim() + "-" + uuidv4().substring(0, 8);
 };
 
+// Calculate reading time based on word count
+// Average reading speed: 200-250 words per minute
+const calculateReadingTime = (content: string): number => {
+  const textContent = content.replace(/<[^>]*>/g, ''); // Remove HTML tags
+  const words = textContent.trim().split(/\s+/).length;
+  const readingTime = Math.ceil(words / 200); // Assuming 200 words per minute
+  return Math.max(1, readingTime); // Minimum 1 minute
+};
+
+// Generate excerpt from content
+const generateExcerpt = (content: string, maxLength: number = 150): string => {
+  const textContent = content.replace(/<[^>]*>/g, ''); // Remove HTML tags
+  if (textContent.length <= maxLength) {
+    return textContent;
+  }
+  return textContent.substring(0, maxLength).trim() + '...';
+};
+
 // Convert Supabase BlogPost to UI BlogPost
 export const adaptBlogPost = (post: BlogPost): UiBlogPost => {
   return {
@@ -118,16 +136,20 @@ export const getAllBlogCategories = async (): Promise<BlogCategory[]> => {
 
 // Create a new blog post
 export const createBlogPost = async (
-  post: Omit<BlogPost, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug">
+  post: Omit<Partial<BlogPost>, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt">
 ): Promise<BlogPost | null> => {
   try {
-    const slug = generateSlug(post.title);
+    const slug = generateSlug(post.title!);
+    const readTime = calculateReadingTime(post.content!);
+    const excerpt = generateExcerpt(post.content!);
     
     const { data, error } = await supabase
       .from("blog_posts")
       .insert({
         ...post,
-        slug
+        slug,
+        read_time: readTime,
+        excerpt
       })
       .select()
       .single();

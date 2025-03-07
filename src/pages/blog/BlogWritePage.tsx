@@ -1,5 +1,5 @@
 
-import { useState, useRef, ChangeEvent, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,48 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBlogCategories, createBlogPost, uploadBlogImage } from "@/services/blogService";
+import { getAllBlogCategories, createBlogPost } from "@/services/blogService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Loader2, Upload } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
-  const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
-  const [readTime, setReadTime] = useState(5);
-  const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [coverImagePreview, setCoverImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Fetch categories
   const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["blog-categories"],
     queryFn: getAllBlogCategories
   });
-
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setCoverImage(file);
-      
-      // Preview the image
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCoverImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const triggerFileInput = () => {
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -62,23 +37,14 @@ export default function BlogWritePage() {
     setIsSubmitting(true);
 
     try {
-      let coverImageUrl = null;
-      
-      // If there's an image, upload it first
-      if (coverImage) {
-        coverImageUrl = await uploadBlogImage(coverImage);
-        if (!coverImageUrl) {
-          throw new Error("이미지 업로드에 실패했습니다");
-        }
-      }
+      // Extract first image URL from content if any
+      const coverImageUrl = extractFirstImageUrl(content);
       
       // Create the blog post
       const newPost = await createBlogPost({
         title,
-        excerpt: excerpt || null,
         content,
         category,
-        read_time: readTime,
         cover_image: coverImageUrl
       });
       
@@ -93,6 +59,13 @@ export default function BlogWritePage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Extract the first image URL from HTML content
+  const extractFirstImageUrl = (htmlContent: string): string | null => {
+    const imgRegex = /<img[^>]+src="([^">]+)"/i;
+    const match = htmlContent.match(imgRegex);
+    return match ? match[1] : null;
   };
 
   return (
@@ -111,17 +84,6 @@ export default function BlogWritePage() {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="excerpt">요약 (선택)</Label>
-            <Textarea 
-              id="excerpt" 
-              value={excerpt} 
-              onChange={(e) => setExcerpt(e.target.value)} 
-              placeholder="글의 요약을 입력하세요 (선택사항)" 
-              rows={3} 
-            />
-          </div>
-          
-          <div className="space-y-2">
             <Label htmlFor="content">내용</Label>
             <Textarea 
               id="content" 
@@ -131,75 +93,33 @@ export default function BlogWritePage() {
               rows={15} 
               required 
             />
-            <p className="text-sm text-gray-500">HTML 형식으로 작성 가능합니다.</p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">카테고리</Label>
-              {isCategoriesLoading ? (
-                <Select disabled>
-                  <SelectTrigger>
-                    <SelectValue placeholder="카테고리 로딩 중..." />
-                  </SelectTrigger>
-                </Select>
-              ) : (
-                <Select value={category} onValueChange={setCategory} required>
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="카테고리 선택" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.name}>
-                        {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="readTime">예상 읽기 시간 (분)</Label>
-              <Input 
-                id="readTime" 
-                type="number" 
-                value={readTime} 
-                onChange={(e) => setReadTime(Number(e.target.value))} 
-                min={1} 
-                required 
-              />
-            </div>
+            <p className="text-sm text-gray-500">
+              HTML 형식으로 작성 가능합니다. 본문에 포함된 첫 번째 이미지가 자동으로 커버 이미지로 사용됩니다.
+            </p>
           </div>
           
           <div className="space-y-2">
-            <Label>커버 이미지</Label>
-            <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer" onClick={triggerFileInput}>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleImageChange} 
-                accept="image/*" 
-                className="hidden" 
-              />
-              
-              {coverImagePreview ? (
-                <div className="w-full space-y-2">
-                  <img 
-                    src={coverImagePreview} 
-                    alt="Cover preview" 
-                    className="w-full h-48 object-cover rounded-lg" 
-                  />
-                  <p className="text-sm text-center text-gray-500">이미지를 변경하려면 클릭하세요</p>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center">
-                  <Upload className="w-10 h-10 text-gray-400 mb-2" />
-                  <p className="text-sm font-medium text-gray-500">이미지를 업로드하려면 클릭하세요</p>
-                  <p className="text-xs text-gray-400 mt-1">JPG, PNG, GIF 파일 지원</p>
-                </div>
-              )}
-            </div>
+            <Label htmlFor="category">카테고리</Label>
+            {isCategoriesLoading ? (
+              <Select disabled>
+                <SelectTrigger>
+                  <SelectValue placeholder="카테고리 로딩 중..." />
+                </SelectTrigger>
+              </Select>
+            ) : (
+              <Select value={category} onValueChange={setCategory} required>
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="카테고리 선택" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.name}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
         
