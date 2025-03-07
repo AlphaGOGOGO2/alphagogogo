@@ -1,5 +1,5 @@
 
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,15 +25,33 @@ export function CommunityDropdown({
 }: CommunityDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [closeTimeout, setCloseTimeout] = useState<number | null>(null);
   
-  // 마우스 이벤트 핸들러 추가
+  // 마우스 이벤트 핸들러 개선
   const handleMouseEnter = () => {
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
     onOpenChange(true);
   };
 
   const handleMouseLeave = () => {
-    onOpenChange(false);
+    const timeout = window.setTimeout(() => {
+      onOpenChange(false);
+    }, 300); // 300ms 지연시간 추가
+    
+    setCloseTimeout(timeout as unknown as number);
   };
+
+  // 컴포넌트 언마운트 시 타임아웃 정리
+  useEffect(() => {
+    return () => {
+      if (closeTimeout) {
+        clearTimeout(closeTimeout);
+      }
+    };
+  }, [closeTimeout]);
   
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
@@ -111,6 +129,8 @@ export function CommunityDropdown({
           aria-orientation="vertical"
           aria-labelledby="community-menu"
           onClick={(e) => e.stopPropagation()}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
         >
           <CommunityDropdownItems 
             categories={categories} 
