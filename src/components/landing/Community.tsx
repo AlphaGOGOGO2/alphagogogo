@@ -50,7 +50,7 @@ export function Community() {
             함께 성장하기
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-purple-800">
-            알파블로그 커뮤니티
+            커뮤니티
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto text-balance">
             AI에 관심 있는 사람들이 모여 지식을 나누고 함께 성장하는 활기찬 커뮤니티에 참여하세요.
