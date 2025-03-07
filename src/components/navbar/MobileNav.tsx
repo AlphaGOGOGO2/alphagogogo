@@ -1,5 +1,5 @@
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
@@ -13,9 +13,19 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   
-  const handleCommunityItemClick = (category: typeof communityCategories[0]) => {
+  const handleCommunityItemClick = (category: typeof communityCategories[0], event: React.MouseEvent) => {
     onClose();
+    
+    // 일반 링크 클릭은 기본 동작 그대로 유지
+    if (!category.action) {
+      navigate(category.path);
+      return;
+    }
+    
+    // 팝업 액션이 있는 경우 기본 동작 중단
+    event.preventDefault();
     
     if (category.action === 'popup' && category.actionData) {
       // 팝업창 열기
@@ -170,7 +180,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               <button
                 key={category.path}
                 className="text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-blue-50/50 hover:pl-4 w-full text-left"
-                onClick={() => handleCommunityItemClick(category)}
+                onClick={(e) => handleCommunityItemClick(category, e)}
               >
                 - {category.name}
               </button>
@@ -200,3 +210,4 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     </div>
   );
 }
+

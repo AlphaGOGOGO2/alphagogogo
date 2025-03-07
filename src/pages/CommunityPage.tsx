@@ -8,7 +8,7 @@ export default function CommunityPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <main className="flex-grow pt-28 pb-12"> {/* 상단 패딩 유지하고 하단 패딩 추가 */}
+      <main className="flex-grow pt-32 pb-12"> {/* 패딩 상단값 더 늘림 */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">커뮤니티 채팅</h1>

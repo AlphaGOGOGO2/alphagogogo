@@ -1,6 +1,6 @@
 
 import { useRef, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronDown, MessageCircle, ExternalLink, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
@@ -23,6 +23,7 @@ export function CommunityDropdown({
   onOpenChange
 }: CommunityDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const { toast } = useToast();
   
   useEffect(() => {
@@ -59,8 +60,17 @@ export function CommunityDropdown({
     }
   };
 
-  const handleCategoryClick = (category: CommunityCategory) => {
+  const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
+    
+    // 일반 링크 클릭은 기본 동작 그대로 유지
+    if (!category.action) {
+      navigate(category.path);
+      return;
+    }
+    
+    // 팝업 액션이 있는 경우 기본 동작 중단
+    event.preventDefault();
     
     if (category.action === 'popup' && category.actionData) {
       // 팝업창 열기
@@ -230,7 +240,7 @@ export function CommunityDropdown({
                     ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                     : "text-white hover:bg-white/20 hover:text-white"
                 )}
-                onClick={() => handleCategoryClick(category)}
+                onClick={(e) => handleCategoryClick(category, e)}
                 role="menuitem"
               >
                 {getCategoryIcon(category.name)}
@@ -246,7 +256,7 @@ export function CommunityDropdown({
                     ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                     : "text-white hover:bg-white/20 hover:text-white"
                 )}
-                onClick={() => handleCategoryClick(category)}
+                onClick={(e) => handleCategoryClick(category, e)}
                 role="menuitem"
               >
                 {getCategoryIcon(category.name)}
@@ -259,3 +269,4 @@ export function CommunityDropdown({
     </div>
   );
 }
+
