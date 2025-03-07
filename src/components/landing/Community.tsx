@@ -1,43 +1,37 @@
 
-import {
-  Users,
-  MessageSquare,
-  Calendar,
-  BookOpen,
-  UserPlus
-} from "lucide-react";
+import { Users, MessageSquare, BellDot, Share2, HeartHandshake } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function Community() {
   const communityFeatures = [
     {
       icon: <MessageSquare className="text-purple-600" size={20} />,
-      title: "포럼 토론",
-      description: "AI 관련 주제에 대한 토론과 질문을 나눌 수 있는 열린 공간입니다.",
-      color: "bg-white border-2 border-purple-100"
-    },
-    {
-      icon: <Calendar className="text-purple-600" size={20} />,
-      title: "오프라인 이벤트",
-      description: "정기적인 모임과 컨퍼런스를 통해 직접 만나고 교류할 수 있습니다.",
+      title: "실시간 채팅",
+      description: "AI 관련 주제에 대한 토론과 질문을 나눌 수 있는 열린 실시간 채팅 공간입니다.",
       color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <Users className="text-purple-600" size={20} />,
-      title: "스터디 그룹",
-      description: "같은 관심사를 가진 사람들과 함께 공부하고 성장할 수 있습니다.",
+      title: "활발한 커뮤니티",
+      description: "수많은 사용자들이 활발하게 참여하는 AI 중심 커뮤니티에서 다양한 의견을 나눠보세요.",
       color: "bg-white border-2 border-purple-100"
     },
     {
-      icon: <BookOpen className="text-purple-600" size={20} />,
-      title: "학습 리소스",
-      description: "커뮤니티 회원들이 공유하는 유용한 자료와 튜토리얼을 이용하세요.",
+      icon: <BellDot className="text-purple-600" size={20} />,
+      title: "실시간 알림",
+      description: "중요한 토론이나 답변이 있을 때 실시간으로 알림을 받을 수 있습니다.",
       color: "bg-white border-2 border-purple-100"
     },
     {
-      icon: <UserPlus className="text-purple-600" size={20} />,
-      title: "멘토링",
-      description: "경험이 풍부한 멘토들과 연결되어 개인적인 성장 기회를 얻으세요.",
+      icon: <Share2 className="text-purple-600" size={20} />,
+      title: "지식 공유",
+      description: "AI에 관한 최신 정보와 자료를 다른 사용자들과 자유롭게 공유할 수 있습니다.",
+      color: "bg-white border-2 border-purple-100"
+    },
+    {
+      icon: <HeartHandshake className="text-purple-600" size={20} />,
+      title: "네트워킹",
+      description: "같은 관심사를 가진 사람들과 연결되어 인적 네트워크를 확장할 수 있습니다.",
       color: "bg-white border-2 border-purple-100"
     }
   ];
@@ -53,7 +47,7 @@ export function Community() {
             커뮤니티
           </h2>
           <p className="text-purple-700 max-w-2xl mx-auto text-balance">
-            AI에 관심 있는 사람들이 모여 지식을 나누고 함께 성장하는 활기찬 커뮤니티에 참여하세요.
+            AI에 관심 있는 사람들이 모여 실시간으로 대화하고 정보를 공유하는 활기찬 커뮤니티에 참여하세요.
           </p>
         </div>
         
@@ -82,23 +76,25 @@ export function Community() {
               <h3 className="text-2xl font-bold mb-4 text-gray-800">
                 지금 커뮤니티에 참여하세요
               </h3>
-              <p className="text-gray-600 mb-0">
+              <p className="text-gray-600 mb-6">
                 실시간 채팅으로 다른 AI 애호가들과 의견을 나누고, 최신 정보와 아이디어를 공유하세요.
+                지금 바로 대화에 참여하고 함께 성장하는 경험을 시작해보세요.
               </p>
+              <div className="flex items-center text-sm text-purple-700 mb-0">
+                <Users className="h-4 w-4 mr-2" />
+                <span>현재 수십 명의 사용자들이 활발하게 대화 중입니다</span>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col gap-4">
               <Link 
                 to="/community" 
-                className="px-6 py-3 rounded-lg bg-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-600/30 transition-all transform hover:-translate-y-0.5"
+                className="px-6 py-3 rounded-lg bg-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-600/30 transition-all transform hover:-translate-y-0.5 text-center"
               >
                 실시간 채팅 참여하기
               </Link>
-              <Link 
-                to="/community" 
-                className="px-6 py-3 rounded-lg bg-white text-gray-700 font-medium border border-gray-200 hover:bg-gray-50 transition-all"
-              >
-                더 알아보기
-              </Link>
+              <div className="text-center text-sm text-gray-500">
+                닉네임 설정 후 바로 참여 가능합니다
+              </div>
             </div>
           </div>
         </div>
