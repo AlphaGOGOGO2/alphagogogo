@@ -24,6 +24,13 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
     border?: string;
     boxShadow?: string;
     textUnderlineOffset?: string;
+    position?: string;
+    overflow?: string;
+    transform?: string;
+    width?: string;
+    animation?: string;
+    backgroundImage?: string;
+    zIndex?: string;
   };
 
   // Generate CSS for the button based on current styles
@@ -41,7 +48,7 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       textDecoration: 'none',
       fontFamily: 'inherit',
       cursor: 'pointer',
-      transition: 'all 0.2s ease',
+      transition: 'all 0.3s ease',
     };
 
     // Apply style based on button type
@@ -80,17 +87,62 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
           textUnderlineOffset: '4px',
         };
         break;
+      case 'fullWidth':
+        styles = {
+          ...styles,
+          backgroundColor: buttonStyle.backgroundColor,
+          border: 'none',
+          width: '100%',
+          padding: '12px 20px',
+        };
+        break;
+      case 'shiny':
+        styles = {
+          ...styles,
+          backgroundColor: buttonStyle.backgroundColor,
+          border: 'none',
+          overflow: 'hidden',
+          position: 'relative',
+          zIndex: '1',
+          backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%)`,
+          animation: 'shiny 3s infinite linear',
+        };
+        break;
+      case 'grow':
+        styles = {
+          ...styles,
+          backgroundColor: buttonStyle.backgroundColor,
+          border: 'none',
+          transform: 'scale(1)',
+          transition: 'transform 0.3s ease',
+        };
+        break;
     }
 
     // Add box shadow if enabled
     if (buttonStyle.boxShadow && buttonStyle.buttonType !== 'link') {
       styles = {
         ...styles,
-        boxShadow: '0 2px 5px rgba(0, 0, 0, 0.15)',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.15)',
       };
     }
 
     return styles;
+  };
+
+  // Get CSS class for the button based on type
+  const getButtonClass = () => {
+    let className = buttonStyle.hoverEffect ? "hover:opacity-90 " : "";
+    
+    if (buttonStyle.buttonType === 'grow') {
+      className += "hover:scale-110 ";
+    }
+    
+    if (buttonStyle.buttonType === 'shiny') {
+      className += "shiny-button ";
+    }
+    
+    return className;
   };
 
   return (
@@ -98,10 +150,24 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       <h3 className="text-lg font-semibold text-gray-800 mb-4">버튼 미리보기</h3>
       
       <div className="bg-gray-100 rounded-md p-8 flex items-center justify-center min-h-[200px]">
+        <style jsx>{`
+          @keyframes shiny {
+            0% {
+              background-position: -200% 0;
+            }
+            100% {
+              background-position: 200% 0;
+            }
+          }
+          .shiny-button {
+            background-size: 200% 100%;
+            background-position: -100% 0;
+          }
+        `}</style>
         <a 
           href={buttonStyle.url} 
           style={getButtonStyles()}
-          className={buttonStyle.hoverEffect ? "hover:opacity-90" : ""}
+          className={getButtonClass()}
           target="_blank" 
           rel="noopener noreferrer"
           onClick={(e) => e.preventDefault()}

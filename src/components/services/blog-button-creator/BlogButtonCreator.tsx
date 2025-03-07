@@ -18,7 +18,7 @@ export type ButtonStyle = {
   padding: string;
   boxShadow: boolean;
   hoverEffect: boolean;
-  buttonType: 'primary' | 'outline' | 'ghost' | 'link';
+  buttonType: 'primary' | 'outline' | 'ghost' | 'link' | 'fullWidth' | 'shiny' | 'grow';
 };
 
 export function BlogButtonCreator() {

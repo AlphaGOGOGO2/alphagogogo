@@ -154,6 +154,18 @@ export function ButtonCustomizer({ buttonStyle, setButtonStyle }: ButtonCustomiz
               <RadioGroupItem value="link" id="link" />
               <Label htmlFor="link">링크 (밑줄)</Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="fullWidth" id="fullWidth" />
+              <Label htmlFor="fullWidth">가로 확장 (100% 너비)</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="shiny" id="shiny" />
+              <Label htmlFor="shiny">반짝이는 버튼 (애니메이션)</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="grow" id="grow" />
+              <Label htmlFor="grow">확대 버튼 (호버 시 커짐)</Label>
+            </div>
           </RadioGroup>
         </div>
       </div>

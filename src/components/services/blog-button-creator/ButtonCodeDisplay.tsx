@@ -17,83 +17,115 @@ export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
     // Create CSS styles
     let styles = "";
     
+    // Add animation keyframes for shiny button
+    let keyframes = "";
+    if (buttonStyle.buttonType === 'shiny') {
+      keyframes = `
+        @keyframes shiny {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+      `;
+    }
+    
+    // Basic styles for all button types
+    let baseStyles = `
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: ${buttonStyle.fontSize}px;
+      font-weight: 500;
+      padding: ${buttonStyle.padding};
+      border-radius: ${buttonStyle.borderRadius}px;
+      text-decoration: none;
+      font-family: sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    `;
+    
     switch (buttonStyle.buttonType) {
       case 'primary':
         styles = `
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          ${baseStyles}
           background-color: ${buttonStyle.backgroundColor};
           color: ${buttonStyle.textColor};
-          font-size: ${buttonStyle.fontSize}px;
-          font-weight: 500;
-          padding: ${buttonStyle.padding};
-          border-radius: ${buttonStyle.borderRadius}px;
-          text-decoration: none;
-          font-family: sans-serif;
-          cursor: pointer;
-          transition: all 0.2s ease;
           border: none;
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);' : ''}
+          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
           ${buttonStyle.hoverEffect ? ':hover { opacity: 0.9; }' : ''}
         `;
         break;
       case 'outline':
         styles = `
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          ${baseStyles}
           background-color: transparent;
           color: ${buttonStyle.backgroundColor};
-          font-size: ${buttonStyle.fontSize}px;
-          font-weight: 500;
-          padding: ${buttonStyle.padding};
-          border-radius: ${buttonStyle.borderRadius}px;
-          text-decoration: none;
-          font-family: sans-serif;
-          cursor: pointer;
-          transition: all 0.2s ease;
           border: 2px solid ${buttonStyle.backgroundColor};
-          ${buttonStyle.boxShadow ? 'box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);' : ''}
+          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
           ${buttonStyle.hoverEffect ? ':hover { background-color: rgba(0, 0, 0, 0.05); }' : ''}
         `;
         break;
       case 'ghost':
         styles = `
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          ${baseStyles}
           background-color: transparent;
           color: ${buttonStyle.backgroundColor};
-          font-size: ${buttonStyle.fontSize}px;
-          font-weight: 500;
-          padding: ${buttonStyle.padding};
-          border-radius: ${buttonStyle.borderRadius}px;
-          text-decoration: none;
-          font-family: sans-serif;
-          cursor: pointer;
-          transition: all 0.2s ease;
           border: none;
           ${buttonStyle.hoverEffect ? ':hover { background-color: rgba(0, 0, 0, 0.05); }' : ''}
         `;
         break;
       case 'link':
         styles = `
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
+          ${baseStyles}
           background-color: transparent;
           color: ${buttonStyle.backgroundColor};
-          font-size: ${buttonStyle.fontSize}px;
-          font-weight: 500;
           padding: 0;
           text-decoration: underline;
           text-underline-offset: 4px;
-          font-family: sans-serif;
-          cursor: pointer;
-          transition: all 0.2s ease;
           border: none;
           ${buttonStyle.hoverEffect ? ':hover { opacity: 0.7; }' : ''}
+        `;
+        break;
+      case 'fullWidth':
+        styles = `
+          ${baseStyles}
+          background-color: ${buttonStyle.backgroundColor};
+          color: ${buttonStyle.textColor};
+          border: none;
+          width: 100%;
+          padding: 12px 20px;
+          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
+          ${buttonStyle.hoverEffect ? ':hover { opacity: 0.9; }' : ''}
+        `;
+        break;
+      case 'shiny':
+        styles = `
+          ${baseStyles}
+          position: relative;
+          background-color: ${buttonStyle.backgroundColor};
+          color: ${buttonStyle.textColor};
+          border: none;
+          overflow: hidden;
+          z-index: 1;
+          background-image: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%);
+          background-size: 200% 100%;
+          background-position: -100% 0;
+          animation: shiny 3s infinite linear;
+          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
+        `;
+        break;
+      case 'grow':
+        styles = `
+          ${baseStyles}
+          background-color: ${buttonStyle.backgroundColor};
+          color: ${buttonStyle.textColor};
+          border: none;
+          transform: scale(1);
+          transition: transform 0.3s ease;
+          ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
+          :hover {
+            transform: scale(1.1);
+            ${buttonStyle.hoverEffect ? 'opacity: 0.9;' : ''}
+          }
         `;
         break;
     }
@@ -104,8 +136,17 @@ export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
       .replace(/\s+/g, ' ')
       .trim();
 
+    // Add keyframes if needed
+    let htmlWithStyle = '';
+    if (keyframes) {
+      htmlWithStyle = `<style>\n${keyframes}\n</style>\n`;
+      keyframes = keyframes.replace(/\n/g, '').replace(/\s+/g, ' ').trim();
+    }
+
     // Create HTML button with inline styles
-    return `<a href="${buttonStyle.url}" style="${styles}" target="_blank" rel="noopener noreferrer">${buttonStyle.text}</a>`;
+    htmlWithStyle += `<a href="${buttonStyle.url}" style="${styles}" target="_blank" rel="noopener noreferrer">${buttonStyle.text}</a>`;
+
+    return htmlWithStyle;
   };
 
   const buttonHtmlCode = generateButtonHtml();
