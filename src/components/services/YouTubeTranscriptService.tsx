@@ -1,6 +1,6 @@
 
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { Youtube } from "lucide-react";
+import { Youtube, AlertCircle } from "lucide-react";
 import { useYoutubeTranscript } from "@/hooks/useYoutubeTranscript";
 import { TranscriptForm } from "./youtube-transcript/TranscriptForm";
 import { ErrorMessage } from "./youtube-transcript/ErrorMessage";
@@ -30,6 +30,16 @@ export function YouTubeTranscriptService() {
         </CardHeader>
         <CardContent className="pt-6">
           <div className="flex flex-col gap-4">
+            <div className="rounded-md bg-yellow-50 p-3 border border-yellow-200 mb-2">
+              <div className="flex gap-2">
+                <AlertCircle size={18} className="text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div className="text-sm text-yellow-700">
+                  <p>자막이 있는 영상에서만 동작합니다. 유효한 YouTube URL을 입력해주세요.</p>
+                  <p className="text-xs mt-1">예시: https://www.youtube.com/watch?v=VIDEO_ID 또는 https://youtu.be/VIDEO_ID</p>
+                </div>
+              </div>
+            </div>
+            
             <TranscriptForm
               youtubeUrl={youtubeUrl}
               setYoutubeUrl={setYoutubeUrl}

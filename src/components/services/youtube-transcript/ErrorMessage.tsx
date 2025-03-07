@@ -14,12 +14,12 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         <p>{error}</p>
         {error.includes("네트워크 연결 오류") && (
           <p className="mt-1">
-            네트워크 연결을 확인하거나 다른 YouTube 영상을 시도해보세요.
+            네트워크 연결을 확인하거나 잠시 후 다시 시도해보세요. 또는 다른 YouTube 영상을 시도해보세요.
           </p>
         )}
         {error.includes("No transcript") && (
           <p className="mt-1">
-            해당 영상에 자막이 없거나 자막 접근이 제한되었을 수 있습니다.
+            해당 영상에 자막이 없거나 자막 접근이 제한되었습니다. 자막이 있는 다른 영상을 시도해보세요.
           </p>
         )}
       </div>
