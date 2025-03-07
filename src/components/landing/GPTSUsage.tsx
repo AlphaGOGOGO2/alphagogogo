@@ -26,13 +26,9 @@ export function GPTSUsage() {
             <h3 className="text-xl font-bold mb-3 text-gray-800">
               블로그 GPTS
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600">
               블로그 작성과 SEO 최적화를 위한 다양한 AI 도구들을 제공합니다. 각 단계별로 필요한 도구를 선택하여 사용해보세요.
             </p>
-            <div className="flex items-center text-purple-600 text-sm font-medium">
-              <span>자세히 보기</span>
-              <ArrowRight size={14} className="ml-1" />
-            </div>
           </div>
           
           <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 hover:shadow-xl transition-all hover:border-purple-200 hover:-translate-y-1 duration-300">
@@ -42,13 +38,9 @@ export function GPTSUsage() {
             <h3 className="text-xl font-bold mb-3 text-gray-800">
               그 외 GPTS
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600">
               유튜브 채널 운영과 이미지 생성을 위한 다양한 AI 도구들을 사용해보세요. 각각의 용도에 맞는 GPTS를 선택하여 창의적인 콘텐츠를 만들어보세요.
             </p>
-            <div className="flex items-center text-purple-600 text-sm font-medium">
-              <span>자세히 보기</span>
-              <ArrowRight size={14} className="ml-1" />
-            </div>
           </div>
           
           <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-100 hover:shadow-xl transition-all hover:border-purple-200 hover:-translate-y-1 duration-300">
@@ -58,13 +50,9 @@ export function GPTSUsage() {
             <h3 className="text-xl font-bold mb-3 text-gray-800">
               지침 및 템플릿
             </h3>
-            <p className="text-gray-600 mb-4">
+            <p className="text-gray-600">
               알파블로그에서 제공하는 지침과 템플릿을 다운로드하여 사용해보세요. 효과적인 콘텐츠 제작에 도움이 됩니다.
             </p>
-            <div className="flex items-center text-purple-600 text-sm font-medium">
-              <span>자세히 보기</span>
-              <ArrowRight size={14} className="ml-1" />
-            </div>
           </div>
         </div>
         
