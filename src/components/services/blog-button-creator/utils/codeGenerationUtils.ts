@@ -60,10 +60,10 @@ ${buttonStyle.hoverEffect ? `
 
 ${buttonStyle.buttonTypes.includes('grow') ? `
 .button-link:hover {
-  transform: scale(5);
+  transform: scale(2.0);
 }
 .button-link:active {
-  transform: scale(4);
+  transform: scale(1.8);
 }` : ''}
 
 ${buttonStyle.buttonTypes.includes('shiny') ? `
