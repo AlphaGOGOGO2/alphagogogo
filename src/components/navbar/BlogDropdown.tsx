@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,28 +24,11 @@ export function BlogDropdown({
   onOpenChange
 }: BlogDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onOpenChange(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onOpenChange]);
-
-  // Console log to debug dropdown state
-  console.log("Blog dropdown isOpen:", isOpen);
 
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onClick={(e) => e.stopPropagation()} // Stop propagation at container level
     >
       <button
         type="button"
@@ -55,7 +38,6 @@ export function BlogDropdown({
           e.preventDefault();
           e.stopPropagation();
           onOpenChange(!isOpen);
-          console.log("Blog dropdown clicked, new state:", !isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >
@@ -102,7 +84,7 @@ export function BlogDropdown({
                     : "text-white hover:bg-white/20 hover:text-white"
                 )}
                 onClick={(e) => {
-                  e.stopPropagation(); // 이벤트 버블링 방지
+                  e.stopPropagation();
                   onCategoryClick?.();
                   onOpenChange(false);
                 }}

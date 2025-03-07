@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -26,22 +26,6 @@ export function CommunityDropdown({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onOpenChange(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onOpenChange]);
-
-  // Console log to debug dropdown state
-  console.log("Community dropdown isOpen:", isOpen);
-
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
     
@@ -73,7 +57,6 @@ export function CommunityDropdown({
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onClick={(e) => e.stopPropagation()} // Stop propagation at container level
     >
       <button
         type="button"
@@ -83,7 +66,6 @@ export function CommunityDropdown({
           e.preventDefault();
           e.stopPropagation();
           onOpenChange(!isOpen);
-          console.log("Community dropdown clicked, new state:", !isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >
@@ -117,6 +99,7 @@ export function CommunityDropdown({
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="community-menu"
+          onClick={(e) => e.stopPropagation()}
         >
           <CommunityDropdownItems 
             categories={categories} 

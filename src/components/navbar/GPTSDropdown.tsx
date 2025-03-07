@@ -1,5 +1,5 @@
 
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -24,38 +24,20 @@ export function GPTSDropdown({
   onOpenChange
 }: GPTSDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        onOpenChange(false);
-      }
-    };
-    
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onOpenChange]);
-
-  // Console log to debug dropdown state
-  console.log("GPTS dropdown isOpen:", isOpen);
 
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onClick={(e) => e.stopPropagation()} // Stop propagation at container level
     >
       <button
-        type="button" 
+        type="button"
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
           onOpenChange(!isOpen);
-          console.log("GPTS dropdown clicked, new state:", !isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >

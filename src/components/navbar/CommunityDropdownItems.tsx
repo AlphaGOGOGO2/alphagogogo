@@ -21,6 +21,7 @@ export function CommunityDropdownItems({
         category.action === 'popup' ? (
           <button
             key={category.path}
+            type="button"
             className={cn(
               "block w-full text-left px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap flex items-center gap-2",
               isScrolled 
@@ -28,11 +29,8 @@ export function CommunityDropdownItems({
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
             onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation(); // 이벤트 버블링 방지
               onItemClick(category, e);
             }}
-            type="button"
             role="menuitem"
           >
             <CommunityIcon categoryName={category.name} />
@@ -49,7 +47,6 @@ export function CommunityDropdownItems({
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
             onClick={(e) => {
-              e.stopPropagation(); // 이벤트 버블링 방지
               onItemClick(category, e);
             }}
             role="menuitem"
