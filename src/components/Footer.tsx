@@ -1,6 +1,5 @@
-
 import { Link } from "react-router-dom";
-import { blogCategories, gptsCategories, communityCategories } from "@/config/navigation";
+import { blogCategories, gptsCategories, communityCategories, servicesCategories } from "@/config/navigation";
 import { openInfoPopup } from "@/utils/popupUtils";
 
 export function Footer() {
@@ -78,10 +77,9 @@ export function Footer() {
             <h3 className="font-medium text-gray-900 mb-4">서비스</h3>
             <ul className="space-y-3">
               {[
-                { name: "AI 상담", path: "/services/consultation" },
-                { name: "기업 솔루션", path: "/services/enterprise" },
-                { name: "교육 프로그램", path: "/services/education" },
-                { name: "리서치 분석", path: "/services/research" }
+                { name: "유튜브 자막 추출기", path: "/youtube-transcript" },
+                { name: "URL 단축기", path: "/url-shortener" },
+                { name: "블로그 버튼 생성기", path: "/blog-button-creator" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
