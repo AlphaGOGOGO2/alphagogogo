@@ -10,6 +10,13 @@ export function Hero() {
     }
   };
 
+  const scrollToGPTSSection = () => {
+    const gptsSection = document.getElementById('gpts-usage');
+    if (gptsSection) {
+      gptsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <section className="relative h-screen overflow-hidden">
       {/* Video Background */}
@@ -63,7 +70,10 @@ export function Hero() {
               <span className="relative z-10">최신글 확인하기</span>
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-purple-100/30 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out"></div>
             </button>
-            <button className="animated-button px-6 py-3 rounded-lg bg-[#1E293B]/70 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-[#1E293B]/80 transition-all flex items-center justify-center gap-2 shadow-lg">
+            <button 
+              onClick={scrollToGPTSSection}
+              className="animated-button px-6 py-3 rounded-lg bg-[#1E293B]/70 backdrop-blur-sm text-white border border-white/20 font-medium hover:bg-[#1E293B]/80 transition-all flex items-center justify-center gap-2 shadow-lg"
+            >
               무료 GPTS 이용하기
               <ArrowRight size={16} className="group-hover:translate-x-0.5 transition-transform" />
             </button>
