@@ -1,12 +1,13 @@
 
 import { ButtonStyle } from "./BlogButtonCreator";
+import { CSSProperties } from "react";
 
 interface ButtonPreviewProps {
   buttonStyle: ButtonStyle;
 }
 
 export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
-  // Define a type for our button styles to avoid TypeScript errors
+  // Define a type for our button styles with all possible properties
   type ButtonStyleObj = {
     color: string;
     fontSize: string;
@@ -24,12 +25,14 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
     border?: string;
     boxShadow?: string;
     textUnderlineOffset?: string;
-    position?: string;
+    position?: "static" | "relative" | "absolute" | "fixed" | "sticky";
     overflow?: string;
     transform?: string;
     width?: string;
     animation?: string;
     backgroundImage?: string;
+    backgroundSize?: string;
+    backgroundPosition?: string;
     zIndex?: string;
   };
 
@@ -105,6 +108,8 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
           position: 'relative',
           zIndex: '1',
           backgroundImage: `linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0) 100%)`,
+          backgroundSize: '200% 100%',
+          backgroundPosition: '-100% 0',
           animation: 'shiny 3s infinite linear',
         };
         break;
@@ -127,7 +132,7 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       };
     }
 
-    return styles;
+    return styles as CSSProperties;
   };
 
   // Get CSS class for the button based on type
@@ -150,20 +155,22 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       <h3 className="text-lg font-semibold text-gray-800 mb-4">버튼 미리보기</h3>
       
       <div className="bg-gray-100 rounded-md p-8 flex items-center justify-center min-h-[200px]">
-        <style jsx>{`
-          @keyframes shiny {
-            0% {
-              background-position: -200% 0;
+        <style>
+          {`
+            @keyframes shiny {
+              0% {
+                background-position: -200% 0;
+              }
+              100% {
+                background-position: 200% 0;
+              }
             }
-            100% {
-              background-position: 200% 0;
+            .shiny-button {
+              background-size: 200% 100%;
+              background-position: -100% 0;
             }
-          }
-          .shiny-button {
-            background-size: 200% 100%;
-            background-position: -100% 0;
-          }
-        `}</style>
+          `}
+        </style>
         <a 
           href={buttonStyle.url} 
           style={getButtonStyles()}
