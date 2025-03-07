@@ -5,6 +5,7 @@ import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
 import { CommunityDropdown } from "./CommunityDropdown";
+import { ServicesDropdown } from "./ServicesDropdown";
 import { mainNavItems, blogCategories, gptsCategories, communityCategories, servicesCategories } from "@/config/navigation";
 
 interface DesktopNavProps {
@@ -13,7 +14,7 @@ interface DesktopNavProps {
 
 export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
-  const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | "community" | null>(null);
+  const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | "community" | "services" | null>(null);
   
   // Check if current path is a service page
   const isServicePage = servicesCategories.some(service => 
@@ -34,6 +35,10 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
 
   const handleCommunityDropdownChange = (isOpen: boolean) => {
     setActiveDropdown(isOpen ? "community" : null);
+  };
+
+  const handleServicesDropdownChange = (isOpen: boolean) => {
+    setActiveDropdown(isOpen ? "services" : null);
   };
 
   // Close dropdowns when route changes
@@ -68,6 +73,14 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         onOpenChange={handleGPTSDropdownChange}
       />
 
+      <ServicesDropdown 
+        isScrolled={isScrolled}
+        isActive={isServicePage}
+        categories={servicesCategories}
+        isOpen={activeDropdown === "services"}
+        onOpenChange={handleServicesDropdownChange}
+      />
+
       <CommunityDropdown
         isScrolled={isScrolled}
         isActive={location.pathname === "/community"}
@@ -82,11 +95,10 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
           name={item.name}
           path={item.path}
           isScrolled={isScrolled}
-          isActive={item.name === "서비스" ? isServicePage : location.pathname === item.path}
+          isActive={location.pathname === item.path}
           isExternal={item.isExternal}
         />
       ))}
     </nav>
   );
 }
-
