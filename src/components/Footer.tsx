@@ -23,27 +23,6 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">내비게이션</h3>
-            <ul className="space-y-3">
-              {[
-                { name: "홈", path: "/" },
-                { name: "뉴스", path: "/news" },
-                { name: "주제", path: "/topics" },
-                { name: "소개", path: "/about" }
-              ].map((item) => (
-                <li key={item.name}>
-                  <Link 
-                    to={item.path}
-                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div>
             <h3 className="font-medium text-gray-900 mb-4">블로그</h3>
             <ul className="space-y-3">
               {[
@@ -65,13 +44,34 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">서비스</h3>
+            <h3 className="font-medium text-gray-900 mb-4">GPTS 이용하기</h3>
             <ul className="space-y-3">
               {[
-                { name: "GPTS 이용하기", path: "/services/gpts" },
-                { name: "AI 상담", path: "/services/consultation" },
-                { name: "기업 솔루션", path: "/services/enterprise" },
-                { name: "기타", path: "/services/other" }
+                { name: "GPT 모델", path: "/gpts/models" },
+                { name: "사용 가이드", path: "/gpts/guide" },
+                { name: "API 연동", path: "/gpts/api" },
+                { name: "맞춤형 솔루션", path: "/gpts/custom" }
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link 
+                    to={item.path}
+                    className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          
+          <div>
+            <h3 className="font-medium text-gray-900 mb-4">커뮤니티</h3>
+            <ul className="space-y-3">
+              {[
+                { name: "포럼", path: "/community/forum" },
+                { name: "이벤트", path: "/community/events" },
+                { name: "스터디 그룹", path: "/community/study-groups" },
+                { name: "기여하기", path: "/community/contribute" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
