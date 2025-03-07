@@ -1,16 +1,10 @@
-
 import { GPTSCard } from "./GPTSCard";
 
-// Card colors for visual variety
-const cardColors = [
+// Using consistent purple shades for Blog GPTS section
+const blogCardColors = [
   "bg-soft-purple",
-  "bg-soft-blue", 
-  "bg-soft-yellow",
-  "bg-soft-green",
-  "bg-soft-peach",
-  "bg-soft-pink",
-  "bg-soft-orange",
-  "bg-soft-gray",
+  "bg-purple-100",
+  "bg-purple-50",
 ];
 
 // 블로그 관련 GPTS 데이터
@@ -77,7 +71,7 @@ export function GPTSBlogSection() {
   return (
     <section className="mb-20">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">블로그 GPTS</h2>
+        <h2 className="text-2xl font-bold text-purple-900 mb-4">블로그 GPTS</h2>
         <p className="text-gray-600">
           블로그 작성과 SEO 최적화를 위한 다양한 AI 도구들을 제공합니다. 각 단계별로 필요한 도구를 선택하여 사용해보세요.
         </p>
@@ -91,7 +85,8 @@ export function GPTSBlogSection() {
             description={gpts.description}
             url={gpts.url}
             imageUrl={gpts.imageUrl}
-            colorClass={cardColors[index % cardColors.length]}
+            colorClass={blogCardColors[index % blogCardColors.length]}
+            buttonColorClass="bg-purple-600 hover:bg-purple-700"
           />
         ))}
       </div>

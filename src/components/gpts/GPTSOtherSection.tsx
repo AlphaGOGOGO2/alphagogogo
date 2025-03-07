@@ -1,16 +1,10 @@
-
 import { GPTSCard } from "./GPTSCard";
 
-// Card colors for visual variety
-const cardColors = [
-  "bg-soft-peach",
-  "bg-soft-blue", 
-  "bg-soft-green",
-  "bg-soft-purple",
-  "bg-soft-yellow",
-  "bg-soft-pink",
-  "bg-soft-orange",
-  "bg-soft-gray",
+// Using consistent navy/blue shades for Other GPTS section
+const otherCardColors = [
+  "bg-soft-blue",
+  "bg-blue-100",
+  "bg-blue-50",
 ];
 
 // 그 외 GPTS 데이터
@@ -70,7 +64,7 @@ export function GPTSOtherSection() {
   return (
     <section className="mb-20">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">그 외 GPTS</h2>
+        <h2 className="text-2xl font-bold text-blue-900 mb-4">그 외 GPTS</h2>
         <p className="text-gray-600">
           유튜브 채널 운영과 이미지 생성을 위한 다양한 AI 도구들을 사용해보세요. 각각의 용도에 맞는 GPTS를 선택하여 창의적인 콘텐츠를 만들어보세요.
         </p>
@@ -84,7 +78,8 @@ export function GPTSOtherSection() {
             description={gpts.description}
             url={gpts.url}
             imageUrl={gpts.imageUrl}
-            colorClass={cardColors[index % cardColors.length]}
+            colorClass={otherCardColors[index % otherCardColors.length]}
+            buttonColorClass="bg-blue-600 hover:bg-blue-700"
           />
         ))}
       </div>

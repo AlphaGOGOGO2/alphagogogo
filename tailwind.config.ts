@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,6 +83,19 @@ export default {
 				'soft-pink': '#FFDEE2',
 				'soft-orange': '#FEC6A1',
 				'soft-gray': '#F1F0FB',
+				'soft-navy': '#D5E3F5',
+				'navy': {
+					50: '#E6F0FB',
+					100: '#CCE0F6',
+					200: '#99C1ED',
+					300: '#66A2E5',
+					400: '#3384DC',
+					500: '#0066D3',
+					600: '#0052A9',
+					700: '#003D7F',
+					800: '#002954',
+					900: '#00142A',
+				},
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
