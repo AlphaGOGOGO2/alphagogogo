@@ -18,7 +18,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
       className={cn(
         "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
         isScrolled 
-          ? "text-purple-900 hover:text-purple-800" 
+          ? "text-blue-900 hover:text-blue-800" 
           : "text-white/90 hover:text-white",
         isActive && "nav-active"
       )}
@@ -30,7 +30,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
       <span 
         className={cn(
           "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
-          isScrolled ? "bg-purple-600" : "bg-red-300",
+          isScrolled ? "bg-blue-600" : "bg-cyan-300",
           isActive 
             ? "scale-x-100" 
             : "scale-x-0 group-hover:scale-x-100"

@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
@@ -39,16 +38,13 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
     }
   };
   
-  // Add a timer variable for better control of the dropdown closing
   let closeTimer: ReturnType<typeof setTimeout>;
   
   const handleMouseLeave = () => {
-    // Use a longer delay (500ms) to prevent accidental closing
     closeTimer = setTimeout(() => setIsDropdownOpen(false), 500);
   };
   
   const handleMouseEnter = () => {
-    // Clear the timer if mouse re-enters the dropdown area
     if (closeTimer) {
       clearTimeout(closeTimer);
     }
@@ -82,7 +78,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
               className={cn(
                 "transition-transform duration-300", 
                 isDropdownOpen ? "rotate-180" : "rotate-0",
-                isScrolled ? "text-purple-700" : "text-white/80"
+                isScrolled ? "text-blue-700" : "text-white/80"
               )}
               aria-hidden="true"
             /> 
@@ -90,7 +86,6 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         />
       </div>
       
-      {/* Dropdown Menu */}
       <div 
         className={cn(
           "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden transition-all duration-200 origin-top-left",
@@ -107,7 +102,6 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Increase padding to create larger hit area */}
         <div className="py-2">
           {categories.map((category) => (
             <Link
@@ -116,12 +110,10 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
               className={cn(
                 "block px-6 py-3 text-sm transition-colors duration-150 whitespace-nowrap",
                 isScrolled 
-                  ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
+                  ? "text-gray-700 hover:bg-blue-50 hover:text-blue-700" 
                   : "text-white/90 hover:bg-white/20 hover:text-white"
               )}
               onClick={() => {
-                // Don't close dropdown when clicking category
-                // This allows users to quickly navigate between categories
                 onCategoryClick?.();
               }}
               role="menuitem"

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -19,7 +18,6 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -38,7 +36,7 @@ export function Navbar() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
         isScrolled 
           ? "bg-white shadow-md" 
-          : "bg-gradient-to-r from-[#6a1b9a] via-[#8e24aa] to-[#6a1b9a] backdrop-blur-lg border-b border-white/10"
+          : "bg-gradient-to-r from-[#0EA5E9] via-[#1E40AF] to-[#0EA5E9] backdrop-blur-lg border-b border-white/10"
       )}
       role="banner"
     >
@@ -51,7 +49,7 @@ export function Navbar() {
           className={cn(
             "md:hidden p-2 rounded-full transition-colors duration-300",
             isScrolled 
-              ? "text-purple-800 hover:bg-gray-100" 
+              ? "text-blue-800 hover:bg-gray-100" 
               : "text-white hover:bg-white/10"
           )}
           onClick={() => setIsMobileMenuOpen(true)}
