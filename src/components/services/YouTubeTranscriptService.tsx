@@ -4,9 +4,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DownloadCloud, Youtube, Loader2, ClipboardCopy, Check } from "lucide-react";
+import { DownloadCloud, Youtube, Loader2, ClipboardCopy, Check, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
-import { extractYouTubeVideoId } from "@/utils/youtubeUtils";
+import { extractYouTubeVideoId, createTranscriptProxyUrl } from "@/utils/youtubeUtils";
 
 export function YouTubeTranscriptService() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -15,6 +15,7 @@ export function YouTubeTranscriptService() {
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
   const [language, setLanguage] = useState("ko");
+  const [useProxy, setUseProxy] = useState(true);
 
   const handleExtractTranscript = async () => {
     // Reset states
@@ -32,7 +33,20 @@ export function YouTubeTranscriptService() {
     setIsLoading(true);
     
     try {
-      const response = await fetch(`https://youtube-transcript.vercel.app/api?videoId=${videoId}&lang=${language}`);
+      // Construct the API URL, using proxy if enabled
+      let apiUrl = `https://youtube-transcript.vercel.app/api?videoId=${videoId}&lang=${language}`;
+      
+      if (useProxy) {
+        apiUrl = createTranscriptProxyUrl(videoId, language);
+      }
+      
+      const response = await fetch(apiUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'  // Required by some CORS proxies
+        }
+      });
       
       if (!response.ok) {
         throw new Error(`자막을 가져오는데 실패했습니다. (${response.status})`);
@@ -51,7 +65,7 @@ export function YouTubeTranscriptService() {
     } catch (error) {
       console.error("자막 추출 오류:", error);
       setError(error instanceof Error ? error.message : "자막을 가져오는데 실패했습니다.");
-      toast.error("자막을 가져오는데 실패했습니다.");
+      toast.error("자막을 가져오는데 실패했습니다. CORS 우회 방법을 사용해보세요.");
     } finally {
       setIsLoading(false);
     }
@@ -127,6 +141,20 @@ export function YouTubeTranscriptService() {
                   <option value="ru">러시아어</option>
                 </select>
               </div>
+              
+              <div className="flex items-center mt-2">
+                <input
+                  type="checkbox"
+                  id="use-proxy"
+                  checked={useProxy}
+                  onChange={(e) => setUseProxy(e.target.checked)}
+                  className="mr-2 h-4 w-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+                />
+                <label htmlFor="use-proxy" className="text-sm text-gray-600">
+                  CORS 우회 사용 (권장)
+                </label>
+              </div>
+              
               <Button
                 className="w-full mt-3"
                 onClick={handleExtractTranscript}
@@ -144,8 +172,17 @@ export function YouTubeTranscriptService() {
             </div>
             
             {error && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm">
-                {error}
+              <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-600 text-sm flex items-start gap-2">
+                <AlertTriangle className="h-5 w-5 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-medium">오류 발생</p>
+                  <p>{error}</p>
+                  {error.includes("Failed to fetch") && (
+                    <p className="mt-1">
+                      CORS 우회 옵션을 활성화했는지 확인하시거나, 다른 YouTube 영상을 시도해보세요.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
             
