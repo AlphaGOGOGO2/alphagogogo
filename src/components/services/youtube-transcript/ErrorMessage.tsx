@@ -20,13 +20,18 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         )}
         
         {error.includes("자막이 없거나") && (
-          <p className="mt-1">
-            해당 영상에 자막이 없거나 자막 접근이 제한되었습니다. 자막이 있는 다른 영상을 시도해보세요.
-            <br />
-            <span className="text-xs mt-1 block">
-              팁: 영어 교육 콘텐츠나 TED 강연과 같은 공식 채널의 영상은 자막이 있을 가능성이 높습니다.
-            </span>
-          </p>
+          <div className="mt-1">
+            <p>해당 영상에 자막이 없거나 자막 접근이 제한되었습니다. 자막이 있는 다른 영상을 시도해보세요.</p>
+            <div className="bg-orange-50 border border-orange-200 p-2 mt-2 rounded text-orange-700 text-xs">
+              <p className="font-medium">추천하는 시도:</p>
+              <ul className="list-disc pl-4 mt-1 space-y-1">
+                <li>영어 교육 콘텐츠나 TED 강연과 같은 공식 채널의 영상</li>
+                <li>최근에 업로드된 인기 있는 콘텐츠</li>
+                <li>자막이 포함된 것으로 표시된 영상</li>
+                <li>다른 영상 URL 형식 시도 (예: 모바일 링크 대신 데스크톱 링크)</li>
+              </ul>
+            </div>
+          </div>
         )}
         
         {error.includes("유효한 YouTube URL") && (

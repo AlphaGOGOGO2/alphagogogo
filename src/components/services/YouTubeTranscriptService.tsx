@@ -35,9 +35,18 @@ export function YouTubeTranscriptService() {
                 <AlertCircle size={18} className="text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div className="text-sm text-yellow-700">
                   <p>자막이 있는 영상에서만 동작합니다. 유효한 YouTube URL을 입력해주세요.</p>
-                  <p className="text-xs mt-1">예시: https://www.youtube.com/watch?v=VIDEO_ID 또는 https://youtu.be/VIDEO_ID</p>
-                  <p className="text-xs mt-1">추천: 영어 교육 콘텐츠, TED 강연, 자막이 제공되는 공식 채널의 영상을 시도해보세요.</p>
-                  <p className="text-xs mt-1">참고: 브라우저의 CORS 정책으로 인해 일부 영상의 자막을 가져오지 못할 수 있습니다.</p>
+                  <p className="text-xs mt-1">다음 URL 형식을 지원합니다:</p>
+                  <ul className="list-disc pl-5 text-xs mt-1 space-y-0.5">
+                    <li>https://www.youtube.com/watch?v=VIDEO_ID</li>
+                    <li>https://youtu.be/VIDEO_ID</li>
+                    <li>https://m.youtube.com/watch?v=VIDEO_ID</li>
+                  </ul>
+                  <p className="text-xs mt-2 font-medium">추천 영상:</p>
+                  <ul className="list-disc pl-5 text-xs mt-1 space-y-0.5">
+                    <li>영어 교육 콘텐츠, TED 강연, 자막이 제공되는 공식 채널의 영상</li>
+                    <li>최근에 업로드된 인기 영상</li>
+                    <li>자막 옵션이 있는 것으로 표시된 영상</li>
+                  </ul>
                 </div>
               </div>
             </div>
@@ -57,7 +66,7 @@ export function YouTubeTranscriptService() {
         <CardFooter className="bg-gray-50 rounded-b-lg">
           <p className="text-xs text-gray-500">
             * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
-            브라우저의 CORS 정책으로 인해 접근이 제한될 수 있습니다.
+            일부 영상은 브라우저의 CORS 정책으로 인해 접근이 제한될 수 있습니다.
           </p>
         </CardFooter>
       </Card>
