@@ -6,6 +6,7 @@ import { UserPresence } from "@/types/chat";
 export function usePresence(nickname: string, userColor: string) {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const presenceChannelRef = useRef<any>(null);
+  const presenceInitializedRef = useRef(false);
 
   // Setup presence channel
   const setupPresenceChannel = useCallback(() => {
@@ -40,6 +41,7 @@ export function usePresence(nickname: string, userColor: string) {
             color: userColor,
             online_at: new Date().toISOString(),
           });
+          presenceInitializedRef.current = true;
         }
       });
   }, [nickname, userColor]);
@@ -49,13 +51,20 @@ export function usePresence(nickname: string, userColor: string) {
     if (presenceChannelRef.current) {
       supabase.removeChannel(presenceChannelRef.current);
       presenceChannelRef.current = null;
+      presenceInitializedRef.current = false;
     }
   }, []);
 
   useEffect(() => {
     if (!nickname || !userColor) return;
     
-    setupPresenceChannel();
+    // Setup presence channel only if not already initialized
+    if (!presenceInitializedRef.current) {
+      setupPresenceChannel();
+    } else if (presenceChannelRef.current) {
+      // Just update presence data if channel is already set up
+      updatePresence();
+    }
     
     return () => {
       cleanupPresenceChannel();

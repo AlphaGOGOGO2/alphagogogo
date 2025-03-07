@@ -14,19 +14,36 @@ export function useCommunityChat() {
   const [userColor, setUserColor] = useState("");
   const { toast } = useToast();
   const messagesLoaded = useRef(false);
+  const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
 
-  // Initialize user data
+  // Initialize user data only once
   useEffect(() => {
-    const randomNickname = `익명${Math.floor(Math.random() * 10000)}`;
-    setNickname(randomNickname);
+    const initUserData = () => {
+      const savedNickname = localStorage.getItem('chat_nickname');
+      const savedColor = localStorage.getItem('chat_color');
+      
+      if (savedNickname) {
+        setNickname(savedNickname);
+      } else {
+        const randomNickname = `익명${Math.floor(Math.random() * 10000)}`;
+        setNickname(randomNickname);
+        localStorage.setItem('chat_nickname', randomNickname);
+      }
+      
+      if (savedColor) {
+        setUserColor(savedColor);
+      } else {
+        const hue = Math.floor(Math.random() * 360);
+        const pastelColor = `hsl(${hue}, 70%, 80%)`;
+        setUserColor(pastelColor);
+        localStorage.setItem('chat_color', pastelColor);
+      }
+    };
     
-    // Generate a random pastel color
-    const hue = Math.floor(Math.random() * 360);
-    const pastelColor = `hsl(${hue}, 70%, 80%)`;
-    setUserColor(pastelColor);
+    initUserData();
   }, []);
   
-  // Load messages
+  // Load messages only once
   useEffect(() => {
     if (!messagesLoaded.current) {
       loadRecentMessages();
@@ -54,7 +71,6 @@ export function useCommunityChat() {
   };
 
   // Setup message subscription
-  const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
   const { messages } = useMessageSubscription(initialMessages);
 
   // Setup presence
@@ -89,6 +105,7 @@ export function useCommunityChat() {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);
     if (newNickname && newNickname.trim()) {
       setNickname(newNickname.trim());
+      localStorage.setItem('chat_nickname', newNickname.trim());
       
       // Update presence with new nickname
       updatePresence();

@@ -6,7 +6,9 @@ import { ChatMessage } from "@/types/chat";
 export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const channelRef = useRef<any>(null);
+  const initialMessagesRef = useRef<ChatMessage[]>([]);
 
+  // Setup subscription only once when component mounts
   useEffect(() => {
     setupMessageSubscription();
     
@@ -15,9 +17,12 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     };
   }, []);
 
+  // Update messages state when initialMessages changes, but avoid continuous re-renders
   useEffect(() => {
-    // Update messages state when initialMessages changes
-    if (initialMessages.length > 0) {
+    // Only update if initialMessages changed and is not empty
+    if (initialMessages.length > 0 && 
+        JSON.stringify(initialMessagesRef.current) !== JSON.stringify(initialMessages)) {
+      initialMessagesRef.current = initialMessages;
       setMessages(initialMessages);
     }
   }, [initialMessages]);
