@@ -1,4 +1,3 @@
-
 import { ButtonStyle } from "../BlogButtonCreator";
 import { CSSProperties } from "react";
 
@@ -115,7 +114,6 @@ export const getButtonStyles = (buttonStyle: ButtonStyle): CSSProperties => {
   if (types.includes('grow')) {
     styles = {
       ...styles,
-      transform: 'scale(1)',
       transition: 'transform 0.3s ease',
     };
   }
@@ -136,12 +134,12 @@ export const getButtonClass = (buttonStyle: ButtonStyle): string => {
   let className = buttonStyle.hoverEffect ? "hover:opacity-90 " : "";
   
   if (buttonStyle.buttonTypes.includes('grow')) {
-    className += "hover:scale-500 active:scale-400 transform transition-transform duration-300 ";
+    className += "hover:scale-500 active:scale-400 ";
   }
   
   if (buttonStyle.buttonTypes.includes('shiny')) {
     className += "shiny-button ";
   }
   
-  return className;
+  return className.trim();
 };

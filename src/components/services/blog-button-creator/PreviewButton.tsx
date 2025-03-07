@@ -9,11 +9,13 @@ interface PreviewButtonProps {
 }
 
 export function PreviewButton({ buttonStyle }: PreviewButtonProps) {
+  const buttonClass = getButtonClass(buttonStyle);
+  
   return (
     <a 
       href={buttonStyle.url} 
       style={getButtonStyles(buttonStyle)}
-      className={getButtonClass(buttonStyle)}
+      className={buttonClass}
       target="_blank" 
       rel="noopener noreferrer"
       onClick={(e) => e.preventDefault()}
