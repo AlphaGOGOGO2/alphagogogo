@@ -66,7 +66,7 @@ export function YouTubeTranscriptService() {
         <CardFooter className="bg-gray-50 rounded-b-lg">
           <p className="text-xs text-gray-500">
             * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
-            일부 영상은 브라우저의 CORS 정책으로 인해 접근이 제한될 수 있습니다.
+            CORS 정책으로 인한 제한이 있을 수 있으며, 이 경우 CORS 프록시를 통해 요청합니다.
           </p>
         </CardFooter>
       </Card>

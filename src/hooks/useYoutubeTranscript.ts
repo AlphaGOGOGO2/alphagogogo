@@ -3,11 +3,156 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { extractYouTubeVideoId } from "@/utils/youtubeUtils";
 
+// Constants for YouTube transcript extraction
+const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36,gzip(gfe)';
+const RE_XML_TRANSCRIPT = /<text start="([^"]*)" dur="([^"]*)">([^<]*)<\/text>/g;
+const CORS_PROXY = 'https://corsproxy.io/?';
+
+// Error classes for better error handling
+class YoutubeTranscriptError extends Error {
+  constructor(message: string) {
+    super(`[YoutubeTranscript] 🚨 ${message}`);
+  }
+}
+
+class YoutubeTranscriptTooManyRequestError extends YoutubeTranscriptError {
+  constructor() {
+    super('YouTube is receiving too many requests from this IP and now requires solving a captcha to continue');
+  }
+}
+
+class YoutubeTranscriptVideoUnavailableError extends YoutubeTranscriptError {
+  constructor(videoId: string) {
+    super(`The video is no longer available (${videoId})`);
+  }
+}
+
+class YoutubeTranscriptDisabledError extends YoutubeTranscriptError {
+  constructor(videoId: string) {
+    super(`Transcript is disabled on this video (${videoId})`);
+  }
+}
+
+class YoutubeTranscriptNotAvailableError extends YoutubeTranscriptError {
+  constructor(videoId: string) {
+    super(`No transcripts are available for this video (${videoId})`);
+  }
+}
+
+interface TranscriptResponse {
+  text: string;
+  duration: number;
+  offset: number;
+  lang?: string;
+}
+
 export function useYoutubeTranscript() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [transcript, setTranscript] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Function to retrieve transcript using the more reliable method
+  const fetchTranscript = async (videoId: string, lang?: string): Promise<TranscriptResponse[]> => {
+    console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
+    
+    // Step 1: Fetch the video page to get caption data
+    const videoPageResponse = await fetch(
+      `${CORS_PROXY}https://www.youtube.com/watch?v=${videoId}`,
+      {
+        headers: {
+          ...(lang && { 'Accept-Language': lang }),
+          'User-Agent': USER_AGENT,
+        },
+      }
+    );
+    
+    if (!videoPageResponse.ok) {
+      console.error(`Video page response not OK: ${videoPageResponse.status}`);
+      throw new YoutubeTranscriptVideoUnavailableError(videoId);
+    }
+    
+    const videoPageBody = await videoPageResponse.text();
+    console.log(`Video page fetched successfully, length: ${videoPageBody.length}`);
+
+    // Step 2: Extract caption data from the page
+    const splittedHTML = videoPageBody.split('"captions":');
+
+    if (splittedHTML.length <= 1) {
+      console.error('No captions found in the video page');
+      if (videoPageBody.includes('class="g-recaptcha"')) {
+        throw new YoutubeTranscriptTooManyRequestError();
+      }
+      if (!videoPageBody.includes('"playabilityStatus":')) {
+        throw new YoutubeTranscriptVideoUnavailableError(videoId);
+      }
+      throw new YoutubeTranscriptDisabledError(videoId);
+    }
+
+    // Step 3: Parse the captions data
+    const captions = (() => {
+      try {
+        return JSON.parse(
+          splittedHTML[1].split(',"videoDetails')[0].replace('\n', '')
+        );
+      } catch (e) {
+        console.error('Error parsing captions JSON:', e);
+        return undefined;
+      }
+    })()?.['playerCaptionsTracklistRenderer'];
+
+    if (!captions) {
+      console.error('Captions object not found');
+      throw new YoutubeTranscriptDisabledError(videoId);
+    }
+
+    if (!('captionTracks' in captions)) {
+      console.error('No caption tracks found');
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+
+    console.log(`Found ${captions.captionTracks.length} caption tracks`);
+    
+    // Step 4: Get the transcript URL
+    const captionTrack = lang
+      ? captions.captionTracks.find((track: any) => track.languageCode === lang)
+      : captions.captionTracks[0];
+      
+    if (!captionTrack) {
+      console.error(`No caption track found for language: ${lang}`);
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+    
+    const transcriptURL = captionTrack.baseUrl;
+    console.log(`Using transcript URL: ${transcriptURL}`);
+
+    // Step 5: Fetch the actual transcript
+    const transcriptResponse = await fetch(`${CORS_PROXY}${transcriptURL}`, {
+      headers: {
+        ...(lang && { 'Accept-Language': lang }),
+        'User-Agent': USER_AGENT,
+      },
+    });
+    
+    if (!transcriptResponse.ok) {
+      console.error(`Transcript response not OK: ${transcriptResponse.status}`);
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+    
+    const transcriptBody = await transcriptResponse.text();
+    console.log(`Transcript fetched successfully, length: ${transcriptBody.length}`);
+
+    // Step 6: Parse the XML transcript
+    const results = [...transcriptBody.matchAll(RE_XML_TRANSCRIPT)];
+    console.log(`Parsed ${results.length} transcript segments`);
+    
+    return results.map((result) => ({
+      text: result[3],
+      duration: parseFloat(result[2]),
+      offset: parseFloat(result[1]),
+      lang: lang ?? captionTrack.languageCode,
+    }));
+  };
 
   const handleExtractTranscript = async () => {
     // Reset states
@@ -32,150 +177,45 @@ export function useYoutubeTranscript() {
     setIsLoading(true);
     
     try {
-      // 직접 YouTube의 자막 데이터 API 접근 - 가장 안정적인 방식 시도
-      // 1. 지정된 언어의 자막 가져오기 시도 (한국어 먼저, 그 다음 영어)
-      // 2. 자동 생성 자막 가져오기 시도
-      let transcriptText = "";
+      // Try to get transcript with Korean language first
+      let transcriptData: TranscriptResponse[] = [];
       
-      // 직접 API 호출 함수
-      async function fetchTranscript(videoId, lang) {
+      try {
+        console.log("Attempting to fetch Korean transcript");
+        transcriptData = await fetchTranscript(videoId, 'ko');
+      } catch (koreanError) {
+        console.log("Korean transcript failed, trying English", koreanError);
         try {
-          const url = `https://www.youtube.com/api/timedtext?lang=${lang}&v=${videoId}`;
-          console.log(`Trying to fetch ${lang} transcript from:`, url);
-          
-          const response = await fetch(url);
-          console.log(`${lang} transcript response status:`, response.status);
-          
-          if (response.ok) {
-            const xmlText = await response.text();
-            console.log(`${lang} transcript XML length:`, xmlText.length);
-            
-            // XML이 실제로 존재하는지 확인 (빈 응답이 아닌지)
-            if (xmlText && xmlText.length > 100) {
-              // XML 자막 파싱
-              const parser = new DOMParser();
-              const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-              const textNodes = xmlDoc.getElementsByTagName("text");
-              
-              if (textNodes.length > 0) {
-                let fullText = "";
-                for (let i = 0; i < textNodes.length; i++) {
-                  // 태그 내부의 HTML 엔티티 등을 적절히 처리
-                  const textContent = textNodes[i].textContent || "";
-                  fullText += textContent + " ";
-                }
-                
-                return fullText.trim();
-              }
-            }
-          }
-          return null;
-        } catch (error) {
-          console.error(`Error fetching ${lang} transcript:`, error);
-          return null;
+          transcriptData = await fetchTranscript(videoId, 'en');
+        } catch (englishError) {
+          console.log("English transcript failed, trying default language", englishError);
+          transcriptData = await fetchTranscript(videoId);
         }
       }
       
-      // 자동 생성 자막 가져오기 시도
-      async function fetchAutoGenerated(videoId) {
-        try {
-          const url = `https://www.youtube.com/api/timedtext?lang=ko&v=${videoId}&kind=asr`;
-          console.log(`Trying to fetch auto-generated transcript:`, url);
-          
-          const response = await fetch(url);
-          console.log(`Auto-generated transcript response status:`, response.status);
-          
-          if (response.ok) {
-            const xmlText = await response.text();
-            console.log(`Auto-generated transcript XML length:`, xmlText.length);
-            
-            if (xmlText && xmlText.length > 100) {
-              const parser = new DOMParser();
-              const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-              const textNodes = xmlDoc.getElementsByTagName("text");
-              
-              if (textNodes.length > 0) {
-                let fullText = "";
-                for (let i = 0; i < textNodes.length; i++) {
-                  const textContent = textNodes[i].textContent || "";
-                  fullText += textContent + " ";
-                }
-                
-                return fullText.trim();
-              }
-            }
-          }
-          return null;
-        } catch (error) {
-          console.error("Error fetching auto-generated transcript:", error);
-          return null;
-        }
-      }
-      
-      // 백업 API 시도 (Kakulukian/youtube-transcript)
-      async function fetchFromBackupApi(videoId) {
-        try {
-          const corsProxy = "https://corsproxy.io/?";
-          const apiUrl = `${corsProxy}https://youtube-transcript.vercel.app/api/transcript?videoId=${videoId}`;
-          
-          console.log("Trying backup API:", apiUrl);
-          const response = await fetch(apiUrl);
-          console.log("Backup API response status:", response.status);
-          
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Backup API data:", data);
-            
-            if (data && data.transcript) {
-              return data.transcript;
-            } else if (data && data.captions && data.captions.length > 0) {
-              return data.captions.map((caption) => caption.text).join(" ");
-            }
-          }
-          return null;
-        } catch (error) {
-          console.error("Backup API error:", error);
-          return null;
-        }
-      }
-      
-      // 각 방법을 순차적으로 시도
-      
-      // 1. 한국어 자막 시도
-      transcriptText = await fetchTranscript(videoId, "ko");
-      
-      // 2. 영어 자막 시도
-      if (!transcriptText) {
-        transcriptText = await fetchTranscript(videoId, "en");
-      }
-      
-      // 3. 자동 생성 자막 시도
-      if (!transcriptText) {
-        transcriptText = await fetchAutoGenerated(videoId);
-      }
-      
-      // 4. 백업 API 시도
-      if (!transcriptText) {
-        transcriptText = await fetchFromBackupApi(videoId);
-      }
-      
-      // 최종 결과 처리
-      if (transcriptText) {
-        setTranscript(transcriptText);
+      if (transcriptData && transcriptData.length > 0) {
+        // Join all transcript segments into a single text
+        const fullTranscript = transcriptData.map(segment => segment.text).join(' ');
+        setTranscript(fullTranscript);
         toast.success("자막을 성공적으로 가져왔습니다!");
       } else {
-        throw new Error("자막을 찾을 수 없습니다");
+        throw new YoutubeTranscriptNotAvailableError(videoId);
       }
-      
     } catch (error) {
       console.error("자막 추출 오류:", error);
       let errorMessage = "자막을 가져오는데 실패했습니다.";
       
-      if (error instanceof Error) {
+      if (error instanceof YoutubeTranscriptTooManyRequestError) {
+        errorMessage = "요청이 너무 많습니다. 잠시 후 다시 시도해주세요.";
+      } else if (error instanceof YoutubeTranscriptVideoUnavailableError) {
+        errorMessage = "이 영상은 더 이상 사용할 수 없습니다.";
+      } else if (error instanceof YoutubeTranscriptDisabledError) {
+        errorMessage = "이 영상에서는 자막 기능이 비활성화되어 있습니다.";
+      } else if (error instanceof YoutubeTranscriptNotAvailableError) {
+        errorMessage = "이 영상에는 자막이 없거나 접근할 수 없습니다.";
+      } else if (error instanceof Error) {
         if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
           errorMessage = "네트워크 연결 오류: 서버에 연결할 수 없습니다.";
-        } else if (error.message.includes("자막을 찾을 수 없습니다")) {
-          errorMessage = "이 영상에는 자막이 없거나 접근할 수 없습니다.";
         } else {
           errorMessage = error.message;
         }

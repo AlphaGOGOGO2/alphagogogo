@@ -39,6 +39,24 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
             예시: https://www.youtube.com/watch?v=VIDEO_ID 또는 https://youtu.be/VIDEO_ID
           </p>
         )}
+
+        {error.includes("요청이 너무 많습니다") && (
+          <p className="mt-1">
+            YouTube에서 너무 많은 요청을 받아 캡챠 확인이 필요합니다. 잠시 후 다시 시도하거나 다른 네트워크에서 접속해보세요.
+          </p>
+        )}
+
+        {error.includes("더 이상 사용할 수 없습니다") && (
+          <p className="mt-1">
+            이 영상은 삭제되었거나 비공개로 전환되었을 수 있습니다. 다른 영상을 시도해보세요.
+          </p>
+        )}
+
+        {error.includes("자막 기능이 비활성화") && (
+          <p className="mt-1">
+            업로더가 이 영상의 자막 기능을 비활성화했습니다. 자막이 활성화된 다른 영상을 시도해보세요.
+          </p>
+        )}
       </div>
     </div>
   );
