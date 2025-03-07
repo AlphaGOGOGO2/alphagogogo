@@ -14,7 +14,12 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         <p>{error}</p>
         {error.includes("Failed to fetch") && (
           <p className="mt-1">
-            CORS 우회 옵션을 활성화했는지 확인하시거나, 다른 YouTube 영상을 시도해보세요.
+            네트워크 연결을 확인하거나 다른 YouTube 영상을 시도해보세요.
+          </p>
+        )}
+        {error.includes("No transcript") && (
+          <p className="mt-1">
+            해당 영상에 자막이 없거나 자막 접근이 제한되었을 수 있습니다.
           </p>
         )}
       </div>

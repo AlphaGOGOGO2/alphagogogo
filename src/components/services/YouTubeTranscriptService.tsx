@@ -13,10 +13,6 @@ export function YouTubeTranscriptService() {
     transcript,
     isLoading,
     error,
-    language,
-    setLanguage,
-    useProxy,
-    setUseProxy,
     handleExtractTranscript
   } = useYoutubeTranscript();
 
@@ -37,10 +33,6 @@ export function YouTubeTranscriptService() {
             <TranscriptForm
               youtubeUrl={youtubeUrl}
               setYoutubeUrl={setYoutubeUrl}
-              language={language}
-              setLanguage={setLanguage}
-              useProxy={useProxy}
-              setUseProxy={setUseProxy}
               isLoading={isLoading}
               onSubmit={handleExtractTranscript}
             />
@@ -52,7 +44,7 @@ export function YouTubeTranscriptService() {
         </CardContent>
         <CardFooter className="bg-gray-50 rounded-b-lg">
           <p className="text-xs text-gray-500">
-            * 일부 영상은 자막이 제공되지 않거나, 언어가 제한될 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
+            * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
           </p>
         </CardFooter>
       </Card>

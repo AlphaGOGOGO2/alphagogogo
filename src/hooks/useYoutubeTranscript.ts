@@ -1,15 +1,13 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { extractYouTubeVideoId, createTranscriptProxyUrl } from "@/utils/youtubeUtils";
+import { extractYouTubeVideoId } from "@/utils/youtubeUtils";
 
 export function useYoutubeTranscript() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
   const [transcript, setTranscript] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [language, setLanguage] = useState("ko");
-  const [useProxy, setUseProxy] = useState(true);
 
   const handleExtractTranscript = async () => {
     // Reset states
@@ -27,18 +25,13 @@ export function useYoutubeTranscript() {
     setIsLoading(true);
     
     try {
-      // Construct the API URL, using proxy if enabled
-      let apiUrl = `https://youtube-transcript.vercel.app/api?videoId=${videoId}&lang=${language}`;
-      
-      if (useProxy) {
-        apiUrl = createTranscriptProxyUrl(videoId, language);
-      }
+      // Use the transcript API directly without language parameter to get default language
+      const apiUrl = `https://youtube-transcript.vercel.app/api?videoId=${videoId}`;
       
       const response = await fetch(apiUrl, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'  // Required by some CORS proxies
         }
       });
       
@@ -59,7 +52,7 @@ export function useYoutubeTranscript() {
     } catch (error) {
       console.error("자막 추출 오류:", error);
       setError(error instanceof Error ? error.message : "자막을 가져오는데 실패했습니다.");
-      toast.error("자막을 가져오는데 실패했습니다. CORS 우회 방법을 사용해보세요.");
+      toast.error("자막을 가져오는데 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -71,10 +64,6 @@ export function useYoutubeTranscript() {
     transcript,
     isLoading,
     error,
-    language,
-    setLanguage,
-    useProxy,
-    setUseProxy,
     handleExtractTranscript
   };
 }
