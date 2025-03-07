@@ -1,26 +1,44 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBlogCategories, createBlogPost } from "@/services/blogService";
-import { useNavigate } from "react-router-dom";
+import { getAllBlogCategories, createBlogPost, updateBlogPost } from "@/services/blogService";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { BlogForm } from "@/components/blog/BlogForm";
 import { BlogPreview } from "@/components/blog/BlogPreview";
+import { BlogPost } from "@/types/blog";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
+  const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const isEditMode = location.pathname.includes('/edit/');
+  const postToEdit = location.state?.post as BlogPost | undefined;
+  
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [postId, setPostId] = useState<string | null>(null);
 
   // Fetch categories
   const { data: categories = [], isLoading: isCategoriesLoading } = useQuery({
     queryKey: ["blog-categories"],
     queryFn: getAllBlogCategories
   });
+
+  // Load post data if in edit mode
+  useEffect(() => {
+    if (isEditMode && postToEdit) {
+      setTitle(postToEdit.title);
+      setContent(postToEdit.content);
+      setCategory(postToEdit.category);
+      setPostId(postToEdit.id);
+      // We don't have tags in the current data model, but if implemented, you could set them here
+    }
+  }, [isEditMode, postToEdit]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -34,9 +52,6 @@ export default function BlogWritePage() {
     setIsSubmitting(true);
 
     try {
-      // Add console logs to help debug
-      console.log("Attempting to create blog post:", { title, content, category, tags });
-      
       // Parse tags properly
       const parsedTags = tags
         .split(',')
@@ -45,35 +60,55 @@ export default function BlogWritePage() {
       
       console.log("Parsed tags:", parsedTags);
       
-      // Create the blog post with additional error handling
-      const newPost = await createBlogPost({
-        title,
-        content,
-        category,
-        tags: parsedTags
-      });
+      let result;
       
-      if (newPost) {
-        console.log("Post created successfully:", newPost);
-        toast.success("블로그 포스트가 성공적으로 저장되었습니다");
+      if (isEditMode && postId) {
+        // Update existing post
+        console.log("Updating blog post:", { id: postId, title, content, category, tags: parsedTags });
+        result = await updateBlogPost(postId, {
+          title,
+          content,
+          category,
+          tags: parsedTags
+        });
+      } else {
+        // Create new post
+        console.log("Creating new blog post:", { title, content, category, tags: parsedTags });
+        result = await createBlogPost({
+          title,
+          content,
+          category,
+          tags: parsedTags
+        });
+      }
+      
+      if (result) {
+        console.log("Post operation successful:", result);
+        toast.success(isEditMode 
+          ? "블로그 포스트가 성공적으로 수정되었습니다"
+          : "블로그 포스트가 성공적으로 저장되었습니다"
+        );
         // Navigate after a short delay to ensure toast is visible
         setTimeout(() => {
-          navigate(`/blog`);
+          navigate(`/blog/${result.slug}`);
         }, 1000);
       } else {
-        console.error("Blog post creation returned null or undefined");
-        toast.error("블로그 포스트 작성에 실패했습니다");
+        console.error("Blog post operation returned null or undefined");
+        toast.error(isEditMode 
+          ? "블로그 포스트 수정에 실패했습니다"
+          : "블로그 포스트 작성에 실패했습니다"
+        );
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      toast.error(`블로그 포스트 작성에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
+      toast.error(`블로그 포스트 ${isEditMode ? '수정' : '작성'}에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <BlogLayout title="글쓰기">
+    <BlogLayout title={isEditMode ? "글 수정" : "글쓰기"}>
       <div className="flex flex-col lg:flex-row gap-8 h-[calc(100vh-250px)]">
         <div className="w-full lg:w-1/2">
           <BlogForm
@@ -89,6 +124,7 @@ export default function BlogWritePage() {
             isCategoriesLoading={isCategoriesLoading}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
+            isEditMode={isEditMode}
           />
         </div>
         <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-sm border border-gray-100 overflow-auto">

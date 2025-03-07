@@ -4,8 +4,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { getBlogPostBySlug } from "@/services/blogService";
-import { Loader2, Calendar, Clock, User } from "lucide-react";
+import { Loader2, Calendar, Clock, User, Pencil } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -25,6 +26,12 @@ export default function BlogPostPage() {
       navigate("/blog");
     }
   }, [isLoading, post, error, navigate]);
+  
+  const handleEdit = () => {
+    if (post) {
+      navigate(`/blog/edit/${post.slug}`, { state: { post } });
+    }
+  };
   
   if (isLoading) {
     return (
@@ -60,10 +67,18 @@ export default function BlogPostPage() {
         )}
         
         <div className="p-6 md:p-8">
-          <div className="mb-6">
+          <div className="flex justify-between items-center mb-6">
             <span className="inline-block px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-full">
               {post.category}
             </span>
+            <Button 
+              onClick={handleEdit} 
+              variant="outline" 
+              className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50"
+            >
+              <Pencil size={16} />
+              수정하기
+            </Button>
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">

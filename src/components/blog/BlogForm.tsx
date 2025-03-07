@@ -20,6 +20,7 @@ interface BlogFormProps {
   isCategoriesLoading: boolean;
   isSubmitting: boolean;
   onSubmit: (e: FormEvent<HTMLFormElement>) => Promise<void>;
+  isEditMode?: boolean;
 }
 
 export function BlogForm({
@@ -34,11 +35,14 @@ export function BlogForm({
   categories,
   isCategoriesLoading,
   isSubmitting,
-  onSubmit
+  onSubmit,
+  isEditMode = false
 }: BlogFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-sm border border-gray-100 h-full flex flex-col relative">
-      <h2 className="text-xl font-semibold text-purple-800 mb-4">글 작성</h2>
+      <h2 className="text-xl font-semibold text-purple-800 mb-4">
+        {isEditMode ? "글 수정" : "글 작성"}
+      </h2>
       <div className="space-y-6 flex-grow overflow-auto pb-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BlogCategorySelect
@@ -53,7 +57,7 @@ export function BlogForm({
         <BlogContentInput content={content} setContent={setContent} />
       </div>
       <div className="absolute bottom-8 right-8 left-8 bg-white py-4 border-t border-gray-100">
-        <BlogSubmitButton isSubmitting={isSubmitting} />
+        <BlogSubmitButton isSubmitting={isSubmitting} isEditMode={isEditMode} />
       </div>
     </form>
   );
