@@ -2,6 +2,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";
+import { GPTSOtherSection } from "@/components/gpts/GPTSOtherSection";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -28,8 +29,7 @@ export default function GPTSPage() {
           </p>
           
           <GPTSBlogSection />
-          
-          {/* 여기에 추가 GPTS 섹션을 추가할 수 있습니다 */}
+          <GPTSOtherSection />
         </div>
       </main>
       
