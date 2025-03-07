@@ -12,6 +12,7 @@ import BlogWritePage from "./pages/blog/BlogWritePage";
 import TrendingPage from "./pages/blog/TrendingPage";
 import LifestylePage from "./pages/blog/LifestylePage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
+import GPTSPage from "./pages/GPTSPage";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/gpts" element={<GPTSPage />} />
           <Route path="/blog" element={<AllBlogPage />} />
           <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
           <Route path="/blog/trending" element={<TrendingPage />} />
