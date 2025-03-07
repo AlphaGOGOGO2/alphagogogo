@@ -30,7 +30,7 @@ export default function ServicesPage() {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
+            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col">
               <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg py-8">
                 <CardTitle className="flex items-center gap-3 text-2xl">
                   <Youtube size={28} className="text-white" />
@@ -40,8 +40,8 @@ export default function ServicesPage() {
                   YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6 pb-6 px-6">
-                <p className="text-gray-700 mb-6">
+              <CardContent className="pt-6 pb-6 px-6 flex-grow flex flex-col">
+                <p className="text-gray-700 mb-6 flex-grow">
                   YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다.
                   영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.
                 </p>
@@ -54,7 +54,7 @@ export default function ServicesPage() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
+            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col">
               <CardHeader className="bg-gradient-to-r from-purple-700 to-purple-500 text-white rounded-t-lg py-8">
                 <CardTitle className="flex items-center gap-3 text-2xl">
                   <Link2 size={28} className="text-white" />
@@ -64,8 +64,8 @@ export default function ServicesPage() {
                   긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6 pb-6 px-6">
-                <p className="text-gray-700 mb-6">
+              <CardContent className="pt-6 pb-6 px-6 flex-grow flex flex-col">
+                <p className="text-gray-700 mb-6 flex-grow">
                   복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다.
                   단축된 URL은 영구적으로 사용할 수 있습니다.
                 </p>
@@ -78,7 +78,7 @@ export default function ServicesPage() {
               </CardContent>
             </Card>
 
-            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
+            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col">
               <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-t-lg py-8">
                 <CardTitle className="flex items-center gap-3 text-2xl">
                   <MousePointerClick size={28} className="text-white" />
@@ -88,8 +88,8 @@ export default function ServicesPage() {
                   블로그용 맞춤형 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="pt-6 pb-6 px-6">
-                <p className="text-gray-700 mb-6">
+              <CardContent className="pt-6 pb-6 px-6 flex-grow flex flex-col">
+                <p className="text-gray-700 mb-6 flex-grow">
                   색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 
                   매력적인 버튼 HTML 코드를 생성합니다.
                 </p>
