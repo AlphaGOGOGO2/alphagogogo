@@ -12,7 +12,8 @@ export function CommunityChat() {
     nickname,
     userColor,
     sendMessage,
-    changeNickname
+    changeNickname,
+    activeUsersCount
   } = useCommunityChat();
 
   return (
@@ -21,6 +22,7 @@ export function CommunityChat() {
         nickname={nickname} 
         userColor={userColor} 
         onChangeNickname={changeNickname} 
+        activeUsersCount={activeUsersCount}
       />
       
       <div className="p-4 h-[500px] overflow-y-auto bg-white">

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
@@ -13,13 +12,21 @@ interface ChatMessage {
   color: string;
 }
 
+interface UserPresence {
+  nickname: string;
+  color: string;
+  online_at: string;
+}
+
 export function useCommunityChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
+  const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const { toast } = useToast();
   const channelRef = useRef<any>(null);
+  const presenceChannelRef = useRef<any>(null);
 
   // Generate random nickname and color when hook is initialized
   useEffect(() => {
@@ -60,6 +67,53 @@ export function useCommunityChat() {
     };
     
     setupSubscription();
+
+    // Setup presence channel for active users tracking
+    const setupPresence = () => {
+      if (presenceChannelRef.current !== null) return;
+
+      presenceChannelRef.current = supabase.channel('room:community', {
+        config: {
+          presence: {
+            key: nickname,
+          },
+        },
+      });
+
+      presenceChannelRef.current
+        .on('presence', { event: 'sync' }, () => {
+          const state = presenceChannelRef.current.presenceState();
+          const users: UserPresence[] = [];
+          
+          Object.keys(state).forEach(key => {
+            state[key].forEach((presence: UserPresence) => {
+              users.push(presence);
+            });
+          });
+          
+          setActiveUsers(users);
+        })
+        .on('presence', { event: 'join' }, ({ key, newPresences }: { key: string, newPresences: UserPresence[] }) => {
+          // 새 사용자가 입장했을 때 activeUsers 상태를 업데이트
+          console.log('User joined:', key, newPresences);
+        })
+        .on('presence', { event: 'leave' }, ({ key, leftPresences }: { key: string, leftPresences: UserPresence[] }) => {
+          // 사용자가 퇴장했을 때 activeUsers 상태를 업데이트
+          console.log('User left:', key, leftPresences);
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            // Send presence data when successfully subscribed
+            await presenceChannelRef.current.track({
+              nickname: nickname,
+              color: userColor,
+              online_at: new Date().toISOString(),
+            });
+          }
+        });
+    };
+
+    setupPresence();
       
     return () => {
       // Clean up subscription when component unmounts
@@ -67,8 +121,12 @@ export function useCommunityChat() {
         supabase.removeChannel(channelRef.current);
         channelRef.current = null;
       }
+      if (presenceChannelRef.current) {
+        supabase.removeChannel(presenceChannelRef.current);
+        presenceChannelRef.current = null;
+      }
     };
-  }, []);
+  }, [nickname, userColor]);
 
   const loadRecentMessages = async () => {
     setIsLoading(true);
@@ -160,6 +218,8 @@ export function useCommunityChat() {
     nickname,
     userColor,
     sendMessage,
-    changeNickname
+    changeNickname,
+    activeUsers,
+    activeUsersCount: activeUsers.length
   };
 }
