@@ -2,7 +2,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Loader2 } from "lucide-react";
+import { ImageIcon, Loader2, FileVideo } from "lucide-react";
 import { useState, useRef } from "react";
 import { uploadBlogImage } from "@/services/blogMediaService";
 import { toast } from "sonner";
@@ -16,35 +16,44 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     // Check file type
-    if (!file.type.startsWith('image/')) {
-      toast.error("이미지 파일만 업로드 가능합니다");
+    const isImage = file.type.startsWith('image/');
+    const isVideo = file.type.startsWith('video/');
+    
+    if (!isImage && !isVideo) {
+      toast.error("이미지 또는 동영상 파일만 업로드 가능합니다");
       return;
     }
 
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("파일 크기는 5MB 이하여야 합니다");
+    // Check file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(`파일 크기는 10MB 이하여야 합니다 (현재: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
       return;
     }
 
     setIsUploading(true);
     try {
-      const imageUrl = await uploadBlogImage(file);
+      const mediaUrl = await uploadBlogImage(file);
       
-      if (imageUrl) {
-        // Insert image HTML at cursor position or at the end
-        const imageHtml = `<img src="${imageUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
-        setContent(content ? `${content}\n${imageHtml}` : imageHtml);
-        toast.success("이미지가 업로드되었습니다");
+      if (mediaUrl) {
+        // Insert media HTML at cursor position or at the end
+        let mediaHtml = '';
+        if (isImage) {
+          mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
+        } else if (isVideo) {
+          mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+        }
+        
+        setContent(content ? `${content}\n${mediaHtml}` : mediaHtml);
+        toast.success(`${isImage ? '이미지' : '동영상'}가 업로드되었습니다`);
       }
     } catch (error) {
-      console.error("이미지 업로드 실패:", error);
-      toast.error("이미지 업로드에 실패했습니다");
+      console.error("미디어 업로드 실패:", error);
+      toast.error("파일 업로드에 실패했습니다");
     } finally {
       setIsUploading(false);
       // Reset the file input
@@ -78,15 +87,15 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
           ) : (
             <>
               <ImageIcon className="h-4 w-4" />
-              이미지 업로드
+              미디어 업로드
             </>
           )}
         </Button>
         <input
           type="file"
           ref={fileInputRef}
-          onChange={handleImageUpload}
-          accept="image/*"
+          onChange={handleMediaUpload}
+          accept="image/*,video/*"
           className="hidden"
         />
       </div>

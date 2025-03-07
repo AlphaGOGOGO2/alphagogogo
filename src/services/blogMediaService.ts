@@ -3,52 +3,54 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
 
-// Upload blog image
+// Upload blog media (images and videos)
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
-    const fileExt = file.name.split('.').pop();
+    // Check for valid file types (images and videos)
+    const fileExt = file.name.split('.').pop()?.toLowerCase();
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `${fileName}`;
 
-    // Check if the bucket exists, if not create it (this won't do anything if it already exists)
-    const { data: buckets } = await supabase.storage.listBuckets();
-    const blogImagesBucket = buckets?.find(bucket => bucket.name === 'blog-images');
-
-    if (!blogImagesBucket) {
-      console.log("Creating blog-images bucket...");
-      const { error: createBucketError } = await supabase.storage.createBucket('blog-images', {
-        public: true,
-        fileSizeLimit: 5242880, // 5MB in bytes
-      });
-
-      if (createBucketError) {
-        console.error("Error creating bucket:", createBucketError);
-        throw createBucketError;
-      }
+    // Check file size (max 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error(`파일 크기는 10MB 이하여야 합니다 (현재: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+      return null;
     }
 
     // Upload the file
-    const { error: uploadError } = await supabase.storage
+    const { error: uploadError, data } = await supabase.storage
       .from('blog-images')
       .upload(filePath, file, {
         cacheControl: '3600',
-        upsert: false
+        upsert: true // Change to true to allow overwriting files
       });
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
-      throw uploadError;
+      
+      // Provide more specific error messages
+      if (uploadError.message.includes("permission")) {
+        toast.error("권한이 없습니다. 관리자에게 문의하세요.");
+      } else if (uploadError.message.includes("storage") || uploadError.message.includes("bucket")) {
+        toast.error("스토리지 버킷 접근에 문제가 있습니다.");
+      } else {
+        toast.error(`업로드 오류: ${uploadError.message}`);
+      }
+      
+      return null;
     }
 
     // Get the public URL
-    const { data } = supabase.storage
+    const { data: urlData } = supabase.storage
       .from('blog-images')
       .getPublicUrl(filePath);
 
-    return data.publicUrl;
+    console.log("Upload successful, URL:", urlData.publicUrl);
+    return urlData.publicUrl;
   } catch (error) {
-    console.error("Error uploading image:", error);
-    toast.error("이미지 업로드에 실패했습니다. 권한이 없거나 버킷 설정이 잘못되었을 수 있습니다.");
+    console.error("Error uploading media:", error);
+    toast.error("미디어 업로드에 실패했습니다. 잠시 후 다시 시도해주세요.");
     return null;
   }
 };

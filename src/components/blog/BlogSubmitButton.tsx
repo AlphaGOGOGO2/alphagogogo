@@ -19,7 +19,12 @@ export function BlogSubmitButton({ isSubmitting, isEditMode = false }: BlogSubmi
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           {isEditMode ? "수정 중..." : "저장 중..."}
         </>
-      ) : isEditMode ? "글 수정하기" : "글 저장하기"}
+      ) : (
+        <>
+          {isEditMode ? "글 수정하기" : "글 저장하기"}
+          <span className="ml-1 text-xs opacity-70">(Ctrl+Enter)</span>
+        </>
+      )}
     </Button>
   );
 }
