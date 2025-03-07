@@ -7,14 +7,33 @@ interface GPTSCardProps {
   description: string;
   url: string;
   imageUrl: string;
+  colorClass?: string;
 }
 
-export function GPTSCard({ title, description, url, imageUrl }: GPTSCardProps) {
+// Color classes for variety
+const cardColors = [
+  "bg-soft-purple",
+  "bg-soft-blue",
+  "bg-soft-yellow",
+  "bg-soft-green",
+  "bg-soft-peach",
+  "bg-soft-pink",
+  "bg-soft-orange",
+  "bg-soft-gray",
+];
+
+export function GPTSCard({ 
+  title, 
+  description, 
+  url, 
+  imageUrl, 
+  colorClass 
+}: GPTSCardProps) {
   return (
     <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300">
-      <CardHeader className="p-6 pb-4">
+      <CardHeader className={`p-6 pb-4 ${colorClass || "bg-white"}`}>
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
             <img 
               src={imageUrl} 
               alt={title} 
@@ -25,8 +44,8 @@ export function GPTSCard({ title, description, url, imageUrl }: GPTSCardProps) {
         </div>
       </CardHeader>
       
-      <CardContent className="p-6 pt-0 flex-grow">
-        <p className="text-gray-600 text-sm">{description}</p>
+      <CardContent className="p-6 pt-3 flex-grow">
+        <p className="text-gray-600">{description}</p>
       </CardContent>
       
       <CardFooter className="p-6 pt-0">
@@ -34,7 +53,7 @@ export function GPTSCard({ title, description, url, imageUrl }: GPTSCardProps) {
           href={url} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
+          className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition-colors"
         >
           이용하기
           <ExternalLink size={16} />

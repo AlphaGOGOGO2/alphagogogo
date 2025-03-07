@@ -23,7 +23,7 @@ export default function GPTSPage() {
           </div>
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">GPTS 이용하기</h1>
-          <p className="text-xl text-gray-600 mb-12 max-w-3xl">
+          <p className="text-xl text-gray-600 mb-12 max-w-full">
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
           

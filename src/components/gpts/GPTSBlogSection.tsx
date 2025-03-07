@@ -1,6 +1,18 @@
 
 import { GPTSCard } from "./GPTSCard";
 
+// Card colors for visual variety
+const cardColors = [
+  "bg-soft-purple",
+  "bg-soft-blue", 
+  "bg-soft-yellow",
+  "bg-soft-green",
+  "bg-soft-peach",
+  "bg-soft-pink",
+  "bg-soft-orange",
+  "bg-soft-gray",
+];
+
 // 블로그 관련 GPTS 데이터
 const blogGPTS = [
   {
@@ -72,13 +84,14 @@ export function GPTSBlogSection() {
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {blogGPTS.map((gpts) => (
+        {blogGPTS.map((gpts, index) => (
           <GPTSCard
             key={gpts.id}
             title={gpts.title}
             description={gpts.description}
             url={gpts.url}
             imageUrl={gpts.imageUrl}
+            colorClass={cardColors[index % cardColors.length]}
           />
         ))}
       </div>
