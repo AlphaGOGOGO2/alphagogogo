@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ButtonStyle } from "./BlogButtonCreator";
@@ -123,7 +122,7 @@ export function ButtonCodeDisplay({ buttonStyle }: ButtonCodeDisplayProps) {
           transition: transform 0.3s ease;
           ${buttonStyle.boxShadow ? 'box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);' : ''}
           :hover {
-            transform: scale(1.1);
+            transform: scale(1.05);
             ${buttonStyle.hoverEffect ? 'opacity: 0.9;' : ''}
           }
         `;

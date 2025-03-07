@@ -1,3 +1,4 @@
+
 import { ButtonStyle } from "./BlogButtonCreator";
 import { CSSProperties } from "react";
 
@@ -139,7 +140,7 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
     let className = buttonStyle.hoverEffect ? "hover:opacity-90 " : "";
     
     if (buttonStyle.buttonType === 'grow') {
-      className += "hover:scale-110 active:scale-105 transform transition-transform duration-300 ";
+      className += "hover:scale-105 active:scale-103 transform transition-transform duration-300 ";
     }
     
     if (buttonStyle.buttonType === 'shiny') {
@@ -168,11 +169,11 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
               background-size: 200% 100%;
               background-position: -100% 0;
             }
-            .hover\\:scale-110:hover {
-              transform: scale(1.1);
-            }
-            .active\\:scale-105:active {
+            .hover\\:scale-105:hover {
               transform: scale(1.05);
+            }
+            .active\\:scale-103:active {
+              transform: scale(1.03);
             }
           `}
         </style>
