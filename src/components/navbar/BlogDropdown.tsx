@@ -47,8 +47,10 @@ export function BlogDropdown({
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="true"
-        onClick={() => onOpenChange(!isOpen)}
-        onMouseEnter={() => onOpenChange(true)}
+        onClick={(e) => {
+          e.stopPropagation(); // 이벤트 버블링 방지
+          onOpenChange(!isOpen);
+        }}
         className="inline-flex items-center focus:outline-none"
       >
         <NavLink 
@@ -83,7 +85,6 @@ export function BlogDropdown({
         role="menu"
         aria-orientation="vertical"
         aria-labelledby="blog-menu"
-        onMouseLeave={() => onOpenChange(false)}
       >
         <div className="py-2">
           {categories.map((category) => (
@@ -96,7 +97,8 @@ export function BlogDropdown({
                   ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                   : "text-white hover:bg-white/20 hover:text-white"
               )}
-              onClick={() => {
+              onClick={(e) => {
+                e.stopPropagation(); // 이벤트 버블링 방지
                 onCategoryClick?.();
                 onOpenChange(false);
               }}

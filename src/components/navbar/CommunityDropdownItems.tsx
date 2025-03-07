@@ -27,7 +27,10 @@ export function CommunityDropdownItems({
                 ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
-            onClick={(e) => onItemClick(category, e)}
+            onClick={(e) => {
+              e.stopPropagation(); // 이벤트 버블링 방지
+              onItemClick(category, e);
+            }}
             type="button"
             role="menuitem"
           >
@@ -44,7 +47,10 @@ export function CommunityDropdownItems({
                 ? "text-gray-700 hover:bg-purple-50 hover:text-purple-700" 
                 : "text-white hover:bg-white/20 hover:text-white"
             )}
-            onClick={(e) => onItemClick(category, e)}
+            onClick={(e) => {
+              e.stopPropagation(); // 이벤트 버블링 방지
+              onItemClick(category, e);
+            }}
             role="menuitem"
           >
             <CommunityIcon categoryName={category.name} />

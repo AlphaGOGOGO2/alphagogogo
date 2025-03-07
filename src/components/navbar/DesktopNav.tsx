@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
@@ -19,20 +19,20 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     item => item.name !== "홈" && item.name !== "GPTS 이용하기" && item.name !== "커뮤니티"
   );
   
-  const handleBlogDropdownChange = (isOpen: boolean) => {
+  const handleBlogDropdownChange = useCallback((isOpen: boolean) => {
     setActiveDropdown(isOpen ? "blog" : null);
-  };
+  }, []);
   
-  const handleGPTSDropdownChange = (isOpen: boolean) => {
+  const handleGPTSDropdownChange = useCallback((isOpen: boolean) => {
     setActiveDropdown(isOpen ? "gpts" : null);
-  };
+  }, []);
 
-  const handleCommunityDropdownChange = (isOpen: boolean) => {
+  const handleCommunityDropdownChange = useCallback((isOpen: boolean) => {
     setActiveDropdown(isOpen ? "community" : null);
-  };
+  }, []);
   
   return (
-    <nav className="hidden md:flex items-center gap-6">
+    <nav className="hidden md:flex items-center gap-6" onClick={() => setActiveDropdown(null)}>
       <NavLink 
         name="홈" 
         path="/" 

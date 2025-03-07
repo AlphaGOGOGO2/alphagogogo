@@ -13,6 +13,7 @@ export function MobileCommunityItems({ onClose, locationPathname }: MobileCommun
   const navigate = useNavigate();
   
   const handleCommunityItemClick = (category: typeof communityCategories[0], event: React.MouseEvent) => {
+    event.stopPropagation(); // 이벤트 버블링 방지
     onClose();
     
     // 일반 링크 클릭은 기본 동작 그대로 유지
@@ -61,7 +62,10 @@ export function MobileCommunityItems({ onClose, locationPathname }: MobileCommun
             name={`- ${category.name}`}
             path={category.path}
             isActive={locationPathname === category.path && category.name === "실시간 채팅"}
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              navigate(category.path);
+            }}
           />
         )
       ))}
