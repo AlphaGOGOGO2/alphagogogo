@@ -27,7 +27,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col w-full">
       <Navbar />
-      <main>
+      <main className="bg-gradient-to-b from-[#1E293B] to-[#472e87]">
         <Hero />
         <FeaturedPosts />
         <GPTSUsage />

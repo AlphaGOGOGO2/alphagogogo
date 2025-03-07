@@ -27,15 +27,15 @@ export function Hero() {
           />
           Your browser does not support the video tag.
         </video>
-        <div className="absolute inset-0 bg-[#1A1F2C]/80 backdrop-blur-[3px]"></div>
+        <div className="absolute inset-0 bg-[#1E293B]/90 backdrop-blur-[3px]"></div>
       </div>
       
       {/* Enhanced animated shapes with more vibrant colors */}
       <div className="absolute inset-0 overflow-hidden z-[1]">
-        <div className="absolute top-16 right-[10%] w-80 h-80 rounded-full bg-[#8e24aa]/30 blur-3xl animate-float purple-glow"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#9c27b0]/30 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-[40%] left-[20%] w-60 h-60 rounded-full bg-[#6a1b9a]/30 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-[30%] right-[30%] w-40 h-40 rounded-full bg-[#8e24aa]/20 blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-16 right-[10%] w-80 h-80 rounded-full bg-[#9c27b0]/30 blur-3xl animate-float purple-glow"></div>
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-[#6a1b9a]/30 blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-[40%] left-[20%] w-60 h-60 rounded-full bg-[#8e24aa]/30 blur-3xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-[30%] right-[30%] w-40 h-40 rounded-full bg-[#7b1fa2]/20 blur-3xl animate-pulse" style={{ animationDelay: '3s' }}></div>
       </div>
       
       <div className="relative w-full h-full max-w-7xl mx-auto px-6 md:px-8 flex flex-col items-center justify-center text-center z-10">
