@@ -80,18 +80,18 @@ export function Community() {
           <div className="md:flex items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
               <h3 className="text-2xl font-bold mb-4 text-gray-800">
-                지금 커뮤니티에 가입하세요
+                지금 커뮤니티에 참여하세요
               </h3>
               <p className="text-gray-600 mb-0">
-                매주 열리는 토론, 워크샵, 네트워킹 이벤트에 참여하고 전문가들의 멘토링도 받아보세요.
+                실시간 채팅으로 다른 AI 애호가들과 의견을 나누고, 최신 정보와 아이디어를 공유하세요.
               </p>
             </div>
             <div className="flex flex-wrap gap-4">
               <Link 
-                to="/community/join" 
+                to="/community" 
                 className="px-6 py-3 rounded-lg bg-purple-600 text-white font-medium hover:shadow-lg hover:shadow-purple-600/30 transition-all transform hover:-translate-y-0.5"
               >
-                가입하기
+                실시간 채팅 참여하기
               </Link>
               <Link 
                 to="/community" 

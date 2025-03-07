@@ -13,6 +13,7 @@ import TrendingPage from "./pages/blog/TrendingPage";
 import LifestylePage from "./pages/blog/LifestylePage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import GPTSPage from "./pages/GPTSPage";
+import CommunityPage from "./pages/CommunityPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/blog/write" element={<BlogWritePage />} />
           <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
           <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/community" element={<CommunityPage />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
