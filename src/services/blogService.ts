@@ -1,6 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, BlogCategory } from "@/types/supabase";
+import { BlogPost as UiBlogPost } from "@/types/blog";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "sonner";
 
@@ -14,8 +15,27 @@ const generateSlug = (title: string): string => {
     .trim() + "-" + uuidv4().substring(0, 8);
 };
 
+// Convert Supabase BlogPost to UI BlogPost
+export const adaptBlogPost = (post: BlogPost): UiBlogPost => {
+  return {
+    id: post.id,
+    title: post.title,
+    excerpt: post.excerpt || "",
+    content: post.content,
+    category: post.category,
+    author: {
+      name: post.author_name,
+      avatar: post.author_avatar
+    },
+    publishedAt: post.published_at,
+    readTime: post.read_time,
+    coverImage: post.cover_image || "",
+    slug: post.slug
+  };
+};
+
 // Get all blog posts
-export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
+export const getAllBlogPosts = async (): Promise<UiBlogPost[]> => {
   try {
     const { data, error } = await supabase
       .from("blog_posts")
@@ -26,7 +46,7 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(adaptBlogPost);
   } catch (error) {
     console.error("Error fetching blog posts:", error);
     toast.error("블로그 포스트를 불러오는데 실패했습니다");
@@ -35,7 +55,7 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
 };
 
 // Get blog posts by category
-export const getBlogPostsByCategory = async (category: string): Promise<BlogPost[]> => {
+export const getBlogPostsByCategory = async (category: string): Promise<UiBlogPost[]> => {
   try {
     const { data, error } = await supabase
       .from("blog_posts")
@@ -47,7 +67,7 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(adaptBlogPost);
   } catch (error) {
     console.error("Error fetching blog posts by category:", error);
     toast.error("블로그 포스트를 불러오는데 실패했습니다");
@@ -56,7 +76,7 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
 };
 
 // Get blog post by slug
-export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
+export const getBlogPostBySlug = async (slug: string): Promise<UiBlogPost | null> => {
   try {
     const { data, error } = await supabase
       .from("blog_posts")
@@ -68,7 +88,7 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       throw error;
     }
 
-    return data;
+    return data ? adaptBlogPost(data) : null;
   } catch (error) {
     console.error("Error fetching blog post by slug:", error);
     toast.error("블로그 포스트를 불러오는데 실패했습니다");
