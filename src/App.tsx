@@ -17,6 +17,7 @@ import CommunityPage from "./pages/CommunityPage";
 import ServicesPage from "./pages/ServicesPage";
 import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
+import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/services" element={<ServicesPage />} />
           <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
           <Route path="/url-shortener" element={<URLShortenerPage />} />
+          <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
           <Route path="/blog" element={<AllBlogPage />} />
           <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
           <Route path="/blog/trending" element={<TrendingPage />} />

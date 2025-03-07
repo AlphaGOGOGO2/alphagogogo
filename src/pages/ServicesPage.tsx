@@ -4,7 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Youtube, Link2 } from "lucide-react";
+import { Youtube, Link2, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function ServicesPage() {
@@ -29,7 +29,7 @@ export default function ServicesPage() {
             알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-purple-800 to-purple-600 text-white rounded-t-lg py-8">
                 <CardTitle className="flex items-center gap-3 text-2xl">
@@ -70,6 +70,30 @@ export default function ServicesPage() {
                   단축된 URL은 영구적으로 사용할 수 있습니다.
                 </p>
                 <Link to="/url-shortener">
+                  <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white">
+                    <ExternalLink size={16} className="mr-2" />
+                    서비스 이용하기
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-t-lg py-8">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <MousePointerClick size={28} className="text-white" />
+                  블로그 버튼 생성기
+                </CardTitle>
+                <CardDescription className="text-white/90 text-base mt-2">
+                  블로그용 맞춤형 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 pb-6 px-6">
+                <p className="text-gray-700 mb-6">
+                  색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 
+                  매력적인 버튼 HTML 코드를 생성합니다.
+                </p>
+                <Link to="/blog-button-creator">
                   <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white">
                     <ExternalLink size={16} className="mr-2" />
                     서비스 이용하기

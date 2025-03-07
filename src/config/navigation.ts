@@ -76,5 +76,10 @@ export const servicesCategories: ServicesCategory[] = [
     name: "URL 단축", 
     path: "/url-shortener",
     description: "긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다."
+  },
+  {
+    name: "블로그 버튼 생성기",
+    path: "/blog-button-creator",
+    description: "블로그용 커스텀 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다."
   }
 ];
