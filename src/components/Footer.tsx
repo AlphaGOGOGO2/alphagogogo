@@ -116,21 +116,10 @@ export function Footer() {
           </div>
         </div>
         
-        <div className="pt-8 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-gray-500 text-sm order-2 md:order-1 mt-4 md:mt-0">
+        <div className="pt-8 border-t border-gray-200 flex justify-center">
+          <p className="text-gray-500 text-sm">
             © {currentYear} 알파블로그. 모든 권리 보유.
           </p>
-          <div className="flex gap-6 text-sm order-1 md:order-2">
-            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
-              개인정보
-            </Link>
-            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
-              이용약관
-            </Link>
-            <Link to="#" className="text-gray-600 hover:text-[#6a1b9a] transition-colors">
-              문의하기
-            </Link>
-          </div>
         </div>
       </div>
     </footer>
