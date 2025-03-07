@@ -6,9 +6,30 @@ interface ButtonPreviewProps {
 }
 
 export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
+  // Define a type for our button styles to avoid TypeScript errors
+  type ButtonStyleObj = {
+    color: string;
+    fontSize: string;
+    borderRadius: string;
+    padding: string;
+    display: string;
+    alignItems: string;
+    justifyContent: string;
+    fontWeight: string;
+    textDecoration: string;
+    fontFamily: string;
+    cursor: string;
+    transition: string;
+    backgroundColor?: string;
+    border?: string;
+    boxShadow?: string;
+    textUnderlineOffset?: string;
+  };
+
   // Generate CSS for the button based on current styles
   const getButtonStyles = () => {
-    let styles = {
+    // Create the initial styles object with the type
+    let styles: ButtonStyleObj = {
       color: buttonStyle.textColor,
       fontSize: `${buttonStyle.fontSize}px`,
       borderRadius: `${buttonStyle.borderRadius}px`,
