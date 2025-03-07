@@ -4,11 +4,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
-
-interface GPTSCategory {
-  name: string;
-  path: string;
-}
+import { type GPTSCategory } from "@/config/navigation";
 
 interface GPTSDropdownProps {
   isScrolled: boolean;
@@ -54,7 +50,7 @@ export function GPTSDropdown({
   let closeTimer: ReturnType<typeof setTimeout>;
   
   const handleMouseLeave = () => {
-    closeTimer = setTimeout(() => onOpenChange(false), 500);
+    closeTimer = setTimeout(() => onOpenChange(false), 300);
   };
   
   const handleMouseEnter = () => {
@@ -110,7 +106,7 @@ export function GPTSDropdown({
             : "transform scale-95 opacity-0 pointer-events-none",
           isScrolled 
             ? "bg-white border border-gray-200" 
-            : "bg-black/70 backdrop-blur-lg border border-white/20"
+            : "bg-black/80 backdrop-blur-lg border border-white/20"
         )}
         role="menu"
         aria-orientation="vertical"

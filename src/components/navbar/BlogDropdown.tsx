@@ -1,5 +1,5 @@
 
-import { useState, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -15,7 +15,14 @@ interface BlogDropdownProps {
   onOpenChange: (isOpen: boolean) => void;
 }
 
-export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick, isOpen, onOpenChange }: BlogDropdownProps) {
+export function BlogDropdown({ 
+  isScrolled, 
+  isActive, 
+  categories, 
+  onCategoryClick,
+  isOpen,
+  onOpenChange
+}: BlogDropdownProps) {
   const dropdownRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -43,7 +50,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
   let closeTimer: ReturnType<typeof setTimeout>;
   
   const handleMouseLeave = () => {
-    closeTimer = setTimeout(() => onOpenChange(false), 500);
+    closeTimer = setTimeout(() => onOpenChange(false), 300);
   };
   
   const handleMouseEnter = () => {
@@ -99,7 +106,7 @@ export function BlogDropdown({ isScrolled, isActive, categories, onCategoryClick
             : "transform scale-95 opacity-0 pointer-events-none",
           isScrolled 
             ? "bg-white border border-gray-200" 
-            : "bg-black/70 backdrop-blur-lg border border-white/20"
+            : "bg-black/80 backdrop-blur-lg border border-white/20"
         )}
         role="menu"
         aria-orientation="vertical"
