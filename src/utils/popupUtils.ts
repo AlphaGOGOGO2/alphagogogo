@@ -12,7 +12,7 @@ export function openInfoPopup(options: {
   
   // 팝업창 설정
   const width = 400;
-  const height = 250;
+  const height = 280;
   const left = (window.innerWidth - width) / 2;
   const top = (window.innerHeight - height) / 2;
   
@@ -27,62 +27,91 @@ export function openInfoPopup(options: {
       <!DOCTYPE html>
       <html>
       <head>
-        <title>안내</title>
+        <title>${title}</title>
         <meta charset="UTF-8">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
         <style>
           body {
             font-family: 'Noto Sans KR', sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-color: #f8f9fa;
+            background-color: #F9F7FE;
+            color: #333333;
           }
           .container {
             background-color: white;
-            padding: 2rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(124, 76, 223, 0.1);
             text-align: center;
-            max-width: 80%;
+            max-width: 90%;
+            width: 100%;
+            animation: fadeIn 0.3s ease-out;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .icon-wrapper {
+            margin-bottom: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #A78BFA, #8B5CF6);
+          }
+          .icon {
+            font-size: 2rem;
+            color: white;
           }
           h2 {
-            color: #6200ee;
+            color: #4B5563;
             margin-bottom: 1rem;
+            font-weight: 600;
+            font-size: 1.5rem;
           }
           p {
-            color: #333;
-            font-size: 1.1rem;
-            margin-bottom: 1.5rem;
+            color: #6B7280;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
           }
           button {
-            background-color: #6200ee;
+            background: linear-gradient(135deg, #A78BFA, #8B5CF6);
             color: white;
             border: none;
-            padding: 0.5rem 1.5rem;
-            border-radius: 0.25rem;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
             cursor: pointer;
             font-size: 1rem;
-            transition: background-color 0.2s;
+            font-weight: 500;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(139, 92, 246, 0.25);
           }
           button:hover {
-            background-color: #5000d6;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(139, 92, 246, 0.3);
           }
-          .info-icon {
-            font-size: 2.5rem;
-            color: #6200ee;
-            margin-bottom: 1rem;
+          button:active {
+            transform: translateY(0);
           }
         </style>
       </head>
       <body>
         <div class="container">
-          <div class="info-icon">ℹ️</div>
+          <div class="icon-wrapper">
+            <div class="icon">${action === 'link' ? '🔗' : '✉️'}</div>
+          </div>
           <h2>${title}</h2>
           <p>${message}</p>
-          <button onclick="handleButtonClick()">확인</button>
+          <button onclick="handleButtonClick()">${action === 'link' ? '채팅방 참여하기' : '이메일 보내기'}</button>
         </div>
         <script>
           function handleButtonClick() {
