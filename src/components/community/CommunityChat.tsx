@@ -4,7 +4,6 @@ import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
 import { useCommunityChat } from "@/hooks/useCommunityChat";
-import { useRef } from "react";
 
 export function CommunityChat() {
   const {

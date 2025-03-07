@@ -1,36 +1,21 @@
 
-import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useToast } from "@/hooks/use-toast";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
-
-interface ChatMessage {
-  id: string;
-  nickname: string;
-  content: string;
-  created_at: string;
-  color: string;
-}
-
-interface UserPresence {
-  nickname: string;
-  color: string;
-  online_at: string;
-}
+import { fetchRecentMessages, sendChatMessage } from "@/services/chatService";
+import { useMessageSubscription } from "@/hooks/useMessageSubscription";
+import { usePresence } from "@/hooks/usePresence";
+import { ChatMessage } from "@/types/chat";
 
 export function useCommunityChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
-  const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const { toast } = useToast();
-  const channelRef = useRef<any>(null);
-  const presenceChannelRef = useRef<any>(null);
   const messagesLoaded = useRef(false);
 
-  // Generate random nickname and color only once when hook is initialized
+  // Initialize user data
   useEffect(() => {
     const randomNickname = `익명${Math.floor(Math.random() * 10000)}`;
     setNickname(randomNickname);
@@ -41,112 +26,20 @@ export function useCommunityChat() {
     setUserColor(pastelColor);
   }, []);
   
-  // Load messages only once
+  // Load messages
   useEffect(() => {
     if (!messagesLoaded.current) {
       loadRecentMessages();
       messagesLoaded.current = true;
     }
   }, []);
-  
-  // Set up subscriptions
-  useEffect(() => {
-    if (!nickname || !userColor) return;
-    
-    // Only initialize subscription once
-    setupMessageSubscription();
-    setupPresenceChannel();
-    
-    return () => {
-      // Clean up subscriptions when component unmounts
-      cleanupChannels();
-    };
-  }, [nickname, userColor]);
-
-  const cleanupChannels = () => {
-    if (channelRef.current) {
-      supabase.removeChannel(channelRef.current);
-      channelRef.current = null;
-    }
-    if (presenceChannelRef.current) {
-      supabase.removeChannel(presenceChannelRef.current);
-      presenceChannelRef.current = null;
-    }
-  };
-
-  const setupMessageSubscription = () => {
-    if (channelRef.current !== null) return; // Don't set up another subscription if one exists
-
-    channelRef.current = supabase
-      .channel('public:community_messages')
-      .on('postgres_changes', 
-        { 
-          event: 'INSERT', 
-          schema: 'public', 
-          table: 'community_messages' 
-        }, 
-        (payload) => {
-          const newMsg = payload.new as ChatMessage;
-          setMessages(prev => {
-            // Check if message already exists to prevent duplicates
-            if (prev.some(msg => msg.id === newMsg.id)) {
-              return prev;
-            }
-            return [...prev, newMsg];
-          });
-        })
-      .subscribe();
-  };
-  
-  const setupPresenceChannel = () => {
-    if (presenceChannelRef.current !== null) return;
-
-    presenceChannelRef.current = supabase.channel('room:community', {
-      config: {
-        presence: {
-          key: nickname,
-        },
-      },
-    });
-
-    presenceChannelRef.current
-      .on('presence', { event: 'sync' }, () => {
-        const state = presenceChannelRef.current.presenceState();
-        const users: UserPresence[] = [];
-        
-        Object.keys(state).forEach(key => {
-          state[key].forEach((presence: UserPresence) => {
-            users.push(presence);
-          });
-        });
-        
-        setActiveUsers(users);
-      })
-      .subscribe(async (status: string) => {
-        if (status === 'SUBSCRIBED') {
-          // Send presence data when successfully subscribed
-          await presenceChannelRef.current.track({
-            nickname: nickname,
-            color: userColor,
-            online_at: new Date().toISOString(),
-          });
-        }
-      });
-  };
 
   const loadRecentMessages = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('community_messages')
-        .select('*')
-        .order('created_at', { ascending: true })
-        .limit(50) as { data: ChatMessage[] | null, error: any };
-        
-      if (error) throw error;
-      
+      const data = await fetchRecentMessages();
       if (data) {
-        setMessages(data);
+        setInitialMessages(data);
       }
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -160,6 +53,13 @@ export function useCommunityChat() {
     }
   };
 
+  // Setup message subscription
+  const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
+  const { messages } = useMessageSubscription(initialMessages);
+
+  // Setup presence
+  const { activeUsers, activeUsersCount, updatePresence } = usePresence(nickname, userColor);
+
   const sendMessage = useCallback(async (messageContent: string) => {
     // 금지된 단어 확인
     if (containsForbiddenWords(messageContent)) {
@@ -172,27 +72,9 @@ export function useCommunityChat() {
     }
 
     const messageId = uuidv4();
-    const timestamp = new Date().toISOString();
-    
-    const tempMessage: ChatMessage = {
-      id: messageId,
-      nickname,
-      content: messageContent,
-      created_at: timestamp,
-      color: userColor
-    };
     
     try {
-      const { error } = await supabase
-        .from('community_messages')
-        .insert({
-          id: messageId,
-          nickname,
-          content: messageContent,
-          color: userColor
-        } as any);
-        
-      if (error) throw error;
+      await sendChatMessage(messageId, nickname, messageContent, userColor);
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -209,20 +91,14 @@ export function useCommunityChat() {
       setNickname(newNickname.trim());
       
       // Update presence with new nickname
-      if (presenceChannelRef.current) {
-        presenceChannelRef.current.track({
-          nickname: newNickname.trim(),
-          color: userColor,
-          online_at: new Date().toISOString(),
-        });
-      }
+      updatePresence();
       
       toast({
         title: "닉네임 변경 완료",
         description: `닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`
       });
     }
-  }, [nickname, userColor, toast]);
+  }, [nickname, updatePresence, toast]);
 
   return {
     messages,
@@ -232,6 +108,6 @@ export function useCommunityChat() {
     sendMessage,
     changeNickname,
     activeUsers,
-    activeUsersCount: activeUsers.length
+    activeUsersCount
   };
 }
