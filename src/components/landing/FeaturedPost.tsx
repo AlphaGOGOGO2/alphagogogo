@@ -1,6 +1,8 @@
+
 import { useState } from "react";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Link } from "react-router-dom";
 
 interface Post {
   id: number;
@@ -126,9 +128,11 @@ export function FeaturedPosts() {
         </div>
         
         <div className="mt-12 text-center">
-          <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium hover:shadow-lg hover:shadow-purple-200/50 transition-all transform hover:-translate-y-0.5">
-            모든 기사 보기
-          </button>
+          <Link to="/blog">
+            <button className="px-8 py-3 rounded-lg bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium hover:shadow-lg hover:shadow-purple-200/50 transition-all transform hover:-translate-y-0.5">
+              전체 글 확인하기
+            </button>
+          </Link>
         </div>
       </div>
     </section>
