@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { FeaturedPosts } from "@/components/FeaturedPost";
-import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { Footer } from "@/components/Footer";
 
 const Index = () => {
@@ -28,7 +27,6 @@ const Index = () => {
       <main>
         <Hero />
         <FeaturedPosts />
-        <NewsletterSignup />
       </main>
       <Footer />
     </div>

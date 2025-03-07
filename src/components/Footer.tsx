@@ -1,6 +1,5 @@
 
 import { Link } from "react-router-dom";
-import { Twitter, Linkedin, Github, Instagram } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -21,20 +20,6 @@ export function Footer() {
             <p className="text-gray-600 mb-6 text-balance">
               심층 보도와 분석을 통해 인공지능의 미래를 탐색합니다.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="Twitter">
-                <Twitter size={20} />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="LinkedIn">
-                <Linkedin size={20} />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="GitHub">
-                <Github size={20} />
-              </a>
-              <a href="#" className="text-gray-500 hover:text-[#6a1b9a] transition-colors" aria-label="Instagram">
-                <Instagram size={20} />
-              </a>
-            </div>
           </div>
           
           <div>
@@ -59,19 +44,17 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">카테고리</h3>
+            <h3 className="font-medium text-gray-900 mb-4">블로그</h3>
             <ul className="space-y-3">
               {[
-                { name: "기술", path: "technology" },
-                { name: "윤리", path: "ethics" },
-                { name: "연구", path: "research" },
-                { name: "의료", path: "healthcare" },
-                { name: "비즈니스", path: "business" },
-                { name: "교육", path: "education" }
+                { name: "최신글", path: "/blog/latest" },
+                { name: "인기글", path: "/blog/popular" },
+                { name: "에디터의 선택", path: "/blog/editors-pick" },
+                { name: "아카이브", path: "/blog/archive" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
-                    to={`/topics/${item.path}`}
+                    to={item.path}
                     className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
                     {item.name}
@@ -82,17 +65,17 @@ export function Footer() {
           </div>
           
           <div>
-            <h3 className="font-medium text-gray-900 mb-4">법적 정보</h3>
+            <h3 className="font-medium text-gray-900 mb-4">서비스</h3>
             <ul className="space-y-3">
               {[
-                { name: "개인정보 처리방침", path: "privacy-policy" },
-                { name: "서비스 이용약관", path: "terms-of-service" },
-                { name: "쿠키 정책", path: "cookie-policy" },
-                { name: "GDPR 준수", path: "gdpr-compliance" }
+                { name: "GPTS 이용하기", path: "/services/gpts" },
+                { name: "AI 상담", path: "/services/consultation" },
+                { name: "기업 솔루션", path: "/services/enterprise" },
+                { name: "기타", path: "/services/other" }
               ].map((item) => (
                 <li key={item.name}>
                   <Link 
-                    to={`/legal/${item.path}`}
+                    to={item.path}
                     className="text-gray-600 hover:text-[#6a1b9a] transition-colors"
                   >
                     {item.name}
