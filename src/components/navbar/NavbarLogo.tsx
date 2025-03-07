@@ -26,7 +26,7 @@ export function NavbarLogo({ isScrolled, onClick }: NavbarLogoProps) {
         "bg-clip-text text-transparent bg-gradient-to-r transition-all duration-300",
         isScrolled 
           ? "from-blue-800 to-blue-600" 
-          : "from-white to-cyan-200"
+          : "from-white to-blue-200"
       )}>알파블로그</span>
     </Link>
   );

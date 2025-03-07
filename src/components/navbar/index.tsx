@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -36,7 +37,7 @@ export function Navbar() {
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
         isScrolled 
           ? "bg-white shadow-md" 
-          : "bg-gradient-to-r from-[#0EA5E9] via-[#1E40AF] to-[#0EA5E9] backdrop-blur-lg border-b border-white/10"
+          : "bg-[#1E293B] backdrop-blur-lg border-b border-white/10"
       )}
       role="banner"
     >

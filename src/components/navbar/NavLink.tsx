@@ -30,7 +30,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight }
       <span 
         className={cn(
           "absolute bottom-0 left-0 w-full h-1 transform origin-left transition-transform duration-300",
-          isScrolled ? "bg-blue-600" : "bg-cyan-300",
+          isScrolled ? "bg-blue-600" : "bg-blue-400",
           isActive 
             ? "scale-x-100" 
             : "scale-x-0 group-hover:scale-x-100"
