@@ -30,12 +30,12 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     if (category.action === 'popup' && category.actionData) {
       // 팝업창 열기
       const width = 400;
-      const height = 200;
+      const height = 250; // 높이 약간 증가
       const left = (window.innerWidth - width) / 2;
       const top = (window.innerHeight - height) / 2;
       
       const popup = window.open(
-        "",
+        "about:blank",
         "popup",
         `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,status=yes`
       );
@@ -100,17 +100,25 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
               <div class="info-icon">ℹ️</div>
               <h2>${category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내"}</h2>
               <p>${category.actionData}</p>
-              <button onclick="closeAndRedirect()">확인</button>
+              <button onclick="handleButtonClick()">확인</button>
             </div>
             <script>
-              function closeAndRedirect() {
-                ${category.name === "오픈 채팅방" ? `window.opener.location.href = "${category.path}";` : ''}
+              function handleButtonClick() {
+                ${category.name === "오픈 채팅방" ? 
+                  `window.opener.location.href = "${category.path}";` : 
+                  category.name === "비즈니스 문의" ? 
+                  `window.open("mailto:${category.actionData}", "_blank");` : 
+                  ''}
                 window.close();
               }
             </script>
           </body>
           </html>
         `);
+        popup.document.close();
+      } else {
+        // 팝업이 차단된 경우 직접 이동
+        window.location.href = category.path;
       }
     }
   };
@@ -210,4 +218,3 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     </div>
   );
 }
-
