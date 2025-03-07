@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost, BlogCategory } from "@/types/supabase";
 import { BlogPost as UiBlogPost } from "@/types/blog";
@@ -143,10 +142,16 @@ export const createBlogPost = async (
     const readTime = calculateReadingTime(post.content!);
     const excerpt = generateExcerpt(post.content!);
     
+    // Extract first image URL from content if any
+    const coverImageUrl = extractFirstImageUrl(post.content!);
+    
     const { data, error } = await supabase
       .from("blog_posts")
       .insert({
-        ...post,
+        title: post.title!,
+        content: post.content!,
+        category: post.category!,
+        cover_image: coverImageUrl,
         slug,
         read_time: readTime,
         excerpt
@@ -192,4 +197,11 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
     toast.error("이미지 업로드에 실패했습니다");
     return null;
   }
+};
+
+// Extract the first image URL from HTML content
+export const extractFirstImageUrl = (htmlContent: string): string | null => {
+  const imgRegex = /<img[^>]+src="([^">]+)"/i;
+  const match = htmlContent.match(imgRegex);
+  return match ? match[1] : null;
 };

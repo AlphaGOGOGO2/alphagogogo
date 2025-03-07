@@ -1,16 +1,11 @@
 
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBlogCategories, createBlogPost } from "@/services/blogService";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { BlogForm } from "@/components/blog/BlogForm";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
@@ -25,7 +20,7 @@ export default function BlogWritePage() {
     queryFn: getAllBlogCategories
   });
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Form validation
@@ -37,15 +32,11 @@ export default function BlogWritePage() {
     setIsSubmitting(true);
 
     try {
-      // Extract first image URL from content if any
-      const coverImageUrl = extractFirstImageUrl(content);
-      
       // Create the blog post
       const newPost = await createBlogPost({
         title,
         content,
         category,
-        cover_image: coverImageUrl
       });
       
       if (newPost) {
@@ -61,83 +52,20 @@ export default function BlogWritePage() {
     }
   };
 
-  // Extract the first image URL from HTML content
-  const extractFirstImageUrl = (htmlContent: string): string | null => {
-    const imgRegex = /<img[^>]+src="([^">]+)"/i;
-    const match = htmlContent.match(imgRegex);
-    return match ? match[1] : null;
-  };
-
   return (
     <BlogLayout title="글쓰기">
-      <form onSubmit={handleSubmit} className="space-y-6 max-w-4xl mx-auto">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">제목</Label>
-            <Input 
-              id="title" 
-              value={title} 
-              onChange={(e) => setTitle(e.target.value)} 
-              placeholder="제목을 입력하세요" 
-              required 
-            />
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="content">내용</Label>
-            <Textarea 
-              id="content" 
-              value={content} 
-              onChange={(e) => setContent(e.target.value)} 
-              placeholder="내용을 입력하세요" 
-              rows={15} 
-              required 
-            />
-            <p className="text-sm text-gray-500">
-              HTML 형식으로 작성 가능합니다. 본문에 포함된 첫 번째 이미지가 자동으로 커버 이미지로 사용됩니다.
-            </p>
-          </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="category">카테고리</Label>
-            {isCategoriesLoading ? (
-              <Select disabled>
-                <SelectTrigger>
-                  <SelectValue placeholder="카테고리 로딩 중..." />
-                </SelectTrigger>
-              </Select>
-            ) : (
-              <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger id="category">
-                  <SelectValue placeholder="카테고리 선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.name}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </div>
-        
-        <div className="flex justify-end">
-          <Button 
-            type="submit" 
-            className="bg-purple-600 hover:bg-purple-700" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                저장 중...
-              </>
-            ) : "글 저장하기"}
-          </Button>
-        </div>
-      </form>
+      <BlogForm
+        title={title}
+        setTitle={setTitle}
+        content={content}
+        setContent={setContent}
+        category={category}
+        setCategory={setCategory}
+        categories={categories}
+        isCategoriesLoading={isCategoriesLoading}
+        isSubmitting={isSubmitting}
+        onSubmit={handleSubmit}
+      />
     </BlogLayout>
   );
 }
