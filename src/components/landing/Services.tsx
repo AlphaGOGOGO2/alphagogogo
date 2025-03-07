@@ -17,54 +17,54 @@ export function Services() {
       icon: <Bot className="text-purple-600" size={20} />,
       title: "AI 상담",
       description: "인공지능 기반의 전문 상담 서비스로 즉각적인 답변과 안내를 제공합니다.",
-      color: "bg-soft-purple"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <Building2 className="text-purple-600" size={20} />,
       title: "기업 솔루션",
       description: "비즈니스 요구에 맞춘 AI 기반 커스텀 솔루션으로 업무 효율을 높입니다.",
-      color: "bg-soft-blue"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <GraduationCap className="text-purple-600" size={20} />,
       title: "교육 프로그램",
       description: "인공지능에 대한 이해를 높이는 다양한 교육 커리큘럼을 제공합니다.",
-      color: "bg-soft-yellow"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <LineChart className="text-purple-600" size={20} />,
       title: "리서치 분석",
       description: "데이터 기반의 심층 분석 서비스로 인사이트를 발굴합니다.",
-      color: "bg-soft-green"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <Lightbulb className="text-purple-600" size={20} />,
       title: "혁신 컨설팅",
       description: "최신 AI 기술을 활용한 비즈니스 혁신 전략을 제시합니다.",
-      color: "bg-soft-peach"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <FileSearch className="text-purple-600" size={20} />,
       title: "AI 리서치",
       description: "특정 주제에 대한 심층적인 AI 기반 연구 서비스를 제공합니다.",
-      color: "bg-soft-pink"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <Users className="text-purple-600" size={20} />,
       title: "커뮤니티",
       description: "AI 전문가들과 지식을 나누고 네트워킹할 수 있는 커뮤니티를 제공합니다.",
-      color: "bg-soft-orange"
+      color: "bg-white border-2 border-purple-100"
     },
     {
       icon: <Briefcase className="text-purple-600" size={20} />,
       title: "전문가 컨설팅",
       description: "AI 전문가들의 직접적인 컨설팅으로 전문적인 해결책을 제시합니다.",
-      color: "bg-soft-gray"
+      color: "bg-white border-2 border-purple-100"
     }
   ];
 
   return (
-    <section id="services" className="py-24 px-6 md:px-8 bg-gray-50 relative">
+    <section id="services" className="py-24 px-6 md:px-8 bg-white relative">
       {/* Section separator - top wavy line */}
       <div className="absolute top-0 left-0 right-0 h-12 overflow-hidden">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" className="absolute bottom-0 w-full h-16 text-white fill-current">
@@ -82,7 +82,7 @@ export function Services() {
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gray-800">
             제공하는 서비스
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto text-balance">
+          <p className="text-purple-700 max-w-2xl mx-auto text-balance">
             알파블로그는 다양한 AI 기반 서비스를 통해 개인과 기업에게 최적화된 솔루션을 제공합니다.
           </p>
         </div>
@@ -91,9 +91,9 @@ export function Services() {
           {services.map((service, index) => (
             <div 
               key={index}
-              className={`p-6 rounded-xl border border-gray-200 transition-all hover:shadow-lg ${service.color}`}
+              className={`p-6 rounded-xl transition-all hover:shadow-lg ${service.color} hover:border-purple-300`}
             >
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+              <div className="w-10 h-10 bg-purple-50 rounded-full flex items-center justify-center mb-4 shadow-sm">
                 {service.icon}
               </div>
               <h3 className="text-lg font-bold mb-2 text-gray-800">

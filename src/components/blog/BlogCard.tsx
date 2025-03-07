@@ -14,7 +14,7 @@ export function BlogCard({ post }: BlogCardProps) {
   
   return (
     <Link to={`/blog/${post.slug}`} className="block h-full">
-      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform">
+      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border border-gray-200 hover:border-purple-300">
         {post.coverImage && (
           <div className="block overflow-hidden h-48">
             <img 
@@ -67,11 +67,11 @@ export function BlogCard({ post }: BlogCardProps) {
             </div>
             <div className="flex gap-3">
               <div className="flex items-center">
-                <Calendar size={14} className="mr-1" />
+                <Calendar size={14} className="mr-1 text-purple-500" />
                 <span>{formatDate(post.publishedAt)}</span>
               </div>
               <div className="flex items-center">
-                <Clock size={14} className="mr-1" />
+                <Clock size={14} className="mr-1 text-purple-500" />
                 <span>{post.readTime}분</span>
               </div>
             </div>
