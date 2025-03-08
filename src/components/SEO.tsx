@@ -32,6 +32,7 @@ export function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
+      <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
       <link rel="canonical" href={canonical} />
       
       {/* Open Graph Tags */}
