@@ -53,9 +53,9 @@ export function Hero() {
           </div>
           
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
-            <span className="text-white">AI를 바라보는 시선</span>
-            <br className="hidden md:block" />
-            이제는 미래가 아닌 현재
+            <span className="text-white md:inline block">AI를 바라보는 시선</span>
+            <br className="md:hidden" />
+            <span className="md:inline block">이제는 미래가 아닌 현재</span>
           </h1>
           
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in text-balance">
