@@ -20,7 +20,7 @@ export function PreviewButton({ buttonStyle }: PreviewButtonProps) {
       rel="noopener noreferrer"
       onClick={(e) => {
         e.preventDefault(); // 미리보기에서는 실제 동작 방지
-        // 실제로는 새 창 열기 및 광고 표시 기능이 활성화됨
+        // 실제로는 구글 애드센스 광고가 표시된 후 새 창에서 URL로 이동
       }}
     >
       {buttonStyle.buttonTypes.includes('grow') && (
