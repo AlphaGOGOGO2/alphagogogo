@@ -7,6 +7,7 @@ import { GPTSOtherSection } from "@/components/gpts/GPTSOtherSection";
 import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
+import { Banner } from "@/components/Banner";
 
 export default function GPTSPage() {
   const location = useLocation();
@@ -55,6 +56,9 @@ export default function GPTSPage() {
               <span>홈으로 돌아가기</span>
             </Link>
           </div>
+          
+          {/* Add Banner component below the "Return home" button */}
+          <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">GPTS 이용하기</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
