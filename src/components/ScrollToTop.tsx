@@ -6,9 +6,11 @@ export function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
+    // Force scroll to top when pathname changes
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      left: 0,
+      behavior: "instant" // Changed from "smooth" to "instant" for more consistent behavior
     });
   }, [pathname]);
 
