@@ -34,6 +34,7 @@ export const generateCssStyles = (buttonStyle: ButtonStyle): string => {
   font-size: ${buttonStyle.fontSize}px;
   border-radius: ${buttonStyle.borderRadius}px;
   padding: ${buttonStyle.padding};
+  margin: 0 auto; /* 가운데 정렬을 위한 스타일 */
 ${buttonStyle.buttonTypes.includes('primary') ? `  background-color: ${buttonStyle.backgroundColor};
   border: none;` : ''}
 ${buttonStyle.buttonTypes.includes('outline') ? `  background-color: transparent;
@@ -51,6 +52,13 @@ ${buttonStyle.buttonTypes.includes('link') ? `  background-color: transparent;
 ${buttonStyle.buttonTypes.includes('fullWidth') ? `  width: 100%;
   padding: 12px 20px;` : ''}
 ${buttonStyle.boxShadow && !buttonStyle.buttonTypes.includes('link') ? `  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);` : ''}
+}
+
+/* 버튼 컨테이너 - 가운데 정렬을 위함 */
+.button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
 }
 
 ${buttonStyle.hoverEffect ? `
@@ -114,7 +122,7 @@ ${cssStyles}
   </style>
 </head>
 <body>
-  <div>
+  <div class="button-container">
     <!-- 아래 버튼 코드를 복사하여 블로그에 붙여넣기 하세요 -->
     <a href="${buttonStyle.url}" class="button-link" style="${stylesString}">
       ${buttonStyle.text}
@@ -128,9 +136,11 @@ ${cssStyles}
  * Generates just the button code for direct use
  */
 export const generateButtonCode = (buttonStyle: ButtonStyle, buttonClass: string, stylesString: string, cssStyles: string): string => {
-  return `<a href="${buttonStyle.url}" class="button-link" style="${stylesString}">
-  ${buttonStyle.text}
-</a>
+  return `<div class="button-container">
+  <a href="${buttonStyle.url}" class="button-link" style="${stylesString}">
+    ${buttonStyle.text}
+  </a>
+</div>
 
 <style>
 ${cssStyles}

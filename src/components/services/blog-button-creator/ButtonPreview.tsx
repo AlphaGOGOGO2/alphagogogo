@@ -15,7 +15,9 @@ export function ButtonPreview({ buttonStyle }: ButtonPreviewProps) {
       
       <div className="bg-gray-100 rounded-md p-8 flex items-center justify-center min-h-[200px]">
         <ButtonAnimationStyles />
-        <PreviewButton buttonStyle={buttonStyle} />
+        <div className="w-full flex justify-center">
+          <PreviewButton buttonStyle={buttonStyle} />
+        </div>
       </div>
       
       <p className="text-sm text-gray-500 mt-4">

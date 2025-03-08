@@ -1,3 +1,4 @@
+
 import { ButtonStyle } from "../BlogButtonCreator";
 import { CSSProperties } from "react";
 
@@ -15,6 +16,7 @@ export type ButtonStyleObj = {
   fontFamily: string;
   cursor: string;
   transition: string;
+  margin: string; // Added for center alignment
   backgroundColor?: string;
   border?: string;
   boxShadow?: string;
@@ -46,6 +48,7 @@ export const getButtonStyles = (buttonStyle: ButtonStyle): CSSProperties => {
     fontFamily: 'inherit',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
+    margin: '0 auto', // Added for center alignment
   };
 
   // Apply styles based on button types
