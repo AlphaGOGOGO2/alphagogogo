@@ -4,6 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CommunityChat } from "@/components/community/CommunityChat";
 import { AlertTriangle } from "lucide-react";
+import { Banner } from "@/components/Banner";
 
 export default function CommunityPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -44,6 +45,11 @@ export default function CommunityPage() {
                 </p>
               </div>
             </div>
+          </div>
+          
+          {/* Add Banner component below the warning section */}
+          <div className={`transition-all duration-500 delay-125 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-7'}`}>
+            <Banner className="mb-8" />
           </div>
           
           <div className={`transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
