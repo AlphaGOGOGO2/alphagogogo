@@ -18,7 +18,10 @@ export function PreviewButton({ buttonStyle }: PreviewButtonProps) {
       className={buttonClass}
       target="_blank" 
       rel="noopener noreferrer"
-      onClick={(e) => e.preventDefault()}
+      onClick={(e) => {
+        e.preventDefault(); // 미리보기에서는 실제 동작 방지
+        // 실제로는 새 창 열기 및 광고 표시 기능이 활성화됨
+      }}
     >
       {buttonStyle.buttonTypes.includes('grow') && (
         <ZoomIn className="mr-1" size={16} />

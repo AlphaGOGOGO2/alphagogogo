@@ -61,6 +61,40 @@ ${buttonStyle.boxShadow && !buttonStyle.buttonTypes.includes('link') ? `  box-sh
   width: 100%;
 }
 
+/* 전면 광고 스타일 */
+.ad-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.ad-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 80%;
+  text-align: center;
+}
+
+.ad-close {
+  margin-top: 15px;
+  padding: 8px 16px;
+  background: #8B5CF6;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
 ${buttonStyle.hoverEffect ? `
 .button-link:hover {
   opacity: 0.9;
@@ -102,7 +136,7 @@ export const generateButtonHtml = (buttonStyle: ButtonStyle, buttonClass: string
   // Generate class attribute if there are any classes
   const classAttribute = buttonClass.trim() ? ` class="${buttonClass.trim()}"` : '';
   
-  return `<a href="${buttonStyle.url}" style="${stylesString}"${classAttribute}>
+  return `<a href="${buttonStyle.url}" style="${stylesString}"${classAttribute} target="_blank" rel="noopener noreferrer" onclick="showAdAndOpenLink(event, '${buttonStyle.url}')">
   ${buttonStyle.text}
 </a>`;
 };
@@ -124,10 +158,41 @@ ${cssStyles}
 <body>
   <div class="button-container">
     <!-- 아래 버튼 코드를 복사하여 블로그에 붙여넣기 하세요 -->
-    <a href="${buttonStyle.url}" class="button-link" style="${stylesString}">
+    <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer" onclick="showAdAndOpenLink(event, '${buttonStyle.url}')">
       ${buttonStyle.text}
     </a>
   </div>
+
+  <!-- 전면 광고 요소 -->
+  <div class="ad-overlay" id="adOverlay">
+    <div class="ad-content">
+      <h2>광고</h2>
+      <p>이 광고는 3초 후에 자동으로 닫힙니다.</p>
+      <button class="ad-close" onclick="closeAd()">닫기</button>
+    </div>
+  </div>
+
+  <script>
+    function showAdAndOpenLink(event, url) {
+      event.preventDefault();
+      
+      // 광고 표시
+      const adOverlay = document.getElementById('adOverlay');
+      adOverlay.style.display = 'flex';
+      
+      // 새 창에서 링크 열기
+      window.open(url, '_blank');
+      
+      // 3초 후 광고 닫기
+      setTimeout(() => {
+        adOverlay.style.display = 'none';
+      }, 3000);
+    }
+    
+    function closeAd() {
+      document.getElementById('adOverlay').style.display = 'none';
+    }
+  </script>
 </body>
 </html>`;
 };
@@ -137,12 +202,43 @@ ${cssStyles}
  */
 export const generateButtonCode = (buttonStyle: ButtonStyle, buttonClass: string, stylesString: string, cssStyles: string): string => {
   return `<div class="button-container">
-  <a href="${buttonStyle.url}" class="button-link" style="${stylesString}">
+  <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer" onclick="showAdAndOpenLink(event, '${buttonStyle.url}')">
     ${buttonStyle.text}
   </a>
 </div>
 
+<!-- 전면 광고 요소 -->
+<div class="ad-overlay" id="adOverlay">
+  <div class="ad-content">
+    <h2>광고</h2>
+    <p>이 광고는 3초 후에 자동으로 닫힙니다.</p>
+    <button class="ad-close" onclick="closeAd()">닫기</button>
+  </div>
+</div>
+
 <style>
 ${cssStyles}
-</style>`;
+</style>
+
+<script>
+  function showAdAndOpenLink(event, url) {
+    event.preventDefault();
+    
+    // 광고 표시
+    const adOverlay = document.getElementById('adOverlay');
+    adOverlay.style.display = 'flex';
+    
+    // 새 창에서 링크 열기
+    window.open(url, '_blank');
+    
+    // 3초 후 광고 닫기
+    setTimeout(() => {
+      adOverlay.style.display = 'none';
+    }, 3000);
+  }
+  
+  function closeAd() {
+    document.getElementById('adOverlay').style.display = 'none';
+  }
+</script>`;
 };
