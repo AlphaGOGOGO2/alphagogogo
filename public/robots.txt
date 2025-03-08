@@ -10,3 +10,4 @@ Disallow: /private/
 
 # Sitemap location
 Sitemap: https://alphablog.app/sitemap.xml
+
