@@ -16,8 +16,8 @@ export function FeaturedPosts() {
     const fetchPosts = async () => {
       try {
         const posts = await getAllBlogPosts();
-        // Get only the 3 most recent posts
-        setFeaturedPosts(posts.slice(0, 3));
+        // Get 6 most recent posts instead of 3
+        setFeaturedPosts(posts.slice(0, 6));
       } catch (error) {
         console.error("Error fetching featured posts:", error);
       } finally {
@@ -45,12 +45,12 @@ export function FeaturedPosts() {
         
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((placeholder) => (
+            {[1, 2, 3, 4, 5, 6].map((placeholder) => (
               <div key={placeholder} className="h-96 bg-gray-100 animate-pulse rounded-2xl"></div>
             ))}
           </div>
         ) : featuredPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPosts.map((post) => (
               <Link 
                 to={`/blog/${post.slug}`} 
