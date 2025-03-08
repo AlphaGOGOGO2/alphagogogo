@@ -43,7 +43,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
         </button>
       </div>
       
-      <nav className="flex flex-col p-6 space-y-4 animate-fade-in">
+      <nav className="flex flex-col p-6 space-y-4 animate-fade-in pb-20">
         <MobileNavLink 
           name="홈" 
           path="/" 
@@ -89,4 +89,3 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     </div>
   );
 }
-

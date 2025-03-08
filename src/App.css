@@ -8,6 +8,17 @@ body {
   font-family: 'Paperlogy', 'Inter', sans-serif;
 }
 
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 4rem; /* Add padding to account for bottom navigation */
+  }
+  
+  .page-container {
+    padding-bottom: 4rem;
+  }
+}
+
 /* 블로그 포스트 카테고리 스타일 */
 .blog-category {
   @apply inline-block px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-700;
