@@ -102,7 +102,7 @@ export const generateButtonHtml = (buttonStyle: ButtonStyle, buttonClass: string
   // Generate class attribute if there are any classes
   const classAttribute = buttonClass.trim() ? ` class="${buttonClass.trim()}"` : '';
   
-  return `<a href="${buttonStyle.url}" style="${stylesString}"${classAttribute} target="_blank" rel="noopener noreferrer" onclick="showAdAndOpenLink(event, '${buttonStyle.url}')">
+  return `<a href="${buttonStyle.url}" style="${stylesString}"${classAttribute} target="_blank" rel="noopener noreferrer">
   ${buttonStyle.text}
 </a>`;
 };
@@ -120,49 +120,14 @@ export const generateCompleteHtml = (buttonStyle: ButtonStyle, buttonClass: stri
   <style>
 ${cssStyles}
   </style>
-  <!-- 구글 애드센스 스크립트 코드 (이 부분은 실제 구글 애드센스 계정 코드로 교체해야 합니다) -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
 </head>
 <body>
   <div class="button-container">
     <!-- 아래 버튼 코드를 복사하여 블로그에 붙여넣기 하세요 -->
-    <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer" onclick="showAdBeforeRedirect(event, '${buttonStyle.url}')">
+    <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer">
       ${buttonStyle.text}
     </a>
   </div>
-
-  <script>
-    function showAdBeforeRedirect(event, url) {
-      event.preventDefault();
-      
-      // 구글 애드센스 광고를 표시하기 위한 코드
-      // 참고: 이 함수는 실제 구글 애드센스 계정 및 설정에 맞게 수정되어야 합니다
-      
-      // 예시: 애드센스 광고 표시 (이 부분은 실제 애드센스 코드로 대체되어야 함)
-      try {
-        // 인터스티셜 광고 표시를 위한 예시 코드
-        // 실제로는 구글 애드센스 계정에서 제공하는 코드로 대체해야 합니다
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        
-        // 광고 노출 후 3초 뒤에 URL로 이동
-        setTimeout(function() {
-          window.open(url, '_blank');
-        }, 3000);
-      } catch (e) {
-        console.error('광고 표시 중 오류:', e);
-        // 오류 발생 시 바로 URL로 이동
-        window.open(url, '_blank');
-      }
-    }
-  </script>
-  
-  <!-- 구글 애드센스 광고 단위 코드 예시 (이 부분은 실제 광고 단위 코드로 교체해야 합니다) -->
-  <ins class="adsbygoogle"
-       style="display:none"
-       data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-       data-ad-slot="XXXXXXXXXX"
-       data-ad-format="auto"
-       data-full-width-responsive="true"></ins>
 </body>
 </html>`;
 };
@@ -172,44 +137,12 @@ ${cssStyles}
  */
 export const generateButtonCode = (buttonStyle: ButtonStyle, buttonClass: string, stylesString: string, cssStyles: string): string => {
   return `<div class="button-container">
-  <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer" onclick="showAdBeforeRedirect(event, '${buttonStyle.url}')">
+  <a href="${buttonStyle.url}" class="button-link" style="${stylesString}" target="_blank" rel="noopener noreferrer">
     ${buttonStyle.text}
   </a>
 </div>
 
 <style>
 ${cssStyles}
-</style>
-
-<!-- 구글 애드센스 스크립트 (이 부분은 실제 구글 애드센스 계정 코드로 교체해야 합니다) -->
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
-
-<script>
-  function showAdBeforeRedirect(event, url) {
-    event.preventDefault();
-    
-    // 구글 애드센스 광고를 표시하기 위한 코드
-    try {
-      // 인터스티셜 광고 표시 (이 부분은 실제 애드센스 코드로 대체해야 함)
-      (adsbygoogle = window.adsbygoogle || []).push({});
-      
-      // 광고 노출 후 3초 뒤에 URL로 이동
-      setTimeout(function() {
-        window.open(url, '_blank');
-      }, 3000);
-    } catch (e) {
-      console.error('광고 표시 중 오류:', e);
-      // 오류 발생 시 바로 URL로 이동
-      window.open(url, '_blank');
-    }
-  }
-</script>
-
-<!-- 구글 애드센스 광고 단위 (이 부분은 실제 광고 단위 코드로 교체해야 합니다) -->
-<ins class="adsbygoogle"
-     style="display:none"
-     data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-     data-ad-slot="XXXXXXXXXX"
-     data-ad-format="auto"
-     data-full-width-responsive="true"></ins>`;
+</style>`;
 };
