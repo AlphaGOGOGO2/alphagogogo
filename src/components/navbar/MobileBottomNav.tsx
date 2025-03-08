@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, BookOpen, Coffee, Menu } from "lucide-react";
+import { Home, BookOpen, MessageCircle, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MobileBottomNav() {
@@ -9,7 +9,7 @@ export function MobileBottomNav() {
   const navItems = [
     { name: "홈", path: "/", icon: <Home size={22} /> },
     { name: "블로그", path: "/blog", icon: <BookOpen size={22} /> },
-    { name: "서비스", path: "/services", icon: <Coffee size={22} /> },
+    { name: "실시간 채팅", path: "/community", icon: <MessageCircle size={22} /> },
     { name: "더보기", path: "#", icon: <Menu size={22} /> }
   ];
 
@@ -39,13 +39,13 @@ export function MobileBottomNav() {
                 "flex flex-col items-center justify-center w-full h-full",
                 (location.pathname === item.path || 
                  (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                 (item.path === "/services" && location.pathname.startsWith("/services"))) 
+                 (item.path === "/community" && location.pathname === "/community")) 
                   ? "text-purple-700" 
                   : "text-gray-600"
               )}
               aria-current={(location.pathname === item.path || 
                             (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                            (item.path === "/services" && location.pathname.startsWith("/services"))) 
+                            (item.path === "/community" && location.pathname === "/community")) 
                               ? "page" 
                               : undefined}
             >
