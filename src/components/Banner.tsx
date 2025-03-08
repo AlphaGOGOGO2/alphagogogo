@@ -30,8 +30,9 @@ export function Banner({ className }: BannerProps) {
         </div>
         
         <div className="mb-4 md:mb-0 md:text-center hidden md:block">
-          <div className="font-bold text-lg">노코드 웹 개발 AI</div>
-          <div className="font-extrabold text-xl">러버블 DEV</div>
+          <div className="text-xl md:text-2xl font-bold">
+            노코드 웹 개발 AI <span className="font-extrabold text-yellow-300 md:text-3xl">러버블 DEV</span>
+          </div>
         </div>
         
         <div className="bg-white/20 px-4 py-2 rounded-md hover:bg-white/30 text-sm font-medium">
