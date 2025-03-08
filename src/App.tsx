@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "./components/ScrollToTop";
 import Index from "./pages/Index";
@@ -21,7 +21,14 @@ import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -32,12 +39,18 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Routes>
+            {/* Main routes */}
             <Route path="/" element={<Index />} />
             <Route path="/gpts" element={<GPTSPage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/community" element={<CommunityPage />} />
+            
+            {/* Service sub-pages */}
             <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
             <Route path="/url-shortener" element={<URLShortenerPage />} />
             <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
+            
+            {/* Blog routes */}
             <Route path="/blog" element={<AllBlogPage />} />
             <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
             <Route path="/blog/trending" element={<TrendingPage />} />
@@ -45,8 +58,13 @@ const App = () => (
             <Route path="/blog/write" element={<BlogWritePage />} />
             <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            
+            {/* Redirect legacy paths or alternate paths */}
+            <Route path="/latest-ai-updates" element={<Navigate to="/blog/latest-updates" replace />} />
+            <Route path="/trending" element={<Navigate to="/blog/trending" replace />} />
+            <Route path="/lifestyle" element={<Navigate to="/blog/lifestyle" replace />} />
+            
+            {/* Catch-all route - must be last */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

@@ -7,6 +7,9 @@ interface BlogPostSchemaProps {
 }
 
 export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
+  // Use full absolute URL for structured data
+  const fullUrl = url.startsWith('http') ? url : `https://alphablog.app${url.startsWith('/') ? '' : '/'}${url}`;
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -20,7 +23,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "dateModified": post.publishedAt,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": url
+      "@id": fullUrl
     },
     "publisher": {
       "@type": "Organization",

@@ -11,6 +11,9 @@ const NotFound = () => {
       "404 오류: 사용자가 존재하지 않는 경로에 접근을 시도했습니다:",
       location.pathname
     );
+    
+    // Log to console for debugging
+    console.log("Current path that failed:", location.pathname);
   }, [location.pathname]);
 
   return (
