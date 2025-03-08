@@ -18,7 +18,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
         href={path}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-blue-50/50 hover:pl-4"
+        className="text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-purple-50/50 hover:pl-4"
         onClick={onClick}
       >
         <span>{name}</span>
@@ -30,10 +30,10 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
     <Link
       to={path}
       className={cn(
-        "text-xl font-medium text-blue-800 p-2 rounded-md transition-all duration-300 relative flex items-center",
+        "text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative flex items-center",
         isActive 
-          ? "bg-blue-50 pl-4" 
-          : "hover:bg-blue-50/50 hover:pl-4"
+          ? "bg-purple-50 pl-4" 
+          : "hover:bg-purple-50/50 hover:pl-4"
       )}
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
@@ -42,7 +42,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
       {iconRight && <span className="ml-1">{iconRight}</span>}
       {isActive && (
         <span 
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-blue-600 rounded-r-full" 
+          className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-600 rounded-r-full" 
           aria-hidden="true" 
         />
       )}

@@ -25,8 +25,8 @@ export function MobileBottomNav() {
                 aria-label="더 많은 메뉴 보기"
                 onClick={() => document.getElementById('mobile-menu-trigger')?.click()}
               >
-                <span className="text-gray-600">{item.icon}</span>
-                <span className="text-xs mt-1 text-gray-600">{item.name}</span>
+                <span className="text-purple-600">{item.icon}</span>
+                <span className="text-xs mt-1 text-purple-600">{item.name}</span>
               </button>
             );
           }
