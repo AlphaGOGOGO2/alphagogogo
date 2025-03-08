@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogButtonCreator } from "@/components/services/blog-button-creator/BlogButtonCreator";
+import { Banner } from "@/components/Banner";
 
 export default function BlogButtonCreatorPage() {
   return (
@@ -21,6 +22,9 @@ export default function BlogButtonCreatorPage() {
               <span>서비스 목록으로 돌아가기</span>
             </Link>
           </div>
+          
+          {/* Add Banner component below the "Return Home" button */}
+          <Banner className="mb-10" />
           
           <div className="mb-12">
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">블로그 버튼 생성기</h1>

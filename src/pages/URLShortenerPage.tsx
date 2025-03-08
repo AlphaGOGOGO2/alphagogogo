@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer";
 import { URLShortenerService } from "@/components/services/URLShortenerService";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Banner } from "@/components/Banner";
 
 export default function URLShortenerPage() {
   return (
@@ -21,6 +22,9 @@ export default function URLShortenerPage() {
               <span>서비스 목록으로 돌아가기</span>
             </Link>
           </div>
+          
+          {/* Add Banner component below the "Return Home" button */}
+          <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">URL 단축</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">

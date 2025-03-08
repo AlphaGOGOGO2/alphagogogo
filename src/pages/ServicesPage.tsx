@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Youtube, Link2, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { Banner } from "@/components/Banner";
 
 export default function ServicesPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -35,6 +36,9 @@ export default function ServicesPage() {
               <span>홈으로 돌아가기</span>
             </Link>
           </div>
+          
+          {/* Add Banner component below the "Return home" button */}
+          <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">서비스</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
