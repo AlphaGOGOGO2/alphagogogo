@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PenLine } from "lucide-react";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
+import { Banner } from "@/components/Banner";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -58,6 +59,9 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           "mx-auto px-4 sm:px-6 lg:px-8",
           isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
         )}>
+          {/* Add Banner at the top */}
+          {!isWritePage && <Banner />}
+          
           <header className="py-8 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 opacity-0 animate-fade-in" 
