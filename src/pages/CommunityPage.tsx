@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CommunityChat } from "@/components/community/CommunityChat";
+import { AlertTriangle } from "lucide-react";
 
 export default function CommunityPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -20,11 +21,29 @@ export default function CommunityPage() {
       <Navbar />
       <main className="flex-grow pt-32 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className={`text-center mb-12 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <div className={`text-center mb-6 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">커뮤니티 채팅</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
               AI에 관심 있는 사람들과 실시간으로 대화하고 정보를 공유하세요.
             </p>
+          </div>
+          
+          <div className={`bg-amber-50 border border-amber-200 rounded-lg p-4 mb-8 transition-all duration-500 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="text-amber-500 h-6 w-6 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-amber-800 mb-1">주의사항</h3>
+                <p className="text-amber-700 text-sm mb-1">
+                  알파GOGOGO는 그 어떤 금전요구나 쿠폰 광고 홍보 등 하지 않습니다!
+                </p>
+                <p className="text-amber-700 text-sm mb-1">
+                  자유로운 형태 실시간 채팅이다보니, 광고성글에 낚이지 마시고!
+                </p>
+                <p className="text-amber-700 text-sm">
+                  사칭범은 아이피 벤 들어갑니다.
+                </p>
+              </div>
+            </div>
           </div>
           
           <div className={`transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
