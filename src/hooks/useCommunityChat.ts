@@ -1,7 +1,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { useToast } from "@/hooks/use-toast";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
 import { fetchRecentMessages, sendChatMessage } from "@/services/chatService";
 import { useMessageSubscription } from "@/hooks/useMessageSubscription";
@@ -13,7 +12,6 @@ export function useCommunityChat() {
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
-  const { toast: toastNotification } = useToast();
   const messagesLoaded = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
 
@@ -65,11 +63,7 @@ export function useCommunityChat() {
       }
     } catch (error) {
       console.error('Error loading messages:', error);
-      toast({
-        title: "메시지 로딩 실패",
-        description: "최근 메시지를 불러오는데 실패했습니다.",
-        variant: "destructive"
-      });
+      toast.error("메시지 로딩 실패: 최근 메시지를 불러오는데 실패했습니다.");
     } finally {
       setIsLoading(false);
     }
@@ -84,11 +78,7 @@ export function useCommunityChat() {
   const sendMessage = useCallback(async (messageContent: string) => {
     // 금지된 단어 확인
     if (containsForbiddenWords(messageContent)) {
-      toast({
-        title: "부적절한 내용 감지",
-        description: "욕설이나 선정적인 표현이 포함된 메시지는 전송할 수 없습니다.",
-        variant: "destructive"
-      });
+      toast.error("부적절한 내용 감지: 욕설이나 선정적인 표현이 포함된 메시지는 전송할 수 없습니다.");
       return;
     }
 
@@ -104,13 +94,9 @@ export function useCommunityChat() {
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      toast({
-        title: "메시지 전송 실패",
-        description: "메시지를 전송하는데 실패했습니다. 다시 시도해주세요.",
-        variant: "destructive"
-      });
+      toast.error("메시지 전송 실패: 메시지를 전송하는데 실패했습니다. 다시 시도해주세요.");
     }
-  }, [nickname, userColor, toastNotification]);
+  }, [nickname, userColor]);
 
   const changeNickname = useCallback(() => {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);
@@ -121,12 +107,9 @@ export function useCommunityChat() {
       // Update presence with new nickname
       updatePresence();
       
-      toast({
-        title: "닉네임 변경 완료",
-        description: `닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`
-      });
+      toast.success(`닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`);
     }
-  }, [nickname, updatePresence, toastNotification]);
+  }, [nickname, updatePresence]);
 
   return {
     messages,
