@@ -12,7 +12,7 @@ export function useCommunityChat() {
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
-  const messagesLoaded = useRef(false);
+  const messagesLoadedRef = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
 
   // Initialize user data only once
@@ -42,11 +42,11 @@ export function useCommunityChat() {
     initUserData();
   }, []);
   
-  // Load messages only once
+  // Load messages on initial mount
   useEffect(() => {
-    if (!messagesLoaded.current) {
+    if (!messagesLoadedRef.current) {
       loadRecentMessages();
-      messagesLoaded.current = true;
+      messagesLoadedRef.current = true;
     }
   }, []);
 
@@ -55,11 +55,12 @@ export function useCommunityChat() {
     try {
       console.log("Loading recent messages from Supabase");
       const data = await fetchRecentMessages();
+      
       if (data && data.length > 0) {
-        console.log(`Loaded ${data.length} messages from Supabase`);
+        console.log(`Successfully loaded ${data.length} messages`);
         setInitialMessages(data);
       } else {
-        console.log("No messages found in Supabase");
+        console.log("No messages found or empty response");
       }
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -69,24 +70,25 @@ export function useCommunityChat() {
     }
   };
 
-  // Setup message subscription
+  // Setup message subscription with initial messages
   const { messages } = useMessageSubscription(initialMessages);
 
   // Setup presence
   const { activeUsers, activeUsersCount, updatePresence } = usePresence(nickname, userColor);
 
   const sendMessage = useCallback(async (messageContent: string) => {
-    // 금지된 단어 확인
+    // Check for forbidden words
     if (containsForbiddenWords(messageContent)) {
       toast.error("부적절한 내용 감지: 욕설이나 선정적인 표현이 포함된 메시지는 전송할 수 없습니다.");
       return;
     }
 
     const messageId = uuidv4();
-    console.log("Sending message to Supabase:", { messageId, nickname, messageContent });
+    console.log("Sending message:", { messageId, nickname, messageContent });
     
     try {
       const success = await sendChatMessage(messageId, nickname, messageContent, userColor);
+      
       if (!success) {
         console.error("Failed to send message");
       } else {

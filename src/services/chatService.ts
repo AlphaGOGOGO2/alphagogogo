@@ -5,6 +5,8 @@ import { toast } from "sonner";
 
 export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
   try {
+    console.log("Fetching recent messages from Supabase");
+    
     const { data, error } = await supabase
       .from('community_messages')
       .select('*')
@@ -17,6 +19,7 @@ export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
       throw error;
     }
     
+    console.log(`Successfully fetched ${data?.length || 0} messages`);
     return data || [];
   } catch (error) {
     console.error("Error in fetchRecentMessages:", error);
@@ -38,6 +41,8 @@ export const sendChatMessage = async (
       return false;
     }
     
+    console.log("Sending message to Supabase:", { messageId, nickname, content });
+    
     const { error } = await supabase
       .from('community_messages')
       .insert([{
@@ -53,7 +58,7 @@ export const sendChatMessage = async (
       throw error;
     }
     
-    console.log("Message successfully sent to Supabase:", { messageId, nickname, content });
+    console.log("Message successfully sent to Supabase");
     return true;
   } catch (error) {
     console.error("Error in sendChatMessage:", error);
