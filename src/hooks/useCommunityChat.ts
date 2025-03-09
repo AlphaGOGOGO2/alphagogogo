@@ -7,12 +7,13 @@ import { fetchRecentMessages, sendChatMessage } from "@/services/chatService";
 import { useMessageSubscription } from "@/hooks/useMessageSubscription";
 import { usePresence } from "@/hooks/usePresence";
 import { ChatMessage } from "@/types/chat";
+import { toast } from "sonner";
 
 export function useCommunityChat() {
   const [isLoading, setIsLoading] = useState(true);
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
-  const { toast } = useToast();
+  const { toast: toastNotification } = useToast();
   const messagesLoaded = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
 
@@ -54,9 +55,13 @@ export function useCommunityChat() {
   const loadRecentMessages = async () => {
     setIsLoading(true);
     try {
+      console.log("Loading recent messages from Supabase");
       const data = await fetchRecentMessages();
-      if (data) {
+      if (data && data.length > 0) {
+        console.log(`Loaded ${data.length} messages from Supabase`);
         setInitialMessages(data);
+      } else {
+        console.log("No messages found in Supabase");
       }
     } catch (error) {
       console.error('Error loading messages:', error);
@@ -88,9 +93,15 @@ export function useCommunityChat() {
     }
 
     const messageId = uuidv4();
+    console.log("Sending message to Supabase:", { messageId, nickname, messageContent });
     
     try {
-      await sendChatMessage(messageId, nickname, messageContent, userColor);
+      const success = await sendChatMessage(messageId, nickname, messageContent, userColor);
+      if (!success) {
+        console.error("Failed to send message");
+      } else {
+        console.log("Message sent successfully");
+      }
     } catch (error) {
       console.error('Error sending message:', error);
       toast({
@@ -99,7 +110,7 @@ export function useCommunityChat() {
         variant: "destructive"
       });
     }
-  }, [nickname, userColor, toast]);
+  }, [nickname, userColor, toastNotification]);
 
   const changeNickname = useCallback(() => {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);
@@ -115,7 +126,7 @@ export function useCommunityChat() {
         description: `닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`
       });
     }
-  }, [nickname, updatePresence, toast]);
+  }, [nickname, updatePresence, toastNotification]);
 
   return {
     messages,

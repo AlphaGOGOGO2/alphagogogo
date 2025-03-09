@@ -27,6 +27,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
         JSON.stringify(initialMessagesRef.current) !== JSON.stringify(initialMessages)) {
       initialMessagesRef.current = initialMessages;
       if (!isCleanedUpRef.current) {
+        console.log("Updating messages with initialMessages:", initialMessages.length);
         setMessages(initialMessages);
       }
     }
@@ -36,6 +37,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     if (channelRef.current !== null || isCleanedUpRef.current) return; // Don't set up another subscription if one exists or cleaned up
 
     try {
+      console.log("Setting up message subscription");
       channelRef.current = supabase
         .channel('public:community_messages')
         .on('postgres_changes', 
@@ -46,6 +48,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
           }, 
           (payload) => {
             if (isCleanedUpRef.current) return;
+            console.log("Received new message from Supabase:", payload);
             const newMsg = payload.new as ChatMessage;
             setMessages(prev => {
               // Check if message already exists to prevent duplicates
@@ -66,6 +69,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const cleanupChannel = () => {
     if (channelRef.current) {
       try {
+        console.log("Cleaning up message subscription channel");
         supabase.removeChannel(channelRef.current);
       } catch (error) {
         console.error("Error removing channel:", error);

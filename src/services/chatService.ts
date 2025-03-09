@@ -40,12 +40,12 @@ export const sendChatMessage = async (
     
     const { error } = await supabase
       .from('community_messages')
-      .insert({
+      .insert([{
         id: messageId,
         nickname,
         content,
         color
-      } as any);
+      }]);
       
     if (error) {
       console.error("Error sending chat message:", error);
@@ -53,6 +53,7 @@ export const sendChatMessage = async (
       throw error;
     }
     
+    console.log("Message successfully sent to Supabase:", { messageId, nickname, content });
     return true;
   } catch (error) {
     console.error("Error in sendChatMessage:", error);
