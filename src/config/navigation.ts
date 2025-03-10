@@ -47,7 +47,7 @@ export const communityCategories: CommunityCategory[] = [
   { name: "실시간 채팅", path: "/community" },
   { 
     name: "오픈 채팅방", 
-    path: "https://open.kakao.com/o/gNCJvOeh", 
+    path: "https://open.kakao.com/o/gWvmjnkh", 
     action: 'popup',
     actionData: "입장코드는 대문자로 GOGOGO 입니다."
   },
