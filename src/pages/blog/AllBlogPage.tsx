@@ -1,16 +1,31 @@
 
+import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBlogPosts } from "@/services/blogService";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
+import { Button } from "@/components/ui/button";
+
+// Number of posts to show initially
+const POSTS_PER_PAGE = 9;
 
 export default function AllBlogPage() {
+  const [visiblePosts, setVisiblePosts] = useState(POSTS_PER_PAGE);
+  
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["blog-posts"],
     queryFn: getAllBlogPosts
   });
+  
+  // Get only the visible posts based on current pagination
+  const displayedPosts = posts.slice(0, visiblePosts);
+  const hasMorePosts = visiblePosts < posts.length;
+  
+  const handleLoadMore = () => {
+    setVisiblePosts(prev => prev + POSTS_PER_PAGE);
+  };
   
   // Blog category structured data
   const structuredData = {
@@ -47,7 +62,21 @@ export default function AllBlogPage() {
           <p className="text-gray-500 mt-2">첫 번째 글을 작성해보세요!</p>
         </div>
       ) : (
-        <BlogGridAnimation posts={posts} />
+        <>
+          <BlogGridAnimation posts={displayedPosts} />
+          
+          {hasMorePosts && (
+            <div className="flex justify-center mt-10 mb-6">
+              <Button 
+                onClick={handleLoadMore} 
+                className="bg-purple-600 hover:bg-purple-700 transition-all"
+                aria-label="더 많은 포스트 불러오기"
+              >
+                더보기 ({posts.length - visiblePosts}개 남음)
+              </Button>
+            </div>
+          )}
+        </>
       )}
     </BlogLayout>
   );
