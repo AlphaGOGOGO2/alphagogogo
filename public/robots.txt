@@ -8,6 +8,8 @@ Disallow: /blog/edit/
 Disallow: /admin/
 Disallow: /private/
 
-# Sitemap location
+# Sitemap and RSS location
 Sitemap: https://alphagogogo.com/sitemap.xml
+Sitemap: https://alphagogogo.com/rss.xml
+
 

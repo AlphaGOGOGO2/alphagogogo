@@ -36,12 +36,19 @@
   # Others
   ExpiresByType application/pdf "access plus 1 month"
   ExpiresByType application/x-shockwave-flash "access plus 1 month"
+  
+  # RSS Feed
+  ExpiresByType application/rss+xml "access plus 1 hour"
 </IfModule>
 
 # Send correct headers
 <IfModule mod_headers.c>
   <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|js|css|swf)$">
     Header set Cache-Control "max-age=31536000, public"
+  </FilesMatch>
+  
+  <FilesMatch "\.(xml|txt|rss)$">
+    Header set Cache-Control "max-age=3600, public"
   </FilesMatch>
 </IfModule>
 
@@ -64,3 +71,9 @@ ErrorDocument 404 /
 # Force HTTPS
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Set content type for RSS feed
+<FilesMatch "\.xml$">
+  ForceType application/rss+xml
+  Header set Content-Type application/rss+xml
+</FilesMatch>

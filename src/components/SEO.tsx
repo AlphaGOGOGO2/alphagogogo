@@ -35,6 +35,9 @@ export function SEO({
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
       <link rel="canonical" href={canonical} />
       
+      {/* RSS Feed Link */}
+      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href="https://alphagogogo.com/rss.xml" />
+      
       {/* Open Graph Tags */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
