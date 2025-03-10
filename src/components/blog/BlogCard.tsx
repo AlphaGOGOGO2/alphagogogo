@@ -14,7 +14,7 @@ export function BlogCard({ post }: BlogCardProps) {
   
   return (
     <Link to={`/blog/${post.slug}`} className="block h-full">
-      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border border-gray-200 hover:border-purple-300">
+      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border border-purple-200 hover:border-purple-400">
         {post.coverImage && (
           <div className="block overflow-hidden h-48">
             <img 
