@@ -8,7 +8,7 @@ interface BlogPostSchemaProps {
 
 export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
   // Use full absolute URL for structured data
-  const fullUrl = url.startsWith('http') ? url : `https://alphablog.app${url.startsWith('/') ? '' : '/'}${url}`;
+  const fullUrl = url.startsWith('http') ? url : `https://alphagogogo.com${url.startsWith('/') ? '' : '/'}${url}`;
   
   const structuredData = {
     "@context": "https://schema.org",
@@ -27,7 +27,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     },
     "publisher": {
       "@type": "Organization",
-      "name": "알파블로그",
+      "name": "알파고고고",
       "logo": {
         "@type": "ImageObject",
         "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"

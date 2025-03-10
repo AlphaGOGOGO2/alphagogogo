@@ -55,8 +55,8 @@
 
 # 301 Redirect from non-www to www
 RewriteEngine On
-RewriteCond %{HTTP_HOST} ^alphablog.app [NC]
-RewriteRule ^(.*)$ https://www.alphablog.app/$1 [L,R=301]
+RewriteCond %{HTTP_HOST} ^alphagogogo.com [NC]
+RewriteRule ^(.*)$ https://www.alphagogogo.com/$1 [L,R=301]
 
 # 404 Error redirect
 ErrorDocument 404 /

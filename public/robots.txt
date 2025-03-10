@@ -9,5 +9,5 @@ Disallow: /admin/
 Disallow: /private/
 
 # Sitemap location
-Sitemap: https://alphablog.app/sitemap.xml
+Sitemap: https://alphagogogo.com/sitemap.xml
 
