@@ -1,0 +1,34 @@
+
+@layer components {
+  .bg-soft-purple {
+    @apply bg-[#E5DEFF];
+  }
+  
+  .bg-soft-blue {
+    @apply bg-[#D3E4FD];
+  }
+  
+  .bg-soft-yellow {
+    @apply bg-[#FEF7CD];
+  }
+  
+  .bg-soft-green {
+    @apply bg-[#F2FCE2];
+  }
+  
+  .bg-soft-peach {
+    @apply bg-[#FDE1D3];
+  }
+  
+  .bg-soft-pink {
+    @apply bg-[#FFDEE2];
+  }
+  
+  .bg-soft-orange {
+    @apply bg-[#FEC6A1];
+  }
+  
+  .bg-soft-gray {
+    @apply bg-[#F1F0FB];
+  }
+}

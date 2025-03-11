@@ -1,0 +1,55 @@
+
+@font-face {
+  font-family: 'Paperlogy';
+  src: url('https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/fonts//Paperlogy-6SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 280 10% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 280 10% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 280 10% 10%;
+    --primary: 282 72% 36%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 282 20% 96%;
+    --secondary-foreground: 282 72% 36%;
+    --muted: 282 20% 96%;
+    --muted-foreground: 280 5% 45%;
+    --accent: 282 30% 94%;
+    --accent-foreground: 282 72% 36%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 282 20% 92%;
+    --input: 282 20% 92%;
+    --ring: 282 72% 36%;
+    --radius: 0.75rem;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground antialiased overflow-x-hidden font-['Paperlogy',_sans-serif];
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-['Paperlogy',_sans-serif] font-medium tracking-tight;
+  }
+}

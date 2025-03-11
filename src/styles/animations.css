@@ -1,0 +1,75 @@
+
+@layer components {
+  .stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+  .stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+  .stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+  .stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+  .stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+  .stagger-animation > *:nth-child(6) { animation-delay: 0.6s; }
+
+  .staggered-fade-in > *:nth-child(1) { animation-delay: 100ms; }
+  .staggered-fade-in > *:nth-child(2) { animation-delay: 150ms; }
+  .staggered-fade-in > *:nth-child(3) { animation-delay: 200ms; }
+  .staggered-fade-in > *:nth-child(4) { animation-delay: 250ms; }
+  .staggered-fade-in > *:nth-child(5) { animation-delay: 300ms; }
+  .staggered-fade-in > *:nth-child(6) { animation-delay: 350ms; }
+  .staggered-fade-in > *:nth-child(7) { animation-delay: 400ms; }
+  .staggered-fade-in > *:nth-child(8) { animation-delay: 450ms; }
+  .staggered-fade-in > *:nth-child(9) { animation-delay: 500ms; }
+  .staggered-fade-in > *:nth-child(10) { animation-delay: 550ms; }
+
+  .page-transition {
+    animation: page-in 0.5s ease;
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.3) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmerAnimation 2s infinite;
+  }
+
+  @keyframes page-in {
+    0% {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmerAnimation {
+    0% {
+      background-position: -100% 0;
+    }
+    100% {
+      background-position: 100% 0;
+    }
+  }
+
+  .premium-link {
+    background: linear-gradient(
+      to right,
+      theme('colors.purple.700'),
+      theme('colors.purple.500'),
+      theme('colors.purple.700')
+    );
+    background-size: 200% auto;
+    color: transparent;
+    background-clip: text;
+    -webkit-background-clip: text;
+    animation: shine 2s linear infinite;
+  }
+
+  @keyframes shine {
+    to {
+      background-position: 200% center;
+    }
+  }
+}

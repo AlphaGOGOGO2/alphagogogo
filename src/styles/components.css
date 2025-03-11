@@ -1,0 +1,33 @@
+
+@layer components {
+  .hero-gradient {
+    @apply bg-gradient-to-br from-[#6a1b9a]/95 via-[#8e24aa]/95 to-[#6a1b9a]/95 bg-opacity-90;
+  }
+  
+  .glass-card {
+    @apply bg-white/90 backdrop-blur-md border border-white/30 shadow-lg;
+  }
+  
+  .purple-glow {
+    @apply shadow-[0_0_30px_rgba(106,27,154,0.5)];
+  }
+  
+  .gradient-border {
+    position: relative;
+    border-radius: var(--radius);
+    background-clip: padding-box;
+    border: 1px solid transparent;
+  }
+  
+  .gradient-border::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    left: -1px;
+    background: linear-gradient(135deg, #6a1b9a, #8e24aa, #6a1b9a);
+    border-radius: var(--radius);
+    z-index: -1;
+  }
+}

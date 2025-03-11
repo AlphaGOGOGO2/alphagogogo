@@ -1,0 +1,33 @@
+
+@layer components {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-white/80;
+  }
+  
+  .animated-button {
+    @apply relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-[#6a1b9a]/20;
+  }
+  
+  .animated-button::after {
+    content: '';
+    @apply absolute inset-0 bg-white opacity-0 transition-opacity duration-300;
+  }
+  
+  .animated-button:hover::after {
+    @apply opacity-20;
+  }
+  
+  .glow-effect {
+    @apply relative;
+  }
+  
+  .glow-effect::before {
+    content: '';
+    @apply absolute -inset-1 rounded-lg blur-md bg-gradient-to-r from-[#6a1b9a] to-[#8e24aa] opacity-50 group-hover:opacity-75 transition duration-300;
+    z-index: -1;
+  }
+}
