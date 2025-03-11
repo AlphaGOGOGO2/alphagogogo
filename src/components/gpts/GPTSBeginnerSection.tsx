@@ -46,15 +46,15 @@ const beginnerGPTS = [
 
 export function GPTSBeginnerSection() {
   return (
-    <section className="mb-20">
-      <div className="mb-8">
+    <section className="mb-20 py-8 bg-purple-50 rounded-xl border border-purple-200 shadow-sm">
+      <div className="mb-8 px-8">
         <h2 className="text-2xl font-bold text-purple-800 mb-4">초보자분들은 이렇게 접근해보세요!</h2>
         <p className="text-gray-600">
           블로그 작성이 처음이신가요? 아래 순서대로 GPTS를 사용해보세요. 단계별로 블로그 콘텐츠를 쉽게 만들 수 있습니다.
         </p>
       </div>
       
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-8">
         {/* 1단계 컬럼 */}
         <div className="flex flex-col">
           <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">1단계</h3>
