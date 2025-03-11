@@ -57,19 +57,18 @@ export function GPTSBeginnerSection() {
       <div className="flex flex-col md:flex-row gap-6">
         {/* 1단계 */}
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">1단계</h3>
-          <div className="h-[240px]">
-            <GPTSCard
-              key={beginnerGPTS[0].id}
-              title={beginnerGPTS[0].title}
-              description={beginnerGPTS[0].description}
-              url={beginnerGPTS[0].url}
-              imageUrl={beginnerGPTS[0].imageUrl}
-              colorClass={beginnerCardColors[0]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700"
-              isHot={beginnerGPTS[0].isHot}
-            />
-          </div>
+          <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">1단계</h3>
+          <p className="text-gray-600 mb-4 text-sm">키워드를 검색하고 주차별 키워드를 생성합니다.</p>
+          <GPTSCard
+            key={beginnerGPTS[0].id}
+            title={beginnerGPTS[0].title}
+            description={beginnerGPTS[0].description}
+            url={beginnerGPTS[0].url}
+            imageUrl={beginnerGPTS[0].imageUrl}
+            colorClass={beginnerCardColors[0]}
+            buttonColorClass="bg-purple-600 hover:bg-purple-700"
+            isHot={beginnerGPTS[0].isHot}
+          />
         </div>
         
         {/* 구분선 */}
@@ -77,7 +76,8 @@ export function GPTSBeginnerSection() {
         
         {/* 2단계 */}
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">2단계</h3>
+          <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">2단계</h3>
+          <p className="text-gray-600 mb-4 text-sm">1단계에서 나온 키워드를 토대로 글을 작성합니다.(마크다운과 HTML 중 선호하는 스타일 진행)</p>
           <div className="space-y-6">
             {beginnerGPTS.slice(1, 3).map((gpts, index) => (
               <GPTSCard
@@ -99,19 +99,18 @@ export function GPTSBeginnerSection() {
         
         {/* 3단계 */}
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">3단계</h3>
-          <div className="h-[240px]">
-            <GPTSCard
-              key={beginnerGPTS[3].id}
-              title={beginnerGPTS[3].title}
-              description={beginnerGPTS[3].description}
-              url={beginnerGPTS[3].url}
-              imageUrl={beginnerGPTS[3].imageUrl}
-              colorClass={beginnerCardColors[0]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700"
-              isHot={beginnerGPTS[3].isHot}
-            />
-          </div>
+          <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">3단계</h3>
+          <p className="text-gray-600 mb-4 text-sm">이제 블로그 이미지를 생성합니다.</p>
+          <GPTSCard
+            key={beginnerGPTS[3].id}
+            title={beginnerGPTS[3].title}
+            description={beginnerGPTS[3].description}
+            url={beginnerGPTS[3].url}
+            imageUrl={beginnerGPTS[3].imageUrl}
+            colorClass={beginnerCardColors[0]}
+            buttonColorClass="bg-purple-600 hover:bg-purple-700"
+            isHot={beginnerGPTS[3].isHot}
+          />
         </div>
       </div>
     </section>
