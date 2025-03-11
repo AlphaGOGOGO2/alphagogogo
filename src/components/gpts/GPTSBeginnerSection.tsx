@@ -58,8 +58,11 @@ export function GPTSBeginnerSection() {
         {/* 1단계 */}
         <div className="flex-1">
           <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">1단계</h3>
-          <p className="text-gray-600 mb-4 text-sm">키워드를 검색하고 주차별 키워드를 생성합니다.</p>
-          <div className="h-[346px]"> {/* Fixed height to align with 2단계 section */}
+          <p className="text-gray-600 mb-4 text-sm">
+            키워드를 검색하고 주차별 키워드를 생성합니다.<br />
+            &nbsp;
+          </p>
+          <div className="h-[346px]">
             <GPTSCard
               key={beginnerGPTS[0].id}
               title={beginnerGPTS[0].title}
@@ -105,8 +108,11 @@ export function GPTSBeginnerSection() {
         {/* 3단계 */}
         <div className="flex-1">
           <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">3단계</h3>
-          <p className="text-gray-600 mb-4 text-sm">이제 블로그 이미지를 생성합니다.</p>
-          <div className="h-[346px]"> {/* Fixed height to align with 2단계 section */}
+          <p className="text-gray-600 mb-4 text-sm">
+            이제 블로그 이미지를 생성합니다.<br />
+            &nbsp;
+          </p>
+          <div className="h-[346px]">
             <GPTSCard
               key={beginnerGPTS[3].id}
               title={beginnerGPTS[3].title}
