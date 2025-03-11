@@ -50,7 +50,7 @@ export function GPTSBeginnerSection() {
   return (
     <section className="mb-20">
       <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+        <div className="flex items-center justify-between gap-4 mb-4">
           <h2 className="text-2xl font-bold text-purple-800">초보자분들은 이렇게 접근해보세요!</h2>
           <Button 
             className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
