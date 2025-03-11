@@ -24,7 +24,7 @@ export function GPTSCard({
   className = ""
 }: GPTSCardProps) {
   return (
-    <Card className={`h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative ${className}`}>
+    <Card className={`overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative ${className}`}>
       {isHot && (
         <div className="absolute -top-1 -right-1 z-10">
           <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-br-xl rounded-tl-xl shadow-md text-sm font-bold">
@@ -37,32 +37,32 @@ export function GPTSCard({
         </div>
       )}
       
-      <CardHeader className={`p-4 pb-3 ${colorClass || "bg-white"}`}>
-        <div className="flex items-center gap-3 mb-1">
-          <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm">
+      <CardHeader className={`p-3 ${colorClass || "bg-white"}`}>
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm">
             <img 
               src={imageUrl} 
               alt={title} 
-              className="w-5 h-5 object-contain"
+              className="w-4 h-4 object-contain"
             />
           </div>
-          <h3 className="text-base font-semibold text-gray-800">{title}</h3>
+          <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
         </div>
       </CardHeader>
       
-      <CardContent className="p-4 pt-2 flex-grow">
-        <p className="text-sm text-gray-600">{description}</p>
+      <CardContent className="p-3 pt-2">
+        <p className="text-xs text-gray-600 line-clamp-3">{description}</p>
       </CardContent>
       
-      <CardFooter className="p-4 pt-0">
+      <CardFooter className="p-3 pt-0">
         <a 
           href={url} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className={`w-full inline-flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-white transition-colors ${buttonColorClass}`}
+          className={`w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-white text-xs transition-colors ${buttonColorClass}`}
         >
           이용하기
-          <ExternalLink size={14} />
+          <ExternalLink size={12} />
         </a>
       </CardFooter>
     </Card>
