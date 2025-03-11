@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { NavLink } from "./NavLink";
@@ -20,8 +19,9 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     location.pathname === service.path || location.pathname === "/services"
   );
   
+  // Only keep YouTube from the filtered items (removing blog and premium since they're already placed)
   const filteredMainNavItems = mainNavItems.filter(
-    item => item.name !== "홈" && item.name !== "GPTS 이용하기" && item.name !== "커뮤니티"
+    item => item.name === "유튜브"
   );
   
   const handleBlogDropdownChange = (isOpen: boolean) => {
@@ -47,7 +47,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
-      className="premium-link"
+      className="premium-link gold-premium"
     />
   );
 
