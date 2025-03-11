@@ -14,6 +14,7 @@ export interface BlogCategory {
 export const mainNavItems: NavItem[] = [
   { name: "홈", path: "/" },
   { name: "GPTS 이용하기", path: "/gpts" },
+  { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
   { name: "커뮤니티", path: "/community" }
 ];
@@ -71,6 +72,11 @@ export const servicesCategories: ServicesCategory[] = [
     name: "전체서비스", 
     path: "/services",
     description: "알파블로그에서 제공하는 모든 서비스를 확인하세요."
+  },
+  { 
+    name: "프리미엄", 
+    path: "https://alphademy.co.kr/",
+    description: "알파블로그 프리미엄 멤버십 서비스로 더 많은 혜택을 누려보세요."
   },
   { 
     name: "유튜브 자막 추출", 
