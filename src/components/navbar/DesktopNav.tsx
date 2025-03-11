@@ -57,7 +57,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   
   return (
     <nav 
-      className="hidden md:flex items-center gap-6" 
+      className="hidden md:flex items-center gap-8" 
     >
       <NavLink 
         name="홈" 

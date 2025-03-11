@@ -15,7 +15,7 @@ interface NavLinkProps {
 
 export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, isExternal, className }: NavLinkProps) {
   const linkClasses = cn(
-    "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
+    "text-base md:text-lg font-medium relative transition-all duration-300 px-3 py-2 rounded-md group flex items-center",
     isScrolled 
       ? "text-purple-900 hover:text-purple-800" 
       : "text-white/90 hover:text-white",
@@ -39,7 +39,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
         className={linkClasses}
         onClick={onClick}
       >
-        <div className="relative z-10">
+        <div className="relative z-10 flex items-center">
           <span>{name}</span>
           {iconRight && <span className="ml-1">{iconRight}</span>}
         </div>
@@ -58,7 +58,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
     >
-      <div className="relative z-10">
+      <div className="relative z-10 flex items-center">
         <span>{name}</span>
         {iconRight && <span className="ml-1">{iconRight}</span>}
       </div>

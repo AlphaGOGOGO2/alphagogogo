@@ -79,7 +79,7 @@ export function BlogDropdown({
             <ChevronDown 
               size={16} 
               className={cn(
-                "transition-transform duration-300", 
+                "ml-1 transition-transform duration-300", 
                 isOpen ? "rotate-180" : "rotate-0",
                 isScrolled ? "text-purple-700" : "text-white/80"
               )}
