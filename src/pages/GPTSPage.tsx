@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { GPTSBeginnerSection } from "@/components/gpts/GPTSBeginnerSection";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";
 import { GPTSOtherSection } from "@/components/gpts/GPTSOtherSection";
 import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
@@ -11,6 +12,7 @@ import { Banner } from "@/components/Banner";
 
 export default function GPTSPage() {
   const location = useLocation();
+  const beginnerSectionRef = useRef<HTMLDivElement>(null);
   const blogSectionRef = useRef<HTMLDivElement>(null);
   const otherSectionRef = useRef<HTMLDivElement>(null);
   const downloadSectionRef = useRef<HTMLDivElement>(null);
@@ -66,15 +68,20 @@ export default function GPTSPage() {
           </p>
           
           <div className={`stagger-animation ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-            <div id="blog" ref={blogSectionRef} className="transition-all duration-500 delay-100">
+            {/* New Beginner Guide Section */}
+            <div id="beginner" ref={beginnerSectionRef} className="transition-all duration-500 delay-100">
+              <GPTSBeginnerSection />
+            </div>
+            
+            <div id="blog" ref={blogSectionRef} className="transition-all duration-500 delay-200">
               <GPTSBlogSection />
             </div>
             
-            <div id="other" ref={otherSectionRef} className="transition-all duration-500 delay-200">
+            <div id="other" ref={otherSectionRef} className="transition-all duration-500 delay-300">
               <GPTSOtherSection />
             </div>
             
-            <div id="download" ref={downloadSectionRef} className="transition-all duration-500 delay-300">
+            <div id="download" ref={downloadSectionRef} className="transition-all duration-500 delay-400">
               <GPTSDownloadSection />
             </div>
           </div>

@@ -31,6 +31,7 @@ export interface GPTSCategory {
 }
 
 export const gptsCategories: GPTSCategory[] = [
+  { name: "초보자 가이드", path: "/gpts#beginner" },
   { name: "블로그 GPTS", path: "/gpts#blog" },
   { name: "그 외 GPTS", path: "/gpts#other" },
   { name: "다운로드", path: "/gpts#download" }
