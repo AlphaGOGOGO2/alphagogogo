@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -38,12 +39,14 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
         className={linkClasses}
         onClick={onClick}
       >
-        <span className="relative z-10">{name}</span>
+        <span className={className ? "" : "relative z-10"}>{name}</span>
         {iconRight && <span className="ml-1">{iconRight}</span>}
-        <span 
-          className={underlineClasses}
-          aria-hidden="true"
-        ></span>
+        {!className && (
+          <span 
+            className={underlineClasses}
+            aria-hidden="true"
+          ></span>
+        )}
       </a>
     );
   }
@@ -55,12 +58,14 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
     >
-      <span className="relative z-10">{name}</span>
+      <span className={className ? "" : "relative z-10"}>{name}</span>
       {iconRight && <span className="ml-1">{iconRight}</span>}
-      <span 
-        className={underlineClasses}
-        aria-hidden="true"
-      ></span>
+      {!className && (
+        <span 
+          className={underlineClasses}
+          aria-hidden="true"
+        ></span>
+      )}
     </Link>
   );
 }

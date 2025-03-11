@@ -77,9 +77,11 @@
       #AA771C
     );
     background-size: 200% auto;
-    color: transparent;
+    color: transparent !important;
     background-clip: text;
     -webkit-background-clip: text;
+    font-weight: 700 !important;
+    text-shadow: 0 0 2px rgba(191, 149, 63, 0.3);
     animation: shine 2s linear infinite;
   }
 
