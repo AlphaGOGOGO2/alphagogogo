@@ -1,4 +1,3 @@
-
 import { GPTSCard } from "./GPTSCard";
 
 // Using a purple-tinted color scheme for beginner cards 
@@ -54,7 +53,7 @@ export function GPTSBeginnerSection() {
         </p>
       </div>
       
-      <div className="flex flex-col md:flex-row gap-6 relative">
+      <div className="flex flex-col md:flex-row gap-6">
         {/* 1단계 */}
         <div className="flex-1">
           <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">1단계</h3>
@@ -70,8 +69,8 @@ export function GPTSBeginnerSection() {
           />
         </div>
         
-        {/* 1단계와 2단계 사이 구분선 */}
-        <div className="hidden md:block w-px self-stretch bg-purple-300 mx-2"></div>
+        {/* 구분선 */}
+        <div className="hidden md:block w-0.5 bg-purple-300 self-stretch mx-2" />
         
         {/* 2단계 */}
         <div className="flex-1">
@@ -92,8 +91,8 @@ export function GPTSBeginnerSection() {
           </div>
         </div>
         
-        {/* 2단계와 3단계 사이 구분선 */}
-        <div className="hidden md:block w-px self-stretch bg-purple-300 mx-2"></div>
+        {/* 구분선 */}
+        <div className="hidden md:block w-0.5 bg-purple-300 self-stretch mx-2" />
         
         {/* 3단계 */}
         <div className="flex-1">
