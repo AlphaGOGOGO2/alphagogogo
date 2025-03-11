@@ -56,19 +56,21 @@ export function GPTSBeginnerSection() {
       
       <div className="flex flex-col md:flex-row gap-6">
         {/* 1단계 */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col">
           <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">1단계</h3>
           <p className="text-gray-600 mb-4 text-sm">키워드를 검색하고 주차별 키워드를 생성합니다.</p>
-          <GPTSCard
-            key={beginnerGPTS[0].id}
-            title={beginnerGPTS[0].title}
-            description={beginnerGPTS[0].description}
-            url={beginnerGPTS[0].url}
-            imageUrl={beginnerGPTS[0].imageUrl}
-            colorClass={beginnerCardColors[0]}
-            buttonColorClass="bg-purple-600 hover:bg-purple-700"
-            isHot={beginnerGPTS[0].isHot}
-          />
+          <div className="flex-1 flex">
+            <GPTSCard
+              key={beginnerGPTS[0].id}
+              title={beginnerGPTS[0].title}
+              description={beginnerGPTS[0].description}
+              url={beginnerGPTS[0].url}
+              imageUrl={beginnerGPTS[0].imageUrl}
+              colorClass={beginnerCardColors[0]}
+              buttonColorClass="bg-purple-600 hover:bg-purple-700"
+              isHot={beginnerGPTS[0].isHot}
+            />
+          </div>
         </div>
         
         {/* 구분선 */}
@@ -98,19 +100,21 @@ export function GPTSBeginnerSection() {
         <div className="hidden md:block w-0.5 bg-purple-300 self-stretch mx-2" />
         
         {/* 3단계 */}
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col">
           <h3 className="text-xl font-bold text-purple-700 mb-2 text-left">3단계</h3>
           <p className="text-gray-600 mb-4 text-sm">이제 블로그 이미지를 생성합니다.</p>
-          <GPTSCard
-            key={beginnerGPTS[3].id}
-            title={beginnerGPTS[3].title}
-            description={beginnerGPTS[3].description}
-            url={beginnerGPTS[3].url}
-            imageUrl={beginnerGPTS[3].imageUrl}
-            colorClass={beginnerCardColors[0]}
-            buttonColorClass="bg-purple-600 hover:bg-purple-700"
-            isHot={beginnerGPTS[3].isHot}
-          />
+          <div className="flex-1 flex">
+            <GPTSCard
+              key={beginnerGPTS[3].id}
+              title={beginnerGPTS[3].title}
+              description={beginnerGPTS[3].description}
+              url={beginnerGPTS[3].url}
+              imageUrl={beginnerGPTS[3].imageUrl}
+              colorClass={beginnerCardColors[0]}
+              buttonColorClass="bg-purple-600 hover:bg-purple-700"
+              isHot={beginnerGPTS[3].isHot}
+            />
+          </div>
         </div>
       </div>
     </section>
