@@ -1,6 +1,6 @@
-
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { Sparkles } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
@@ -16,7 +16,6 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   const location = useLocation();
   const [activeDropdown, setActiveDropdown] = useState<"blog" | "gpts" | "community" | "services" | null>(null);
   
-  // Check if current path is a service page
   const isServicePage = servicesCategories.some(service => 
     location.pathname === service.path || location.pathname === "/services"
   );
@@ -41,7 +40,17 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     setActiveDropdown(isOpen ? "services" : null);
   };
 
-  // Close dropdowns when route changes
+  const renderPremiumLink = () => (
+    <NavLink
+      name="프리미엄"
+      path="https://alphademy.co.kr/"
+      isScrolled={isScrolled}
+      isActive={false}
+      isExternal={true}
+      iconRight={<Sparkles className="animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite] text-yellow-400" />}
+    />
+  );
+
   useEffect(() => {
     setActiveDropdown(null);
   }, [location.pathname]);
@@ -64,6 +73,8 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         isOpen={activeDropdown === "blog"}
         onOpenChange={handleBlogDropdownChange}
       />
+      
+      {renderPremiumLink()}
       
       <GPTSDropdown 
         isScrolled={isScrolled}
