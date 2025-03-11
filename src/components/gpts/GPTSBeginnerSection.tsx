@@ -1,5 +1,7 @@
 
 import { GPTSCard } from "./GPTSCard";
+import { ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Using a purple-tinted color scheme for beginner cards 
 const beginnerCardColors = [
@@ -48,7 +50,15 @@ export function GPTSBeginnerSection() {
   return (
     <section className="mb-20">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-purple-800 mb-4">초보자분들은 이렇게 접근해보세요!</h2>
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+          <h2 className="text-2xl font-bold text-purple-800">초보자분들은 이렇게 접근해보세요!</h2>
+          <Button 
+            className="bg-red-600 hover:bg-red-700 text-white whitespace-nowrap"
+            onClick={() => window.open("https://alphagogogo.com/blog/-gpts--2a0ujatr", "_blank")}
+          >
+            사용법 확인하기 <ExternalLink className="ml-1 h-4 w-4" />
+          </Button>
+        </div>
         <p className="text-gray-600">
           블로그 작성이 처음이신가요? 아래 순서대로 GPTS를 사용해보세요. 단계별로 블로그 콘텐츠를 쉽게 만들 수 있습니다.
         </p>
