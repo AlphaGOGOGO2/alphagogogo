@@ -46,7 +46,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
-      className="gold-premium"
+      className="premium-link"
     />
   );
 

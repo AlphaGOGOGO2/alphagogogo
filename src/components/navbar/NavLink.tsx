@@ -39,12 +39,14 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
         className={linkClasses}
         onClick={onClick}
       >
-        <span className="relative z-10">{name}</span>
-        {iconRight && <span className="ml-1">{iconRight}</span>}
+        <div className="relative z-10">
+          <span>{name}</span>
+          {iconRight && <span className="ml-1">{iconRight}</span>}
+        </div>
         <span 
           className={underlineClasses}
           aria-hidden="true"
-        ></span>
+        />
       </a>
     );
   }
@@ -56,12 +58,14 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
       onClick={onClick}
       aria-current={isActive ? "page" : undefined}
     >
-      <span className="relative z-10">{name}</span>
-      {iconRight && <span className="ml-1">{iconRight}</span>}
+      <div className="relative z-10">
+        <span>{name}</span>
+        {iconRight && <span className="ml-1">{iconRight}</span>}
+      </div>
       <span 
         className={underlineClasses}
         aria-hidden="true"
-      ></span>
+      />
     </Link>
   );
 }
