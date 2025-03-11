@@ -19,7 +19,6 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     location.pathname === service.path || location.pathname === "/services"
   );
   
-  // Only keep YouTube from the filtered items (removing blog and premium since they're already placed)
   const filteredMainNavItems = mainNavItems.filter(
     item => item.name === "유튜브"
   );
@@ -47,7 +46,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
-      className="premium-link gold-premium"
+      className="gold-premium"
     />
   );
 
