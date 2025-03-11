@@ -10,7 +10,6 @@ interface GPTSCardProps {
   colorClass?: string;
   buttonColorClass?: string;
   isHot?: boolean; // Prop to indicate if the card should have a HOT badge
-  className?: string; // Added className prop to allow custom styling
 }
 
 export function GPTSCard({ 
@@ -20,11 +19,10 @@ export function GPTSCard({
   imageUrl, 
   colorClass,
   buttonColorClass = "bg-purple-600 hover:bg-purple-700", // Default to purple if not specified
-  isHot = false,
-  className = ""
+  isHot = false
 }: GPTSCardProps) {
   return (
-    <Card className={`overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative ${className}`}>
+    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative">
       {isHot && (
         <div className="absolute -top-1 -right-1 z-10">
           <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-br-xl rounded-tl-xl shadow-md text-sm font-bold">
@@ -37,32 +35,32 @@ export function GPTSCard({
         </div>
       )}
       
-      <CardHeader className={`p-3 ${colorClass || "bg-white"}`}>
-        <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-full bg-white flex items-center justify-center shadow-sm">
+      <CardHeader className={`p-6 pb-4 ${colorClass || "bg-white"}`}>
+        <div className="flex items-center gap-3 mb-2">
+          <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm">
             <img 
               src={imageUrl} 
               alt={title} 
-              className="w-4 h-4 object-contain"
+              className="w-6 h-6 object-contain"
             />
           </div>
-          <h3 className="text-sm font-semibold text-gray-800">{title}</h3>
+          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         </div>
       </CardHeader>
       
-      <CardContent className="p-3 pt-2">
-        <p className="text-xs text-gray-600 line-clamp-3">{description}</p>
+      <CardContent className="p-6 pt-3 flex-grow">
+        <p className="text-gray-600">{description}</p>
       </CardContent>
       
-      <CardFooter className="p-3 pt-0">
+      <CardFooter className="p-6 pt-0">
         <a 
           href={url} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className={`w-full inline-flex items-center justify-center gap-1 px-2 py-1.5 rounded-lg text-white text-xs transition-colors ${buttonColorClass}`}
+          className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-white transition-colors ${buttonColorClass}`}
         >
           이용하기
-          <ExternalLink size={12} />
+          <ExternalLink size={16} />
         </a>
       </CardFooter>
     </Card>
