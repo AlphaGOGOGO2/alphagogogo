@@ -1,4 +1,3 @@
-
 import { GPTSCard } from "./GPTSCard";
 
 // Using a purple-tinted color scheme for beginner cards 
@@ -54,66 +53,54 @@ export function GPTSBeginnerSection() {
         </p>
       </div>
       
-      <div className="grid grid-cols-3 gap-6">
-        {/* 1단계 컬럼 */}
-        <div className="flex flex-col">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 1단계 */}
+        <div>
           <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">1단계</h3>
-          <div className="h-full">
-            <GPTSCard
-              key={beginnerGPTS[0].id}
-              title={beginnerGPTS[0].title}
-              description={beginnerGPTS[0].description}
-              url={beginnerGPTS[0].url}
-              imageUrl={beginnerGPTS[0].imageUrl}
-              colorClass={beginnerCardColors[0]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700" // 보라색 버튼
-              isHot={beginnerGPTS[0].isHot}
-            />
-          </div>
+          <GPTSCard
+            key={beginnerGPTS[0].id}
+            title={beginnerGPTS[0].title}
+            description={beginnerGPTS[0].description}
+            url={beginnerGPTS[0].url}
+            imageUrl={beginnerGPTS[0].imageUrl}
+            colorClass={beginnerCardColors[0]}
+            buttonColorClass="bg-purple-600 hover:bg-purple-700"
+            isHot={beginnerGPTS[0].isHot}
+          />
         </div>
         
-        {/* 2단계 컬럼 */}
-        <div className="flex flex-col">
+        {/* 2단계 */}
+        <div>
           <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">2단계</h3>
           <div className="space-y-6">
-            <GPTSCard
-              key={beginnerGPTS[1].id}
-              title={beginnerGPTS[1].title}
-              description={beginnerGPTS[1].description}
-              url={beginnerGPTS[1].url}
-              imageUrl={beginnerGPTS[1].imageUrl}
-              colorClass={beginnerCardColors[1]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700" // 보라색 버튼
-              isHot={beginnerGPTS[1].isHot}
-            />
-            <GPTSCard
-              key={beginnerGPTS[2].id}
-              title={beginnerGPTS[2].title}
-              description={beginnerGPTS[2].description}
-              url={beginnerGPTS[2].url}
-              imageUrl={beginnerGPTS[2].imageUrl}
-              colorClass={beginnerCardColors[2]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700" // 보라색 버튼
-              isHot={beginnerGPTS[2].isHot}
-            />
+            {beginnerGPTS.slice(1, 3).map((gpts, index) => (
+              <GPTSCard
+                key={gpts.id}
+                title={gpts.title}
+                description={gpts.description}
+                url={gpts.url}
+                imageUrl={gpts.imageUrl}
+                colorClass={beginnerCardColors[index + 1]}
+                buttonColorClass="bg-purple-600 hover:bg-purple-700"
+                isHot={gpts.isHot}
+              />
+            ))}
           </div>
         </div>
         
-        {/* 3단계 컬럼 */}
-        <div className="flex flex-col">
+        {/* 3단계 */}
+        <div>
           <h3 className="text-xl font-bold text-purple-700 mb-4 text-center">3단계</h3>
-          <div className="h-full">
-            <GPTSCard
-              key={beginnerGPTS[3].id}
-              title={beginnerGPTS[3].title}
-              description={beginnerGPTS[3].description}
-              url={beginnerGPTS[3].url}
-              imageUrl={beginnerGPTS[3].imageUrl}
-              colorClass={beginnerCardColors[0]}
-              buttonColorClass="bg-purple-600 hover:bg-purple-700" // 보라색 버튼
-              isHot={beginnerGPTS[3].isHot}
-            />
-          </div>
+          <GPTSCard
+            key={beginnerGPTS[3].id}
+            title={beginnerGPTS[3].title}
+            description={beginnerGPTS[3].description}
+            url={beginnerGPTS[3].url}
+            imageUrl={beginnerGPTS[3].imageUrl}
+            colorClass={beginnerCardColors[0]}
+            buttonColorClass="bg-purple-600 hover:bg-purple-700"
+            isHot={beginnerGPTS[3].isHot}
+          />
         </div>
       </div>
     </section>
