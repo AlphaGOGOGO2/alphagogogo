@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -10,14 +9,16 @@ interface NavLinkProps {
   onClick?: () => void;
   iconRight?: React.ReactNode;
   isExternal?: boolean;
+  className?: string;
 }
 
-export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, isExternal }: NavLinkProps) {
+export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, isExternal, className }: NavLinkProps) {
   const linkClasses = cn(
     "text-base md:text-lg font-medium relative transition-all duration-300 px-2 py-1 rounded-md group flex items-center",
     isScrolled 
       ? "text-purple-900 hover:text-purple-800" 
-      : "text-white/90 hover:text-white"
+      : "text-white/90 hover:text-white",
+    className
   );
 
   const underlineClasses = cn(

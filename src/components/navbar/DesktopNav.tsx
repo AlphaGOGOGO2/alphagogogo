@@ -1,6 +1,6 @@
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Sparkles } from "lucide-react";
 import { NavLink } from "./NavLink";
 import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
@@ -47,7 +47,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
-      iconRight={<Sparkles className="animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite] text-yellow-400" />}
+      className="premium-link"
     />
   );
 
