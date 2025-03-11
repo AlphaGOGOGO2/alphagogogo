@@ -22,7 +22,7 @@ export function GPTSCard({
   isHot = false
 }: GPTSCardProps) {
   return (
-    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative">
+    <Card className="h-[280px] flex flex-col overflow-hidden hover:shadow-md transition-shadow border border-gray-200 hover:border-purple-300 relative">
       {isHot && (
         <div className="absolute -top-1 -right-1 z-10">
           <div className="flex items-center gap-1 bg-red-500 text-white px-3 py-1 rounded-br-xl rounded-tl-xl shadow-md text-sm font-bold">
