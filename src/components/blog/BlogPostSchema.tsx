@@ -15,6 +15,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     ? [...post.tags, "알파고고고", "알파고", "알파GOGOGO", "블로그", "AI", "인공지능"] 
     : ["알파고고고", "알파고", "알파GOGOGO", "유튜브 알파GOGOGO", "유튜브 알파고고고", "본질을 찾아서", "블로그", "블로그 자동화", "알파블로그", "블로그 GPTS", "챗GPT", "블로그 AI", "블로그 GPT"];
   
+  // Create the structured data object
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -41,21 +42,24 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "keywords": keywordsArray.join(",")
   };
 
+  // Add image if available, or use default logo
   if (post.coverImage) {
     structuredData["image"] = post.coverImage;
   } else {
     structuredData["image"] = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png";
   }
 
-  // Ensure the JSON is valid before adding it to the page
+  // Extra validation to ensure JSON is properly formed
   try {
-    // Test parse to catch any JSON errors
-    JSON.parse(JSON.stringify(structuredData));
+    // Convert to string and parse back to validate
+    const jsonString = JSON.stringify(structuredData);
+    // This will throw if JSON is invalid
+    JSON.parse(jsonString);
     
     return (
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: jsonString }}
       />
     );
   } catch (error) {

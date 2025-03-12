@@ -31,9 +31,11 @@ export function SEO({
   if (structuredData) {
     try {
       structuredDataString = JSON.stringify(structuredData);
+      // Validate by parsing it back
+      JSON.parse(structuredDataString);
     } catch (error) {
-      console.error("Error stringifying structured data:", error);
-      structuredDataString = "{}";
+      console.error("Error with structured data:", error);
+      structuredDataString = ""; // Don't use invalid JSON
     }
   }
   
@@ -72,8 +74,8 @@ export function SEO({
       <meta name="language" content="Korean" />
       <meta name="revisit-after" content="7 days" />
       
-      {/* Structured Data */}
-      {structuredData && structuredDataString !== "{}" && (
+      {/* Structured Data - only include if valid */}
+      {structuredData && structuredDataString && (
         <script type="application/ld+json">
           {structuredDataString}
         </script>
