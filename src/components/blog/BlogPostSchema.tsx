@@ -10,6 +10,11 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
   // Use full absolute URL for structured data
   const fullUrl = url.startsWith('http') ? url : `https://alphagogogo.com${url.startsWith('/') ? '' : '/'}${url}`;
   
+  // Create a keywords array from tags if available, or use default keywords
+  const keywordsArray = post.tags && post.tags.length > 0 
+    ? [...post.tags, "알파고고고", "알파고", "알파GOGOGO", "블로그", "AI", "인공지능"] 
+    : ["알파고고고", "알파고", "알파GOGOGO", "유튜브 알파GOGOGO", "유튜브 알파고고고", "본질을 찾아서", "블로그", "블로그 자동화", "알파블로그", "블로그 GPTS", "챗GPT", "블로그 AI", "블로그 GPT"];
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -33,7 +38,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
         "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"
       }
     },
-    "keywords": "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼"
+    "keywords": keywordsArray.join(",")
   };
 
   if (post.coverImage) {
@@ -42,10 +47,20 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     structuredData["image"] = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png";
   }
 
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-    />
-  );
+  // Ensure the JSON is valid before adding it to the page
+  try {
+    // Test parse to catch any JSON errors
+    JSON.parse(JSON.stringify(structuredData));
+    
+    return (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+    );
+  } catch (error) {
+    console.error("Invalid schema JSON:", error);
+    // Return empty fragment if invalid JSON to prevent rendering errors
+    return <></>;
+  }
 }
