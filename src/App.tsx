@@ -50,6 +50,11 @@ const App = () => (
             <Route path="/url-shortener" element={<URLShortenerPage />} />
             <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
             
+            {/* Legacy services routes - redirect to new paths */}
+            <Route path="/services/youtube-transcript" element={<Navigate to="/youtube-transcript" replace />} />
+            <Route path="/services/url-shortener" element={<Navigate to="/url-shortener" replace />} />
+            <Route path="/services/blog-button-creator" element={<Navigate to="/blog-button-creator" replace />} />
+            
             {/* Blog routes */}
             <Route path="/blog" element={<AllBlogPage />} />
             <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
