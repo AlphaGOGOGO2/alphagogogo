@@ -42,9 +42,14 @@ export function InviteForm({ onSuccess }: InviteFormProps) {
     setIsSubmitting(true);
     
     try {
+      // Since data is validated by Zod, we know it has all required fields as non-optional
       const { error } = await supabase
         .from("genspark_invites")
-        .insert(data);  // Pass the data object directly, not as an array
+        .insert({
+          nickname: data.nickname,
+          message: data.message,
+          invite_url: data.invite_url
+        });
         
       if (error) {
         if (error.code === "23505") {
