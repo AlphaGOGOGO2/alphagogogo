@@ -8,7 +8,7 @@ import { InviteForm } from "@/components/genspark/InviteForm";
 import { InviteGrid } from "@/components/genspark/InviteGrid";
 import { GensparkInvite } from "@/types/genspark";
 import { supabase } from "@/integrations/supabase/client";
-import { Info, Shield, Users, AlertTriangle, Heart } from "lucide-react";
+import { Info, Shield, Users, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -51,16 +51,16 @@ export default function GensparkInvitesPage() {
             AI 품앗이: 서로 도우며 AI 생태계를 함께 키워나가요!
           </p>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {/* 카드 1: 규칙 정보 */}
-            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
-              <div className="flex justify-center mb-3">
-                <div className="bg-purple-600 p-2 rounded-full">
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex items-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full mr-3">
                   <Info className="h-7 w-7 text-white" />
                 </div>
+                <h3 className="font-bold text-purple-900 text-xl">적격 규칙</h3>
               </div>
-              <h3 className="font-bold text-purple-900 mb-2 text-lg">적격 규칙</h3>
-              <ul className="text-left space-y-2 text-purple-800 text-sm">
+              <ul className="text-left space-y-2 text-purple-800 text-sm pl-4">
                 <li>초대된 친구는 2024년 12월 1일 이후에 등록한 신규 사용자여야 합니다.</li>
                 <li>각 사용자는 초대를 통해 최대 20개월의 무료 Genspark Plus를 받을 수 있습니다.</li>
                 <li>조회수와 가입자수는 비례하지 않습니다.</li>
@@ -69,14 +69,14 @@ export default function GensparkInvitesPage() {
             </div>
             
             {/* 카드 2: 링크 등록 규칙 */}
-            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
-              <div className="flex justify-center mb-3">
-                <div className="bg-purple-600 p-2 rounded-full">
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex items-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full mr-3">
                   <Shield className="h-7 w-7 text-white" />
                 </div>
+                <h3 className="font-bold text-purple-900 text-xl">등록 규칙</h3>
               </div>
-              <h3 className="font-bold text-purple-900 mb-2 text-lg">등록 규칙</h3>
-              <ul className="text-left space-y-2 text-purple-800 text-sm">
+              <ul className="text-left space-y-2 text-purple-800 text-sm pl-4">
                 <li>중복된 초대 링크는 등록할 수 없습니다.</li>
                 <li>젠스파크 초대 링크만 등록 가능합니다.</li>
                 <li>닉네임과 한마디로 관심을 끌어보세요!</li>
@@ -85,14 +85,14 @@ export default function GensparkInvitesPage() {
             </div>
             
             {/* 카드 3: 이용 방법 */}
-            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
-              <div className="flex justify-center mb-3">
-                <div className="bg-purple-600 p-2 rounded-full">
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex items-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full mr-3">
                   <Users className="h-7 w-7 text-white" />
                 </div>
+                <h3 className="font-bold text-purple-900 text-xl">이용 방법</h3>
               </div>
-              <h3 className="font-bold text-purple-900 mb-2 text-lg">이용 방법</h3>
-              <ul className="text-left space-y-2 text-purple-800 text-sm">
+              <ul className="text-left space-y-2 text-purple-800 text-sm pl-4">
                 <li>초대 링크를 클릭하여 젠스파크에 가입하세요.</li>
                 <li>친구를 초대하여 무료 이용 기간을 늘려보세요.</li>
                 <li>자신의 초대 링크를 등록하고 공유하세요.</li>
@@ -101,14 +101,14 @@ export default function GensparkInvitesPage() {
             </div>
             
             {/* 카드 4: 주의사항 */}
-            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
-              <div className="flex justify-center mb-3">
-                <div className="bg-purple-600 p-2 rounded-full">
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-6 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex items-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full mr-3">
                   <Heart className="h-7 w-7 text-white" />
                 </div>
+                <h3 className="font-bold text-purple-900 text-xl">이용 안내</h3>
               </div>
-              <h3 className="font-bold text-purple-900 mb-2 text-lg">이용 안내</h3>
-              <ul className="text-left space-y-2 text-purple-800 text-sm">
+              <ul className="text-left space-y-2 text-purple-800 text-sm pl-4">
                 <li>재미로 만들고 편하게 올려두고 하실일 하시라고 만든겁니다.</li>
                 <li>너무 민감하게 반응하지 마세요!</li>
                 <li>모두가 함께 혜택을 나누는 공간입니다.</li>
