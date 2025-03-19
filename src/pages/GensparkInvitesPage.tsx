@@ -8,6 +8,7 @@ import { InviteForm } from "@/components/genspark/InviteForm";
 import { InviteGrid } from "@/components/genspark/InviteGrid";
 import { GensparkInvite } from "@/types/genspark";
 import { supabase } from "@/integrations/supabase/client";
+import { Info, Shield, Users, AlertTriangle, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -46,25 +47,79 @@ export default function GensparkInvitesPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-purple-900 mb-4">
             젠스파크 친구 초대하고 무료로 이용하기!
           </h1>
-          <div className="text-lg text-gray-600 max-w-3xl mx-auto space-y-6">
-            <p className="font-medium text-purple-800">
-              AI 품앗이: 서로 도우며 AI 생태계를 함께 키워나가요!
-            </p>
-            
-            <div className="bg-purple-50 p-5 rounded-lg border border-purple-200 text-left">
-              <h3 className="font-semibold text-purple-900 mb-3">적격 규칙:</h3>
-              <ul className="list-disc pl-5 space-y-2 text-purple-800">
+          <p className="font-medium text-purple-800 text-lg mb-8">
+            AI 품앗이: 서로 도우며 AI 생태계를 함께 키워나가요!
+          </p>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl mx-auto">
+            {/* 카드 1: 규칙 정보 */}
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex justify-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full">
+                  <Info className="h-7 w-7 text-white" />
+                </div>
+              </div>
+              <h3 className="font-bold text-purple-900 mb-2 text-lg">적격 규칙</h3>
+              <ul className="text-left space-y-2 text-purple-800 text-sm">
                 <li>초대된 친구는 2024년 12월 1일 이후에 등록한 신규 사용자여야 합니다.</li>
                 <li>각 사용자는 초대를 통해 최대 20개월의 무료 Genspark Plus를 받을 수 있습니다.</li>
                 <li>조회수와 가입자수는 비례하지 않습니다.</li>
                 <li>해당 이벤트는 3월 31일까지 진행됩니다.</li>
               </ul>
             </div>
+            
+            {/* 카드 2: 링크 등록 규칙 */}
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex justify-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full">
+                  <Shield className="h-7 w-7 text-white" />
+                </div>
+              </div>
+              <h3 className="font-bold text-purple-900 mb-2 text-lg">등록 규칙</h3>
+              <ul className="text-left space-y-2 text-purple-800 text-sm">
+                <li>중복된 초대 링크는 등록할 수 없습니다.</li>
+                <li>젠스파크 초대 링크만 등록 가능합니다.</li>
+                <li>닉네임과 한마디로 관심을 끌어보세요!</li>
+                <li>클릭수가 10이 되면 삭제됩니다. 서로 견제하세요!</li>
+              </ul>
+            </div>
+            
+            {/* 카드 3: 이용 방법 */}
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex justify-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full">
+                  <Users className="h-7 w-7 text-white" />
+                </div>
+              </div>
+              <h3 className="font-bold text-purple-900 mb-2 text-lg">이용 방법</h3>
+              <ul className="text-left space-y-2 text-purple-800 text-sm">
+                <li>초대 링크를 클릭하여 젠스파크에 가입하세요.</li>
+                <li>친구를 초대하여 무료 이용 기간을 늘려보세요.</li>
+                <li>자신의 초대 링크를 등록하고 공유하세요.</li>
+                <li>다른 사람의 링크도 클릭해주면 서로 도움이 됩니다.</li>
+              </ul>
+            </div>
+            
+            {/* 카드 4: 주의사항 */}
+            <div className="bg-gradient-to-br from-purple-100 to-purple-200 p-5 rounded-xl border-2 border-purple-300 shadow-lg hover:shadow-xl transition-all">
+              <div className="flex justify-center mb-3">
+                <div className="bg-purple-600 p-2 rounded-full">
+                  <Heart className="h-7 w-7 text-white" />
+                </div>
+              </div>
+              <h3 className="font-bold text-purple-900 mb-2 text-lg">이용 안내</h3>
+              <ul className="text-left space-y-2 text-purple-800 text-sm">
+                <li>재미로 만들고 편하게 올려두고 하실일 하시라고 만든겁니다.</li>
+                <li>너무 민감하게 반응하지 마세요!</li>
+                <li>모두가 함께 혜택을 나누는 공간입니다.</li>
+                <li>서로 배려하며 이용해주세요.</li>
+              </ul>
+            </div>
           </div>
         </div>
 
         <section className="mb-16 max-w-3xl mx-auto">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-lg shadow-md border border-purple-200 hover:border-purple-300 transition-all">
             <h2 className="text-2xl font-semibold mb-6 text-purple-800">초대 링크 등록하기</h2>
             <InviteForm onSuccess={handleDataRefresh} />
           </div>
