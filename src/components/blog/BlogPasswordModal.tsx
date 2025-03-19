@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface BlogPasswordModalProps {
   isOpen: boolean;
@@ -17,16 +18,27 @@ export function BlogPasswordModal({ isOpen, onClose }: BlogPasswordModalProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setError(null);
 
-    // Validate the password (hardcoded as requested)
-    setTimeout(() => {
-      if (password === "dnjsehd12@@") {
+    try {
+      // Use the Supabase edge function to verify password
+      const { data, error } = await supabase.functions.invoke('verify-admin-password', {
+        body: { password }
+      });
+
+      if (error) {
+        console.error("Error calling verify-admin-password function:", error);
+        setError("인증 중 오류가 발생했습니다. 다시 시도해주세요.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (data && data.success) {
         // Correct password
-        sessionStorage.setItem("blogAuthToken", "authorized");
+        sessionStorage.setItem("blogAuthToken", data.token);
         setIsSubmitting(false);
         onClose();
         navigate("/blog/write");
@@ -35,7 +47,11 @@ export function BlogPasswordModal({ isOpen, onClose }: BlogPasswordModalProps) {
         setError("비밀번호가 올바르지 않습니다. 다시 시도해주세요.");
         setIsSubmitting(false);
       }
-    }, 800); // Simulate a delay for security
+    } catch (error) {
+      console.error("Unexpected error during authentication:", error);
+      setError("인증 중 오류가 발생했습니다. 다시 시도해주세요.");
+      setIsSubmitting(false);
+    }
   };
 
   return (
