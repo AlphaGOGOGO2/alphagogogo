@@ -44,7 +44,7 @@ export function InviteForm({ onSuccess }: InviteFormProps) {
     try {
       const { error } = await supabase
         .from("genspark_invites")
-        .insert([data]);
+        .insert(data);  // Pass the data object directly, not as an array
         
       if (error) {
         if (error.code === "23505") {
