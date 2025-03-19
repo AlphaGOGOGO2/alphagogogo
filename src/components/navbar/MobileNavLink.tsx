@@ -6,12 +6,21 @@ interface MobileNavLinkProps {
   name: string;
   path: string;
   isActive: boolean;
-  onClick?: () => void;
+  onClick?: () => boolean | void;
   iconRight?: React.ReactNode;
   isExternal?: boolean;
 }
 
 export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExternal }: MobileNavLinkProps) {
+  const handleClick = (e) => {
+    if (onClick) {
+      const shouldProceed = onClick();
+      if (shouldProceed === false) {
+        e.preventDefault();
+      }
+    }
+  };
+
   if (isExternal) {
     return (
       <a
@@ -19,7 +28,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
         target="_blank"
         rel="noopener noreferrer"
         className="text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-purple-50/50 hover:pl-4"
-        onClick={onClick}
+        onClick={handleClick}
       >
         <span>{name}</span>
       </a>
@@ -35,7 +44,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
           ? "bg-purple-50 pl-4" 
           : "hover:bg-purple-50/50 hover:pl-4"
       )}
-      onClick={onClick}
+      onClick={handleClick}
       aria-current={isActive ? "page" : undefined}
     >
       <span>{name}</span>

@@ -1,5 +1,5 @@
 
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
@@ -7,6 +7,7 @@ import { MobileNavLink } from "./MobileNavLink";
 import { mainNavItems, servicesCategories } from "@/config/navigation";
 import { MobileBlogItems } from "./MobileBlogItems";
 import { MobileCommunityItems } from "./MobileCommunityItems";
+import { toast } from "sonner";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -15,11 +16,26 @@ interface MobileNavProps {
 
 export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   
   // Check if current path is a service page
   const isServicePage = servicesCategories.some(service => 
     location.pathname === service.path || location.pathname === "/services"
   );
+
+  const handleNavLinkClick = (item) => {
+    if (item.isComingSoon) {
+      toast("준비중입니다", {
+        description: "해당 기능은 곧 제공될 예정입니다.",
+        position: "top-center"
+      });
+      navigate("/");
+      onClose();
+      return false;
+    }
+    onClose();
+    return true;
+  };
   
   return (
     <div 
@@ -92,7 +108,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
             name={item.name} 
             path={item.path} 
             isActive={location.pathname === item.path}
-            onClick={onClose}
+            onClick={() => handleNavLinkClick(item)}
             isExternal={item.isExternal}
           />
         ))}

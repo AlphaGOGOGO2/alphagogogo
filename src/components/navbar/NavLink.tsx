@@ -7,7 +7,7 @@ interface NavLinkProps {
   path: string;
   isScrolled: boolean;
   isActive: boolean;
-  onClick?: () => void;
+  onClick?: () => boolean | void;
   iconRight?: React.ReactNode;
   isExternal?: boolean;
   className?: string;
@@ -30,6 +30,15 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
       : "scale-x-0 group-hover:scale-x-100"
   );
 
+  const handleClick = (e) => {
+    if (onClick) {
+      const shouldProceed = onClick();
+      if (shouldProceed === false) {
+        e.preventDefault();
+      }
+    }
+  };
+
   if (isExternal) {
     return (
       <a
@@ -37,7 +46,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
         target="_blank"
         rel="noopener noreferrer"
         className={linkClasses}
-        onClick={onClick}
+        onClick={handleClick}
       >
         <div className="relative z-10 flex items-center">
           <span>{name}</span>
@@ -55,7 +64,7 @@ export function NavLink({ name, path, isScrolled, isActive, onClick, iconRight, 
     <Link
       to={path}
       className={linkClasses}
-      onClick={onClick}
+      onClick={handleClick}
       aria-current={isActive ? "page" : undefined}
     >
       <div className="relative z-10 flex items-center">
