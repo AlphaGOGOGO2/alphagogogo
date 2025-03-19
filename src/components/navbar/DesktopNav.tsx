@@ -21,7 +21,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   );
   
   const filteredMainNavItems = mainNavItems.filter(
-    item => item.name === "유튜브"
+    item => item.name === "유튜브" || item.name === "AI 품앗이"
   );
   
   const handleBlogDropdownChange = (isOpen: boolean) => {
