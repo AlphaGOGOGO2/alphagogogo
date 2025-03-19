@@ -32,34 +32,31 @@ export function InviteCard({
     if (processing) return;
     
     try {
-      // Set processing state
+      // Start processing
       onProcessingChange(invite.id, true);
       
-      // Open invite URL in new window first - this is what the user wants most
+      // 1. First open the URL - this is the primary action
       window.open(invite.invite_url, '_blank');
       
-      // Calculate new click count
+      // 2. Update the local UI immediately for responsiveness
       const newClickCount = displayedClicks + 1;
-      
-      // Update local state immediately for responsive UI
       onClickCountChange(invite.id, newClickCount);
       
-      // Simple update to database - just increment the clicks
+      // 3. Update the database in the background
       const { error } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
         .eq('id', invite.id);
       
-      // Handle database update error
       if (error) {
-        console.error("클릭 카운트 업데이트 오류:", error);
-        // Reset to original count on error
+        console.error("클릭 카운트 업데이트 실패:", error);
+        // Revert UI if database update fails
         onClickCountChange(invite.id, invite.clicks);
-        toast.error("클릭 수 업데이트 중 오류가 발생했습니다.");
+        toast.error("클릭 수 업데이트에 실패했습니다.");
         return;
       }
       
-      // Check if we need to delete the invite (30 clicks reached)
+      // 4. Handle 30 clicks case - delete the invite
       if (newClickCount >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
@@ -67,23 +64,22 @@ export function InviteCard({
           .eq('id', invite.id);
         
         if (deleteError) {
-          console.error("초대장 삭제 오류:", deleteError);
-          toast.error("초대장 삭제 중 오류가 발생했습니다.");
+          console.error("초대장 삭제 실패:", deleteError);
+          toast.error("초대장 삭제에 실패했습니다.");
         } else {
           toast.success("30회 클릭 달성! 초대장이 삭제되었습니다.");
         }
-        
-        // Always refresh the list after deletion attempt
-        onInviteUpdate();
-      } else {
-        // If not deleted, still refresh the list to show updated count
-        onInviteUpdate();
       }
-    } catch (error) {
-      console.error("초대장 처리 오류:", error);
-      toast.error("링크 처리 중 오류가 발생했습니다.");
       
-      // Reset count on any error
+      // 5. Always refresh the parent component to show correct data
+      onInviteUpdate();
+      
+    } catch (error) {
+      // Basic error handling with meaningful message
+      console.error("초대장 처리 중 오류:", error);
+      toast.error("초대장 처리 중 오류가 발생했습니다.");
+      
+      // Reset to the original count
       onClickCountChange(invite.id, invite.clicks);
     } finally {
       // Always reset processing state
