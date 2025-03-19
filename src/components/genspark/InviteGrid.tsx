@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,24 +23,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       setProcessingIds(prev => new Set([...prev, invite.id]));
       const clientId = getClientId();
       
-      // 이 사용자가 이 초대장을 몇 번 클릭했는지 확인
-      const { data: existingClicks, error: countError } = await supabase
-        .from('genspark_invite_clicks')
-        .select('id')
-        .eq('invite_id', invite.id)
-        .eq('client_id', clientId);
-      
-      if (countError) {
-        console.error("Error checking existing clicks:", countError);
-        throw countError;
-      }
-      
-      // 이미 2번 클릭했으면 더 이상 클릭 불가
-      if (existingClicks && existingClicks.length >= 2) {
-        toast.error("이 초대 링크는 최대 2번까지만 클릭할 수 있습니다.");
-        return;
-      }
-      
       // 클릭 기록 추가
       const { error: clickError } = await supabase
         .from('genspark_invite_clicks')
@@ -51,12 +32,17 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         });
       
       if (clickError) {
+        console.error("Error inserting click:", clickError);
         // 중복 클릭은 무시 (unique 제약조건 위반)
         if (clickError.code === '23505') {
           toast.error("이미 클릭한 링크입니다.");
+          setProcessingIds(prev => {
+            const newSet = new Set(prev);
+            newSet.delete(invite.id);
+            return newSet;
+          });
           return;
         }
-        console.error("Error inserting click:", clickError);
         throw clickError;
       }
       
@@ -90,11 +76,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           console.error("Error deleting invite:", deleteError);
           throw deleteError;
         }
-        
-        toast.success("초대 링크가 10번 클릭되어 제거되었습니다.");
-      } else {
-        // 토스트 메시지 비활성화
-        // toast.success("초대 링크로 이동합니다. 남은 클릭 수: " + (10 - newClickCount));
       }
       
       // 클릭 이벤트 후 데이터 갱신
