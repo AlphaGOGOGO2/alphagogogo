@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,9 +16,51 @@ interface InviteGridProps {
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [localClickCounts, setLocalClickCounts] = useState<Record<string, number>>({});
+  const [clickedInvites, setClickedInvites] = useState<Set<string>>(new Set());
+  
+  // 페이지 로드 시 사용자가 이미 클릭한 초대 링크 가져오기
+  useEffect(() => {
+    const fetchClickedInvites = async () => {
+      const clientId = getClientId();
+      
+      // 모든 초대 ID 목록
+      const inviteIds = invites.map(invite => invite.id);
+      
+      if (inviteIds.length === 0) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from('genspark_invite_clicks')
+          .select('invite_id')
+          .eq('client_id', clientId)
+          .in('invite_id', inviteIds);
+        
+        if (error) {
+          console.error("Error fetching clicked invites:", error);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          const clickedIds = new Set(data.map(item => item.invite_id));
+          setClickedInvites(clickedIds);
+        }
+      } catch (error) {
+        console.error("Error in fetchClickedInvites:", error);
+      }
+    };
+    
+    fetchClickedInvites();
+  }, [invites]);
 
   const handleInviteClick = async (invite: GensparkInvite) => {
     if (processingIds.has(invite.id)) return;
+    
+    // 이미 클릭한 초대장인지 먼저 확인
+    if (clickedInvites.has(invite.id)) {
+      toast.error("이미 클릭한 링크입니다.");
+      window.open(invite.invite_url, '_blank');
+      return;
+    }
     
     try {
       setProcessingIds(prev => new Set([...prev, invite.id]));
@@ -36,7 +78,10 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         [invite.id]: newClickCount
       }));
       
-      // 클릭 기록 추가 및 중복 클릭 확인
+      // 사용자가 클릭한 초대장 목록에 추가
+      setClickedInvites(prev => new Set([...prev, invite.id]));
+      
+      // 클릭 기록 추가
       const { error: clickError } = await supabase
         .from('genspark_invite_clicks')
         .insert({
@@ -143,6 +188,9 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         const displayedClicks = localClickCounts[invite.id] !== undefined 
           ? localClickCounts[invite.id] 
           : invite.clicks;
+        
+        // 이미 클릭한 링크인지 확인
+        const alreadyClicked = clickedInvites.has(invite.id);
 
         return (
           <Card 
@@ -162,18 +210,29 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
                 <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
                   클릭: {displayedClicks}/10
                 </span>
+                {alreadyClicked && (
+                  <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full">
+                    클릭 완료
+                  </span>
+                )}
               </div>
             </CardContent>
             <CardFooter className="p-4 pt-0 flex flex-col gap-2 bg-purple-50">
               <Button 
                 variant="secondary" 
                 size="sm" 
-                className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                className={`w-full ${alreadyClicked 
+                  ? 'bg-gray-500 hover:bg-gray-600' 
+                  : 'bg-purple-600 hover:bg-purple-700'} text-white`}
                 onClick={() => handleInviteClick(invite)}
                 disabled={processingIds.has(invite.id)}
               >
                 <ExternalLink className="h-4 w-4 mr-1" />
-                {processingIds.has(invite.id) ? "처리 중..." : "바로 가기"}
+                {processingIds.has(invite.id) 
+                  ? "처리 중..." 
+                  : alreadyClicked 
+                    ? "다시 방문하기" 
+                    : "바로 가기"}
               </Button>
             </CardFooter>
           </Card>
