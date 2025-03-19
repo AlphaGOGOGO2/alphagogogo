@@ -35,10 +35,11 @@ enable_signup = true
 double_confirm_changes = true
 enable_confirmations = false
 
-[[auth.external.providers]]
-id = "github"
-client_id = "env(GITHUB_CLIENT_ID)"
-secret = "env(GITHUB_CLIENT_SECRET)" 
+# Changed format for external providers
+[auth.external]
+github.enabled = true
+github.client_id = "env(GITHUB_CLIENT_ID)"
+github.secret = "env(GITHUB_CLIENT_SECRET)"
 
+# Removed functions_port from experimental section
 [experimental]
-functions_port = 54321
