@@ -62,9 +62,9 @@ export default function GensparkInvitesPage() {
               </div>
               <ul className="text-left space-y-2.5 text-white text-sm md:text-base pl-4">
                 <li>초대된 친구는 2024년 12월 1일 이후에 등록한 신규 사용자여야 합니다.</li>
-                <li>각 사용자는 초대를 통해 최대 20개월의 무료 Genspark Plus를 받을 수 있습니다.</li>
-                <li>조회수와 가입자수는 비례하지 않습니다.</li>
-                <li>해당 이벤트는 3월 31일까지 진행됩니다.</li>
+                <li>각 사용자는 초대를 통해 최대 20개월의 Plus 플랜 혜택을 받을 수 있습니다.</li>
+                <li>클릭수와 가입자수는 비례하지 않습니다.</li>
+                <li className="text-yellow-300 font-semibold">해당 이벤트는 3월 31일까지 진행됩니다.</li>
               </ul>
             </div>
             
