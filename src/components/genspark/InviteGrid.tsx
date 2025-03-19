@@ -1,12 +1,11 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { getClientId } from "@/utils/clientIdUtils";
 
 interface InviteGridProps {
   invites: GensparkInvite[];
@@ -16,54 +15,12 @@ interface InviteGridProps {
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [localClickCounts, setLocalClickCounts] = useState<Record<string, number>>({});
-  const [clickedInvites, setClickedInvites] = useState<Set<string>>(new Set());
-  
-  // 페이지 로드 시 사용자가 이미 클릭한 초대 링크 가져오기
-  useEffect(() => {
-    const fetchClickedInvites = async () => {
-      const clientId = getClientId();
-      
-      // 모든 초대 ID 목록
-      const inviteIds = invites.map(invite => invite.id);
-      
-      if (inviteIds.length === 0) return;
-      
-      try {
-        const { data, error } = await supabase
-          .from('genspark_invite_clicks')
-          .select('invite_id')
-          .eq('client_id', clientId)
-          .in('invite_id', inviteIds);
-        
-        if (error) {
-          console.error("Error fetching clicked invites:", error);
-          return;
-        }
-        
-        if (data && data.length > 0) {
-          const clickedIds = new Set(data.map(item => item.invite_id));
-          setClickedInvites(clickedIds);
-        }
-      } catch (error) {
-        console.error("Error in fetchClickedInvites:", error);
-      }
-    };
-    
-    fetchClickedInvites();
-  }, [invites]);
 
   const handleInviteClick = async (invite: GensparkInvite) => {
     if (processingIds.has(invite.id)) return;
     
-    // 이미 클릭한 초대장인지 먼저 확인
-    if (clickedInvites.has(invite.id)) {
-      window.open(invite.invite_url, '_blank');
-      return;
-    }
-    
     try {
       setProcessingIds(prev => new Set([...prev, invite.id]));
-      const clientId = getClientId();
       
       // 실제 링크 새 창에서 열기
       window.open(invite.invite_url, '_blank');
@@ -76,35 +33,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         ...prev,
         [invite.id]: newClickCount
       }));
-      
-      // 사용자가 클릭한 초대장 목록에 추가
-      setClickedInvites(prev => new Set([...prev, invite.id]));
-      
-      // 클릭 기록 추가
-      const { error: clickError } = await supabase
-        .from('genspark_invite_clicks')
-        .insert({
-          invite_id: invite.id,
-          client_id: clientId
-        });
-      
-      if (clickError) {
-        console.error("Error inserting click:", clickError);
-        if (clickError.code === '23505') {
-          // 중복 클릭이면 로컬 상태를 원래대로 되돌림
-          setLocalClickCounts(prev => ({
-            ...prev,
-            [invite.id]: invite.clicks
-          }));
-          setProcessingIds(prev => {
-            const newSet = new Set(prev);
-            newSet.delete(invite.id);
-            return newSet;
-          });
-          return;
-        }
-        throw clickError;
-      }
       
       // 초대장 클릭 수 증가
       const { data, error: updateError } = await supabase
@@ -134,8 +62,8 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         }));
       }
       
-      // 클릭 수가 10에 도달하면 삭제
-      if (newClickCount >= 10) {
+      // 클릭 수가 30에 도달하면 삭제
+      if (newClickCount >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
           .delete()
@@ -147,7 +75,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         }
         
         // 삭제 후 데이터 갱신 알림
-        toast.success("10회 클릭 달성! 초대장이 삭제되었습니다.");
+        toast.success("30회 클릭 달성! 초대장이 삭제되었습니다.");
       }
       
       // 모든 처리가 완료되면 데이터 갱신 (삭제가 됐든 안됐든)
@@ -186,9 +114,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         const displayedClicks = localClickCounts[invite.id] !== undefined 
           ? localClickCounts[invite.id] 
           : invite.clicks;
-        
-        // 이미 클릭한 링크인지 확인 (내부 로직용)
-        const alreadyClicked = clickedInvites.has(invite.id);
 
         return (
           <Card 
@@ -206,7 +131,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
               </p>
               <div className="flex justify-between items-center mt-4">
                 <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-                  클릭: {displayedClicks}/10
+                  클릭: {displayedClicks}/30
                 </span>
               </div>
             </CardContent>

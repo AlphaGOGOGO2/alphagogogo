@@ -80,7 +80,7 @@ export default function GensparkInvitesPage() {
                 <li>중복된 초대 링크는 등록할 수 없습니다.</li>
                 <li>젠스파크 초대 링크만 등록 가능합니다.</li>
                 <li>닉네임과 한마디로 관심을 끌어보세요!</li>
-                <li className="text-yellow-300 font-semibold text-[#FFD700]">클릭수가 10이 되면 삭제됩니다. 서로 견제하세요!</li>
+                <li className="text-yellow-300 font-semibold text-[#FFD700]">클릭수가 30이 되면 삭제됩니다. 서로 견제하세요!</li>
               </ul>
             </div>
             
