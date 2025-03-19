@@ -24,6 +24,13 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       setProcessingIds(prev => new Set([...prev, invite.id]));
       const clientId = getClientId();
       
+      // 로컬 상태 즉시 업데이트 (UI 즉시 반영)
+      const newClickCount = invite.clicks + 1;
+      setLocalClickCounts(prev => ({
+        ...prev,
+        [invite.id]: newClickCount
+      }));
+      
       // 클릭 기록 추가
       const { error: clickError } = await supabase
         .from('genspark_invite_clicks')
@@ -36,6 +43,11 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         console.error("Error inserting click:", clickError);
         if (clickError.code === '23505') {
           toast.error("이미 클릭한 링크입니다.");
+          // 중복 클릭이면 로컬 상태를 원래대로 되돌림
+          setLocalClickCounts(prev => ({
+            ...prev,
+            [invite.id]: invite.clicks
+          }));
           setProcessingIds(prev => {
             const newSet = new Set(prev);
             newSet.delete(invite.id);
@@ -47,14 +59,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       }
       
       // 초대장 클릭 수 증가
-      const newClickCount = invite.clicks + 1;
-      
-      // 먼저 로컬 상태 업데이트 (UI에 즉시 반영하기 위함)
-      setLocalClickCounts(prev => ({
-        ...prev,
-        [invite.id]: newClickCount
-      }));
-      
       const { error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
@@ -62,6 +66,11 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       
       if (updateError) {
         console.error("Error updating click count:", updateError);
+        // 업데이트 실패 시 로컬 상태를 원래대로 되돌림
+        setLocalClickCounts(prev => ({
+          ...prev,
+          [invite.id]: invite.clicks
+        }));
         throw updateError;
       }
       
@@ -76,6 +85,9 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           console.error("Error deleting invite:", deleteError);
           throw deleteError;
         }
+        
+        // 삭제 후 데이터 갱신 알림
+        toast.success("10회 클릭 달성! 초대장이 삭제되었습니다.");
       }
       
       // 클릭 이벤트 후 데이터 갱신
