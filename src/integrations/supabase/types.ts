@@ -159,6 +159,30 @@ export type Database = {
         }
         Relationships: []
       }
+      genspark_invites: {
+        Row: {
+          created_at: string
+          id: string
+          invite_url: string
+          message: string
+          nickname: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_url: string
+          message: string
+          nickname: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_url?: string
+          message?: string
+          nickname?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

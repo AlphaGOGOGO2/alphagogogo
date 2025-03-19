@@ -20,6 +20,7 @@ import ServicesPage from "./pages/ServicesPage";
 import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
+import GensparkInvitesPage from "./pages/GensparkInvitesPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -44,6 +45,7 @@ const App = () => (
             <Route path="/gpts" element={<GPTSPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/genspark-invites" element={<GensparkInvitesPage />} />
             
             {/* Service sub-pages */}
             <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
