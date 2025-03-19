@@ -31,6 +31,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         .eq('client_id', clientId);
       
       if (countError) {
+        console.error("Error checking existing clicks:", countError);
         throw countError;
       }
       
@@ -54,6 +55,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           toast.error("이미 클릭한 링크입니다.");
           return;
         }
+        console.error("Error inserting click:", clickError);
         throw clickError;
       }
       
@@ -65,6 +67,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         .eq('id', invite.id);
       
       if (updateError) {
+        console.error("Error updating click count:", updateError);
         throw updateError;
       }
       
@@ -76,6 +79,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           .eq('id', invite.id);
         
         if (deleteError) {
+          console.error("Error deleting invite:", deleteError);
           throw deleteError;
         }
         
