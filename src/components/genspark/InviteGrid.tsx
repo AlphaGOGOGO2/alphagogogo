@@ -15,6 +15,7 @@ interface InviteGridProps {
 
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  const [localClickCounts, setLocalClickCounts] = useState<Record<string, number>>({});
 
   const handleInviteClick = async (invite: GensparkInvite) => {
     if (processingIds.has(invite.id)) return;
@@ -61,6 +62,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       
       // 초대장 클릭 수 증가
       const newClickCount = invite.clicks + 1;
+      
       const { error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
@@ -70,6 +72,12 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         console.error("Error updating click count:", updateError);
         throw updateError;
       }
+      
+      // 로컬 상태 업데이트 (UI에 즉시 반영하기 위함)
+      setLocalClickCounts(prev => ({
+        ...prev,
+        [invite.id]: newClickCount
+      }));
       
       // 클릭 수가 10에 도달하면 삭제
       if (newClickCount >= 10) {
@@ -85,7 +93,8 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         
         toast.success("초대 링크가 10번 클릭되어 제거되었습니다.");
       } else {
-        toast.success("초대 링크로 이동합니다. 남은 클릭 수: " + (10 - newClickCount));
+        // 토스트 메시지 비활성화
+        // toast.success("초대 링크로 이동합니다. 남은 클릭 수: " + (10 - newClickCount));
       }
       
       // 클릭 이벤트 후 데이터 갱신
@@ -116,40 +125,47 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-      {invites.map((invite) => (
-        <Card 
-          key={invite.id} 
-          className="overflow-hidden hover:shadow-md transition-shadow border-purple-200 hover:border-purple-300"
-        >
-          <CardHeader className="p-4 pb-2 bg-purple-100">
-            <CardTitle className="text-lg font-medium truncate text-purple-900">
-              {invite.nickname}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4 pt-2 bg-purple-50">
-            <p className="text-sm text-purple-800 mb-2 h-10 overflow-hidden">
-              {invite.message}
-            </p>
-            <div className="flex justify-between items-center mt-4">
-              <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-                클릭: {invite.clicks}/10
-              </span>
-            </div>
-          </CardContent>
-          <CardFooter className="p-4 pt-0 flex flex-col gap-2 bg-purple-50">
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-              onClick={() => handleInviteClick(invite)}
-              disabled={processingIds.has(invite.id)}
-            >
-              <ExternalLink className="h-4 w-4 mr-1" />
-              {processingIds.has(invite.id) ? "처리 중..." : "바로 가기"}
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
+      {invites.map((invite) => {
+        // 로컬에 저장된 클릭 수가 있으면 그것을 사용, 없으면 원래 클릭 수를 사용
+        const displayedClicks = localClickCounts[invite.id] !== undefined 
+          ? localClickCounts[invite.id] 
+          : invite.clicks;
+
+        return (
+          <Card 
+            key={invite.id} 
+            className="overflow-hidden hover:shadow-md transition-shadow border-purple-200 hover:border-purple-300"
+          >
+            <CardHeader className="p-4 pb-2 bg-purple-100">
+              <CardTitle className="text-lg font-medium truncate text-purple-900">
+                {invite.nickname}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 pt-2 bg-purple-50">
+              <p className="text-sm text-purple-800 mb-2 h-10 overflow-hidden">
+                {invite.message}
+              </p>
+              <div className="flex justify-between items-center mt-4">
+                <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
+                  클릭: {displayedClicks}/10
+                </span>
+              </div>
+            </CardContent>
+            <CardFooter className="p-4 pt-0 flex flex-col gap-2 bg-purple-50">
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                onClick={() => handleInviteClick(invite)}
+                disabled={processingIds.has(invite.id)}
+              >
+                <ExternalLink className="h-4 w-4 mr-1" />
+                {processingIds.has(invite.id) ? "처리 중..." : "바로 가기"}
+              </Button>
+            </CardFooter>
+          </Card>
+        );
+      })}
     </div>
   );
 }
