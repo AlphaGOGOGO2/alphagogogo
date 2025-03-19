@@ -10,18 +10,14 @@ interface InviteGridProps {
 }
 
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
-  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
+  // Track which invites are currently being processed
+  const [processingIds, setProcessingIds] = useState<Record<string, boolean>>({});
 
   const handleProcessingChange = (id: string, isProcessing: boolean) => {
-    setProcessingIds(prev => {
-      const newSet = new Set(prev);
-      if (isProcessing) {
-        newSet.add(id);
-      } else {
-        newSet.delete(id);
-      }
-      return newSet;
-    });
+    setProcessingIds(prev => ({
+      ...prev,
+      [id]: isProcessing
+    }));
   };
 
   if (invites.length === 0) {
@@ -35,7 +31,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           key={invite.id}
           invite={invite}
           onInviteUpdate={onInviteUpdate}
-          processing={processingIds.has(invite.id)}
+          processing={!!processingIds[invite.id]}
           onProcessingChange={handleProcessingChange}
         />
       ))}

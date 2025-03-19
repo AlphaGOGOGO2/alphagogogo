@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,13 @@ export function InviteCard({
   processing, 
   onProcessingChange
 }: InviteCardProps) {
+  // Track clicks in local state
   const [localClicks, setLocalClicks] = useState(invite.clicks);
+  
+  // Update local clicks when invite prop changes
+  useEffect(() => {
+    setLocalClicks(invite.clicks);
+  }, [invite.clicks]);
 
   const handleInviteClick = async () => {
     if (processing) return;
@@ -27,11 +34,14 @@ export function InviteCard({
     try {
       onProcessingChange(invite.id, true);
       
+      // Immediately open URL
+      window.open(invite.invite_url, '_blank');
+      
+      // Update local state for immediate feedback
       const newClickCount = localClicks + 1;
       setLocalClicks(newClickCount);
       
-      window.open(invite.invite_url, '_blank');
-      
+      // Update database
       const { error } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
@@ -40,7 +50,7 @@ export function InviteCard({
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
-        setLocalClicks(invite.clicks);
+        setLocalClicks(invite.clicks); // Reset to original value on error
         return;
       }
       
@@ -58,12 +68,13 @@ export function InviteCard({
         }
       }
       
+      // Refresh data from parent
       onInviteUpdate();
       
     } catch (error) {
       console.error("초대장 처리 중 오류:", error);
       toast.error("초대장 처리 중 오류가 발생했습니다.");
-      setLocalClicks(invite.clicks);
+      setLocalClicks(invite.clicks); // Reset to original value on error
     } finally {
       onProcessingChange(invite.id, false);
     }
