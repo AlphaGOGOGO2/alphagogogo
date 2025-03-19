@@ -57,7 +57,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
     
     // 이미 클릭한 초대장인지 먼저 확인
     if (clickedInvites.has(invite.id)) {
-      toast.error("이미 클릭한 링크입니다.");
       window.open(invite.invite_url, '_blank');
       return;
     }
@@ -92,7 +91,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       if (clickError) {
         console.error("Error inserting click:", clickError);
         if (clickError.code === '23505') {
-          toast.error("이미 클릭한 링크입니다.");
           // 중복 클릭이면 로컬 상태를 원래대로 되돌림
           setLocalClickCounts(prev => ({
             ...prev,
@@ -189,7 +187,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           ? localClickCounts[invite.id] 
           : invite.clicks;
         
-        // 이미 클릭한 링크인지 확인
+        // 이미 클릭한 링크인지 확인 (내부 로직용)
         const alreadyClicked = clickedInvites.has(invite.id);
 
         return (
@@ -210,29 +208,18 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
                 <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
                   클릭: {displayedClicks}/10
                 </span>
-                {alreadyClicked && (
-                  <span className="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full">
-                    클릭 완료
-                  </span>
-                )}
               </div>
             </CardContent>
             <CardFooter className="p-4 pt-0 flex flex-col gap-2 bg-purple-50">
               <Button 
                 variant="secondary" 
                 size="sm" 
-                className={`w-full ${alreadyClicked 
-                  ? 'bg-gray-500 hover:bg-gray-600' 
-                  : 'bg-purple-600 hover:bg-purple-700'} text-white`}
+                className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                 onClick={() => handleInviteClick(invite)}
                 disabled={processingIds.has(invite.id)}
               >
                 <ExternalLink className="h-4 w-4 mr-1" />
-                {processingIds.has(invite.id) 
-                  ? "처리 중..." 
-                  : alreadyClicked 
-                    ? "다시 방문하기" 
-                    : "바로 가기"}
+                {processingIds.has(invite.id) ? "처리 중..." : "바로 가기"}
               </Button>
             </CardFooter>
           </Card>
