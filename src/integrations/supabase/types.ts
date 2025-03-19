@@ -159,8 +159,38 @@ export type Database = {
         }
         Relationships: []
       }
+      genspark_invite_clicks: {
+        Row: {
+          client_id: string
+          created_at: string
+          id: string
+          invite_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          id?: string
+          invite_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          id?: string
+          invite_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genspark_invite_clicks_invite_id_fkey"
+            columns: ["invite_id"]
+            isOneToOne: false
+            referencedRelation: "genspark_invites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       genspark_invites: {
         Row: {
+          clicks: number
           created_at: string
           id: string
           invite_url: string
@@ -168,6 +198,7 @@ export type Database = {
           nickname: string
         }
         Insert: {
+          clicks?: number
           created_at?: string
           id?: string
           invite_url: string
@@ -175,6 +206,7 @@ export type Database = {
           nickname: string
         }
         Update: {
+          clicks?: number
           created_at?: string
           id?: string
           invite_url?: string

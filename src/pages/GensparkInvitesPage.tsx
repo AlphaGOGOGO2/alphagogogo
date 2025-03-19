@@ -28,7 +28,7 @@ export default function GensparkInvitesPage() {
     }
   });
 
-  const handleFormSuccess = () => {
+  const handleDataRefresh = () => {
     setRefreshKey(prev => prev + 1);
   };
 
@@ -55,7 +55,7 @@ export default function GensparkInvitesPage() {
         <section className="mb-16 max-w-3xl mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-2xl font-semibold mb-6 text-purple-800">초대 링크 등록하기</h2>
-            <InviteForm onSuccess={handleFormSuccess} />
+            <InviteForm onSuccess={handleDataRefresh} />
           </div>
         </section>
 
@@ -70,7 +70,7 @@ export default function GensparkInvitesPage() {
               <p className="text-lg text-red-500">초대 링크를 불러오는 중 오류가 발생했습니다.</p>
             </div>
           ) : (
-            <InviteGrid invites={invites} />
+            <InviteGrid invites={invites} onInviteUpdate={handleDataRefresh} />
           )}
         </section>
       </main>
