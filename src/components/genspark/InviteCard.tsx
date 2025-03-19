@@ -12,21 +12,14 @@ interface InviteCardProps {
   onInviteUpdate: () => void;
   processing: boolean;
   onProcessingChange: (id: string, isProcessing: boolean) => void;
-  localClickCount?: number;
-  onClickCountChange: (id: string, count: number) => void;
 }
 
 export function InviteCard({ 
   invite, 
   onInviteUpdate, 
   processing, 
-  onProcessingChange,
-  localClickCount,
-  onClickCountChange
+  onProcessingChange
 }: InviteCardProps) {
-  // Use local click count if provided, otherwise use the invite's click count
-  const displayedClicks = localClickCount !== undefined ? localClickCount : invite.clicks;
-
   const handleInviteClick = async () => {
     // Prevent multiple clicks while processing
     if (processing) return;
@@ -38,26 +31,20 @@ export function InviteCard({
       // 1. First open the URL - this is the primary action
       window.open(invite.invite_url, '_blank');
       
-      // 2. Update the local UI immediately for responsiveness
-      const newClickCount = displayedClicks + 1;
-      onClickCountChange(invite.id, newClickCount);
-      
-      // 3. Update the database in the background
+      // 2. Update the database directly - no local state needed
       const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: newClickCount })
+        .update({ clicks: invite.clicks + 1 })
         .eq('id', invite.id);
       
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
-        // Revert UI if database update fails
-        onClickCountChange(invite.id, invite.clicks);
         toast.error("클릭 수 업데이트에 실패했습니다.");
         return;
       }
       
-      // 4. Handle 30 clicks case - delete the invite
-      if (newClickCount >= 30) {
+      // 3. Handle 30 clicks case - delete the invite
+      if (invite.clicks + 1 >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
           .delete()
@@ -71,16 +58,12 @@ export function InviteCard({
         }
       }
       
-      // 5. Always refresh the parent component to show correct data
+      // 4. Always refresh the parent component to show correct data
       onInviteUpdate();
       
     } catch (error) {
-      // Basic error handling with meaningful message
       console.error("초대장 처리 중 오류:", error);
       toast.error("초대장 처리 중 오류가 발생했습니다.");
-      
-      // Reset to the original count
-      onClickCountChange(invite.id, invite.clicks);
     } finally {
       // Always reset processing state
       onProcessingChange(invite.id, false);
@@ -100,7 +83,7 @@ export function InviteCard({
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {displayedClicks}/30
+            클릭: {invite.clicks}/30
           </span>
         </div>
       </CardContent>

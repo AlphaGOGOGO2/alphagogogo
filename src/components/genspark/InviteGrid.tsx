@@ -11,7 +11,6 @@ interface InviteGridProps {
 
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
-  const [localClickCounts, setLocalClickCounts] = useState<Record<string, number>>({});
 
   const handleProcessingChange = (id: string, isProcessing: boolean) => {
     setProcessingIds(prev => {
@@ -23,13 +22,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       }
       return newSet;
     });
-  };
-
-  const handleClickCountChange = (id: string, count: number) => {
-    setLocalClickCounts(prev => ({
-      ...prev,
-      [id]: count
-    }));
   };
 
   if (invites.length === 0) {
@@ -45,8 +37,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           onInviteUpdate={onInviteUpdate}
           processing={processingIds.has(invite.id)}
           onProcessingChange={handleProcessingChange}
-          localClickCount={localClickCounts[invite.id]}
-          onClickCountChange={handleClickCountChange}
         />
       ))}
     </div>
