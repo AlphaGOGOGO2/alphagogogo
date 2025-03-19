@@ -16,11 +16,6 @@ interface InviteGridProps {
 export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
 
-  const handleCopyLink = (url: string) => {
-    navigator.clipboard.writeText(url);
-    toast.success("초대 링크가 클립보드에 복사되었습니다.");
-  };
-
   const handleInviteClick = async (invite: GensparkInvite) => {
     if (processingIds.has(invite.id)) return;
     
@@ -118,35 +113,30 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
       {invites.map((invite) => (
-        <Card key={invite.id} className="overflow-hidden hover:shadow-md transition-shadow">
-          <CardHeader className="p-4 pb-2 bg-purple-50">
-            <CardTitle className="text-lg font-medium truncate">
+        <Card 
+          key={invite.id} 
+          className="overflow-hidden hover:shadow-md transition-shadow border-purple-200 hover:border-purple-300"
+        >
+          <CardHeader className="p-4 pb-2 bg-purple-100">
+            <CardTitle className="text-lg font-medium truncate text-purple-900">
               {invite.nickname}
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-2">
-            <p className="text-sm text-gray-600 mb-2 h-10 overflow-hidden">
+          <CardContent className="p-4 pt-2 bg-purple-50">
+            <p className="text-sm text-purple-800 mb-2 h-10 overflow-hidden">
               {invite.message}
             </p>
             <div className="flex justify-between items-center mt-4">
-              <span className="text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+              <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
                 클릭: {invite.clicks}/10
               </span>
             </div>
           </CardContent>
-          <CardFooter className="p-4 pt-0 flex flex-col gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="w-full"
-              onClick={() => handleCopyLink(invite.invite_url)}
-            >
-              링크 복사하기
-            </Button>
+          <CardFooter className="p-4 pt-0 flex flex-col gap-2 bg-purple-50">
             <Button 
               variant="secondary" 
               size="sm" 
-              className="w-full"
+              className="w-full bg-purple-600 hover:bg-purple-700 text-white"
               onClick={() => handleInviteClick(invite)}
               disabled={processingIds.has(invite.id)}
             >
