@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,14 +20,6 @@ export function InviteCard({
   processing, 
   onProcessingChange
 }: InviteCardProps) {
-  // Track clicks in local state
-  const [localClicks, setLocalClicks] = useState(invite.clicks);
-  
-  // Update local clicks when invite prop changes
-  useEffect(() => {
-    setLocalClicks(invite.clicks);
-  }, [invite.clicks]);
-
   const handleInviteClick = async () => {
     if (processing) return;
     
@@ -37,24 +29,20 @@ export function InviteCard({
       // Immediately open URL
       window.open(invite.invite_url, '_blank');
       
-      // Update local state for immediate feedback
-      const newClickCount = localClicks + 1;
-      setLocalClicks(newClickCount);
-      
-      // Update database
+      // Update database with incremented click count
       const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: newClickCount })
+        .update({ clicks: invite.clicks + 1 })
         .eq('id', invite.id);
       
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
-        setLocalClicks(invite.clicks); // Reset to original value on error
         return;
       }
       
-      if (newClickCount >= 30) {
+      // Check if clicks + 1 is >= 30 and delete if necessary
+      if (invite.clicks + 1 >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
           .delete()
@@ -68,13 +56,12 @@ export function InviteCard({
         }
       }
       
-      // Refresh data from parent
+      // Refresh data from parent - this will update all cards with latest data
       onInviteUpdate();
       
     } catch (error) {
       console.error("초대장 처리 중 오류:", error);
       toast.error("초대장 처리 중 오류가 발생했습니다.");
-      setLocalClicks(invite.clicks); // Reset to original value on error
     } finally {
       onProcessingChange(invite.id, false);
     }
@@ -93,7 +80,7 @@ export function InviteCard({
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {localClicks}/30
+            클릭: {invite.clicks}/30
           </span>
         </div>
       </CardContent>
