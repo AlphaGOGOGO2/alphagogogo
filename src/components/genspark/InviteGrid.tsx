@@ -24,6 +24,9 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       setProcessingIds(prev => new Set([...prev, invite.id]));
       const clientId = getClientId();
       
+      // 실제 링크 새 창에서 열기
+      window.open(invite.invite_url, '_blank');
+      
       // UI에 즉시 반영할 새 클릭 수 계산
       const newClickCount = invite.clicks + 1;
       
@@ -80,6 +83,14 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       
       console.log("Updated click count in database:", data?.clicks);
       
+      // 데이터베이스에서 반환된 클릭 수로 로컬 상태 업데이트
+      if (data) {
+        setLocalClickCounts(prev => ({
+          ...prev,
+          [invite.id]: data.clicks
+        }));
+      }
+      
       // 클릭 수가 10에 도달하면 삭제
       if (newClickCount >= 10) {
         const { error: deleteError } = await supabase
@@ -94,15 +105,11 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         
         // 삭제 후 데이터 갱신 알림
         toast.success("10회 클릭 달성! 초대장이 삭제되었습니다.");
-        // 삭제 이후 최신 데이터로 갱신하도록 부모 컴포넌트에 알림
-        onInviteUpdate();
-      } else {
-        // 클릭 이벤트 후 데이터 갱신
-        onInviteUpdate();
       }
       
-      // 실제 링크로 이동
-      window.open(invite.invite_url, '_blank');
+      // 모든 처리가 완료되면 데이터 갱신 (삭제가 됐든 안됐든)
+      onInviteUpdate();
+      
     } catch (error) {
       console.error("Error handling invite click:", error);
       toast.error("링크 처리 중 오류가 발생했습니다.");
