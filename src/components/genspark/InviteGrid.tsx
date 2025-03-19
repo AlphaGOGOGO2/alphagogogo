@@ -24,14 +24,16 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       setProcessingIds(prev => new Set([...prev, invite.id]));
       const clientId = getClientId();
       
-      // 로컬 상태 즉시 업데이트 (UI 즉시 반영)
+      // UI에 즉시 반영할 새 클릭 수 계산
       const newClickCount = invite.clicks + 1;
+      
+      // 로컬 상태 즉시 업데이트 (UI 즉시 반영)
       setLocalClickCounts(prev => ({
         ...prev,
         [invite.id]: newClickCount
       }));
       
-      // 클릭 기록 추가
+      // 클릭 기록 추가 및 중복 클릭 확인
       const { error: clickError } = await supabase
         .from('genspark_invite_clicks')
         .insert({
@@ -59,10 +61,12 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       }
       
       // 초대장 클릭 수 증가
-      const { error: updateError } = await supabase
+      const { data, error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
-        .eq('id', invite.id);
+        .eq('id', invite.id)
+        .select('clicks')
+        .single();
       
       if (updateError) {
         console.error("Error updating click count:", updateError);
@@ -73,6 +77,8 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         }));
         throw updateError;
       }
+      
+      console.log("Updated click count in database:", data?.clicks);
       
       // 클릭 수가 10에 도달하면 삭제
       if (newClickCount >= 10) {
@@ -88,16 +94,23 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         
         // 삭제 후 데이터 갱신 알림
         toast.success("10회 클릭 달성! 초대장이 삭제되었습니다.");
+        // 삭제 이후 최신 데이터로 갱신하도록 부모 컴포넌트에 알림
+        onInviteUpdate();
+      } else {
+        // 클릭 이벤트 후 데이터 갱신
+        onInviteUpdate();
       }
-      
-      // 클릭 이벤트 후 데이터 갱신
-      onInviteUpdate();
       
       // 실제 링크로 이동
       window.open(invite.invite_url, '_blank');
     } catch (error) {
       console.error("Error handling invite click:", error);
       toast.error("링크 처리 중 오류가 발생했습니다.");
+      // 오류 발생 시 로컬 상태를 원래대로 되돌림
+      setLocalClickCounts(prev => ({
+        ...prev,
+        [invite.id]: invite.clicks
+      }));
     } finally {
       setProcessingIds(prev => {
         const newSet = new Set(prev);
