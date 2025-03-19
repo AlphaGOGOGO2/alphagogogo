@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +34,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       
       if (clickError) {
         console.error("Error inserting click:", clickError);
-        // 중복 클릭은 무시 (unique 제약조건 위반)
         if (clickError.code === '23505') {
           toast.error("이미 클릭한 링크입니다.");
           setProcessingIds(prev => {
@@ -49,6 +49,12 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
       // 초대장 클릭 수 증가
       const newClickCount = invite.clicks + 1;
       
+      // 먼저 로컬 상태 업데이트 (UI에 즉시 반영하기 위함)
+      setLocalClickCounts(prev => ({
+        ...prev,
+        [invite.id]: newClickCount
+      }));
+      
       const { error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
@@ -58,12 +64,6 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
         console.error("Error updating click count:", updateError);
         throw updateError;
       }
-      
-      // 로컬 상태 업데이트 (UI에 즉시 반영하기 위함)
-      setLocalClickCounts(prev => ({
-        ...prev,
-        [invite.id]: newClickCount
-      }));
       
       // 클릭 수가 10에 도달하면 삭제
       if (newClickCount >= 10) {
