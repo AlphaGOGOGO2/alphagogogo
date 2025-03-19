@@ -16,10 +16,23 @@ serve(async (req) => {
     // Parse request body
     const { password } = await req.json();
     
-    // Verify password (hardcoded here but more secure than client-side)
-    // In a real production app, you might want to store this in Supabase secrets
-    // and access via Deno.env.get("ADMIN_PASSWORD")
-    const correctPassword = "dnjsehd12@@";
+    // Verify password using environment variable
+    // Access the password from Supabase secrets
+    const correctPassword = Deno.env.get("ADMIN_PASSWORD");
+    
+    if (!correctPassword) {
+      console.error("ADMIN_PASSWORD environment variable is not set");
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          message: "Server configuration error: Admin password not configured" 
+        }),
+        { 
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
     
     if (password === correctPassword) {
       // Return success response
@@ -46,6 +59,7 @@ serve(async (req) => {
     }
   } catch (error) {
     // Return error response
+    console.error("Error in verify-admin-password function:", error.message);
     return new Response(
       JSON.stringify({ 
         success: false, 
