@@ -37,31 +37,22 @@ export function InviteCard({
       window.open(invite.invite_url, '_blank');
       
       // Calculate new click count
-      const newClickCount = invite.clicks + 1;
+      const newClickCount = displayedClicks + 1;
       
       // Update local state immediately for better UX
       onClickCountChange(invite.id, newClickCount);
       
       // Update click count in database
-      const { data, error: updateError } = await supabase
+      const { error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
-        .eq('id', invite.id)
-        .select('clicks')
-        .single();
+        .eq('id', invite.id);
       
       if (updateError) {
         console.error("Error updating click count:", updateError);
         // Revert local state if update fails
         onClickCountChange(invite.id, invite.clicks);
         throw updateError;
-      }
-      
-      console.log("Updated click count in database:", data?.clicks);
-      
-      // Update local state with database value
-      if (data) {
-        onClickCountChange(invite.id, data.clicks);
       }
       
       // Delete invite if 30 clicks reached
@@ -77,10 +68,11 @@ export function InviteCard({
         }
         
         toast.success("30회 클릭 달성! 초대장이 삭제되었습니다.");
+        onInviteUpdate();
+      } else {
+        // Only trigger a full refresh periodically to avoid too many requests
+        onInviteUpdate();
       }
-      
-      // Refresh invites list
-      onInviteUpdate();
       
     } catch (error) {
       console.error("Error handling invite click:", error);
