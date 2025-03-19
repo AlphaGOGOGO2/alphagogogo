@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -20,31 +19,32 @@ export function InviteCard({
   processing, 
   onProcessingChange
 }: InviteCardProps) {
+  const [localClicks, setLocalClicks] = useState(invite.clicks);
+
   const handleInviteClick = async () => {
-    // Prevent multiple clicks while processing
     if (processing) return;
     
     try {
-      // Start processing
       onProcessingChange(invite.id, true);
       
-      // 1. First open the URL - this is the primary action
+      const newClickCount = localClicks + 1;
+      setLocalClicks(newClickCount);
+      
       window.open(invite.invite_url, '_blank');
       
-      // 2. Update the database directly - no local state needed
       const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: invite.clicks + 1 })
+        .update({ clicks: newClickCount })
         .eq('id', invite.id);
       
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
+        setLocalClicks(invite.clicks);
         return;
       }
       
-      // 3. Handle 30 clicks case - delete the invite
-      if (invite.clicks + 1 >= 30) {
+      if (newClickCount >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
           .delete()
@@ -58,14 +58,13 @@ export function InviteCard({
         }
       }
       
-      // 4. Always refresh the parent component to show correct data
       onInviteUpdate();
       
     } catch (error) {
       console.error("초대장 처리 중 오류:", error);
       toast.error("초대장 처리 중 오류가 발생했습니다.");
+      setLocalClicks(invite.clicks);
     } finally {
-      // Always reset processing state
       onProcessingChange(invite.id, false);
     }
   };
@@ -83,7 +82,7 @@ export function InviteCard({
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {invite.clicks}/30
+            클릭: {localClicks}/30
           </span>
         </div>
       </CardContent>
