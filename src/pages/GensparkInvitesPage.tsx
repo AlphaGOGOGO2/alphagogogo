@@ -80,7 +80,7 @@ export default function GensparkInvitesPage() {
                 <li>중복된 초대 링크는 등록할 수 없습니다.</li>
                 <li>젠스파크 초대 링크만 등록 가능합니다.</li>
                 <li>닉네임과 한마디로 관심을 끌어보세요!</li>
-                <li>클릭수가 10이 되면 삭제됩니다. 서로 견제하세요!</li>
+                <li className="text-yellow-300 font-semibold">클릭수가 10이 되면 삭제됩니다. 서로 견제하세요!</li>
               </ul>
             </div>
             
@@ -118,7 +118,7 @@ export default function GensparkInvitesPage() {
           </div>
         </div>
 
-        <section className="mb-16 max-w-3xl mx-auto">
+        <section className="mb-16 max-w-4xl mx-auto">
           <div className="bg-white p-6 rounded-lg shadow-md border border-purple-200 hover:border-purple-300 transition-all">
             <h2 className="text-2xl font-semibold mb-6 text-purple-800">초대 링크 등록하기</h2>
             <InviteForm onSuccess={handleDataRefresh} />

@@ -105,30 +105,32 @@ export function InviteForm({ onSuccess }: InviteFormProps) {
           />
         </div>
         
-        <FormField
-          control={form.control}
-          name="invite_url"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>초대 링크 URL</FormLabel>
-              <FormControl>
-                <Input 
-                  placeholder="https://www.genspark.ai/invite?invite_code=..." 
-                  {...field} 
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        
-        <Button 
-          type="submit" 
-          className="w-full md:w-auto" 
-          disabled={isSubmitting}
-        >
-          {isSubmitting ? "등록 중..." : "초대 링크 등록하기"}
-        </Button>
+        <div className="flex flex-col md:flex-row gap-4 items-end">
+          <FormField
+            control={form.control}
+            name="invite_url"
+            render={({ field }) => (
+              <FormItem className="flex-1">
+                <FormLabel>초대 링크 URL</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="https://www.genspark.ai/invite?invite_code=..." 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <Button 
+            type="submit" 
+            className="md:h-10 whitespace-nowrap" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "등록 중..." : "초대 링크 등록하기"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
