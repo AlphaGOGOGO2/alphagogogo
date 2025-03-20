@@ -15,7 +15,7 @@ interface InviteCardProps {
 
 export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
+  const [clickCount, setClickCount] = useState<number>(0);
   
   // Initialize local click count from invite prop
   useEffect(() => {
@@ -94,6 +94,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       // Optimistically update local state
       setClickCount(newClickCount);
       
+      // Use upsert with PATCH method to ensure we're only updating the clicks field
       const { data, error } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
