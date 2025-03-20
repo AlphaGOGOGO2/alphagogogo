@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -22,7 +21,7 @@ export default function GensparkInvitesPage() {
           insert: true, 
           update: true, 
           delete: true 
-        } as any);
+        } as never);
         console.log("Realtime enabled for genspark_invites table");
       } catch (error) {
         console.error("Error enabling realtime:", error);

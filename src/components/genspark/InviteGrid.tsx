@@ -25,12 +25,17 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   useEffect(() => {
     // Enable realtime for this table
     const enableRealtimeQuery = async () => {
-      await supabase.rpc('supabase_realtime', {
-        table: 'genspark_invites',
-        insert: true,
-        update: true,
-        delete: true
-      } as any);
+      try {
+        await supabase.rpc('supabase_realtime', {
+          table: 'genspark_invites',
+          insert: true,
+          update: true,
+          delete: true
+        } as never);
+        console.log('Realtime enabled for genspark_invites table in InviteGrid');
+      } catch (error) {
+        console.error('Error enabling realtime:', error);
+      }
     };
     enableRealtimeQuery();
 
