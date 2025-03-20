@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -15,17 +14,6 @@ export default function GensparkInvitesPage() {
 
   // Subscribe to real-time changes for all invites
   useEffect(() => {
-    // Enable replica identity for the genspark_invites table to support UPDATE
-    const enableRealtimeForTable = async () => {
-      try {
-        await supabase.rpc('enable_realtime_for_genspark_invites');
-      } catch (error) {
-        console.error("Error enabling realtime:", error);
-      }
-    };
-
-    enableRealtimeForTable();
-
     // Create a channel to listen for all changes to the genspark_invites table
     const channel = supabase
       .channel('genspark_invites_changes')
