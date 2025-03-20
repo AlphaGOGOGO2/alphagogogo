@@ -17,7 +17,12 @@ export default function GensparkInvitesPage() {
     // Enable realtime for the genspark_invites table when the page loads
     const enableRealtime = async () => {
       try {
-        await supabase.rpc('supabase_realtime', { table: 'genspark_invites', insert: true, update: true, delete: true });
+        await supabase.rpc('supabase_realtime', { 
+          table: 'genspark_invites', 
+          insert: true, 
+          update: true, 
+          delete: true 
+        } as any);
         console.log("Realtime enabled for genspark_invites table");
       } catch (error) {
         console.error("Error enabling realtime:", error);
