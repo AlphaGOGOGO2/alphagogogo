@@ -20,6 +20,8 @@ export function InviteCard({
   processing, 
   onProcessingChange
 }: InviteCardProps) {
+  const [localClicks, setLocalClicks] = useState(invite.clicks);
+  
   const handleInviteClick = async () => {
     if (processing) return;
     
@@ -46,6 +48,9 @@ export function InviteCard({
       const currentClicks = data?.clicks || invite.clicks;
       const newClickCount = currentClicks + 1;
       
+      // 로컬 상태 즉시 업데이트
+      setLocalClicks(newClickCount);
+      
       // Update database with incremented click count
       const { error } = await supabase
         .from('genspark_invites')
@@ -55,6 +60,8 @@ export function InviteCard({
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
+        // 업데이트 실패 시 로컬 상태 원복
+        setLocalClicks(invite.clicks);
         onProcessingChange(invite.id, false);
         return;
       }
@@ -102,7 +109,7 @@ export function InviteCard({
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {invite.clicks}/30
+            클릭: {localClicks}/30
           </span>
         </div>
       </CardContent>
