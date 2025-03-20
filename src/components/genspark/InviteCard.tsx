@@ -9,20 +9,49 @@ import { getClientId } from "@/utils/clientIdUtils";
 
 interface InviteCardProps {
   invite: GensparkInvite;
+  onUpdateClick?: (updatedInvite: Partial<GensparkInvite>) => void;
 }
 
-export function InviteCard({ invite }: InviteCardProps) {
+export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [clickCount, setClickCount] = useState(invite.clicks);
-
-  // 초기화 및 invite prop이 변경될 때 clickCount 업데이트
+  const [clickCount, setClickCount] = useState(0);
+  
+  // 초기 로드 및 invite 변경 시 클릭 카운트 설정
   useEffect(() => {
-    setClickCount(invite.clicks);
-  }, [invite.clicks]);
-
-  // 이 특정 초대에 대한 실시간 업데이트 구독
+    const fetchCurrentInvite = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('genspark_invites')
+          .select('clicks')
+          .eq('id', invite.id)
+          .single();
+        
+        if (error) {
+          console.error("Error fetching current invite:", error);
+          setClickCount(invite.clicks || 0);
+          return;
+        }
+        
+        if (data && typeof data.clicks === 'number') {
+          console.log(`초기 로드: 초대 ID ${invite.id}의 클릭 수는 ${data.clicks}입니다`);
+          setClickCount(data.clicks);
+        } else {
+          console.log(`초기 로드: 데이터 없음, 초대 object의 클릭 수 ${invite.clicks || 0} 사용`);
+          setClickCount(invite.clicks || 0);
+        }
+      } catch (error) {
+        console.error("Error in fetchCurrentInvite:", error);
+        setClickCount(invite.clicks || 0);
+      }
+    };
+    
+    fetchCurrentInvite();
+  }, [invite.id, invite.clicks]);
+  
+  // 실시간 업데이트 구독
   useEffect(() => {
-    // 이 특정 초대에 대한 변경 사항을 수신하는 채널 생성
+    console.log(`실시간 업데이트 구독 설정: 초대 ID ${invite.id}`);
+    
     const channel = supabase
       .channel(`invite-${invite.id}`)
       .on(
@@ -35,31 +64,42 @@ export function InviteCard({ invite }: InviteCardProps) {
         },
         (payload) => {
           if (payload.new && typeof payload.new.clicks === 'number') {
-            console.log(`실시간 업데이트: ${invite.id}의 클릭 수가 ${payload.new.clicks}로 변경됨`);
+            console.log(`실시간 업데이트 받음: 초대 ID ${invite.id}의 클릭 수가 ${payload.new.clicks}로 변경됨`);
             setClickCount(payload.new.clicks);
+            
+            // 부모 컴포넌트에 업데이트 알림 (선택적)
+            if (onUpdateClick && typeof onUpdateClick === 'function') {
+              onUpdateClick({
+                id: invite.id,
+                clicks: payload.new.clicks
+              });
+            }
           }
         }
       )
       .subscribe((status) => {
-        console.log(`초대 ${invite.id}에 대한 실시간 구독 상태: ${status}`);
+        console.log(`실시간 구독 상태: ${status}`);
       });
-
-    // 컴포넌트 언마운트 시 구독 정리
+    
     return () => {
+      console.log(`구독 정리: 초대 ID ${invite.id}`);
       supabase.removeChannel(channel);
     };
-  }, [invite.id]);
-
+  }, [invite.id, onUpdateClick]);
+  
   const handleInviteClick = async () => {
-    if (isLoading || clickCount >= 30) return;
-    
     try {
+      // 이미 최대 클릭 수에 도달했으면 중단
+      if (clickCount >= 30) {
+        window.open(invite.invite_url, '_blank');
+        return;
+      }
+      
       setIsLoading(true);
       const clientId = getClientId();
+      console.log(`클릭 처리 시작: 초대 ID ${invite.id}, 클라이언트 ID ${clientId}`);
       
-      console.log(`클릭 처리 시작: 초대 ID ${invite.id}, 현재 클릭 수 ${clickCount}`);
-      
-      // 최신 초대 데이터 먼저 가져오기
+      // 최신 데이터 가져오기
       const { data: currentInvite, error: fetchError } = await supabase
         .from('genspark_invites')
         .select('clicks')
@@ -67,48 +107,59 @@ export function InviteCard({ invite }: InviteCardProps) {
         .single();
       
       if (fetchError) {
-        console.error("초대 데이터 가져오기 오류:", fetchError);
-        throw fetchError;
+        console.error("Error fetching current invite clicks:", fetchError);
+        setIsLoading(false);
+        window.open(invite.invite_url, '_blank');
+        return;
       }
       
-      console.log(`현재 DB의 클릭 수: ${currentInvite?.clicks}`);
+      // 현재 DB 값 기준으로 계산
+      const currentClicks = currentInvite?.clicks || 0;
+      console.log(`현재 DB의 클릭 수: ${currentClicks}`);
       
-      // 최신 데이터를 기반으로 새 클릭 수 계산
-      const newClickCount = (currentInvite?.clicks || 0) + 1;
+      const newClickCount = currentClicks + 1;
       
       if (newClickCount > 30) {
         console.log("최대 클릭 수(30)에 도달했습니다.");
         setIsLoading(false);
+        window.open(invite.invite_url, '_blank');
         return;
       }
       
-      // 즉각적인 피드백을 위해 지역 상태 먼저 업데이트
+      // 임시로 로컬 상태 업데이트 (UI 반응성)
       setClickCount(newClickCount);
+      console.log(`클릭 수 로컬 업데이트: ${newClickCount}`);
       
-      // Supabase에서 클릭 수 업데이트
-      const { error } = await supabase
+      // DB 업데이트
+      const { error: updateError } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
         .eq('id', invite.id);
-        
-      console.log(`클릭 수 업데이트 요청 완료, 새 값: ${newClickCount}`);
-
-      if (error) {
-        // 오류가 있으면 지역 상태 되돌리기
-        console.error("클릭 수 업데이트 오류:", error);
-        setClickCount(currentInvite?.clicks || 0);
-        throw error;
+      
+      if (updateError) {
+        console.error("Error updating click count:", updateError);
+        // 에러 발생 시 원래 값으로 되돌리기
+        setClickCount(currentClicks);
+      } else {
+        console.log(`클릭 수 업데이트 성공: ${newClickCount}`);
+        if (onUpdateClick && typeof onUpdateClick === 'function') {
+          // 부모 컴포넌트에 알림
+          onUpdateClick({
+            id: invite.id,
+            clicks: newClickCount
+          });
+        }
       }
       
-      // 초대 URL을 새 탭에서 열기
+      // URL 열기
       window.open(invite.invite_url, '_blank');
     } catch (error) {
-      console.error("클릭 수 업데이트 중 오류 발생:", error);
+      console.error("Error in handleInviteClick:", error);
     } finally {
       setIsLoading(false);
     }
   };
-
+  
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow border-purple-200 hover:border-purple-300">
       <CardHeader className="p-4 pb-2 bg-purple-100">

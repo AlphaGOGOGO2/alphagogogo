@@ -12,6 +12,7 @@ import { Info, Shield, Users, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [localInvites, setLocalInvites] = useState<GensparkInvite[]>([]);
 
   // 모든 초대에 대한 실시간 변경 구독
   useEffect(() => {
@@ -31,6 +32,23 @@ export default function GensparkInvitesPage() {
           console.log("수파베이스 테이블 변경 감지:", payload);
           // 변경 사항이 있을 때 새로고침 트리거
           setRefreshKey(prev => prev + 1);
+          
+          // 로컬 상태도 업데이트
+          if (payload.eventType === 'UPDATE' && payload.new) {
+            setLocalInvites(prev => 
+              prev.map(invite => 
+                invite.id === payload.new.id 
+                  ? { ...invite, ...payload.new } 
+                  : invite
+              )
+            );
+          } else if (payload.eventType === 'INSERT' && payload.new) {
+            setLocalInvites(prev => [payload.new as GensparkInvite, ...prev]);
+          } else if (payload.eventType === 'DELETE' && payload.old) {
+            setLocalInvites(prev => 
+              prev.filter(invite => invite.id !== payload.old.id)
+            );
+          }
         }
       )
       .subscribe((status) => {
@@ -59,10 +77,17 @@ export default function GensparkInvitesPage() {
       }
       
       console.log("가져온 초대:", data);
+      
+      // 가져온 데이터로 로컬 상태 업데이트
+      if (data) {
+        setLocalInvites(data as GensparkInvite[]);
+      }
+      
       return data as GensparkInvite[];
     },
     // 항상 최신 데이터를 가져오도록 staleTime 설정
     staleTime: 0,
+    // 사용자가 페이지로 돌아오거나 브라우저 포커스가 변경될 때 자동으로 데이터 새로고침
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
@@ -70,6 +95,19 @@ export default function GensparkInvitesPage() {
   const handleDataRefresh = () => {
     setRefreshKey(prev => prev + 1);
   };
+
+  const handleUpdateInvite = (updatedInvite: Partial<GensparkInvite>) => {
+    setLocalInvites(prev => 
+      prev.map(invite => 
+        invite.id === updatedInvite.id 
+          ? { ...invite, ...updatedInvite } 
+          : invite
+      )
+    );
+  };
+
+  // 실제 표시할 초대 데이터 결정 (로컬 상태 우선, 쿼리 데이터는 백업)
+  const displayInvites = localInvites.length > 0 ? localInvites : invites;
 
   return (
     <>
@@ -161,7 +199,7 @@ export default function GensparkInvitesPage() {
 
         <section>
           <h2 className="text-2xl font-semibold mb-6 text-purple-800">등록된 초대 링크</h2>
-          {isLoading ? (
+          {isLoading && displayInvites.length === 0 ? (
             <div className="text-center py-10">
               <p className="text-lg text-gray-500">초대 링크를 불러오는 중...</p>
             </div>
@@ -170,7 +208,10 @@ export default function GensparkInvitesPage() {
               <p className="text-lg text-red-500">초대 링크를 불러오는 중 오류가 발생했습니다.</p>
             </div>
           ) : (
-            <InviteGrid invites={invites} />
+            <InviteGrid 
+              invites={displayInvites} 
+              onUpdateInvite={handleUpdateInvite}
+            />
           )}
         </section>
       </main>
