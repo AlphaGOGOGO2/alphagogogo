@@ -150,7 +150,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         </p>
         <div className="flex justify-between items-center mt-4">
           <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {clickCount}/30
+            클릭: {clickCount}
           </span>
         </div>
       </CardContent>
