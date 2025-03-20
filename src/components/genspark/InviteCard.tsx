@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,11 @@ export function InviteCard({
 }: InviteCardProps) {
   const [localClicks, setLocalClicks] = useState(invite.clicks);
   
+  // Synchronize local clicks with invite.clicks when it changes
+  useEffect(() => {
+    setLocalClicks(invite.clicks);
+  }, [invite.clicks]);
+  
   const handleInviteClick = async () => {
     if (processing) return;
     
@@ -31,7 +36,7 @@ export function InviteCard({
       // Immediately open URL
       window.open(invite.invite_url, '_blank');
       
-      // Get the current click count from the database
+      // Get the current click count from the database to ensure we have the latest
       const { data, error: fetchError } = await supabase
         .from('genspark_invites')
         .select('clicks')
@@ -45,10 +50,11 @@ export function InviteCard({
         return;
       }
       
-      const currentClicks = data?.clicks || invite.clicks;
+      // Use the most up-to-date click count from the database
+      const currentClicks = data?.clicks || 0;
       const newClickCount = currentClicks + 1;
       
-      // 로컬 상태 즉시 업데이트
+      // Update local UI immediately
       setLocalClicks(newClickCount);
       
       // Update database with incremented click count
@@ -60,8 +66,8 @@ export function InviteCard({
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
-        // 업데이트 실패 시 로컬 상태 원복
-        setLocalClicks(invite.clicks);
+        // Revert local state if update fails
+        setLocalClicks(currentClicks);
         onProcessingChange(invite.id, false);
         return;
       }
@@ -85,7 +91,7 @@ export function InviteCard({
         toast.success(`클릭 카운트가 ${newClickCount}로 업데이트되었습니다.`);
       }
       
-      // Refresh data from parent - this will update all cards with latest data
+      // Refresh all data from parent to ensure all cards are up-to-date
       onInviteUpdate();
       
     } catch (error) {
