@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { InviteForm } from "@/components/genspark/InviteForm";
-import { InviteGrid } from "@/components/genspark/InviteGrid";
+import { InviteCard } from "@/components/genspark/InviteCard";
 import { GensparkInvite } from "@/types/genspark";
 import { supabase } from "@/integrations/supabase/client";
 import { Info, Shield, Users, Heart } from "lucide-react";
@@ -207,11 +207,21 @@ export default function GensparkInvitesPage() {
             <div className="text-center py-10">
               <p className="text-lg text-red-500">초대 링크를 불러오는 중 오류가 발생했습니다.</p>
             </div>
+          ) : displayInvites.length === 0 ? (
+            <div className="text-center py-16 bg-purple-50 rounded-lg border border-purple-200">
+              <h3 className="text-xl font-semibold text-purple-900 mb-2">아직 등록된 초대 링크가 없습니다</h3>
+              <p className="text-purple-700 mb-6">첫 번째로 초대 링크를 등록해 보세요!</p>
+            </div>
           ) : (
-            <InviteGrid 
-              invites={displayInvites} 
-              onUpdateInvite={handleUpdateInvite}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+              {displayInvites.map((invite) => (
+                <InviteCard
+                  key={invite.id}
+                  invite={invite}
+                  onUpdateClick={handleUpdateInvite}
+                />
+              ))}
+            </div>
           )}
         </section>
       </main>

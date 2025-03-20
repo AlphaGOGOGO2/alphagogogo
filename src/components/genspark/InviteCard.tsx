@@ -28,15 +28,12 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         
         if (error) {
           console.error("Error fetching current invite:", error);
-          setClickCount(invite.clicks || 0);
           return;
         }
         
         if (data && typeof data.clicks === 'number') {
-          console.log(`초기 로드: 초대 ID ${invite.id}의 클릭 수는 ${data.clicks}입니다`);
           setClickCount(data.clicks);
         } else {
-          console.log(`초기 로드: 데이터 없음, 초대 object의 클릭 수 ${invite.clicks || 0} 사용`);
           setClickCount(invite.clicks || 0);
         }
       } catch (error) {
@@ -50,8 +47,6 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   
   // 실시간 업데이트 구독
   useEffect(() => {
-    console.log(`실시간 업데이트 구독 설정: 초대 ID ${invite.id}`);
-    
     const channel = supabase
       .channel(`invite-${invite.id}`)
       .on(
@@ -64,7 +59,6 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         },
         (payload) => {
           if (payload.new && typeof payload.new.clicks === 'number') {
-            console.log(`실시간 업데이트 받음: 초대 ID ${invite.id}의 클릭 수가 ${payload.new.clicks}로 변경됨`);
             setClickCount(payload.new.clicks);
             
             // 부모 컴포넌트에 업데이트 알림 (선택적)
@@ -77,12 +71,9 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           }
         }
       )
-      .subscribe((status) => {
-        console.log(`실시간 구독 상태: ${status}`);
-      });
+      .subscribe();
     
     return () => {
-      console.log(`구독 정리: 초대 ID ${invite.id}`);
       supabase.removeChannel(channel);
     };
   }, [invite.id, onUpdateClick]);
@@ -97,7 +88,6 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       
       setIsLoading(true);
       const clientId = getClientId();
-      console.log(`클릭 처리 시작: 초대 ID ${invite.id}, 클라이언트 ID ${clientId}`);
       
       // 최신 데이터 가져오기
       const { data: currentInvite, error: fetchError } = await supabase
@@ -115,20 +105,10 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       
       // 현재 DB 값 기준으로 계산
       const currentClicks = currentInvite?.clicks || 0;
-      console.log(`현재 DB의 클릭 수: ${currentClicks}`);
-      
       const newClickCount = currentClicks + 1;
-      
-      if (newClickCount > 30) {
-        console.log("최대 클릭 수(30)에 도달했습니다.");
-        setIsLoading(false);
-        window.open(invite.invite_url, '_blank');
-        return;
-      }
       
       // 임시로 로컬 상태 업데이트 (UI 반응성)
       setClickCount(newClickCount);
-      console.log(`클릭 수 로컬 업데이트: ${newClickCount}`);
       
       // DB 업데이트
       const { error: updateError } = await supabase
@@ -140,15 +120,12 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         console.error("Error updating click count:", updateError);
         // 에러 발생 시 원래 값으로 되돌리기
         setClickCount(currentClicks);
-      } else {
-        console.log(`클릭 수 업데이트 성공: ${newClickCount}`);
-        if (onUpdateClick && typeof onUpdateClick === 'function') {
-          // 부모 컴포넌트에 알림
-          onUpdateClick({
-            id: invite.id,
-            clicks: newClickCount
-          });
-        }
+      } else if (onUpdateClick && typeof onUpdateClick === 'function') {
+        // 부모 컴포넌트에 알림
+        onUpdateClick({
+          id: invite.id,
+          clicks: newClickCount
+        });
       }
       
       // URL 열기
