@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Info, Shield, Users, Heart } from "lucide-react";
+import { Info, Shield, Users, Heart, Sparkles } from "lucide-react";
 
 export function InfoCards() {
   return (
@@ -63,6 +63,43 @@ export function InfoCards() {
           <li>모두가 함께 혜택을 나누는 공간입니다.</li>
           <li>서로 배려하며 이용해주세요.</li>
         </ul>
+      </div>
+      
+      <div className="col-span-1 md:col-span-2 bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED] p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
+        <div className="flex items-center mb-4">
+          <div className="bg-white/20 p-2 rounded-full mr-3">
+            <Sparkles className="h-7 w-7 text-white" />
+          </div>
+          <h3 className="font-bold text-white text-xl">Genspark Plus 멤버십</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-white">
+          <div>
+            <h4 className="font-semibold text-yellow-300 mb-2">기본 혜택</h4>
+            <ul className="space-y-2 text-sm md:text-base pl-4">
+              <li>무제한 검색</li>
+              <li>Free보다 5배 더 많은 사용량</li>
+              <li>모든 AI 에이전트에 대한 우선 액세스</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-yellow-300 mb-2">최상위 모델 액세스</h4>
+            <ul className="space-y-2 text-sm md:text-base pl-4">
+              <li>OpenAI o1, o3-mini, GPT-4o</li>
+              <li>Anthropic Claude Sonnet</li>
+              <li>Google Gemini, DeepSeek 등</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold text-yellow-300 mb-2">이미지 & 비디오 모델</h4>
+            <ul className="space-y-2 text-sm md:text-base pl-4">
+              <li>FLUX, Ideogram, Recraft, DALL·E</li>
+              <li>Gemini Imagen 등</li>
+              <li>Kling, PixVerse, Lumalabs 등</li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   );
