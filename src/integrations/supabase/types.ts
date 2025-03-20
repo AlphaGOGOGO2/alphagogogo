@@ -161,6 +161,7 @@ export type Database = {
       }
       genspark_invites: {
         Row: {
+          clicks: number | null
           created_at: string
           id: string
           invite_url: string
@@ -168,6 +169,7 @@ export type Database = {
           nickname: string
         }
         Insert: {
+          clicks?: number | null
           created_at?: string
           id?: string
           invite_url: string
@@ -175,6 +177,7 @@ export type Database = {
           nickname: string
         }
         Update: {
+          clicks?: number | null
           created_at?: string
           id?: string
           invite_url?: string
@@ -190,6 +193,12 @@ export type Database = {
     Functions: {
       enable_realtime_for_genspark_invites: {
         Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      increment_invite_clicks: {
+        Args: {
+          invite_id: string
+        }
         Returns: undefined
       }
     }
