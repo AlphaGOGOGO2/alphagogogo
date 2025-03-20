@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -21,10 +22,11 @@ export default function GensparkInvitesPage() {
           insert: true, 
           update: true, 
           delete: true 
-        } as Record<string, unknown>);
+        } as any); // Using 'as any' to bypass TypeScript checking for custom RPCs
         console.log("Realtime enabled for genspark_invites table");
       } catch (error) {
         console.error("Error enabling realtime:", error);
+        // Continue even if enabling realtime via RPC fails
       }
     };
     

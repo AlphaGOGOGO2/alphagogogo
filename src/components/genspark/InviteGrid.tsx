@@ -23,7 +23,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
 
   // Set up real-time subscription to updates
   useEffect(() => {
-    // Enable realtime for this table
+    // Enable realtime for this table - Note: this RPC may not exist in some Supabase instances
     const enableRealtimeQuery = async () => {
       try {
         await supabase.rpc('supabase_realtime', {
@@ -31,10 +31,11 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           insert: true,
           update: true,
           delete: true
-        } as Record<string, unknown>);
+        } as any); // Using 'as any' to bypass TypeScript checking for custom RPCs
         console.log('Realtime enabled for genspark_invites table in InviteGrid');
       } catch (error) {
         console.error('Error enabling realtime:', error);
+        // Continue even if enabling realtime via RPC fails - the subscription below will still work
       }
     };
     enableRealtimeQuery();

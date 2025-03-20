@@ -20,9 +20,10 @@ export function InviteCard({
   processing, 
   onProcessingChange
 }: InviteCardProps) {
+  // Use local state to immediately reflect click updates in the UI
   const [localClicks, setLocalClicks] = useState(invite.clicks);
   
-  // Synchronize local clicks with invite.clicks when it changes
+  // Update local clicks when invite prop changes
   useEffect(() => {
     setLocalClicks(invite.clicks);
   }, [invite.clicks]);
