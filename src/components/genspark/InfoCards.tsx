@@ -1,6 +1,7 @@
 
 import React from "react";
-import { Info, Shield, Users, Heart, Sparkles } from "lucide-react";
+import { Info, Shield, Users, Heart, Sparkles, ExternalLink } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export function InfoCards() {
   return (
@@ -36,11 +37,22 @@ export function InfoCards() {
       </div>
       
       <div className="bg-gradient-to-br from-[#9B87F5] to-[#7E69AB] p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
-        <div className="flex items-center mb-4">
-          <div className="bg-white/20 p-2 rounded-full mr-3">
-            <Users className="h-7 w-7 text-white" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            <div className="bg-white/20 p-2 rounded-full mr-3">
+              <Users className="h-7 w-7 text-white" />
+            </div>
+            <h3 className="font-bold text-white text-xl">이용 방법</h3>
           </div>
-          <h3 className="font-bold text-white text-xl">이용 방법</h3>
+          <Button
+            variant="outline"
+            size="sm"
+            className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+            onClick={() => window.open("https://alphagogogo.com/blog/72--8onr510t", "_blank")}
+          >
+            <ExternalLink className="h-4 w-4 mr-1" />
+            사용방법
+          </Button>
         </div>
         <ul className="text-left space-y-2.5 text-white text-sm md:text-base pl-4">
           <li>초대 링크를 클릭하여 젠스파크에 가입하세요.</li>
