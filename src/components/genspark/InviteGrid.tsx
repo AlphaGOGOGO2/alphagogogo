@@ -25,11 +25,11 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
   useEffect(() => {
     // Enable realtime for this table
     const enableRealtimeQuery = async () => {
-      await supabase.rpc('supabase_realtime', { 
-        table: 'genspark_invites', 
-        insert: true, 
-        update: true, 
-        delete: true 
+      await supabase.rpc('supabase_realtime', {
+        table: 'genspark_invites',
+        insert: true,
+        update: true,
+        delete: true
       } as any);
     };
     enableRealtimeQuery();
