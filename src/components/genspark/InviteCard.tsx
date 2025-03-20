@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,33 @@ export function InviteCard({ invite }: InviteCardProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks);
+
+  // Subscribe to real-time updates for this specific invite
+  useEffect(() => {
+    // Create a channel to listen for changes to this specific invite
+    const channel = supabase
+      .channel(`invite-${invite.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'genspark_invites',
+          filter: `id=eq.${invite.id}`
+        },
+        (payload) => {
+          if (payload.new && typeof payload.new.clicks === 'number') {
+            setClickCount(payload.new.clicks);
+          }
+        }
+      )
+      .subscribe();
+
+    // Clean up subscription when component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [invite.id]);
 
   // Get or generate client ID to prevent multiple clicks from same client
   const getClientId = () => {

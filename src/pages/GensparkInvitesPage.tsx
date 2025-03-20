@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
@@ -12,6 +12,42 @@ import { Info, Shield, Users, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Subscribe to real-time changes for all invites
+  useEffect(() => {
+    // Enable replica identity for the genspark_invites table to support UPDATE
+    const enableRealtimeForTable = async () => {
+      try {
+        await supabase.rpc('enable_realtime_for_genspark_invites');
+      } catch (error) {
+        console.error("Error enabling realtime:", error);
+      }
+    };
+
+    enableRealtimeForTable();
+
+    // Create a channel to listen for all changes to the genspark_invites table
+    const channel = supabase
+      .channel('genspark_invites_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'genspark_invites'
+        },
+        (payload) => {
+          // Trigger a refresh when any change happens
+          setRefreshKey(prev => prev + 1);
+        }
+      )
+      .subscribe();
+
+    // Clean up subscription when component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
@@ -27,7 +63,6 @@ export default function GensparkInvitesPage() {
       
       return data as GensparkInvite[];
     },
-    refetchInterval: 5000, // Add automatic refetch every 5 seconds to keep the click counts updated
   });
 
   const handleDataRefresh = () => {
