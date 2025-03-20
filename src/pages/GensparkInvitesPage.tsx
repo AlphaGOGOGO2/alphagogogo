@@ -17,13 +17,13 @@ export default function GensparkInvitesPage() {
     // Enable realtime for the genspark_invites table when the page loads
     const enableRealtime = async () => {
       try {
-        // Using 'as any' to bypass TypeScript checking for custom RPCs
+        // Using 'as unknown as Record<string, any>' for proper type casting of custom RPCs
         await supabase.rpc('supabase_realtime', { 
           table: 'genspark_invites', 
           insert: true, 
           update: true, 
           delete: true 
-        } as any);
+        } as unknown as Record<string, any>);
         console.log("Realtime enabled for genspark_invites table");
       } catch (error) {
         console.error("Error enabling realtime:", error);
