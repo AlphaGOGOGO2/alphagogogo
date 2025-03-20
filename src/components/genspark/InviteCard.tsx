@@ -5,7 +5,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { v4 as uuidv4 } from "uuid";
 
 interface InviteCardProps {
@@ -13,7 +12,6 @@ interface InviteCardProps {
 }
 
 export function InviteCard({ invite }: InviteCardProps) {
-  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks);
 
@@ -93,21 +91,10 @@ export function InviteCard({ invite }: InviteCardProps) {
         throw error;
       }
 
-      // Show success toast if update was successful
-      toast({
-        title: "클릭 카운트가 업데이트되었습니다.",
-        description: `${invite.nickname}의 초대 링크가 ${newClickCount}/30회 클릭되었습니다.`,
-      });
-
       // Open the invite URL in a new tab
       window.open(invite.invite_url, '_blank');
     } catch (error) {
       console.error("Error updating click count:", error);
-      toast({
-        title: "에러",
-        description: "클릭 카운트를 업데이트하는 중 오류가 발생했습니다.",
-        variant: "destructive",
-      });
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +24,7 @@ export default function GensparkInvitesPage() {
           schema: 'public',
           table: 'genspark_invites'
         },
-        (payload) => {
+        () => {
           // Trigger a refresh when any change happens
           setRefreshKey(prev => prev + 1);
         }
