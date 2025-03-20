@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
@@ -12,27 +11,6 @@ import { Info, Shield, Users, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
-
-  useEffect(() => {
-    // Enable realtime for the genspark_invites table when the page loads
-    const enableRealtime = async () => {
-      try {
-        // Using 'as unknown as Record<string, any>' for proper type casting of custom RPCs
-        await supabase.rpc('supabase_realtime', { 
-          table: 'genspark_invites', 
-          insert: true, 
-          update: true, 
-          delete: true 
-        } as unknown as Record<string, any>);
-        console.log("Realtime enabled for genspark_invites table");
-      } catch (error) {
-        console.error("Error enabling realtime:", error);
-        // Continue even if enabling realtime via RPC fails
-      }
-    };
-    
-    enableRealtime();
-  }, []);
 
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
@@ -73,7 +51,6 @@ export default function GensparkInvitesPage() {
           </p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            {/* 카드 1: 규칙 정보 */}
             <div className="bg-gradient-to-br from-purple-600 to-purple-800 p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
               <div className="flex items-center mb-4">
                 <div className="bg-white/20 p-2 rounded-full mr-3">
@@ -89,7 +66,6 @@ export default function GensparkInvitesPage() {
               </ul>
             </div>
             
-            {/* 카드 2: 링크 등록 규칙 */}
             <div className="bg-gradient-to-br from-[#8B5CF6] to-[#7C3AED] p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
               <div className="flex items-center mb-4">
                 <div className="bg-white/20 p-2 rounded-full mr-3">
@@ -105,7 +81,6 @@ export default function GensparkInvitesPage() {
               </ul>
             </div>
             
-            {/* 카드 3: 이용 방법 */}
             <div className="bg-gradient-to-br from-[#9B87F5] to-[#7E69AB] p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
               <div className="flex items-center mb-4">
                 <div className="bg-white/20 p-2 rounded-full mr-3">
@@ -121,7 +96,6 @@ export default function GensparkInvitesPage() {
               </ul>
             </div>
             
-            {/* 카드 4: 주의사항 */}
             <div className="bg-gradient-to-br from-[#D946EF] to-[#9333EA] p-7 rounded-xl border border-purple-400 shadow-lg hover:shadow-xl transition-all">
               <div className="flex items-center mb-4">
                 <div className="bg-white/20 p-2 rounded-full mr-3">
@@ -157,7 +131,7 @@ export default function GensparkInvitesPage() {
               <p className="text-lg text-red-500">초대 링크를 불러오는 중 오류가 발생했습니다.</p>
             </div>
           ) : (
-            <InviteGrid invites={invites} onInviteUpdate={handleDataRefresh} />
+            <InviteGrid invites={invites} />
           )}
         </section>
       </main>
