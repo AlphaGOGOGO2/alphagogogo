@@ -49,7 +49,7 @@ export default function GensparkInvitesPage() {
             젠스파크 친구 초대하고 무료로 이용하기!
           </h1>
           <p className="font-medium text-purple-800 text-lg mb-8">
-            72만원 상당의 헤택을 무료로 이용할 수 있는 기회! 놓치지 마세요!
+            <span className="text-xl md:text-2xl font-semibold">72만원</span> 상당의 헤택을 무료로 이용할 수 있는 기회! 놓치지 마세요!
           </p>
           
           <InfoCards />
