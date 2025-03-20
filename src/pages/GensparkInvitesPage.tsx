@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "@/components/navbar";
@@ -12,6 +12,20 @@ import { Info, Shield, Users, Heart } from "lucide-react";
 
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    // Enable realtime for the genspark_invites table when the page loads
+    const enableRealtime = async () => {
+      try {
+        await supabase.rpc('supabase_realtime', { table: 'genspark_invites', insert: true, update: true, delete: true });
+        console.log("Realtime enabled for genspark_invites table");
+      } catch (error) {
+        console.error("Error enabling realtime:", error);
+      }
+    };
+    
+    enableRealtime();
+  }, []);
 
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
