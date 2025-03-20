@@ -96,21 +96,33 @@ export function useGensparkInvites() {
         
         console.log("Fetched invites data:", data);
         
-        // Update local state with the fetched data
         if (data) {
-          setLocalInvites(data as GensparkInvite[]);
+          // Deep clone to prevent reference issues
+          const formattedData = JSON.parse(JSON.stringify(data)) as GensparkInvite[];
+          
+          // Ensure clicks are numbers, not strings (which can happen with some Supabase responses)
+          formattedData.forEach(invite => {
+            invite.clicks = typeof invite.clicks === 'string' 
+              ? parseInt(invite.clicks, 10) 
+              : (invite.clicks || 0);
+          });
+          
+          console.log("Formatted invites data:", formattedData);
+          setLocalInvites(formattedData);
+          return formattedData;
         }
         
-        return data as GensparkInvite[];
+        return [] as GensparkInvite[];
       } catch (err) {
         console.error("Exception fetching invites:", err);
         toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
         throw err;
       }
     },
-    staleTime: 30000, // Data is fresh for 30 seconds
+    staleTime: 0, // Always fetch fresh data on navigation
     refetchOnWindowFocus: true,
     refetchOnMount: true,
+    refetchInterval: 30000, // Refetch every 30 seconds to ensure data is fresh
   });
 
   // Handle manual refresh
@@ -136,10 +148,15 @@ export function useGensparkInvites() {
           : invite
       )
     );
+    
+    // Also trigger a refresh to ensure we have the latest data
+    setRefreshKey(prev => prev + 1);
   };
 
   // Choose which invites to display (prefer local state if available)
   const displayInvites = localInvites.length > 0 ? localInvites : invites;
+  
+  console.log("Current displayInvites:", displayInvites);
   
   return {
     invites: displayInvites,

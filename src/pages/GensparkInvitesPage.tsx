@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
@@ -16,6 +16,12 @@ export default function GensparkInvitesPage() {
     handleDataRefresh, 
     handleUpdateInvite 
   } = useGensparkInvites();
+  
+  // Request a refresh on mount and navigate
+  useEffect(() => {
+    console.log("GensparkInvitesPage mounted - refreshing data");
+    handleDataRefresh();
+  }, [handleDataRefresh]);
   
   return (
     <>

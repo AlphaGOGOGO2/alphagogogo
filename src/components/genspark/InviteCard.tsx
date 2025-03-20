@@ -15,19 +15,23 @@ interface InviteCardProps {
 
 export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [clickCount, setClickCount] = useState(invite.clicks || 0);
+  const [clickCount, setClickCount] = useState(0);
   
-  // Set click count whenever invite prop changes
+  // Initialize local click count from invite prop
   useEffect(() => {
-    if (invite && typeof invite.clicks === 'number') {
-      setClickCount(invite.clicks);
-      console.log(`InviteCard: Updated click count for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
-    }
+    console.log(`InviteCard: Initializing click count for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
+    
+    // Ensure clicks is a number
+    const numClicks = typeof invite.clicks === 'string' 
+      ? parseInt(invite.clicks, 10) 
+      : (invite.clicks || 0);
+    
+    setClickCount(numClicks);
   }, [invite.id, invite.clicks]);
   
   // Set up realtime subscription for this specific invite
   useEffect(() => {
-    console.log(`InviteCard: Setting up realtime for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
+    console.log(`InviteCard: Setting up realtime for invite ID: ${invite.id}, clicks: ${clickCount}`);
     
     const channel = supabase
       .channel(`invite-${invite.id}`)
@@ -42,15 +46,20 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         (payload) => {
           console.log(`Realtime update for invite ${invite.id}:`, payload);
           
-          if (payload.new && typeof payload.new.clicks === 'number') {
-            console.log(`Setting click count to ${payload.new.clicks} for invite ${invite.id}`);
-            setClickCount(payload.new.clicks);
+          if (payload.new) {
+            // Ensure clicks is a number
+            const newClicks = typeof payload.new.clicks === 'string' 
+              ? parseInt(payload.new.clicks, 10) 
+              : (payload.new.clicks || 0);
+            
+            console.log(`Setting click count to ${newClicks} for invite ${invite.id}`);
+            setClickCount(newClicks);
             
             // Notify parent component about the update if callback is provided
             if (onUpdateClick && typeof onUpdateClick === 'function') {
               onUpdateClick({
                 id: invite.id,
-                clicks: payload.new.clicks
+                clicks: newClicks
               });
             }
           }
@@ -80,23 +89,26 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       
       // Then update the click count in the database
       const newClickCount = clickCount + 1;
-      console.log(`Updating click count for invite ${invite.id} to ${newClickCount}`);
+      console.log(`Updating click count for invite ${invite.id} from ${clickCount} to ${newClickCount}`);
       
-      const { error } = await supabase
+      // Optimistically update local state
+      setClickCount(newClickCount);
+      
+      const { data, error } = await supabase
         .from('genspark_invites')
         .update({ clicks: newClickCount })
-        .eq('id', invite.id);
+        .eq('id', invite.id)
+        .select();
       
       if (error) {
         console.error("Error incrementing click count:", error);
         toast.error("클릭 수를 업데이트하는 중 오류가 발생했습니다");
+        // Revert to previous click count on error
+        setClickCount(clickCount);
         return;
       }
       
-      console.log(`Successfully updated click count for ${invite.id} to ${newClickCount}`);
-      
-      // Optimistically update local state
-      setClickCount(newClickCount);
+      console.log(`Successfully updated click count for ${invite.id} to ${newClickCount}`, data);
       
       // Notify parent component about the update if callback is provided
       if (onUpdateClick && typeof onUpdateClick === 'function') {
@@ -108,6 +120,8 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
     } catch (error) {
       console.error("Error in handleInviteClick:", error);
       toast.error("초대 링크 처리 중 오류가 발생했습니다");
+      // Revert to previous click count on error
+      setClickCount(clickCount);
     } finally {
       setIsLoading(false);
     }
