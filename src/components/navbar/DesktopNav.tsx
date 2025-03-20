@@ -6,7 +6,7 @@ import { BlogDropdown } from "./BlogDropdown";
 import { GPTSDropdown } from "./GPTSDropdown";
 import { CommunityDropdown } from "./CommunityDropdown";
 import { ServicesDropdown } from "./ServicesDropdown";
-import { mainNavItems, blogCategories, gptsCategories, communityCategories, servicesCategories } from "@/config/navigation";
+import { mainNavItems, blogCategories, gptsCategories, communityCategories, servicesCategories, NavItem } from "@/config/navigation";
 import { toast } from "sonner";
 
 interface DesktopNavProps {

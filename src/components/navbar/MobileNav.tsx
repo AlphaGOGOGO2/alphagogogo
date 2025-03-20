@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavbarLogo } from "./NavbarLogo";
 import { MobileNavLink } from "./MobileNavLink";
-import { mainNavItems, servicesCategories } from "@/config/navigation";
+import { mainNavItems, servicesCategories, NavItem } from "@/config/navigation";
 import { MobileBlogItems } from "./MobileBlogItems";
 import { MobileCommunityItems } from "./MobileCommunityItems";
 import { toast } from "sonner";
@@ -23,7 +23,7 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
     location.pathname === service.path || location.pathname === "/services"
   );
 
-  const handleNavLinkClick = (item) => {
+  const handleNavLinkClick = (item: NavItem) => {
     if (item.isComingSoon) {
       toast("준비중입니다", {
         description: "해당 기능은 곧 제공될 예정입니다.",
