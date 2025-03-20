@@ -161,7 +161,6 @@ export type Database = {
       }
       genspark_invites: {
         Row: {
-          clicks: number
           created_at: string
           id: string
           invite_url: string
@@ -169,7 +168,6 @@ export type Database = {
           nickname: string
         }
         Insert: {
-          clicks?: number
           created_at?: string
           id?: string
           invite_url: string
@@ -177,7 +175,6 @@ export type Database = {
           nickname: string
         }
         Update: {
-          clicks?: number
           created_at?: string
           id?: string
           invite_url?: string

@@ -17,17 +17,17 @@ export default function GensparkInvitesPage() {
     handleUpdateInvite 
   } = useGensparkInvites();
   
-  // Request a refresh on mount and navigate
+  // 페이지 마운트 및 이동 시 데이터 리프레시
   useEffect(() => {
-    console.log("GensparkInvitesPage mounted - refreshing data");
-    // Immediate refresh on mount
+    console.log("GensparkInvitesPage 마운트됨 - 데이터 리프레시 중");
+    // 마운트 시 즉시 리프레시
     handleDataRefresh();
     
-    // Also set up an interval to refresh periodically
+    // 정기적인 데이터 갱신 설정
     const intervalId = setInterval(() => {
-      console.log("Periodic refresh triggered");
+      console.log("정기적인 리프레시 트리거됨");
       handleDataRefresh();
-    }, 60000); // Refresh every minute
+    }, 30000); // 30초마다 리프레시
     
     return () => {
       clearInterval(intervalId);

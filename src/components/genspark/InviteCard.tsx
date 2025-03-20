@@ -17,101 +17,53 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState<number>(0);
   
-  // Initialize local click count from invite prop
+  // 초기 클릭 수 설정
   useEffect(() => {
-    console.log(`InviteCard: Initializing click count for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
+    console.log(`InviteCard: 초대 ID 초기화: ${invite.id}, 클릭 수: ${invite.clicks}`);
     
-    // Ensure clicks is a number
-    const numClicks = typeof invite.clicks === 'string' 
-      ? parseInt(invite.clicks, 10) 
-      : (invite.clicks || 0);
+    // 클릭 수가 숫자인지 확인
+    const numClicks = typeof invite.clicks === 'number' 
+      ? invite.clicks 
+      : typeof invite.clicks === 'string' 
+        ? parseInt(invite.clicks, 10) 
+        : 0;
     
-    setClickCount(numClicks);
+    setClickCount(numClicks || 0);
   }, [invite.id, invite.clicks]);
   
-  // Set up realtime subscription for this specific invite
-  useEffect(() => {
-    console.log(`InviteCard: Setting up realtime for invite ID: ${invite.id}, clicks: ${clickCount}`);
-    
-    const channel = supabase
-      .channel(`invite-${invite.id}`)
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'genspark_invites',
-          filter: `id=eq.${invite.id}`
-        },
-        (payload) => {
-          console.log(`Realtime update for invite ${invite.id}:`, payload);
-          
-          if (payload.new) {
-            // Ensure clicks is a number
-            const newClicks = typeof payload.new.clicks === 'string' 
-              ? parseInt(payload.new.clicks, 10) 
-              : (payload.new.clicks || 0);
-            
-            console.log(`Setting click count to ${newClicks} for invite ${invite.id}`);
-            setClickCount(newClicks);
-            
-            // Notify parent component about the update if callback is provided
-            if (onUpdateClick && typeof onUpdateClick === 'function') {
-              onUpdateClick({
-                id: invite.id,
-                clicks: newClicks
-              });
-            }
-          }
-        }
-      )
-      .subscribe((status) => {
-        console.log(`Subscription status for invite ${invite.id}: ${status}`);
-      });
-    
-    // Clean up subscription when component unmounts
-    return () => {
-      console.log(`Cleaning up subscription for invite ${invite.id}`);
-      supabase.removeChannel(channel);
-    };
-  }, [invite.id, onUpdateClick]);
-  
+  // 간소화된 클릭 처리 함수
   const handleInviteClick = async () => {
     if (isLoading) return;
     
     try {
       setIsLoading(true);
-      const clientId = getClientId();
-      console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
-      // First open the URL to improve user experience
+      // 먼저 URL을 열어 사용자 경험 개선
       window.open(invite.invite_url, '_blank');
       
-      // Then update the click count in the database
+      // 새 클릭 수 계산 (낙관적 UI 업데이트)
       const newClickCount = clickCount + 1;
-      console.log(`Updating click count for invite ${invite.id} from ${clickCount} to ${newClickCount}`);
+      console.log(`초대 ${invite.id}의 클릭 수를 ${clickCount}에서 ${newClickCount}로 업데이트합니다`);
       
-      // Optimistically update local state
+      // 낙관적으로 로컬 상태 업데이트
       setClickCount(newClickCount);
       
-      // Use upsert with PATCH method to ensure we're only updating the clicks field
-      const { data, error } = await supabase
-        .from('genspark_invites')
-        .update({ clicks: newClickCount })
-        .eq('id', invite.id)
-        .select();
+      // 데이터베이스 직접 업데이트 (단순 업데이트 방식)
+      const { error } = await supabase.rpc('increment_invite_clicks', { 
+        invite_id: invite.id 
+      });
       
       if (error) {
-        console.error("Error incrementing click count:", error);
+        console.error("클릭 수 업데이트 오류:", error);
         toast.error("클릭 수를 업데이트하는 중 오류가 발생했습니다");
-        // Revert to previous click count on error
+        // 오류 발생 시 이전 클릭 수로 복원
         setClickCount(clickCount);
         return;
       }
       
-      console.log(`Successfully updated click count for ${invite.id} to ${newClickCount}`, data);
+      console.log(`${invite.id}의 클릭 수가 ${newClickCount}로 성공적으로 업데이트되었습니다`);
       
-      // Notify parent component about the update if callback is provided
+      // 부모 컴포넌트에 업데이트 알림
       if (onUpdateClick && typeof onUpdateClick === 'function') {
         onUpdateClick({
           id: invite.id,
@@ -119,9 +71,9 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         });
       }
     } catch (error) {
-      console.error("Error in handleInviteClick:", error);
+      console.error("handleInviteClick 오류:", error);
       toast.error("초대 링크 처리 중 오류가 발생했습니다");
-      // Revert to previous click count on error
+      // 오류 발생 시 이전 클릭 수로 복원
       setClickCount(clickCount);
     } finally {
       setIsLoading(false);

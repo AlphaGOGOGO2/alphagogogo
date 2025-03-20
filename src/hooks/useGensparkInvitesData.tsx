@@ -10,9 +10,9 @@ export function useGensparkInvitesData(
 ) {
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Fetch invites data
+  // 초대 데이터 가져오기
   const fetchInvites = useCallback(async () => {
-    console.log("Fetching invites data...");
+    console.log("초대 데이터를 가져오는 중...");
     
     try {
       const { data, error } = await supabase
@@ -21,30 +21,32 @@ export function useGensparkInvitesData(
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error("Error fetching invites:", error);
+        console.error("초대 가져오기 오류:", error);
         toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
         throw new Error(error.message);
       }
       
-      console.log("Fetched invites data:", data);
+      console.log("가져온 초대 데이터:", data);
       
       if (data) {
-        // Ensure clicks are numbers, not strings
+        // 클릭 수가 숫자인지 확인
         const formattedData = data.map(invite => ({
           ...invite,
-          clicks: typeof invite.clicks === 'string' 
-            ? parseInt(invite.clicks, 10) 
-            : (invite.clicks || 0)
+          clicks: typeof invite.clicks === 'number' 
+            ? invite.clicks 
+            : typeof invite.clicks === 'string' 
+              ? parseInt(invite.clicks, 10) 
+              : 0
         })) as GensparkInvite[];
         
-        console.log("Formatted invites data:", formattedData);
+        console.log("변환된 초대 데이터:", formattedData);
         setLocalInvites(formattedData);
         return formattedData;
       }
       
       return [] as GensparkInvite[];
     } catch (err) {
-      console.error("Exception fetching invites:", err);
+      console.error("초대 가져오기 예외:", err);
       toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
       throw err;
     }
@@ -53,15 +55,15 @@ export function useGensparkInvitesData(
   const queryResult = useQuery({
     queryKey: ['genspark-invites', refreshKey],
     queryFn: fetchInvites,
-    staleTime: 0, // Always fetch fresh data on navigation
+    staleTime: 0, // 항상 새로운 데이터 가져오기
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    refetchInterval: 30000, // Refetch every 30 seconds to ensure data is fresh
+    refetchInterval: 30000, // 30초마다 리프레시
   });
 
-  // Handle manual refresh
+  // 수동 리프레시 처리
   const handleDataRefresh = useCallback(() => {
-    console.log("Manual refresh requested");
+    console.log("수동 리프레시 요청됨");
     setRefreshKey(prev => prev + 1);
   }, []);
 
