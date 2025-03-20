@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { getClientId } from "@/utils/clientIdUtils";
+import { toast } from "sonner";
 
 interface InviteCardProps {
   invite: GensparkInvite;
@@ -47,6 +48,8 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   
   // 실시간 업데이트 구독
   useEffect(() => {
+    console.log(`Setting up realtime subscription for invite ${invite.id}`);
+    
     const channel = supabase
       .channel(`invite-${invite.id}`)
       .on(
@@ -58,7 +61,10 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           filter: `id=eq.${invite.id}`
         },
         (payload) => {
+          console.log(`Received realtime update for invite ${invite.id}:`, payload);
+          
           if (payload.new && typeof payload.new.clicks === 'number') {
+            console.log(`Setting click count to ${payload.new.clicks}`);
             setClickCount(payload.new.clicks);
             
             // 부모 컴포넌트에 업데이트 알림 (선택적)
@@ -71,9 +77,12 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           }
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`Subscription status for invite ${invite.id}: ${status}`);
+      });
     
     return () => {
+      console.log(`Cleaning up subscription for invite ${invite.id}`);
       supabase.removeChannel(channel);
     };
   }, [invite.id, onUpdateClick]);
@@ -82,6 +91,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
     try {
       setIsLoading(true);
       const clientId = getClientId();
+      console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
       // 최신 데이터 가져오기
       const { data: currentInvite, error: fetchError } = await supabase
@@ -92,6 +102,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       
       if (fetchError) {
         console.error("Error fetching current invite clicks:", fetchError);
+        toast.error("클릭 수를 가져오는 중 오류가 발생했습니다");
         setIsLoading(false);
         window.open(invite.invite_url, '_blank');
         return;
@@ -100,6 +111,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       // 현재 DB 값 기준으로 계산
       const currentClicks = currentInvite?.clicks || 0;
       const newClickCount = currentClicks + 1;
+      console.log(`Current clicks: ${currentClicks}, new clicks: ${newClickCount}`);
       
       // 임시로 로컬 상태 업데이트 (UI 반응성)
       setClickCount(newClickCount);
@@ -112,20 +124,25 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       
       if (updateError) {
         console.error("Error updating click count:", updateError);
+        toast.error("클릭 수를 업데이트하는 중 오류가 발생했습니다");
         // 에러 발생 시 원래 값으로 되돌리기
         setClickCount(currentClicks);
-      } else if (onUpdateClick && typeof onUpdateClick === 'function') {
+      } else {
+        console.log(`Successfully updated click count to ${newClickCount}`);
         // 부모 컴포넌트에 알림
-        onUpdateClick({
-          id: invite.id,
-          clicks: newClickCount
-        });
+        if (onUpdateClick && typeof onUpdateClick === 'function') {
+          onUpdateClick({
+            id: invite.id,
+            clicks: newClickCount
+          });
+        }
       }
       
       // URL 열기
       window.open(invite.invite_url, '_blank');
     } catch (error) {
       console.error("Error in handleInviteClick:", error);
+      toast.error("초대 링크 처리 중 오류가 발생했습니다");
     } finally {
       setIsLoading(false);
     }

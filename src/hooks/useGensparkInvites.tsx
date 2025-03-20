@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { GensparkInvite } from "@/types/genspark";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function useGensparkInvites() {
   const [refreshKey, setRefreshKey] = useState(0);
@@ -24,6 +25,7 @@ export function useGensparkInvites() {
         },
         (payload) => {
           console.log("수파베이스 테이블 변경 감지:", payload);
+          
           // 변경 사항이 있을 때 새로고침 트리거
           setRefreshKey(prev => prev + 1);
           
@@ -36,12 +38,15 @@ export function useGensparkInvites() {
                   : invite
               )
             );
+            console.log("로컬 상태 업데이트됨 (UPDATE):", payload.new);
           } else if (payload.eventType === 'INSERT' && payload.new) {
             setLocalInvites(prev => [payload.new as GensparkInvite, ...prev]);
+            console.log("로컬 상태 업데이트됨 (INSERT):", payload.new);
           } else if (payload.eventType === 'DELETE' && payload.old) {
             setLocalInvites(prev => 
               prev.filter(invite => invite.id !== payload.old.id)
             );
+            console.log("로컬 상태 업데이트됨 (DELETE):", payload.old);
           }
         }
       )
@@ -60,24 +65,32 @@ export function useGensparkInvites() {
     queryKey: ['genspark-invites', refreshKey],
     queryFn: async () => {
       console.log("초대 데이터 가져오는 중...");
-      const { data, error } = await supabase
-        .from('genspark_invites')
-        .select('*')
-        .order('created_at', { ascending: false });
       
-      if (error) {
-        console.error("초대 가져오기 오류:", error);
-        throw new Error(error.message);
+      try {
+        const { data, error } = await supabase
+          .from('genspark_invites')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (error) {
+          console.error("초대 가져오기 오류:", error);
+          toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
+          throw new Error(error.message);
+        }
+        
+        console.log("가져온 초대:", data);
+        
+        // 가져온 데이터로 로컬 상태 업데이트
+        if (data) {
+          setLocalInvites(data as GensparkInvite[]);
+        }
+        
+        return data as GensparkInvite[];
+      } catch (err) {
+        console.error("초대 목록 가져오기 중 예외 발생:", err);
+        toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
+        throw err;
       }
-      
-      console.log("가져온 초대:", data);
-      
-      // 가져온 데이터로 로컬 상태 업데이트
-      if (data) {
-        setLocalInvites(data as GensparkInvite[]);
-      }
-      
-      return data as GensparkInvite[];
     },
     // 항상 최신 데이터를 가져오도록 staleTime 설정
     staleTime: 0,
@@ -87,10 +100,13 @@ export function useGensparkInvites() {
   });
 
   const handleDataRefresh = () => {
+    console.log("데이터 새로고침 요청됨");
     setRefreshKey(prev => prev + 1);
   };
 
   const handleUpdateInvite = (updatedInvite: Partial<GensparkInvite>) => {
+    console.log("초대 링크 업데이트:", updatedInvite);
+    
     setLocalInvites(prev => 
       prev.map(invite => 
         invite.id === updatedInvite.id 
