@@ -18,7 +18,8 @@ export function useGensparkInvitesData(
       const { data, error } = await supabase
         .from('genspark_invites')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('clicks', { ascending: false }) // 클릭 수 내림차순으로 정렬 (높은 순서대로)
+        .order('created_at', { ascending: false }); // 같은 클릭 수일 경우 최신순으로 정렬
       
       if (error) {
         console.error("초대 가져오기 오류:", error);
