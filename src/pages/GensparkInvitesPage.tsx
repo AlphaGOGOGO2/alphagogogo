@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -25,7 +26,8 @@ export default function GensparkInvitesPage() {
       }
       
       return data as GensparkInvite[];
-    }
+    },
+    refetchInterval: 5000, // Add automatic refetch every 5 seconds to keep the click counts updated
   });
 
   const handleDataRefresh = () => {

@@ -31,27 +31,28 @@ export function InviteCard({ invite }: InviteCardProps) {
     try {
       setIsLoading(true);
       const clientId = getClientId();
+      
+      // First update local state to show immediate feedback
+      const newClickCount = clickCount + 1;
+      setClickCount(newClickCount);
 
       // Update the click count in Supabase
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: clickCount + 1 })
-        .eq('id', invite.id)
-        .select();
+        .update({ clicks: newClickCount })
+        .eq('id', invite.id);
 
       if (error) {
+        // Revert the local state if there was an error
+        setClickCount(clickCount);
         throw error;
       }
 
-      if (data && data.length > 0) {
-        setClickCount(data[0].clicks);
-        
-        // Show success toast if update was successful
-        toast({
-          title: "클릭 카운트가 업데이트되었습니다.",
-          description: `${invite.nickname}의 초대 링크가 ${data[0].clicks}/30회 클릭되었습니다.`,
-        });
-      }
+      // Show success toast if update was successful
+      toast({
+        title: "클릭 카운트가 업데이트되었습니다.",
+        description: `${invite.nickname}의 초대 링크가 ${newClickCount}/30회 클릭되었습니다.`,
+      });
 
       // Open the invite URL in a new tab
       window.open(invite.invite_url, '_blank');
