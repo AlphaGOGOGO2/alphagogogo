@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { v4 as uuidv4 } from "uuid";
+import { getClientId } from "@/utils/clientIdUtils";
 
 interface InviteCardProps {
   invite: GensparkInvite;
@@ -15,7 +16,7 @@ export function InviteCard({ invite }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks);
 
-  // Initialize click count from the invite prop
+  // Update click count when invite prop changes
   useEffect(() => {
     setClickCount(invite.clicks);
   }, [invite.clicks]);
@@ -46,16 +47,6 @@ export function InviteCard({ invite }: InviteCardProps) {
       supabase.removeChannel(channel);
     };
   }, [invite.id]);
-
-  // Get or generate client ID to prevent multiple clicks from same client
-  const getClientId = () => {
-    let clientId = localStorage.getItem('genspark_client_id');
-    if (!clientId) {
-      clientId = uuidv4();
-      localStorage.setItem('genspark_client_id', clientId);
-    }
-    return clientId;
-  };
 
   const handleInviteClick = async () => {
     try {

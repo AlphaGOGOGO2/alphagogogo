@@ -13,5 +13,3 @@ export const getClientId = (): string => {
   
   return clientId;
 };
-
-// 참고: 이 파일은 현재 사용되지 않지만, 향후 필요할 경우를 위해 유지합니다.

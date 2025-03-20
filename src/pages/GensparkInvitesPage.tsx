@@ -54,6 +54,8 @@ export default function GensparkInvitesPage() {
       console.log("Fetched invites:", data);
       return data as GensparkInvite[];
     },
+    // Ensure we're always getting fresh data
+    staleTime: 0,
   });
 
   const handleDataRefresh = () => {
