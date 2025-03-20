@@ -16,7 +16,6 @@ export function useGensparkInvites() {
     // Enable realtime functionality for the table
     const enableRealtime = async () => {
       try {
-        // This is just a no-op function that exists in the database to make it easier to call from the frontend
         const { error } = await supabase.rpc('enable_realtime_for_genspark_invites');
         if (error) {
           console.error("Error enabling realtime:", error);
@@ -43,10 +42,6 @@ export function useGensparkInvites() {
         (payload) => {
           console.log("Database change detected:", payload);
           
-          // Trigger a refresh of the invites data
-          setRefreshKey(prev => prev + 1);
-          
-          // Update local state based on the event type
           if (payload.eventType === 'UPDATE' && payload.new) {
             console.log("Processing UPDATE event:", payload.new);
             setLocalInvites(prev => 
@@ -65,6 +60,9 @@ export function useGensparkInvites() {
               prev.filter(invite => invite.id !== payload.old.id)
             );
           }
+          
+          // Always trigger a fetch after any database change to ensure we have the latest data
+          setRefreshKey(prev => prev + 1);
         }
       )
       .subscribe((status) => {
@@ -110,7 +108,7 @@ export function useGensparkInvites() {
         throw err;
       }
     },
-    staleTime: 0, // Always fetch fresh data
+    staleTime: 30000, // Data is fresh for 30 seconds
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
@@ -121,7 +119,7 @@ export function useGensparkInvites() {
     setRefreshKey(prev => prev + 1);
   };
 
-  // Handle invite update
+  // Handle invite update (e.g., after click)
   const handleUpdateInvite = (updatedInvite: Partial<GensparkInvite>) => {
     console.log("Update invite called with:", updatedInvite);
     
@@ -130,7 +128,7 @@ export function useGensparkInvites() {
       return;
     }
     
-    // Update local state
+    // Update local state immediately for responsive UI
     setLocalInvites(prev => 
       prev.map(invite => 
         invite.id === updatedInvite.id 

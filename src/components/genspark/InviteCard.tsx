@@ -17,12 +17,18 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks || 0);
   
-  // Initialize click count and set up realtime subscription
+  // Set click count whenever invite prop changes
   useEffect(() => {
-    setClickCount(invite.clicks || 0);
-    console.log(`InviteCard: Initializing card for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
+    if (invite && typeof invite.clicks === 'number') {
+      setClickCount(invite.clicks);
+      console.log(`InviteCard: Updated click count for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
+    }
+  }, [invite.id, invite.clicks]);
+  
+  // Set up realtime subscription for this specific invite
+  useEffect(() => {
+    console.log(`InviteCard: Setting up realtime for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
     
-    // Set up realtime subscription for this specific invite
     const channel = supabase
       .channel(`invite-${invite.id}`)
       .on(
@@ -59,21 +65,27 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       console.log(`Cleaning up subscription for invite ${invite.id}`);
       supabase.removeChannel(channel);
     };
-  }, [invite.id, invite.clicks, onUpdateClick]);
+  }, [invite.id, onUpdateClick]);
   
   const handleInviteClick = async () => {
+    if (isLoading) return;
+    
     try {
       setIsLoading(true);
       const clientId = getClientId();
       console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
-      // Directly update the clicks count with a SQL update instead of using RPC
-      console.log(`Updating click count for invite ${invite.id}`);
-      const { data, error } = await supabase
+      // First open the URL to improve user experience
+      window.open(invite.invite_url, '_blank');
+      
+      // Then update the click count in the database
+      const newClickCount = clickCount + 1;
+      console.log(`Updating click count for invite ${invite.id} to ${newClickCount}`);
+      
+      const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: clickCount + 1 })
-        .eq('id', invite.id)
-        .select();
+        .update({ clicks: newClickCount })
+        .eq('id', invite.id);
       
       if (error) {
         console.error("Error incrementing click count:", error);
@@ -81,13 +93,9 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         return;
       }
       
-      console.log(`Successfully updated click count for ${invite.id}`, data);
-      
-      // Open the invite URL
-      window.open(invite.invite_url, '_blank');
+      console.log(`Successfully updated click count for ${invite.id} to ${newClickCount}`);
       
       // Optimistically update local state
-      const newClickCount = clickCount + 1;
       setClickCount(newClickCount);
       
       // Notify parent component about the update if callback is provided
