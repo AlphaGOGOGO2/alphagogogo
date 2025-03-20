@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { GensparkInvite } from "@/types/genspark";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export function useGensparkRealtimeSubscription(
   setLocalInvites: React.Dispatch<React.SetStateAction<GensparkInvite[]>>
@@ -70,6 +71,14 @@ export function useGensparkRealtimeSubscription(
             setLocalInvites(prev => [newInvite, ...prev]);
           } else if (payload.eventType === 'DELETE' && payload.old) {
             console.log("Processing DELETE event:", payload.old);
+            
+            // 삭제된 초대 링크가 30회 클릭에 도달한 경우 알림
+            if (payload.old.clicks >= 30) {
+              toast.success(`'${payload.old.nickname}'님의 초대 링크가 30회 클릭 도달로 자동 삭제되었습니다!`, {
+                description: "초대에 참여해주셔서 감사합니다."
+              });
+            }
+            
             setLocalInvites(prev => 
               prev.filter(invite => invite.id !== payload.old.id)
             );

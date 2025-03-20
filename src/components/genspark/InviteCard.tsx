@@ -16,6 +16,7 @@ interface InviteCardProps {
 export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState<number>(0);
+  const MAX_CLICKS = 30;
   
   // 초기 클릭 수 설정
   useEffect(() => {
@@ -61,6 +62,11 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         return;
       }
       
+      // 클릭 수가 MAX_CLICKS(30)에 가까워지면 알림
+      if (newClickCount >= MAX_CLICKS - 3 && newClickCount < MAX_CLICKS) {
+        toast.warning(`이 초대 링크는 ${MAX_CLICKS - newClickCount}번 더 클릭하면 삭제됩니다!`);
+      }
+      
       console.log(`${invite.id}의 클릭 수가 ${newClickCount}로 성공적으로 업데이트되었습니다`);
       
       // 부모 컴포넌트에 업데이트 알림
@@ -92,8 +98,8 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           {invite.message}
         </p>
         <div className="flex justify-between items-center mt-4">
-          <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
-            클릭: {clickCount}
+          <span className={`text-xs ${clickCount >= MAX_CLICKS - 5 ? 'bg-red-200 text-red-800' : 'bg-purple-200 text-purple-800'} px-2 py-1 rounded-full`}>
+            클릭: {clickCount}{clickCount >= MAX_CLICKS - 5 ? ` / ${MAX_CLICKS}` : ''}
           </span>
         </div>
       </CardContent>
@@ -101,7 +107,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         <Button 
           variant="secondary" 
           size="sm" 
-          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+          className={`w-full ${clickCount >= MAX_CLICKS - 5 ? 'bg-red-600 hover:bg-red-700' : 'bg-purple-600 hover:bg-purple-700'} text-white`}
           onClick={handleInviteClick}
           disabled={isLoading}
         >
