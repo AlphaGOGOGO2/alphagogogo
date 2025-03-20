@@ -80,12 +80,6 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   
   const handleInviteClick = async () => {
     try {
-      // 이미 최대 클릭 수에 도달했으면 중단
-      if (clickCount >= 30) {
-        window.open(invite.invite_url, '_blank');
-        return;
-      }
-      
       setIsLoading(true);
       const clientId = getClientId();
       
@@ -160,7 +154,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           size="sm" 
           className="w-full bg-purple-600 hover:bg-purple-700 text-white"
           onClick={handleInviteClick}
-          disabled={isLoading || clickCount >= 30}
+          disabled={isLoading}
         >
           <ExternalLink className="h-4 w-4 mr-1" />
           {isLoading ? "처리 중..." : "바로 가기"}
