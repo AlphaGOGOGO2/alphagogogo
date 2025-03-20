@@ -13,6 +13,20 @@ export function useGensparkInvites() {
   useEffect(() => {
     console.log("실시간 업데이트 구독 설정 중...");
     
+    // 데이터베이스 실시간 업데이트 활성화
+    const enableRealtime = async () => {
+      try {
+        const { error } = await supabase.rpc('enable_realtime_for_genspark_invites');
+        if (error) {
+          console.error("실시간 업데이트 활성화 오류:", error);
+        }
+      } catch (err) {
+        console.error("실시간 활성화 중 예외 발생:", err);
+      }
+    };
+    
+    enableRealtime();
+    
     // genspark_invites 테이블의 모든 변경 사항을 수신하는 채널 생성
     const channel = supabase
       .channel('genspark_invites_changes')
@@ -26,7 +40,7 @@ export function useGensparkInvites() {
         (payload) => {
           console.log("수파베이스 테이블 변경 감지:", payload);
           
-          // 변경 사항이 있을 때 새로고침 트리거
+          // 변경 사항이 있을 때 캐시 무효화 및 새로고침 트리거
           setRefreshKey(prev => prev + 1);
           
           // 로컬 상태도 업데이트

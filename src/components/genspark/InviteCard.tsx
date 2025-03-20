@@ -15,39 +15,14 @@ interface InviteCardProps {
 
 export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [clickCount, setClickCount] = useState(0);
+  const [clickCount, setClickCount] = useState(invite.clicks || 0);
   
   // 초기 로드 및 invite 변경 시 클릭 카운트 설정
   useEffect(() => {
-    const fetchCurrentInvite = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('genspark_invites')
-          .select('clicks')
-          .eq('id', invite.id)
-          .single();
-        
-        if (error) {
-          console.error("Error fetching current invite:", error);
-          return;
-        }
-        
-        if (data && typeof data.clicks === 'number') {
-          setClickCount(data.clicks);
-        } else {
-          setClickCount(invite.clicks || 0);
-        }
-      } catch (error) {
-        console.error("Error in fetchCurrentInvite:", error);
-        setClickCount(invite.clicks || 0);
-      }
-    };
+    setClickCount(invite.clicks || 0);
+    console.log(`InviteCard: 초기 클릭 수 설정 - ID: ${invite.id}, 클릭 수: ${invite.clicks}`);
     
-    fetchCurrentInvite();
-  }, [invite.id, invite.clicks]);
-  
-  // 실시간 업데이트 구독
-  useEffect(() => {
+    // 실시간 업데이트 구독
     console.log(`Setting up realtime subscription for invite ${invite.id}`);
     
     const channel = supabase
@@ -85,7 +60,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       console.log(`Cleaning up subscription for invite ${invite.id}`);
       supabase.removeChannel(channel);
     };
-  }, [invite.id, onUpdateClick]);
+  }, [invite.id, invite.clicks, onUpdateClick]);
   
   const handleInviteClick = async () => {
     try {
@@ -93,42 +68,22 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       const clientId = getClientId();
       console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
-      // 최신 데이터 가져오기
-      const { data: currentInvite, error: fetchError } = await supabase
-        .from('genspark_invites')
-        .select('clicks')
-        .eq('id', invite.id)
-        .single();
-      
-      if (fetchError) {
-        console.error("Error fetching current invite clicks:", fetchError);
-        toast.error("클릭 수를 가져오는 중 오류가 발생했습니다");
-        setIsLoading(false);
-        window.open(invite.invite_url, '_blank');
-        return;
-      }
-      
-      // 현재 DB 값 기준으로 계산
-      const currentClicks = currentInvite?.clicks || 0;
-      const newClickCount = currentClicks + 1;
-      console.log(`Current clicks: ${currentClicks}, new clicks: ${newClickCount}`);
-      
       // 임시로 로컬 상태 업데이트 (UI 반응성)
+      const newClickCount = clickCount + 1;
       setClickCount(newClickCount);
       
-      // DB 업데이트
-      const { error: updateError } = await supabase
-        .from('genspark_invites')
-        .update({ clicks: newClickCount })
-        .eq('id', invite.id);
+      // DB 업데이트 - RPC 함수 호출
+      const { data, error } = await supabase
+        .rpc('increment_invite_clicks', { invite_id: invite.id });
       
-      if (updateError) {
-        console.error("Error updating click count:", updateError);
+      if (error) {
+        console.error("Error updating click count:", error);
         toast.error("클릭 수를 업데이트하는 중 오류가 발생했습니다");
         // 에러 발생 시 원래 값으로 되돌리기
-        setClickCount(currentClicks);
+        setClickCount(clickCount);
       } else {
         console.log(`Successfully updated click count to ${newClickCount}`);
+        
         // 부모 컴포넌트에 알림
         if (onUpdateClick && typeof onUpdateClick === 'function') {
           onUpdateClick({
