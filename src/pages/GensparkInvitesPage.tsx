@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { useQuery } from "@tanstack/react-query";
@@ -12,27 +13,33 @@ import { Info, Shield, Users, Heart } from "lucide-react";
 export default function GensparkInvitesPage() {
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // Subscribe to real-time changes for all invites
+  // 모든 초대에 대한 실시간 변경 구독
   useEffect(() => {
-    // Create a channel to listen for all changes to the genspark_invites table
+    console.log("실시간 업데이트 구독 설정 중...");
+    
+    // genspark_invites 테이블의 모든 변경 사항을 수신하는 채널 생성
     const channel = supabase
       .channel('genspark_invites_changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
+          event: '*', // 모든 이벤트(INSERT, UPDATE, DELETE) 수신
           schema: 'public',
           table: 'genspark_invites'
         },
-        () => {
-          // Trigger a refresh when any change happens
+        (payload) => {
+          console.log("수파베이스 테이블 변경 감지:", payload);
+          // 변경 사항이 있을 때 새로고침 트리거
           setRefreshKey(prev => prev + 1);
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log(`genspark_invites 테이블에 대한 실시간 구독 상태: ${status}`);
+      });
 
-    // Clean up subscription when component unmounts
+    // 컴포넌트 언마운트 시 구독 정리
     return () => {
+      console.log("실시간 업데이트 구독 정리 중...");
       supabase.removeChannel(channel);
     };
   }, []);
@@ -40,22 +47,24 @@ export default function GensparkInvitesPage() {
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
     queryFn: async () => {
-      console.log("Fetching invites data...");
+      console.log("초대 데이터 가져오는 중...");
       const { data, error } = await supabase
         .from('genspark_invites')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
-        console.error("Error fetching invites:", error);
+        console.error("초대 가져오기 오류:", error);
         throw new Error(error.message);
       }
       
-      console.log("Fetched invites:", data);
+      console.log("가져온 초대:", data);
       return data as GensparkInvite[];
     },
-    // Ensure we're always getting fresh data
+    // 항상 최신 데이터를 가져오도록 staleTime 설정
     staleTime: 0,
+    refetchOnWindowFocus: true,
+    refetchOnMount: true,
   });
 
   const handleDataRefresh = () => {
