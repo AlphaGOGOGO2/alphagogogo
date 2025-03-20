@@ -9,42 +9,46 @@ export function useGensparkInvites() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [localInvites, setLocalInvites] = useState<GensparkInvite[]>([]);
 
-  // 실시간 업데이트 구독
+  // Set up global realtime subscription for all invite changes
   useEffect(() => {
-    console.log("실시간 업데이트 구독 설정 중...");
+    console.log("Setting up global realtime subscription for genspark_invites table");
     
-    // 데이터베이스 실시간 업데이트 활성화
+    // Enable realtime functionality for the table
     const enableRealtime = async () => {
       try {
+        // This is just a no-op function that exists in the database to make it easier to call from the frontend
         const { error } = await supabase.rpc('enable_realtime_for_genspark_invites');
         if (error) {
-          console.error("실시간 업데이트 활성화 오류:", error);
+          console.error("Error enabling realtime:", error);
+        } else {
+          console.log("Successfully enabled realtime for genspark_invites");
         }
       } catch (err) {
-        console.error("실시간 활성화 중 예외 발생:", err);
+        console.error("Exception enabling realtime:", err);
       }
     };
     
     enableRealtime();
     
-    // genspark_invites 테이블의 모든 변경 사항을 수신하는 채널 생성
+    // Create a channel to listen for all changes to the genspark_invites table
     const channel = supabase
       .channel('genspark_invites_changes')
       .on(
         'postgres_changes',
         {
-          event: '*', // 모든 이벤트(INSERT, UPDATE, DELETE) 수신
+          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
           schema: 'public',
           table: 'genspark_invites'
         },
         (payload) => {
-          console.log("수파베이스 테이블 변경 감지:", payload);
+          console.log("Database change detected:", payload);
           
-          // 변경 사항이 있을 때 캐시 무효화 및 새로고침 트리거
+          // Trigger a refresh of the invites data
           setRefreshKey(prev => prev + 1);
           
-          // 로컬 상태도 업데이트
+          // Update local state based on the event type
           if (payload.eventType === 'UPDATE' && payload.new) {
+            console.log("Processing UPDATE event:", payload.new);
             setLocalInvites(prev => 
               prev.map(invite => 
                 invite.id === payload.new.id 
@@ -52,33 +56,33 @@ export function useGensparkInvites() {
                   : invite
               )
             );
-            console.log("로컬 상태 업데이트됨 (UPDATE):", payload.new);
           } else if (payload.eventType === 'INSERT' && payload.new) {
+            console.log("Processing INSERT event:", payload.new);
             setLocalInvites(prev => [payload.new as GensparkInvite, ...prev]);
-            console.log("로컬 상태 업데이트됨 (INSERT):", payload.new);
           } else if (payload.eventType === 'DELETE' && payload.old) {
+            console.log("Processing DELETE event:", payload.old);
             setLocalInvites(prev => 
               prev.filter(invite => invite.id !== payload.old.id)
             );
-            console.log("로컬 상태 업데이트됨 (DELETE):", payload.old);
           }
         }
       )
       .subscribe((status) => {
-        console.log(`genspark_invites 테이블에 대한 실시간 구독 상태: ${status}`);
+        console.log("Realtime subscription status:", status);
       });
 
-    // 컴포넌트 언마운트 시 구독 정리
+    // Clean up subscription when component unmounts
     return () => {
-      console.log("실시간 업데이트 구독 정리 중...");
+      console.log("Cleaning up global realtime subscription");
       supabase.removeChannel(channel);
     };
   }, []);
 
+  // Use react-query to fetch invites data
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
     queryFn: async () => {
-      console.log("초대 데이터 가져오는 중...");
+      console.log("Fetching invites data...");
       
       try {
         const { data, error } = await supabase
@@ -87,40 +91,46 @@ export function useGensparkInvites() {
           .order('created_at', { ascending: false });
         
         if (error) {
-          console.error("초대 가져오기 오류:", error);
+          console.error("Error fetching invites:", error);
           toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
           throw new Error(error.message);
         }
         
-        console.log("가져온 초대:", data);
+        console.log("Fetched invites data:", data);
         
-        // 가져온 데이터로 로컬 상태 업데이트
+        // Update local state with the fetched data
         if (data) {
           setLocalInvites(data as GensparkInvite[]);
         }
         
         return data as GensparkInvite[];
       } catch (err) {
-        console.error("초대 목록 가져오기 중 예외 발생:", err);
+        console.error("Exception fetching invites:", err);
         toast.error("초대 링크 목록을 불러오는 중 오류가 발생했습니다");
         throw err;
       }
     },
-    // 항상 최신 데이터를 가져오도록 staleTime 설정
-    staleTime: 0,
-    // 사용자가 페이지로 돌아오거나 브라우저 포커스가 변경될 때 자동으로 데이터 새로고침
+    staleTime: 0, // Always fetch fresh data
     refetchOnWindowFocus: true,
     refetchOnMount: true,
   });
 
+  // Handle manual refresh
   const handleDataRefresh = () => {
-    console.log("데이터 새로고침 요청됨");
+    console.log("Manual refresh requested");
     setRefreshKey(prev => prev + 1);
   };
 
+  // Handle invite update
   const handleUpdateInvite = (updatedInvite: Partial<GensparkInvite>) => {
-    console.log("초대 링크 업데이트:", updatedInvite);
+    console.log("Update invite called with:", updatedInvite);
     
+    if (!updatedInvite.id) {
+      console.error("Cannot update invite without id");
+      return;
+    }
+    
+    // Update local state
     setLocalInvites(prev => 
       prev.map(invite => 
         invite.id === updatedInvite.id 
@@ -130,9 +140,9 @@ export function useGensparkInvites() {
     );
   };
 
-  // 실제 표시할 초대 데이터 결정 (로컬 상태 우선, 쿼리 데이터는 백업)
+  // Choose which invites to display (prefer local state if available)
   const displayInvites = localInvites.length > 0 ? localInvites : invites;
-
+  
   return {
     invites: displayInvites,
     isLoading,

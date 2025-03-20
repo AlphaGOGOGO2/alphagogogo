@@ -17,14 +17,12 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks || 0);
   
-  // 초기 로드 및 invite 변경 시 클릭 카운트 설정
+  // Initialize click count and set up realtime subscription
   useEffect(() => {
     setClickCount(invite.clicks || 0);
-    console.log(`InviteCard: 초기 클릭 수 설정 - ID: ${invite.id}, 클릭 수: ${invite.clicks}`);
+    console.log(`InviteCard: Initializing card for invite ID: ${invite.id}, clicks: ${invite.clicks}`);
     
-    // 실시간 업데이트 구독
-    console.log(`Setting up realtime subscription for invite ${invite.id}`);
-    
+    // Set up realtime subscription for this specific invite
     const channel = supabase
       .channel(`invite-${invite.id}`)
       .on(
@@ -36,13 +34,13 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           filter: `id=eq.${invite.id}`
         },
         (payload) => {
-          console.log(`Received realtime update for invite ${invite.id}:`, payload);
+          console.log(`Realtime update for invite ${invite.id}:`, payload);
           
           if (payload.new && typeof payload.new.clicks === 'number') {
-            console.log(`Setting click count to ${payload.new.clicks}`);
+            console.log(`Setting click count to ${payload.new.clicks} for invite ${invite.id}`);
             setClickCount(payload.new.clicks);
             
-            // 부모 컴포넌트에 업데이트 알림 (선택적)
+            // Notify parent component about the update if callback is provided
             if (onUpdateClick && typeof onUpdateClick === 'function') {
               onUpdateClick({
                 id: invite.id,
@@ -56,6 +54,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         console.log(`Subscription status for invite ${invite.id}: ${status}`);
       });
     
+    // Clean up subscription when component unmounts
     return () => {
       console.log(`Cleaning up subscription for invite ${invite.id}`);
       supabase.removeChannel(channel);
@@ -68,33 +67,33 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       const clientId = getClientId();
       console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
-      // 임시로 로컬 상태 업데이트 (UI 반응성)
-      const newClickCount = clickCount + 1;
-      setClickCount(newClickCount);
-      
-      // DB 업데이트 - RPC 함수 호출
+      // Call the RPC function to increment the click count
+      console.log(`Calling increment_invite_clicks RPC for invite ${invite.id}`);
       const { data, error } = await supabase
         .rpc('increment_invite_clicks', { invite_id: invite.id });
       
       if (error) {
-        console.error("Error updating click count:", error);
+        console.error("Error incrementing click count:", error);
         toast.error("클릭 수를 업데이트하는 중 오류가 발생했습니다");
-        // 에러 발생 시 원래 값으로 되돌리기
-        setClickCount(clickCount);
-      } else {
-        console.log(`Successfully updated click count to ${newClickCount}`);
-        
-        // 부모 컴포넌트에 알림
-        if (onUpdateClick && typeof onUpdateClick === 'function') {
-          onUpdateClick({
-            id: invite.id,
-            clicks: newClickCount
-          });
-        }
+        return;
       }
       
-      // URL 열기
+      console.log(`Successfully called increment_invite_clicks for ${invite.id}`);
+      
+      // Open the invite URL
       window.open(invite.invite_url, '_blank');
+      
+      // Optimistically update local state
+      const newClickCount = clickCount + 1;
+      setClickCount(newClickCount);
+      
+      // Notify parent component about the update if callback is provided
+      if (onUpdateClick && typeof onUpdateClick === 'function') {
+        onUpdateClick({
+          id: invite.id,
+          clicks: newClickCount
+        });
+      }
     } catch (error) {
       console.error("Error in handleInviteClick:", error);
       toast.error("초대 링크 처리 중 오류가 발생했습니다");
