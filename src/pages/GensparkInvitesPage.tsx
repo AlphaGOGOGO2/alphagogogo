@@ -41,15 +41,18 @@ export default function GensparkInvitesPage() {
   const { data: invites = [], isLoading, error } = useQuery({
     queryKey: ['genspark-invites', refreshKey],
     queryFn: async () => {
+      console.log("Fetching invites data...");
       const { data, error } = await supabase
         .from('genspark_invites')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
+        console.error("Error fetching invites:", error);
         throw new Error(error.message);
       }
       
+      console.log("Fetched invites:", data);
       return data as GensparkInvite[];
     },
   });

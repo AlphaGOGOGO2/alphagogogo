@@ -17,6 +17,11 @@ export function InviteCard({ invite }: InviteCardProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [clickCount, setClickCount] = useState(invite.clicks);
 
+  // Initialize click count from the invite prop
+  useEffect(() => {
+    setClickCount(invite.clicks);
+  }, [invite.clicks]);
+
   // Subscribe to real-time updates for this specific invite
   useEffect(() => {
     // Create a channel to listen for changes to this specific invite
@@ -59,8 +64,21 @@ export function InviteCard({ invite }: InviteCardProps) {
       setIsLoading(true);
       const clientId = getClientId();
       
-      // First update local state to show immediate feedback
-      const newClickCount = clickCount + 1;
+      // Refresh the current invite data first to get the latest click count
+      const { data: currentInvite, error: fetchError } = await supabase
+        .from('genspark_invites')
+        .select('clicks')
+        .eq('id', invite.id)
+        .single();
+      
+      if (fetchError) {
+        throw fetchError;
+      }
+
+      // Calculate the new click count based on the latest data
+      const newClickCount = (currentInvite?.clicks || 0) + 1;
+      
+      // Update local state first for immediate feedback
       setClickCount(newClickCount);
 
       // Update the click count in Supabase
@@ -71,7 +89,7 @@ export function InviteCard({ invite }: InviteCardProps) {
 
       if (error) {
         // Revert the local state if there was an error
-        setClickCount(clickCount);
+        setClickCount(currentInvite?.clicks || 0);
         throw error;
       }
 
