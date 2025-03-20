@@ -51,7 +51,7 @@ export function useGensparkInvites() {
               clicks: typeof payload.new.clicks === 'string' 
                 ? parseInt(payload.new.clicks, 10) 
                 : (payload.new.clicks || 0)
-            };
+            } as GensparkInvite;
             
             setLocalInvites(prev => 
               prev.map(invite => 
@@ -69,9 +69,9 @@ export function useGensparkInvites() {
               clicks: typeof payload.new.clicks === 'string' 
                 ? parseInt(payload.new.clicks, 10) 
                 : (payload.new.clicks || 0)
-            };
+            } as GensparkInvite;
             
-            setLocalInvites(prev => [newInvite as GensparkInvite, ...prev]);
+            setLocalInvites(prev => [newInvite, ...prev]);
           } else if (payload.eventType === 'DELETE' && payload.old) {
             console.log("Processing DELETE event:", payload.old);
             setLocalInvites(prev => 
