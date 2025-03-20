@@ -21,7 +21,7 @@ export default function GensparkInvitesPage() {
           insert: true, 
           update: true, 
           delete: true 
-        } as never);
+        } as Record<string, unknown>);
         console.log("Realtime enabled for genspark_invites table");
       } catch (error) {
         console.error("Error enabling realtime:", error);

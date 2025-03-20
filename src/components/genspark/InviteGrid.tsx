@@ -31,7 +31,7 @@ export function InviteGrid({ invites, onInviteUpdate }: InviteGridProps) {
           insert: true,
           update: true,
           delete: true
-        } as never);
+        } as Record<string, unknown>);
         console.log('Realtime enabled for genspark_invites table in InviteGrid');
       } catch (error) {
         console.error('Error enabling realtime:', error);
