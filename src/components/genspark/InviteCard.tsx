@@ -67,10 +67,13 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       const clientId = getClientId();
       console.log(`Handling click for invite ${invite.id} with client ID ${clientId}`);
       
-      // Call the RPC function to increment the click count
-      console.log(`Calling increment_invite_clicks RPC for invite ${invite.id}`);
+      // Directly update the clicks count with a SQL update instead of using RPC
+      console.log(`Updating click count for invite ${invite.id}`);
       const { data, error } = await supabase
-        .rpc('increment_invite_clicks', { invite_id: invite.id });
+        .from('genspark_invites')
+        .update({ clicks: clickCount + 1 })
+        .eq('id', invite.id)
+        .select();
       
       if (error) {
         console.error("Error incrementing click count:", error);
@@ -78,7 +81,7 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
         return;
       }
       
-      console.log(`Successfully called increment_invite_clicks for ${invite.id}`);
+      console.log(`Successfully updated click count for ${invite.id}`, data);
       
       // Open the invite URL
       window.open(invite.invite_url, '_blank');
