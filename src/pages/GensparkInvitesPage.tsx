@@ -20,7 +20,18 @@ export default function GensparkInvitesPage() {
   // Request a refresh on mount and navigate
   useEffect(() => {
     console.log("GensparkInvitesPage mounted - refreshing data");
+    // Immediate refresh on mount
     handleDataRefresh();
+    
+    // Also set up an interval to refresh periodically
+    const intervalId = setInterval(() => {
+      console.log("Periodic refresh triggered");
+      handleDataRefresh();
+    }, 60000); // Refresh every minute
+    
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [handleDataRefresh]);
   
   return (
