@@ -29,20 +29,40 @@ export function InviteCard({
       // Immediately open URL
       window.open(invite.invite_url, '_blank');
       
+      // Get the current click count from the database
+      const { data, error: fetchError } = await supabase
+        .from('genspark_invites')
+        .select('clicks')
+        .eq('id', invite.id)
+        .single();
+      
+      if (fetchError) {
+        console.error("클릭 카운트 조회 실패:", fetchError);
+        toast.error("클릭 수 조회에 실패했습니다.");
+        onProcessingChange(invite.id, false);
+        return;
+      }
+      
+      const currentClicks = data?.clicks || invite.clicks;
+      const newClickCount = currentClicks + 1;
+      
       // Update database with incremented click count
       const { error } = await supabase
         .from('genspark_invites')
-        .update({ clicks: invite.clicks + 1 })
+        .update({ clicks: newClickCount })
         .eq('id', invite.id);
       
       if (error) {
         console.error("클릭 카운트 업데이트 실패:", error);
         toast.error("클릭 수 업데이트에 실패했습니다.");
+        onProcessingChange(invite.id, false);
         return;
       }
       
-      // Check if clicks + 1 is >= 30 and delete if necessary
-      if (invite.clicks + 1 >= 30) {
+      console.log(`초대장 ${invite.id}의 클릭 수가 ${newClickCount}로 업데이트되었습니다.`);
+      
+      // Check if newClickCount is >= 30 and delete if necessary
+      if (newClickCount >= 30) {
         const { error: deleteError } = await supabase
           .from('genspark_invites')
           .delete()
@@ -54,6 +74,8 @@ export function InviteCard({
         } else {
           toast.success("30회 클릭 달성! 초대장이 삭제되었습니다.");
         }
+      } else {
+        toast.success(`클릭 카운트가 ${newClickCount}로 업데이트되었습니다.`);
       }
       
       // Refresh data from parent - this will update all cards with latest data
