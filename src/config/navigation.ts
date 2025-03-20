@@ -19,7 +19,7 @@ export const mainNavItems: NavItem[] = [
   { name: "블로그", path: "/blog" },
   { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "GPTS 이용하기", path: "/gpts" },
-  { name: "AI 품앗이", path: "/genspark-invites", isComingSoon: true },
+  { name: "AI 품앗이", path: "/genspark-invites" },
   { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
   { name: "커뮤니티", path: "/community" }
 ];
