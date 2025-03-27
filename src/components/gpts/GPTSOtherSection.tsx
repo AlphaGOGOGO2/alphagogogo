@@ -76,9 +76,9 @@ const otherGPTS = [
   },
   {
     id: 9,
-    title: "AI 품앗이 전용 GPT",
-    description: "알파블로그의 AI 품앗이 전용 도구로, 콘텐츠 제작 및 SEO 최적화를 위한 맞춤형 AI 조합을 제공합니다.",
-    url: "https://chatgpt.com/g",
+    title: "챗지피티로 챗GPT 배우기",
+    description: "이젠 챗지피티로 챗GPT를 배웁니다.",
+    url: "https://chatgpt.com/g/g-67e4524f42ec8191b154c1936bd15bf2-caesjipitiro-caesgpt-baeugi",
     imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
     isHot: true
   }
