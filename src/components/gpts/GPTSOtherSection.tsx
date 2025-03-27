@@ -65,6 +65,22 @@ const otherGPTS = [
     url: "https://chatgpt.com/g/g-674ee52be85c8191a3d776d969ef8fda-heugbaeg-cosanghwa-inmul-imiji-saengseong-gpt",
     imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
     isHot: false
+  },
+  {
+    id: 8,
+    title: "고도화된 이미지 생성기",
+    description: "누구나 쉽게 이미지를 생성합니다. 50가지의 이미지 스타일을 제공해주며 직관적인 인터페이스로 원하는 이미지를 빠르게 생성할 수 있습니다.",
+    url: "https://chatgpt.com/g/g-67e45fe4672081918ba63b131b5f3ec5-godohwadoen-imiji-saengseonggi",
+    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    isHot: true
+  },
+  {
+    id: 9,
+    title: "AI 품앗이 전용 GPT",
+    description: "알파블로그의 AI 품앗이 전용 도구로, 콘텐츠 제작 및 SEO 최적화를 위한 맞춤형 AI 조합을 제공합니다.",
+    url: "https://chatgpt.com/g",
+    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    isHot: true
   }
 ];
 
