@@ -10,6 +10,7 @@ export interface BlogPost {
     avatar: string;
   };
   publishedAt: string;
+  updatedAt?: string; // Add optional updatedAt property
   readTime: number;
   coverImage: string;
   slug: string;

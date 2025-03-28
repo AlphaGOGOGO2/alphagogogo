@@ -15,6 +15,7 @@ export const adaptBlogPost = (post: SupabaseBlogPost): BlogPost => {
       avatar: post.author_avatar
     },
     publishedAt: post.published_at,
+    updatedAt: post.updated_at, // Add updatedAt mapping
     readTime: post.read_time,
     coverImage: post.cover_image || "",
     slug: post.slug
