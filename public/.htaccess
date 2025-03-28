@@ -50,6 +50,11 @@
   <FilesMatch "\.(xml|txt|rss)$">
     Header set Cache-Control "max-age=3600, public"
   </FilesMatch>
+  
+  # Secure cookie settings
+  Header always edit Set-Cookie (.*) "$1; SameSite=Lax"
+  Header always edit Set-Cookie (.*) "$1; Secure"
+  Header always edit Set-Cookie (.*) "$1; HttpOnly"
 </IfModule>
 
 # Protect against XSS attacks
@@ -58,6 +63,8 @@
   Header set X-Content-Type-Options "nosniff"
   Header set X-Frame-Options "SAMEORIGIN"
   Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+  Header set Feature-Policy "camera 'none'; microphone 'none'; geolocation 'none'"
 </IfModule>
 
 # 301 Redirect from non-www to www
@@ -81,4 +88,18 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 <FilesMatch "\.xml$">
   ForceType application/rss+xml
   Header set Content-Type application/rss+xml
+</FilesMatch>
+
+# Block access to hidden files and directories
+<IfModule mod_rewrite.c>
+  RewriteCond %{SCRIPT_FILENAME} -d [OR]
+  RewriteCond %{SCRIPT_FILENAME} -f
+  RewriteRule "(^|/)\." - [F]
+</IfModule>
+
+# Block access to backup and source files
+<FilesMatch "(\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|swp)|~)$">
+  Order allow,deny
+  Deny from all
+  Satisfy All
 </FilesMatch>

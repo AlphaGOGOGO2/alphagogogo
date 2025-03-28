@@ -7,9 +7,15 @@ Disallow: /blog/write
 Disallow: /blog/edit/
 Disallow: /admin/
 Disallow: /private/
+Disallow: /*?*
+
+# Prevent crawling of unnecessary parameters
+Disallow: /*?*utm_source=
+Disallow: /*?*utm_medium=
+Disallow: /*?*utm_campaign=
+Disallow: /*?*utm_term=
+Disallow: /*?*utm_content=
 
 # Sitemap and RSS location
 Sitemap: https://alphagogogo.com/sitemap.xml
 Sitemap: https://alphagogogo.com/rss.xml
-
-
