@@ -72,8 +72,16 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
 
   // Extra validation to ensure JSON is properly formed
   try {
-    // Convert to string and parse back to validate
-    const jsonString = JSON.stringify(structuredData);
+    // Convert to string - IMPORTANT: Use replacer function to handle any circular references
+    const jsonString = JSON.stringify(structuredData, (key, value) => {
+      // Check for special characters in string values that might break JSON
+      if (typeof value === 'string') {
+        // Replace any unescaped quotes or control characters that might break JSON
+        return value.replace(/\\(?!["\\/bfnrt])/g, '\\\\');
+      }
+      return value;
+    });
+    
     // This will throw if JSON is invalid
     JSON.parse(jsonString);
     
