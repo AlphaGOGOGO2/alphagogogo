@@ -16,6 +16,7 @@ import LifestylePage from "./pages/blog/LifestylePage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
 import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
+import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import ServicesPage from "./pages/ServicesPage";
 import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/gpts" element={<GPTSPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/community" element={<CommunityPage />} />
+            <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
             <Route path="/genspark-invites" element={<GensparkInvitesPage />} />
             
             {/* Service sub-pages */}

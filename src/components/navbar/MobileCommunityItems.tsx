@@ -26,8 +26,8 @@ export function MobileCommunityItems({ onClose, locationPathname }: MobileCommun
     event.preventDefault();
     
     if (category.action === 'popup' && category.actionData) {
-      const title = category.name === "오픈 채팅방" ? "오픈 채팅방 입장 안내" : "비즈니스 문의 안내";
-      const action = category.name === "오픈 채팅방" ? 'link' : 'email';
+      const title = category.name === "비즈니스 문의 안내" ? "비즈니스 문의 안내" : "비즈니스 문의 안내";
+      const action = category.name === "비즈니스 문의" ? 'email' : 'email';
       
       // 팝업 열기 시도
       const isPopupOpened = openInfoPopup({
@@ -61,7 +61,7 @@ export function MobileCommunityItems({ onClose, locationPathname }: MobileCommun
             key={category.path}
             name={`- ${category.name}`}
             path={category.path}
-            isActive={locationPathname === category.path && category.name === "실시간 채팅"}
+            isActive={locationPathname === category.path}
             onClick={() => {
               onClose();
               navigate(category.path);
