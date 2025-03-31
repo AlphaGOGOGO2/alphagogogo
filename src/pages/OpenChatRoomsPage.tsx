@@ -6,6 +6,14 @@ import { Footer } from "@/components/Footer";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription,
+  DialogFooter 
+} from "@/components/ui/dialog";
 
 interface ChatRoom {
   id: number;
@@ -37,6 +45,8 @@ const chatRooms: ChatRoom[] = [
 
 export default function OpenChatRoomsPage() {
   const [isVisible, setIsVisible] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState<ChatRoom | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -45,6 +55,18 @@ export default function OpenChatRoomsPage() {
     
     return () => clearTimeout(timer);
   }, []);
+
+  const handleRoomClick = (room: ChatRoom) => {
+    setSelectedRoom(room);
+    setDialogOpen(true);
+  };
+
+  const handleConfirm = () => {
+    if (selectedRoom) {
+      window.open(selectedRoom.url, "_blank", "noopener,noreferrer");
+    }
+    setDialogOpen(false);
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -78,17 +100,13 @@ export default function OpenChatRoomsPage() {
                     <p className="text-gray-600 mb-4">{room.description}</p>
                   </CardContent>
                   <CardFooter>
-                    <a 
-                      href={room.url} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="w-full"
+                    <Button 
+                      className="w-full bg-purple-600 hover:bg-purple-700"
+                      onClick={() => handleRoomClick(room)}
                     >
-                      <Button className="w-full bg-purple-600 hover:bg-purple-700">
-                        입장하기
-                        <ExternalLink className="ml-2 h-4 w-4" />
-                      </Button>
-                    </a>
+                      입장하기
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </Button>
                   </CardFooter>
                 </Card>
               </div>
@@ -105,6 +123,32 @@ export default function OpenChatRoomsPage() {
           </div>
         </div>
       </main>
+      
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl font-bold text-purple-800">
+              채팅방 입장 안내
+            </DialogTitle>
+            <DialogDescription className="text-center py-3">
+              <span className="block text-lg font-medium text-gray-800 mb-2">
+                입장코드는 <span className="font-bold text-purple-700">GOGOGO</span> 입니다
+              </span>
+              <span className="block text-gray-600">
+                코드를 복사하여 채팅방에 입장해 주세요.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="sm:justify-center">
+            <Button 
+              onClick={handleConfirm} 
+              className="min-w-32 bg-purple-600 hover:bg-purple-700"
+            >
+              확인
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       <Footer />
     </div>
