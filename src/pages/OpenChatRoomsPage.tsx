@@ -19,19 +19,19 @@ const chatRooms: ChatRoom[] = [
     id: 1,
     name: "1번방",
     url: "https://open.kakao.com/o/gMQApRSg",
-    description: "알파GOGOGO 커뮤니티의 첫 번째 오픈 채팅방입니다."
+    description: "유튜브 알파GOGOGO 커뮤니티 첫번째 오픈 채팅방입니다."
   },
   {
     id: 2,
     name: "2번방",
     url: "https://open.kakao.com/o/gEF0866g",
-    description: "더 많은 사람들과 소통하고 싶다면 두 번째 채팅방에 참여해보세요."
+    description: "유튜브 알파GOGOGO 커뮤니티 두번째 오픈 채팅방입니다."
   },
   {
     id: 3,
     name: "3번방",
     url: "https://open.kakao.com/o/gNCJvOeh",
-    description: "주제별 대화와 새로운 정보를 공유하는 세 번째 채팅방입니다."
+    description: "유튜브 알파GOGOGO 커뮤니티 세번째 오픈 채팅방입니다."
   }
 ];
 
@@ -98,7 +98,6 @@ export default function OpenChatRoomsPage() {
           <div className={`mt-12 p-6 bg-purple-50 rounded-lg border border-purple-100 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`} style={{ transitionDelay: `500ms` }}>
             <h3 className="text-xl font-semibold text-purple-800 mb-3">참여 안내</h3>
             <p className="text-purple-700">
-              • 채팅방 입장 시 닉네임과 프로필 사진을 설정해주세요.<br />
               • 모든 참여자를 존중하고 예의를 지켜주세요.<br />
               • 스팸, 광고성 메시지는 자제해주시기 바랍니다.<br />
               • 단순 홍보나 비방 목적의 메시지는 제재될 수 있습니다.
