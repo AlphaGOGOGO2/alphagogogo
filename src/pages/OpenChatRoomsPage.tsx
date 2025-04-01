@@ -73,6 +73,10 @@ export default function OpenChatRoomsPage() {
       <Helmet>
         <title>오픈 채팅방 | 알파GOGOGO</title>
         <meta name="description" content="알파GOGOGO 커뮤니티의 카카오톡 오픈 채팅방 목록입니다." />
+        <meta property="og:title" content="오픈 채팅방 | 알파GOGOGO" />
+        <meta property="og:description" content="알파GOGOGO 커뮤니티의 카카오톡 오픈 채팅방 목록입니다." />
+        <meta property="og:image" content="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png" />
+        <meta property="og:type" content="website" />
       </Helmet>
       
       <Navbar />

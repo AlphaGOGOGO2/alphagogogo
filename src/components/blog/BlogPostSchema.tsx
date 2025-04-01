@@ -52,7 +52,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "inLanguage": "ko-KR"
   };
 
-  // Add image if available, or use default logo
+  // Add image if available, or use default OG image
   if (post.coverImage) {
     structuredData["image"] = {
       "@type": "ImageObject",
@@ -64,9 +64,9 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
   } else {
     structuredData["image"] = {
       "@type": "ImageObject",
-      "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
-      "width": 112,
-      "height": 112
+      "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
+      "width": 1200,
+      "height": 630
     };
   }
 
