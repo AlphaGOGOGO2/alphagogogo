@@ -8,6 +8,7 @@ import { mainNavItems, servicesCategories, NavItem } from "@/config/navigation";
 import { MobileBlogItems } from "./MobileBlogItems";
 import { MobileCommunityItems } from "./MobileCommunityItems";
 import { toast } from "sonner";
+import { openInfoPopup } from "@/utils/popupUtils";
 
 interface MobileNavProps {
   isOpen: boolean;
@@ -33,6 +34,21 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
       onClose();
       return false;
     }
+    
+    // Handle AI 품앗이 page being closed
+    if (item.name === "AI 품앗이") {
+      onClose(); // Close mobile menu first
+      setTimeout(() => {
+        openInfoPopup({
+          title: "AI 품앗이 종료 안내",
+          message: "현재 AI 품앗이가 종료되었습니다. 다음 회차를 기대해 주세요!",
+          action: 'link',
+          actionData: "/"
+        });
+      }, 300);
+      return false;
+    }
+    
     onClose();
     return true;
   };

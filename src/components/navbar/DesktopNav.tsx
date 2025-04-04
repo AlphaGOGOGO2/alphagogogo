@@ -8,6 +8,7 @@ import { CommunityDropdown } from "./CommunityDropdown";
 import { ServicesDropdown } from "./ServicesDropdown";
 import { mainNavItems, blogCategories, gptsCategories, communityCategories, servicesCategories, NavItem } from "@/config/navigation";
 import { toast } from "sonner";
+import { openInfoPopup } from "@/utils/popupUtils";
 
 interface DesktopNavProps {
   isScrolled: boolean;
@@ -51,6 +52,18 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       navigate("/");
       return false;
     }
+    
+    // Handle AI 품앗이 page being closed
+    if (item.name === "AI 품앗이") {
+      openInfoPopup({
+        title: "AI 품앗이 종료 안내",
+        message: "현재 AI 품앗이가 종료되었습니다. 다음 회차를 기대해 주세요!",
+        action: 'link',
+        actionData: "/"
+      });
+      return false;
+    }
+    
     return true;
   };
 

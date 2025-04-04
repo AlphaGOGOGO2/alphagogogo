@@ -21,7 +21,7 @@ import ServicesPage from "./pages/ServicesPage";
 import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
-import GensparkInvitesPage from "./pages/GensparkInvitesPage";
+// import GensparkInvitesPage from "./pages/GensparkInvitesPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,7 +47,8 @@ const App = () => (
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
-            <Route path="/genspark-invites" element={<GensparkInvitesPage />} />
+            {/* Redirect AI 품앗이 to home page with an alert */}
+            <Route path="/genspark-invites" element={<Navigate to="/" replace />} />
             
             {/* Service sub-pages */}
             <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
