@@ -39,7 +39,7 @@ export function openInfoPopup(options: {
           size="sm"
           className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600"
         >
-          {action === 'link' ? '채팅방 참여하기' : '이메일 보내기'}
+          {action === 'link' ? (actionData === '/' ? '홈화면 바로가기' : '채팅방 참여하기') : '이메일 보내기'}
         </Button>
       ) : undefined,
     });
@@ -90,6 +90,14 @@ export function openInfoPopup(options: {
         handleClose();
       };
 
+      // Determine button text based on action and destination
+      const getButtonText = () => {
+        if (action === 'link') {
+          return actionData === '/' ? '홈화면 바로가기' : '채팅방 참여하기';
+        }
+        return '이메일 보내기';
+      };
+
       return (
         <Modal
           isOpen={isOpen}
@@ -105,7 +113,7 @@ export function openInfoPopup(options: {
                   onClick={handleAction}
                   className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600"
                 >
-                  {action === 'link' ? '채팅방 참여하기' : '이메일 보내기'}
+                  {getButtonText()}
                 </Button>
               </div>
             ) : (
