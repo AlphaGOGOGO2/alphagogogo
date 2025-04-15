@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 
 interface AdBannerProps {
@@ -13,6 +12,11 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
 
   useEffect(() => {
     try {
+      // 개발 환경에서 추가 로깅
+      if (process.env.NODE_ENV === 'development') {
+        console.log('AdBanner: Attempting to load ad', { slot, format });
+      }
+
       const adsbygoogle = window.adsbygoogle || [];
       
       if (adRef.current) {
@@ -37,10 +41,22 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
         }
         
         adRef.current.appendChild(adElement);
+        
+        // 추가 에러 처리 및 로깅
+        if (!adsbygoogle) {
+          console.error('AdSense script not loaded correctly');
+          return;
+        }
+
         adsbygoogle.push({});
       }
     } catch (error) {
-      console.error('AdSense error:', error);
+      console.error('AdSense 로딩 중 오류 발생:', error);
+      
+      // 프로덕션에서도 상세 에러 로깅
+      if (process.env.NODE_ENV === 'production') {
+        // 추후 모니터링을 위한 에러 로깅 서비스 추가 가능
+      }
     }
 
     return () => {
@@ -54,13 +70,26 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
     <div 
       ref={adRef}
       className={`ad-container my-6 text-center overflow-hidden ${className || ''}`}
-      style={style}
+      style={{
+        ...style,
+        minHeight: '90px', // 광고 최소 높이 보장
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
       aria-label="광고"
-    />
+    >
+      {/* 광고 로딩 중 또는 광고 없을 때 대체 텍스트 */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="text-gray-500 text-sm">
+          광고 로딩 중 또는 설정 필요
+        </div>
+      )}
+    </div>
   );
 };
 
-// Declare global adsbygoogle array
+// 전역 adsbygoogle 배열 선언
 declare global {
   interface Window {
     adsbygoogle: any[];
