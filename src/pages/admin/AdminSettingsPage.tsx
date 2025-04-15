@@ -12,18 +12,21 @@ import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 export default function AdminSettingsPage() {
-  // 시스템 설정 상태 (실제로는 DB에서 가져와야 할 내용)
   const [settings, setSettings] = useState({
     siteName: "알파GOGOGO",
     siteDescription: "본질을 찾아서",
+    shortDescription: "AI 소식과 인사이트를 공유하는 블로그",
+    longDescription: "알파GOGOGO는 최신 AI 기술 동향, 인공지능 관련 뉴스, 그리고 다양한 AI 서비스 리뷰를 제공하는 전문 블로그입니다. 인공지능과 관련된 깊이 있는 인사이트와 실용적인 정보를 제공합니다.",
     adminEmail: "admin@alphagogogo.com",
     enableComments: true,
-    metaKeywords: "알파고고고,알파고,인공지능,AI,블로그",
+    seoTitle: "알파GOGOGO - AI 전문 블로그",
+    seoDescription: "최신 AI 소식, 인공지능 동향, 그리고 실용적인 AI 서비스 리뷰를 제공하는 전문 블로그입니다.",
+    metaKeywords: "알파고고고,알파고,인공지능,AI,블로그,AI 소식,인공지능 뉴스,AI 서비스,AI 리뷰,AI 트렌드,ChatGPT,인공지능 기술",
+    ogImage: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
     customCss: "",
     customJs: ""
   });
   
-  // 설정 변경 처리
   const handleSettingChange = (key: keyof typeof settings, value: string | boolean) => {
     setSettings({
       ...settings,
@@ -31,15 +34,11 @@ export default function AdminSettingsPage() {
     });
   };
   
-  // 설정 저장 처리 (실제로는 DB에 저장)
   const handleSaveSettings = () => {
-    // 설정 저장 로직 (실제로는 DB에 저장)
     toast.success("설정이 저장되었습니다.");
   };
   
-  // 캐시 삭제 처리
   const handleClearCache = () => {
-    // 캐시 삭제 로직
     toast.success("캐시가 삭제되었습니다.");
   };
   
@@ -86,13 +85,26 @@ export default function AdminSettingsPage() {
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="site-description">사이트 설명</Label>
-                  <Textarea
-                    id="site-description"
-                    value={settings.siteDescription}
-                    onChange={(e) => handleSettingChange("siteDescription", e.target.value)}
-                    rows={3}
+                  <Label htmlFor="short-description">짧은 소개글</Label>
+                  <Input
+                    id="short-description"
+                    value={settings.shortDescription}
+                    onChange={(e) => handleSettingChange("shortDescription", e.target.value)}
+                    placeholder="사이트를 간단히 소개하는 한 줄 설명"
                   />
+                  <p className="text-xs text-gray-500">메타 태그와 검색 결과에 표시될 간단한 설명입니다.</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <Label htmlFor="long-description">상세 소개글</Label>
+                  <Textarea
+                    id="long-description"
+                    value={settings.longDescription}
+                    onChange={(e) => handleSettingChange("longDescription", e.target.value)}
+                    rows={4}
+                    placeholder="사이트의 목적과 제공하는 컨텐츠에 대한 상세한 설명"
+                  />
+                  <p className="text-xs text-gray-500">사이트의 주요 페이지와 about 페이지에 표시될 상세한 설명입니다.</p>
                 </div>
                 
                 <div className="flex items-center space-x-2">
@@ -120,16 +132,56 @@ export default function AdminSettingsPage() {
             <CardContent>
               <div className="space-y-6">
                 <div className="space-y-2">
+                  <Label htmlFor="seo-title">기본 SEO 타이틀</Label>
+                  <Input
+                    id="seo-title"
+                    value={settings.seoTitle}
+                    onChange={(e) => handleSettingChange("seoTitle", e.target.value)}
+                    placeholder="검색 결과에 표시될 기본 타이틀"
+                  />
+                  <p className="text-xs text-gray-500">
+                    검색 엔진과 소셜 미디어에 표시될 기본 타이틀입니다.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="seo-description">SEO 설명</Label>
+                  <Textarea
+                    id="seo-description"
+                    value={settings.seoDescription}
+                    onChange={(e) => handleSettingChange("seoDescription", e.target.value)}
+                    rows={3}
+                    placeholder="검색 결과에 표시될 사이트 설명"
+                  />
+                  <p className="text-xs text-gray-500">
+                    150-160자 이내로 작성하시면 검색 결과에 최적화됩니다.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
                   <Label htmlFor="meta-keywords">메타 키워드</Label>
                   <Textarea
                     id="meta-keywords"
                     value={settings.metaKeywords}
                     onChange={(e) => handleSettingChange("metaKeywords", e.target.value)}
-                    placeholder="키워드를 쉼표(,)로 구분하여 입력하세요"
                     rows={3}
+                    placeholder="키워드를 쉼표(,)로 구분하여 입력하세요"
                   />
                   <p className="text-xs text-gray-500">
-                    콤마(,)로 구분된 키워드를 입력하세요. 사이트 전체에 적용됩니다.
+                    주요 키워드를 쉼표(,)로 구분하여 입력하세요. 10-15개의 키워드가 적당합니다.
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="og-image">대표 이미지 URL</Label>
+                  <Input
+                    id="og-image"
+                    value={settings.ogImage}
+                    onChange={(e) => handleSettingChange("ogImage", e.target.value)}
+                    placeholder="소셜 미디어에 표시될 대표 이미지 URL"
+                  />
+                  <p className="text-xs text-gray-500">
+                    1200 x 630 픽셀 크기의 이미지를 권장합니다.
                   </p>
                 </div>
                 
