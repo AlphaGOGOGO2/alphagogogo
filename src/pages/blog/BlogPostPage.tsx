@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 import { SEO } from "@/components/SEO";
 import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
+import { AdBanner } from "@/components/ads/AdBanner";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -141,12 +141,24 @@ export default function BlogPostPage() {
             </div>
           </div>
           
+          <AdBanner 
+            slot="3456789012" 
+            format="rectangle"
+            className="my-6"
+            style={{ minHeight: '250px' }}
+          />
+          
           <div className="prose prose-purple max-w-none">
-            {/* Render the content safely */}
             <div dangerouslySetInnerHTML={{ __html: post.content }} />
           </div>
           
-          {/* Display tags if available */}
+          <AdBanner 
+            slot="5678901234" 
+            format="rectangle"
+            className="my-8"
+            style={{ minHeight: '250px' }}
+          />
+          
           {post.tags && post.tags.length > 0 && (
             <div className="mt-8 pt-6 border-t border-gray-100">
               <h3 className="text-lg font-medium text-gray-800 mb-3">태그</h3>
@@ -165,7 +177,6 @@ export default function BlogPostPage() {
         </div>
       </article>
       
-      {/* Password Authentication Modal */}
       <BlogPasswordModal 
         isOpen={showAuthModal} 
         onClose={() => setShowAuthModal(false)} 

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { PenLine } from "lucide-react";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 import { Banner } from "@/components/Banner";
+import { AdBanner } from "@/components/ads/AdBanner";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -62,6 +63,16 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           {/* Add Banner at the top */}
           {!isWritePage && <Banner />}
           
+          {/* Add top ad banner for non-write pages */}
+          {!isWritePage && (
+            <AdBanner 
+              slot="1234567890" 
+              format="auto" 
+              className="mt-4 mb-6" 
+              style={{ minHeight: '90px' }} 
+            />
+          )}
+          
           <header className="py-8 flex flex-col md:flex-row md:items-center md:justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 opacity-0 animate-fade-in" 
@@ -112,6 +123,16 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           >
             {children}
           </section>
+          
+          {/* Add bottom ad banner for non-write pages */}
+          {!isWritePage && (
+            <AdBanner 
+              slot="9876543210" 
+              format="auto" 
+              className="mt-10 mb-4" 
+              style={{ minHeight: '250px' }}
+            />
+          )}
         </div>
       </main>
       
