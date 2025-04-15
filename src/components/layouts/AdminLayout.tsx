@@ -1,4 +1,3 @@
-
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,6 @@ import {
   Home,
   User
 } from "lucide-react";
-import { AdIcon } from "@/components/icons/AdIcon"; // 사용자 정의 아이콘을 올바른 경로에서 가져옵니다
 import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 
@@ -58,7 +56,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     { name: "대시보드", path: "/admin", icon: BarChart3 },
     { name: "블로그 관리", path: "/admin/posts", icon: FileText },
     { name: "카테고리 관리", path: "/admin/categories", icon: Tags },
-    { name: "광고 관리", path: "/admin/ads", icon: AdIcon },
     { name: "시스템 설정", path: "/admin/settings", icon: Settings },
   ];
   

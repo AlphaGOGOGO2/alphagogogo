@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -27,7 +26,6 @@ import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
-import AdminAdsPage from "./pages/admin/AdminAdsPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 
 const queryClient = new QueryClient({
@@ -80,7 +78,6 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/admin/posts" element={<AdminPostsPage />} />
             <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-            <Route path="/admin/ads" element={<AdminAdsPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
             
             {/* Redirect legacy paths or alternate paths */}
