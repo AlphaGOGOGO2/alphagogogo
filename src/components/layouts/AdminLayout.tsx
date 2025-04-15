@@ -9,9 +9,9 @@ import {
   Tags, 
   Newspaper,
   Home,
-  AdIcon,
   User
 } from "lucide-react";
+import { AdIcon } from "@/components/icons/AdIcon"; // 사용자 정의 아이콘을 올바른 경로에서 가져옵니다
 import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 
