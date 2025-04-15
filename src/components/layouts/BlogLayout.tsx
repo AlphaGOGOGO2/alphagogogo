@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { PenLine } from "lucide-react";
+import { PenLine, LayoutDashboard } from "lucide-react";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 import { Banner } from "@/components/Banner";
 import { AdBanner } from "@/components/ads/AdBanner";
@@ -20,6 +20,7 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
   const location = useLocation();
   const isWritePage = location.pathname === "/blog/write";
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
 
   // Add animation effect when component mounts
   useEffect(() => {
@@ -102,17 +103,34 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
               </nav>
             </div>
             
-            {location.pathname !== "/blog/write" && (
-              <Button 
-                onClick={handleWriteButtonClick}
-                className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 opacity-0 animate-fade-in" 
-                style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
-                aria-label="블로그 글 작성하기"
-              >
-                <PenLine size={16} />
-                글쓰기
-              </Button>
-            )}
+            <div className="flex items-center gap-2">
+              {location.pathname !== "/blog/write" && (
+                <Button 
+                  onClick={handleWriteButtonClick}
+                  className="bg-purple-600 hover:bg-purple-700 flex items-center gap-2 opacity-0 animate-fade-in" 
+                  style={{ animationDelay: '300ms', animationFillMode: 'forwards' }}
+                  aria-label="블로그 글 작성하기"
+                >
+                  <PenLine size={16} />
+                  글쓰기
+                </Button>
+              )}
+              
+              {/* 관리자 대시보드 버튼 추가 */}
+              {isAuthorized && (
+                <Link to="/admin">
+                  <Button 
+                    variant="outline"
+                    className="flex items-center gap-2 opacity-0 animate-fade-in" 
+                    style={{ animationDelay: '350ms', animationFillMode: 'forwards' }}
+                    aria-label="관리자 대시보드"
+                  >
+                    <LayoutDashboard size={16} />
+                    대시보드
+                  </Button>
+                </Link>
+              )}
+            </div>
           </header>
           
           <section 

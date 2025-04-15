@@ -23,6 +23,13 @@ import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 // import GensparkInvitesPage from "./pages/GensparkInvitesPage";
 
+// 관리자 페이지 가져오기
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminPostsPage from "./pages/admin/AdminPostsPage";
+import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
+import AdminAdsPage from "./pages/admin/AdminAdsPage";
+import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -68,6 +75,13 @@ const App = () => (
             <Route path="/blog/write" element={<BlogWritePage />} />
             <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
+            
+            {/* 관리자 대시보드 라우트 */}
+            <Route path="/admin" element={<AdminDashboardPage />} />
+            <Route path="/admin/posts" element={<AdminPostsPage />} />
+            <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+            <Route path="/admin/ads" element={<AdminAdsPage />} />
+            <Route path="/admin/settings" element={<AdminSettingsPage />} />
             
             {/* Redirect legacy paths or alternate paths */}
             <Route path="/latest-ai-updates" element={<Navigate to="/blog/latest-updates" replace />} />
