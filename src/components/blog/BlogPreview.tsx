@@ -53,8 +53,8 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
                   ol: ({node, ...props}) => <ol className="list-decimal pl-6 my-3" {...props} />,
                   li: ({node, ...props}) => <li className="my-1" {...props} />,
                   blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-purple-300 pl-4 italic text-gray-600 bg-purple-50 py-2 rounded" {...props} />,
-                  code: (props) => {
-                    const { inline, ...restProps } = props as { inline?: boolean } & React.HTMLAttributes<HTMLElement>;
+                  code: (props: { inline?: boolean } & React.HTMLAttributes<HTMLElement>) => {
+                    const { inline, ...restProps } = props;
                     return inline
                       ? <code className="bg-purple-50 px-1 rounded text-purple-700 text-[0.98em]" {...restProps} />
                       : <pre className="bg-gray-900 text-gray-100 rounded p-4 my-4 overflow-x-auto"><code {...restProps} /></pre>;
