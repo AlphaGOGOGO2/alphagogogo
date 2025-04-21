@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
@@ -21,6 +22,9 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
     setParsedTags(tagArray);
   }, [tags]);
 
+  // 마크다운 렌더 전에 앞쪽 공백/엔터 제거 (헤더가 아니라 텍스트로 보이는 경우 방지)
+  const parsedContent = typeof content === "string" ? content.replace(/^\s*\n/, "").trimStart() : "";
+
   return (
     <div className="p-8 h-full">
       <h2 className="text-xl font-semibold text-purple-800 mb-4">미리보기</h2>
@@ -36,7 +40,7 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 overflow-auto flex-grow">
-          {content ? (
+          {parsedContent ? (
             <div className="markdown-purple prose prose-purple max-w-none">
               <ReactMarkdown
                 remarkPlugins={[remarkGfm]}
@@ -65,7 +69,7 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
                   img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" {...props} />,
                 }}
               >
-                {content}
+                {parsedContent}
               </ReactMarkdown>
             </div>
           ) : (
