@@ -10,9 +10,10 @@ import { supabase } from "@/integrations/supabase/client";
 interface BlogPasswordModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: () => void; // 성공 시 콜백 추가
 }
 
-export function BlogPasswordModal({ isOpen, onClose }: BlogPasswordModalProps) {
+export function BlogPasswordModal({ isOpen, onClose, onSuccess }: BlogPasswordModalProps) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,8 +41,13 @@ export function BlogPasswordModal({ isOpen, onClose }: BlogPasswordModalProps) {
         // Correct password
         sessionStorage.setItem("blogAuthToken", data.token);
         setIsSubmitting(false);
-        onClose();
-        navigate("/blog/write");
+
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          onClose();
+          navigate("/blog/write");
+        }
       } else {
         // Incorrect password
         setError("비밀번호가 올바르지 않습니다. 다시 시도해주세요.");

@@ -1,3 +1,4 @@
+
 import { ReactNode, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -27,10 +28,10 @@ interface NavItem {
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  
+
   // 관리자 세션 확인
   const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
-  
+
   // 인증 확인
   if (!isAuthorized) {
     // 인증되지 않은 경우 인증 모달 표시
@@ -45,12 +46,13 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           <BlogPasswordModal 
             isOpen={showAuthModal} 
             onClose={() => setShowAuthModal(false)} 
+            onSuccess={() => window.location.reload()} // 인증 성공 시 새로고침(즉시 어드민 진입)
           />
         </div>
       </div>
     );
   }
-  
+
   // 사이드바 네비게이션 항목
   const navItems: NavItem[] = [
     { name: "대시보드", path: "/admin", icon: BarChart3 },
@@ -58,7 +60,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     { name: "카테고리 관리", path: "/admin/categories", icon: Tags },
     { name: "시스템 설정", path: "/admin/settings", icon: Settings },
   ];
-  
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* 사이드바 */}
@@ -115,12 +117,9 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           {children}
         </main>
       </div>
-      
-      {/* 인증 모달 */}
-      <BlogPasswordModal 
-        isOpen={showAuthModal} 
-        onClose={() => setShowAuthModal(false)} 
-      />
+
+      {/* 필요시 모달 (어드민 진입 후엔 표시 안 함) */}
+      {/* BlogPasswordModal은 어드민 진입 후 불필요하므로 제거 */}
     </div>
   );
 }
