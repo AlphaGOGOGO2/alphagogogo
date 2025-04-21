@@ -1,8 +1,7 @@
 
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ImageIcon, Loader2 } from "lucide-react";
+import { ImageIcon, Loader2, Eye } from "lucide-react";
 import { useState, useRef } from "react";
 import { uploadBlogImage } from "@/services/blogMediaService";
 import { toast } from "sonner";
@@ -24,7 +23,7 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
     // Check file type
     const isImage = file.type.startsWith('image/');
     const isVideo = file.type.startsWith('video/');
-    
+
     if (!isImage && !isVideo) {
       toast.error("이미지 또는 동영상 파일만 업로드 가능합니다");
       return;
@@ -39,45 +38,43 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
     setIsUploading(true);
     try {
       const mediaUrl = await uploadBlogImage(file);
-      
+
       if (mediaUrl) {
-        // Insert media HTML at cursor position
+        // Insert Markdown at cursor position
         const textarea = textareaRef.current;
         if (textarea) {
           const start = textarea.selectionStart;
           const end = textarea.selectionEnd;
-          
-          let mediaHtml = '';
+
+          let mediaMd = '';
           if (isImage) {
-            mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
+            mediaMd = `![블로그 이미지](${mediaUrl})`;
           } else if (isVideo) {
-            mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+            // 마크다운 기본은 비디오 태그를 지원하지 않아 html 직접 입력
+            mediaMd = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
           }
-          
-          const newContent = content.substring(0, start) + mediaHtml + content.substring(end);
+
+          const newContent = content.substring(0, start) + mediaMd + content.substring(end);
           setContent(newContent);
-          
-          // Set cursor position after the inserted media
+
           setTimeout(() => {
             if (textarea) {
-              const newPosition = start + mediaHtml.length;
+              const newPosition = start + mediaMd.length;
               textarea.focus();
               textarea.setSelectionRange(newPosition, newPosition);
             }
           }, 0);
         } else {
-          // Fallback if textarea ref is not available
-          // Define mediaHtml here as well to fix the scope issue
-          let mediaHtml = '';
+          let mediaMd = '';
           if (isImage) {
-            mediaHtml = `<img src="${mediaUrl}" alt="블로그 이미지" class="my-4 rounded-lg mx-auto max-w-full" />`;
+            mediaMd = `![블로그 이미지](${mediaUrl})`;
           } else if (isVideo) {
-            mediaHtml = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
+            mediaMd = `<video controls src="${mediaUrl}" class="my-4 rounded-lg mx-auto max-w-full"></video>`;
           }
-          
-          setContent(content ? `${content}\n${mediaHtml}` : mediaHtml);
+
+          setContent(content ? `${content}\n${mediaMd}` : mediaMd);
         }
-        
+
         toast.success(`${isImage ? '이미지' : '동영상'}가 업로드되었습니다`);
       }
     } catch (error) {
@@ -85,7 +82,6 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
       toast.error("파일 업로드에 실패했습니다");
     } finally {
       setIsUploading(false);
-      // Reset the file input
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -99,7 +95,7 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <Label htmlFor="content">내용</Label>
+        <Label htmlFor="content">내용 (마크다운 지원)</Label>
         <Button
           type="button"
           variant="outline"
@@ -128,17 +124,19 @@ export function BlogContentInput({ content, setContent }: BlogContentInputProps)
           className="hidden"
         />
       </div>
-      <Textarea 
-        id="content" 
+      <textarea
+        id="content"
         ref={textareaRef}
-        value={content} 
-        onChange={(e) => setContent(e.target.value)} 
-        placeholder="내용을 입력하세요" 
-        rows={15} 
-        required 
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        placeholder={`# 마크다운으로 작성해보세요! \n\n예시: \n- ## 소제목 \n- **굵은 글씨**, *기울임* \n- [링크](https://alphagogogo.com)`}
+        rows={15}
+        className="w-full rounded-lg border-gray-300 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 shadow text-sm p-4 bg-gray-50 resize-y transition"
+        required
       />
       <p className="text-sm text-gray-500">
-        HTML 형식으로 작성 가능합니다. 본문에 포함된 첫 번째 이미지가 자동으로 커버 이미지로 사용됩니다.
+        <span className="text-purple-600 font-semibold">마크다운(Markdown)</span> 형식으로 작성할 수 있어요.<br />
+        <span className="text-purple-700">h1/h2/ul/code/표/이미지/인용문/체크리스트</span> 등 지원하며, 이미지 첨부는 상단 버튼 이용!
       </p>
     </div>
   );
