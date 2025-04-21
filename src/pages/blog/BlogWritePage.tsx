@@ -24,16 +24,19 @@ export default function BlogWritePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [postId, setPostId] = useState<string | null>(null);
 
+  // 예약발행 관련 상태 추가
+  const [scheduled, setScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState<Date | null>(null);
+  const [scheduledTime, setScheduledTime] = useState<string>("12:00");
+
   // Check authentication status
   useEffect(() => {
     const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
-    
     if (!isAuthorized) {
       openInfoPopup({
         title: "접근 권한 없음",
         message: "글쓰기 페이지에 접근할 권한이 없습니다. 먼저 관리자 인증을 해주세요.",
       });
-      
       navigate("/blog");
     }
   }, [navigate]);
@@ -55,13 +58,33 @@ export default function BlogWritePage() {
     }
   }, [isEditMode, postToEdit]);
 
+  // 예약발행 시간 계산
+  const getScheduledAt = () => {
+    if (!scheduled || !scheduledDate) return undefined;
+    // 시간(시:분) 입력값 파싱
+    const [hours, minutes] = scheduledTime.split(":").map(Number);
+    const date = new Date(scheduledDate);
+    date.setHours(hours, minutes, 0, 0);
+    return date.toISOString();
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
-    // Form validation
     if (!title || !content || !category) {
       toast.error("제목, 내용, 카테고리는 필수입력 항목입니다");
       return;
+    }
+
+    // 예약발행 설정되었다면 scheduled_at validate
+    if (scheduled) {
+      if (!scheduledDate || !scheduledTime) {
+        toast.error("예약 날짜와 시간을 모두 선택해주세요");
+        return;
+      }
+      if (new Date(getScheduledAt()!) < new Date()) {
+        toast.error("예약 발행 시간은 현재 시각 이후여야 합니다.");
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -73,49 +96,45 @@ export default function BlogWritePage() {
         .map(tag => tag.trim())
         .filter(tag => tag !== "");
       
-      console.log("Parsed tags:", parsedTags);
-      
       let result;
       
       if (isEditMode && postId) {
         // Update existing post
-        console.log("Updating blog post:", { id: postId, title, content, category, tags: parsedTags });
         result = await updateBlogPost(postId, {
           title,
           content,
           category,
-          tags: parsedTags
+          tags: parsedTags,
+          scheduled_at: getScheduledAt()
         });
       } else {
         // Create new post
-        console.log("Creating new blog post:", { title, content, category, tags: parsedTags });
         result = await createBlogPost({
           title,
           content,
           category,
-          tags: parsedTags
+          tags: parsedTags,
+          scheduled_at: getScheduledAt()
         });
       }
       
       if (result) {
-        console.log("Post operation successful:", result);
         toast.success(isEditMode 
           ? "블로그 포스트가 성공적으로 수정되었습니다"
-          : "블로그 포스트가 성공적으로 저장되었습니다"
+          : scheduled
+            ? "블로그 포스트가 예약되었습니다"
+            : "블로그 포스트가 성공적으로 저장되었습니다"
         );
-        // Navigate after a short delay to ensure toast is visible
         setTimeout(() => {
           navigate(`/blog/${result.slug}`);
         }, 1000);
       } else {
-        console.error("Blog post operation returned null or undefined");
         toast.error(isEditMode 
           ? "블로그 포스트 수정에 실패했습니다"
           : "블로그 포스트 작성에 실패했습니다"
         );
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
       toast.error(`블로그 포스트 ${isEditMode ? '수정' : '작성'}에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
     } finally {
       setIsSubmitting(false);
@@ -140,6 +159,13 @@ export default function BlogWritePage() {
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
             isEditMode={isEditMode}
+            // 예약발행 관련 prop 전달
+            scheduled={scheduled}
+            setScheduled={setScheduled}
+            scheduledDate={scheduledDate}
+            setScheduledDate={setScheduledDate}
+            scheduledTime={scheduledTime}
+            setScheduledTime={setScheduledTime}
           />
         </div>
         <div className="w-full lg:w-1/2 bg-white rounded-lg shadow-sm border border-gray-100 overflow-auto">
