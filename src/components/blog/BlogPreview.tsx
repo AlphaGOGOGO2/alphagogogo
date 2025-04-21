@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ReactMarkdown from "react-markdown";
@@ -14,7 +13,6 @@ interface BlogPreviewProps {
 export function BlogPreview({ title, content, category, tags }: BlogPreviewProps) {
   const [parsedTags, setParsedTags] = useState<string[]>([]);
 
-  // Parse tags whenever the tags string changes
   useEffect(() => {
     const tagArray = tags
       .split(',')
@@ -55,9 +53,12 @@ export function BlogPreview({ title, content, category, tags }: BlogPreviewProps
                   ol: ({node, ...props}) => <ol className="list-decimal pl-6 my-3" {...props} />,
                   li: ({node, ...props}) => <li className="my-1" {...props} />,
                   blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-purple-300 pl-4 italic text-gray-600 bg-purple-50 py-2 rounded" {...props} />,
-                  code: ({inline, ...props}) => inline
-                    ? <code className="bg-purple-50 px-1 rounded text-purple-700 text-[0.98em]" {...props} />
-                    : <pre className="bg-gray-900 text-gray-100 rounded p-4 my-4 overflow-x-auto"><code {...props} /></pre>,
+                  code: (props) => {
+                    const { inline, ...restProps } = props as { inline?: boolean } & React.HTMLAttributes<HTMLElement>;
+                    return inline
+                      ? <code className="bg-purple-50 px-1 rounded text-purple-700 text-[0.98em]" {...restProps} />
+                      : <pre className="bg-gray-900 text-gray-100 rounded p-4 my-4 overflow-x-auto"><code {...restProps} /></pre>;
+                  },
                   table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
                   th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
                   td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
