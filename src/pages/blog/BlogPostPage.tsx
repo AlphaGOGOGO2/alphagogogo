@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,14 +20,12 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // Fetch the blog post by slug
   const { data: post, isLoading, error } = useQuery({
     queryKey: ["blog-post", slug],
     queryFn: () => getBlogPostBySlug(slug!),
     enabled: !!slug
   });
   
-  // If post not found, navigate back to blog
   useEffect(() => {
     if (!isLoading && !post && error) {
       console.error("Blog post not found:", error);
@@ -37,7 +34,6 @@ export default function BlogPostPage() {
   }, [isLoading, post, error, navigate]);
 
   useEffect(() => {
-    // Start animation after a slight delay
     const timer = setTimeout(() => {
       setIsVisible(true);
     }, 100);
@@ -46,14 +42,11 @@ export default function BlogPostPage() {
   }, []);
   
   const handleEdit = () => {
-    // Check if user is already authenticated for blog editing
     const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
     
     if (isAuthorized && post) {
-      // If already authenticated, navigate directly to edit page
       navigate(`/blog/edit/${post.slug}`, { state: { post } });
     } else {
-      // Otherwise show the auth modal
       setShowAuthModal(true);
     }
   };
@@ -80,7 +73,6 @@ export default function BlogPostPage() {
     );
   }
   
-  // Prepare SEO data
   const postUrl = `https://alphagogogo.com/blog/${post.slug}`;
   const excerpt = post.excerpt || generateExcerpt(post.content);
   const postKeywords = post.tags && post.tags.length > 0
@@ -151,13 +143,19 @@ export default function BlogPostPage() {
             style={{ minHeight: '250px' }}
           />
           
-          {/* 마크다운 렌더링 (dangerouslySetInnerHTML 제거) */}
           <div className="prose prose-purple max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
               components={{
-                h1: ({node, ...props}) => <h1 className="mt-8 mb-4 text-3xl font-bold text-purple-900 border-b-2 border-purple-300 pb-1" {...props} />,
-                h2: ({node, ...props}) => <h2 className="mt-7 mb-3 text-2xl font-semibold text-purple-800 border-b border-purple-200 pb-1" {...props} />,
+                h1: ({node, ...props}) => (
+                  <h1 className="mt-8 mb-4 text-3xl font-bold text-purple-900 border-b-2 border-purple-300 pb-1" {...props} />
+                ),
+                h2: ({node, ...props}) => (
+                  <h2
+                    className="mt-7 mb-3 text-2xl font-semibold text-purple-800 border-b border-purple-200 pb-1 border-l-4 border-purple-400 pl-4"
+                    {...props}
+                  />
+                ),
                 h3: ({node, ...props}) => <h3 className="mt-6 mb-2 text-xl font-semibold text-purple-700" {...props} />,
                 h4: ({node, ...props}) => <h4 className="mt-5 mb-2 text-lg font-semibold text-purple-600" {...props} />,
                 h5: ({node, ...props}) => <h5 className="mt-4 mb-2 text-base font-semibold text-purple-500" {...props} />,
