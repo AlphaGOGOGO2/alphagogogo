@@ -75,7 +75,7 @@ export default function BlogWritePage() {
       return;
     }
 
-    // 예약발행 설정되었다면 scheduled_at validate
+    // 예약발행 설정되었다면 published_at validate
     if (scheduled) {
       if (!scheduledDate || !scheduledTime) {
         toast.error("예약 날짜와 시간을 모두 선택해주세요");
@@ -105,7 +105,7 @@ export default function BlogWritePage() {
           content,
           category,
           tags: parsedTags,
-          scheduled_at: getScheduledAt()
+          published_at: getScheduledAt(), // <-- FIXED: use published_at instead of scheduled_at
         });
       } else {
         // Create new post
@@ -114,7 +114,7 @@ export default function BlogWritePage() {
           content,
           category,
           tags: parsedTags,
-          scheduled_at: getScheduledAt()
+          published_at: getScheduledAt(), // <-- FIXED: use published_at instead of scheduled_at
         });
       }
       
@@ -180,3 +180,4 @@ export default function BlogWritePage() {
     </BlogLayout>
   );
 }
+
