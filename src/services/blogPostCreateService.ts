@@ -7,7 +7,7 @@ import { handleBlogTags } from "./blogPostTagsService";
 
 // Create a new blog post
 export const createBlogPost = async (
-  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
+  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
 ): Promise<SupabaseBlogPost | null> => {
   try {
     const slug = generateSlug(post.title!);
@@ -26,7 +26,7 @@ export const createBlogPost = async (
       coverImageUrl
     });
     
-    // Create the blog post object with all required fields properly defined
+    // Use post.published_at if it exists; otherwise, use now
     const blogPostData = {
       title: post.title!,
       content: post.content!,
@@ -37,7 +37,7 @@ export const createBlogPost = async (
       excerpt,
       author_name: "알파GOGOGO", // Default author name
       author_avatar: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png", // Updated profile image URL
-      published_at: new Date().toISOString() // Explicitly set published_at
+      published_at: post.published_at ?? new Date().toISOString()
     };
     
     console.log("Final blog post data for insert:", blogPostData);

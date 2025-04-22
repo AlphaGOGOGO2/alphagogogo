@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
 import { calculateReadingTime, generateExcerpt, extractFirstImageUrl } from "@/utils/blogUtils";
@@ -8,7 +7,7 @@ import { handleBlogTags, removeExistingTags } from "./blogPostTagsService";
 // Update an existing blog post
 export const updateBlogPost = async (
   id: string,
-  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "published_at" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
+  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
 ): Promise<SupabaseBlogPost | null> => {
   try {
     const readTime = calculateReadingTime(post.content!);
@@ -26,8 +25,8 @@ export const updateBlogPost = async (
       coverImageUrl
     });
     
-    // Create the blog post object with all required fields properly defined
-    const blogPostData = {
+    // Use post.published_at if given, otherwise leave unchanged
+    const blogPostData: Partial<SupabaseBlogPost> = {
       title: post.title!,
       content: post.content!,
       category: post.category!,
@@ -36,6 +35,9 @@ export const updateBlogPost = async (
       excerpt,
       updated_at: new Date().toISOString()
     };
+    if (post.published_at) {
+      blogPostData.published_at = post.published_at;
+    }
     
     console.log("Final blog post data for update:", blogPostData);
     
