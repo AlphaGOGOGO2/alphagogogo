@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -11,6 +12,8 @@ import { SEO } from "@/components/SEO";
 import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import { AdBanner } from "@/components/ads/AdBanner";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -148,8 +151,37 @@ export default function BlogPostPage() {
             style={{ minHeight: '250px' }}
           />
           
+          {/* 마크다운 렌더링 (dangerouslySetInnerHTML 제거) */}
           <div className="prose prose-purple max-w-none">
-            <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                h1: ({node, ...props}) => <h1 className="mt-8 mb-4 text-3xl font-bold text-purple-900 border-b-2 border-purple-300 pb-1" {...props} />,
+                h2: ({node, ...props}) => <h2 className="mt-7 mb-3 text-2xl font-semibold text-purple-800 border-b border-purple-200 pb-1" {...props} />,
+                h3: ({node, ...props}) => <h3 className="mt-6 mb-2 text-xl font-semibold text-purple-700" {...props} />,
+                h4: ({node, ...props}) => <h4 className="mt-5 mb-2 text-lg font-semibold text-purple-600" {...props} />,
+                h5: ({node, ...props}) => <h5 className="mt-4 mb-2 text-base font-semibold text-purple-500" {...props} />,
+                h6: ({node, ...props}) => <h6 className="mt-3 mb-2 text-base font-semibold text-purple-400" {...props} />,
+                p: ({node, ...props}) => <p className="my-3 text-gray-800" {...props} />,
+                a: ({node, ...props}) => <a className="text-purple-600 underline hover:text-purple-800 transition" target="_blank" rel="noopener noreferrer" {...props} />,
+                ul: ({node, ...props}) => <ul className="list-disc pl-6 my-3" {...props} />,
+                ol: ({node, ...props}) => <ol className="list-decimal pl-6 my-3" {...props} />,
+                li: ({node, ...props}) => <li className="my-1" {...props} />,
+                blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-purple-300 pl-4 italic text-gray-600 bg-purple-50 py-2 rounded" {...props} />,
+                code: (props: { inline?: boolean } & React.HTMLAttributes<HTMLElement>) => {
+                  const { inline, ...restProps } = props;
+                  return inline
+                    ? <code className="bg-purple-50 px-1 rounded text-purple-700 text-[0.98em]" {...restProps} />
+                    : <pre className="bg-gray-900 text-gray-100 rounded p-4 my-4 overflow-x-auto"><code {...restProps} /></pre>;
+                },
+                table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
+                th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
+                td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
+                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" {...props} />,
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
           </div>
           
           <AdBanner 
