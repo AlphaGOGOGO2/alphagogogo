@@ -152,7 +152,7 @@ export default function BlogPostPage() {
                 ),
                 h2: ({node, ...props}) => (
                   <h2
-                    className="mt-7 mb-3 text-2xl font-semibold text-purple-800 border-b border-purple-200 pb-1 border-l-4 border-purple-400 pl-4"
+                    className="mt-7 mb-3 text-2xl font-semibold text-purple-800 border-l-4 border-purple-400 pl-4"
                     {...props}
                   />
                 ),

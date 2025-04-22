@@ -4,6 +4,12 @@ import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 
+// 마크다운 #, ## 같은 제목 앞 기호 제거 함수
+function extractPlainTitle(markdownTitle: string): string {
+  // "# 제목" 또는 "## 제목" 같은 마크다운 제목 포맷 제거
+  return markdownTitle.replace(/^\s*#+\s*/, '').trim();
+}
+
 interface BlogCardProps {
   post: BlogPost;
 }
@@ -11,7 +17,9 @@ interface BlogCardProps {
 export function BlogCard({ post }: BlogCardProps) {
   // Use the specified profile image URL instead of the one from the post data
   const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
-  
+  // 제목에서 # 같은 것 제거
+  const displayTitle = extractPlainTitle(post.title ?? "");
+
   return (
     <Link to={`/blog/${post.slug}`} className="block h-full">
       <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
@@ -32,7 +40,7 @@ export function BlogCard({ post }: BlogCardProps) {
           </div>
           <div className="block mb-2">
             <h3 className="text-lg font-bold text-gray-800 hover:text-purple-700 transition-colors duration-200">
-              {post.title}
+              {displayTitle}
             </h3>
           </div>
           <p className="text-gray-600 text-sm mb-4 flex-grow">
@@ -81,3 +89,4 @@ export function BlogCard({ post }: BlogCardProps) {
     </Link>
   );
 }
+
