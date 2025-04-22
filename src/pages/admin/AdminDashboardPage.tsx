@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,31 +6,51 @@ import { SEO } from "@/components/SEO";
 import { FileText, TrendingUp, Users, Tag, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
 
 export default function AdminDashboardPage() {
-  // 블로그 포스트 데이터 가져오기
   const { data: posts = [], isLoading: postsLoading } = useQuery({
     queryKey: ["all-blog-posts"],
     queryFn: getAllBlogPosts
   });
   
-  // 카테고리 데이터 가져오기
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
     queryKey: ["blog-categories"],
     queryFn: getAllBlogCategories
   });
   
-  // 각 카테고리별 블로그 포스트 수 계산
   const categoryPostCounts = posts.reduce((acc, post) => {
     acc[post.category] = (acc[post.category] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
   
-  // 최근 포스트 (최대 5개)
   const recentPosts = [...posts]
     .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
     .slice(0, 5);
-    
+  
+  const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
+  
+  useEffect(() => {
+    async function fetchTodayCount() {
+      const todayStart = new Date();
+      todayStart.setHours(0,0,0,0);
+      const todayISO = todayStart.toISOString();
+
+      const { data, error, count } = await supabase
+        .from("visit_logs")
+        .select("id", { count: "exact", head: false })
+        .gte("visited_at", todayISO);
+
+      if (!error && typeof count === "number") {
+        setTodayVisitCount(count);
+      } else {
+        setTodayVisitCount(null);
+      }
+    }
+    fetchTodayCount();
+  }, []);
+
   return (
     <AdminLayout title="대시보드">
       <SEO 
@@ -39,7 +58,6 @@ export default function AdminDashboardPage() {
         description="알파GOGOGO 사이트 관리자 대시보드" 
       />
       
-      {/* 통계 카드 */}
       <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -93,9 +111,21 @@ export default function AdminDashboardPage() {
             <p className="text-xs text-gray-500 mt-1">가장 많은 포스트가 있는 카테고리</p>
           </CardContent>
         </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">오늘 방문자</CardTitle>
+            <Users className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {todayVisitCount !== null ? todayVisitCount : "로딩중"}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">금일 방문한 사용자 수</p>
+          </CardContent>
+        </Card>
       </div>
       
-      {/* 최근 포스트 */}
       <Card className="mb-8">
         <CardHeader>
           <CardTitle>최근 포스트</CardTitle>
@@ -141,7 +171,6 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
-      {/* 카테고리 요약 */}
       <Card>
         <CardHeader>
           <CardTitle>카테고리 요약</CardTitle>

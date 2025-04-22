@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -10,6 +9,7 @@ import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { openInfoPopup } from "@/utils/popupUtils";
+import { useRecordVisit } from "@/hooks/useRecordVisit";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -43,6 +43,9 @@ const Index = () => {
     }
   }, [location.pathname, navigate]);
   
+  // 방문 기록 (최상단에서 실행)
+  useRecordVisit();
+
   // HomePage structured data
   const structuredData = {
     "@context": "https://schema.org",
