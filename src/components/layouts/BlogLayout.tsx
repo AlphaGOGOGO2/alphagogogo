@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -7,6 +6,7 @@ import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
 import { AdBanner } from "@/components/ads/AdBanner";
+import { SidebarAd } from "@/components/ads/SidebarAd";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -17,39 +17,46 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
   const location = useLocation();
   const isWritePage = location.pathname === "/blog/write";
 
-  // Add animation effect when component mounts
   useEffect(() => {
-    // Add the animation class to the main content
     const mainContent = document.getElementById('blog-content');
     if (mainContent) {
       mainContent.classList.add('animate-fade-in');
     }
 
-    // Staggered animation for category tabs
     const categoryTabs = document.querySelectorAll('.category-tab');
     categoryTabs.forEach((tab, index) => {
       setTimeout(() => {
         tab.classList.add('animate-fade-in');
-      }, 100 + (index * 50)); // Stagger each tab by 50ms
+      }, 100 + (index * 50));
     });
   }, [location.pathname]);
-  
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       
-      <main className="flex-grow pt-24 pb-16" role="main">
+      <main className="flex-grow pt-24 pb-16 relative" role="main">
+        {!isWritePage && (
+          <div className="fixed left-4 top-32 z-10">
+            <SidebarAd slot="1497497659" />
+          </div>
+        )}
+        
+        {!isWritePage && (
+          <div className="fixed right-4 top-32 z-10">
+            <SidebarAd slot="1497497659" />
+          </div>
+        )}
+
         <div className={cn(
           "mx-auto px-4 sm:px-6 lg:px-8",
           isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
         )}>
-          {/* Add Banner at the top */}
           {!isWritePage && <Banner />}
           
-          {/* Add top ad banner for non-write pages */}
           {!isWritePage && (
             <AdBanner 
-              slot="1234567890" 
+              slot="1497497659"
               format="auto" 
               className="mt-4 mb-6" 
               style={{ minHeight: '90px' }} 
@@ -95,10 +102,9 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
             {children}
           </section>
           
-          {/* Add bottom ad banner for non-write pages */}
           {!isWritePage && (
             <AdBanner 
-              slot="9876543210" 
+              slot="1497497659"
               format="auto" 
               className="mt-10 mb-4" 
               style={{ minHeight: '250px' }}
