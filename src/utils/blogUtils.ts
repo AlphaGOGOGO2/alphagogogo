@@ -51,6 +51,8 @@ export const generateExcerpt = (content: string, maxLength: number = 150): strin
 
 // Extract the first image URL from markdown content or HTML content
 export const extractFirstImageUrl = (content: string): string | null => {
+  if (!content) return null;
+  
   // First try to find markdown image syntax: ![alt](url)
   const markdownImgRegex = /!\[.*?\]\((.*?)\)/i;
   const markdownMatch = content.match(markdownImgRegex);

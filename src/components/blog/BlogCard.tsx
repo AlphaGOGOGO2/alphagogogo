@@ -33,7 +33,7 @@ export function BlogCard({ post }: BlogCardProps) {
           <div className="block overflow-hidden h-48">
             <img 
               src={cardImage} 
-              alt={post.title} 
+              alt={displayTitle} 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>

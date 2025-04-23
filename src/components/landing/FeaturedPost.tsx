@@ -103,7 +103,7 @@ export function FeaturedPosts() {
                       </h3>
                       
                       <p className="text-gray-600 mb-4 flex-1 text-balance">
-                        {stripMarkdown(post.excerpt)}
+                        {stripMarkdown(post.excerpt || '')}
                       </p>
                       
                       {/* Display tags if available */}
