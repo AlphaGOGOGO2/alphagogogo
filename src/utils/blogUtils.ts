@@ -20,9 +20,21 @@ export const calculateReadingTime = (content: string): number => {
   return Math.max(1, readingTime); // Minimum 1 minute
 };
 
-// Generate excerpt from content
+// 마크다운 제거 함수 (excerpt용)
+export const stripMarkdown = (md: string): string => {
+  return md
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/[*_~>#-]/g, '')
+    .replace(/!\([^\]]*\)\([^)]+\)/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+};
+
+// Generate excerpt from content, 마크다운 태그 제거
 export const generateExcerpt = (content: string, maxLength: number = 150): string => {
-  const textContent = content.replace(/<[^>]*>/g, ''); // Remove HTML tags
+  // 마크다운 → 일반 텍스트로 전환 후 자르기
+  const textContent = stripMarkdown(content.replace(/<[^>]*>/g, ''));
   if (textContent.length <= maxLength) {
     return textContent;
   }

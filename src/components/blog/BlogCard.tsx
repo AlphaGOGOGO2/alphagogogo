@@ -10,6 +10,19 @@ function extractPlainTitle(markdownTitle: string): string {
   return markdownTitle.replace(/^\s*#+\s*/, '').trim();
 }
 
+// 마크다운 태그 제거 함수(링크/강조 포함)
+function stripMarkdown(md: string): string {
+  return md
+    // 링크 [텍스트](url) -> 텍스트
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // 강조, 코드블록 등
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/[*_~>#-]/g, '')
+    .replace(/!\([^\]]*\)\([^)]+\)/g, '')
+    .replace(/\n+/g, ' ')
+    .trim();
+}
+
 interface BlogCardProps {
   post: BlogPost;
 }
@@ -19,6 +32,8 @@ export function BlogCard({ post }: BlogCardProps) {
   const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
   // 제목에서 # 같은 것 제거
   const displayTitle = extractPlainTitle(post.title ?? "");
+  // 마크다운 제거된 excerpt
+  const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
 
   return (
     <Link to={`/blog/${post.slug}`} className="block h-full">
@@ -44,9 +59,8 @@ export function BlogCard({ post }: BlogCardProps) {
             </h3>
           </div>
           <p className="text-gray-600 text-sm mb-4 flex-grow">
-            {post.excerpt}
+            {cleanExcerpt}
           </p>
-          
           {/* Display tags if available */}
           {post.tags && post.tags.length > 0 && (
             <div className="flex flex-wrap gap-1 mb-3">
@@ -63,7 +77,6 @@ export function BlogCard({ post }: BlogCardProps) {
               )}
             </div>
           )}
-          
           <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
             <div className="flex items-center">
               <img 
@@ -89,4 +102,3 @@ export function BlogCard({ post }: BlogCardProps) {
     </Link>
   );
 }
-

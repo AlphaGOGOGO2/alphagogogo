@@ -68,7 +68,11 @@ export function FeaturedPosts() {
                 >
                   <div className="relative overflow-hidden h-56">
                     <img 
-                      src={post.coverImage || "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"} 
+                      src={
+                        post.coverImage
+                          ? post.coverImage
+                          : "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"
+                      } 
                       alt={post.title}
                       className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                     />
@@ -94,7 +98,8 @@ export function FeaturedPosts() {
                     </h3>
                     
                     <p className="text-gray-600 mb-4 flex-1 text-balance">
-                      {post.excerpt}
+                      {/* 마크다운 제거하여 출력 */}
+                      {post.excerpt.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*_~>#-]/g, "").replace(/\n+/g, " ")}
                     </p>
                     
                     {/* Display tags if available */}
