@@ -3,24 +3,12 @@ import { BlogPost } from "@/types/blog";
 import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { stripMarkdown } from "@/utils/blogUtils";
 
 // 마크다운 #, ## 같은 제목 앞 기호 제거 함수
 function extractPlainTitle(markdownTitle: string): string {
   // "# 제목" 또는 "## 제목" 같은 마크다운 제목 포맷 제거
   return markdownTitle.replace(/^\s*#+\s*/, '').trim();
-}
-
-// 마크다운 태그 제거 함수(링크/강조 포함)
-function stripMarkdown(md: string): string {
-  return md
-    // 링크 [텍스트](url) -> 텍스트
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // 강조, 코드블록 등
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/[*_~>#-]/g, '')
-    .replace(/!\([^\]]*\)\([^)]+\)/g, '')
-    .replace(/\n+/g, ' ')
-    .trim();
 }
 
 interface BlogCardProps {
@@ -32,7 +20,7 @@ export function BlogCard({ post }: BlogCardProps) {
   const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
   // 제목에서 # 같은 것 제거
   const displayTitle = extractPlainTitle(post.title ?? "");
-  // 마크다운 제거된 excerpt
+  // 마크다운 제거된 excerpt - 외부 유틸리티 함수 사용
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
 
   return (

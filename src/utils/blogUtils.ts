@@ -21,12 +21,20 @@ export const calculateReadingTime = (content: string): number => {
 };
 
 // 마크다운 제거 함수 (excerpt용)
+// 링크, 이미지, 코드블럭, 강조 등 모든 마크다운 요소를 제거
 export const stripMarkdown = (md: string): string => {
+  if (!md) return '';
+  
   return md
+    // 마크다운 이미지 제거 - 이미지 처리를 링크보다 먼저 해야 ![alt](url) 패턴이 정확히 제거됨
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
+    // 링크 [텍스트](url) -> 텍스트만 남김
     .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // 인라인 코드 `코드` -> 코드만 남김
     .replace(/`([^`]+)`/g, '$1')
+    // 헤더(#), 강조(*_), 인용(>), 리스트(-) 등 기타 마크다운 기호 제거
     .replace(/[*_~>#-]/g, '')
-    .replace(/!\([^\]]*\)\([^)]+\)/g, '')
+    // 여러 줄바꿈을 하나의 공백으로 변환
     .replace(/\n+/g, ' ')
     .trim();
 };

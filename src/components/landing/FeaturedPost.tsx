@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { getAllBlogPosts } from "@/services/blogService";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
+import { stripMarkdown } from "@/utils/blogUtils";
 
 export function FeaturedPosts() {
   const [hoveredPost, setHoveredPost] = useState<string | null>(null);
@@ -98,8 +99,7 @@ export function FeaturedPosts() {
                     </h3>
                     
                     <p className="text-gray-600 mb-4 flex-1 text-balance">
-                      {/* 마크다운 제거하여 출력 */}
-                      {post.excerpt.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/[*_~>#-]/g, "").replace(/\n+/g, " ")}
+                      {stripMarkdown(post.excerpt)}
                     </p>
                     
                     {/* Display tags if available */}
