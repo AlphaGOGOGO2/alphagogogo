@@ -3,7 +3,7 @@ import { BlogPost } from "@/types/blog";
 import { Link } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { stripMarkdown } from "@/utils/blogUtils";
+import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
 
 // 마크다운 #, ## 같은 제목 앞 기호 제거 함수
 function extractPlainTitle(markdownTitle: string): string {
@@ -22,14 +22,17 @@ export function BlogCard({ post }: BlogCardProps) {
   const displayTitle = extractPlainTitle(post.title ?? "");
   // 마크다운 제거된 excerpt - 외부 유틸리티 함수 사용
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
+  
+  // Get image for card display - prioritize coverImage, then try to extract from content
+  const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
   return (
     <Link to={`/blog/${post.slug}`} className="block h-full">
       <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
-        {post.coverImage && (
+        {cardImage && (
           <div className="block overflow-hidden h-48">
             <img 
-              src={post.coverImage} 
+              src={cardImage} 
               alt={post.title} 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />

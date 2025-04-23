@@ -49,9 +49,19 @@ export const generateExcerpt = (content: string, maxLength: number = 150): strin
   return textContent.substring(0, maxLength).trim() + '...';
 };
 
-// Extract the first image URL from HTML content
-export const extractFirstImageUrl = (htmlContent: string): string | null => {
+// Extract the first image URL from markdown content or HTML content
+export const extractFirstImageUrl = (content: string): string | null => {
+  // First try to find markdown image syntax: ![alt](url)
+  const markdownImgRegex = /!\[.*?\]\((.*?)\)/i;
+  const markdownMatch = content.match(markdownImgRegex);
+  
+  if (markdownMatch && markdownMatch[1]) {
+    return markdownMatch[1];
+  }
+  
+  // If no markdown image found, try to find HTML img tag
   const imgRegex = /<img[^>]+src="([^">]+)"/i;
-  const match = htmlContent.match(imgRegex);
-  return match ? match[1] : null;
+  const htmlMatch = content.match(imgRegex);
+  
+  return htmlMatch ? htmlMatch[1] : null;
 };
