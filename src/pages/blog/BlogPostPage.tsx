@@ -10,7 +10,6 @@ import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 import { SEO } from "@/components/SEO";
 import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
-import { AdBanner } from "@/components/ads/AdBanner";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -136,15 +135,6 @@ export default function BlogPostPage() {
             </div>
           </div>
           
-          <div className="w-full flex justify-center mb-6">
-            <AdBanner 
-              slot="3456789012" 
-              format="rectangle"
-              className="my-6"
-              style={{ minHeight: '250px', minWidth: '300px' }}
-            />
-          </div>
-          
           <div className="prose prose-purple max-w-none">
             <ReactMarkdown
               remarkPlugins={[remarkGfm]}
@@ -182,15 +172,6 @@ export default function BlogPostPage() {
             >
               {post.content}
             </ReactMarkdown>
-          </div>
-          
-          <div className="w-full flex justify-center mt-8">
-            <AdBanner 
-              slot="5678901234" 
-              format="rectangle"
-              className="my-8"
-              style={{ minHeight: '250px', minWidth: '300px' }}
-            />
           </div>
           
           {post.tags && post.tags.length > 0 && (

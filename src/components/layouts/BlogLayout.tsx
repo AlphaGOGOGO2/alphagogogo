@@ -1,4 +1,3 @@
-
 import { ReactNode, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -6,8 +5,6 @@ import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
-import { AdBanner } from "@/components/ads/AdBanner";
-import { SidebarAd } from "@/components/ads/SidebarAd";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -37,34 +34,11 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16 relative" role="main">
-        {!isWritePage && (
-          <>
-            <div className="fixed left-4 top-32 z-10 hidden lg:block">
-              <SidebarAd slot="1497497659" />
-            </div>
-            
-            <div className="fixed right-4 top-32 z-10 hidden lg:block">
-              <SidebarAd slot="1497497659" />
-            </div>
-          </>
-        )}
-
         <div className={cn(
           "mx-auto px-4 sm:px-6 lg:px-8",
           isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
         )}>
           {!isWritePage && <Banner />}
-          
-          {!isWritePage && (
-            <div className="w-full flex justify-center">
-              <AdBanner 
-                slot="1497497659"
-                format="auto" 
-                className="mt-4 mb-6" 
-                style={{ minHeight: '90px', minWidth: '300px' }} 
-              />
-            </div>
-          )}
           
           <header className="py-8">
             <div>
@@ -104,17 +78,6 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           >
             {children}
           </section>
-          
-          {!isWritePage && (
-            <div className="w-full flex justify-center">
-              <AdBanner 
-                slot="1497497659"
-                format="rectangle" 
-                className="mt-10 mb-4" 
-                style={{ minHeight: '250px', minWidth: '300px' }}
-              />
-            </div>
-          )}
         </div>
       </main>
       
