@@ -85,6 +85,9 @@ const Index = () => {
       <main>
         <Hero />
         <FeaturedPosts />
+        <div className="flex justify-center my-12">
+          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+        </div>
         <GPTSUsage />
         <div className="flex justify-center my-12">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
@@ -94,6 +97,9 @@ const Index = () => {
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
         <Community />
+        <div className="flex justify-center my-12">
+          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+        </div>
       </main>
       <Footer />
     </div>
