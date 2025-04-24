@@ -136,12 +136,14 @@ export default function BlogPostPage() {
             </div>
           </div>
           
-          <AdBanner 
-            slot="3456789012" 
-            format="rectangle"
-            className="my-6"
-            style={{ minHeight: '250px' }}
-          />
+          <div className="w-full flex justify-center mb-6">
+            <AdBanner 
+              slot="3456789012" 
+              format="rectangle"
+              className="my-6"
+              style={{ minHeight: '250px', minWidth: '300px' }}
+            />
+          </div>
           
           <div className="prose prose-purple max-w-none">
             <ReactMarkdown
@@ -182,12 +184,14 @@ export default function BlogPostPage() {
             </ReactMarkdown>
           </div>
           
-          <AdBanner 
-            slot="5678901234" 
-            format="rectangle"
-            className="my-8"
-            style={{ minHeight: '250px' }}
-          />
+          <div className="w-full flex justify-center mt-8">
+            <AdBanner 
+              slot="5678901234" 
+              format="rectangle"
+              className="my-8"
+              style={{ minHeight: '250px', minWidth: '300px' }}
+            />
+          </div>
           
           {post.tags && post.tags.length > 0 && (
             <div className="mt-8 pt-6 border-t border-gray-100">

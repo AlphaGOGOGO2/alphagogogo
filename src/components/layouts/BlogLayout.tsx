@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -37,15 +38,15 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
       
       <main className="flex-grow pt-24 pb-16 relative" role="main">
         {!isWritePage && (
-          <div className="fixed left-4 top-32 z-10">
-            <SidebarAd slot="1497497659" />
-          </div>
-        )}
-        
-        {!isWritePage && (
-          <div className="fixed right-4 top-32 z-10">
-            <SidebarAd slot="1497497659" />
-          </div>
+          <>
+            <div className="fixed left-4 top-32 z-10 hidden lg:block">
+              <SidebarAd slot="1497497659" />
+            </div>
+            
+            <div className="fixed right-4 top-32 z-10 hidden lg:block">
+              <SidebarAd slot="1497497659" />
+            </div>
+          </>
         )}
 
         <div className={cn(
@@ -55,12 +56,14 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           {!isWritePage && <Banner />}
           
           {!isWritePage && (
-            <AdBanner 
-              slot="1497497659"
-              format="auto" 
-              className="mt-4 mb-6" 
-              style={{ minHeight: '90px' }} 
-            />
+            <div className="w-full flex justify-center">
+              <AdBanner 
+                slot="1497497659"
+                format="auto" 
+                className="mt-4 mb-6" 
+                style={{ minHeight: '90px', minWidth: '300px' }} 
+              />
+            </div>
           )}
           
           <header className="py-8">
@@ -103,12 +106,14 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
           </section>
           
           {!isWritePage && (
-            <AdBanner 
-              slot="1497497659"
-              format="auto" 
-              className="mt-10 mb-4" 
-              style={{ minHeight: '250px' }}
-            />
+            <div className="w-full flex justify-center">
+              <AdBanner 
+                slot="1497497659"
+                format="rectangle" 
+                className="mt-10 mb-4" 
+                style={{ minHeight: '250px', minWidth: '300px' }}
+              />
+            </div>
           )}
         </div>
       </main>

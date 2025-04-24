@@ -11,7 +11,27 @@ export function SidebarAd({ slot, className }: SidebarAdProps) {
   const adRef = useRef<HTMLDivElement>(null);
   const [isAdLoaded, setIsAdLoaded] = useState(false);
   const [adAttempts, setAdAttempts] = useState(0);
+  const [adVisible, setAdVisible] = useState(false);
   const maxAttempts = 2;
+
+  // 광고 요소가 화면에 보이는지 확인
+  useEffect(() => {
+    if (!adRef.current) return;
+    
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        setAdVisible(entry.isIntersecting);
+      },
+      { threshold: 0.1 }
+    );
+    
+    observer.observe(adRef.current);
+    
+    return () => {
+      if (adRef.current) observer.unobserve(adRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     // 개발 환경에서는 광고 표시 안함
@@ -24,6 +44,9 @@ export function SidebarAd({ slot, className }: SidebarAdProps) {
     
     // 최대 시도 횟수를 초과했다면 더 이상 시도하지 않음
     if (adAttempts >= maxAttempts) return;
+    
+    // 광고가 화면에 보이지 않으면 로드하지 않음
+    if (!adVisible) return;
 
     // 기존 광고 요소 제거
     adRef.current.innerHTML = '';
@@ -37,26 +60,34 @@ export function SidebarAd({ slot, className }: SidebarAdProps) {
       adElement.dataset.adFormat = 'vertical';
       adElement.dataset.fullWidthResponsive = 'false';
       
+      // 명시적인 크기 설정
+      adElement.style.width = '160px';
+      adElement.style.height = '600px';
+      adElement.style.minWidth = '160px';
+      adElement.style.minHeight = '600px';
+      
       adRef.current.appendChild(adElement);
 
-      // 광고 로딩
-      try {
-        if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
-          window.adsbygoogle.push({});
-          console.log('SidebarAd push successful for slot:', slot);
-          setAdAttempts(prev => prev + 1);
-        } else {
-          console.log('AdSense not loaded yet. Will retry.');
-          setTimeout(() => {
-            if (window.adsbygoogle) {
-              window.adsbygoogle.push({});
-              setAdAttempts(prev => prev + 1);
-            }
-          }, 2000);
+      // 광고 로딩 - setTimeout으로 타이밍 조정
+      setTimeout(() => {
+        try {
+          if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
+            window.adsbygoogle.push({});
+            console.log('SidebarAd push successful for slot:', slot);
+            setAdAttempts(prev => prev + 1);
+          } else {
+            console.log('AdSense not loaded yet. Will retry.');
+            setTimeout(() => {
+              if (window.adsbygoogle) {
+                window.adsbygoogle.push({});
+                setAdAttempts(prev => prev + 1);
+              }
+            }, 2000);
+          }
+        } catch (err) {
+          console.error('Ad push error:', err);
         }
-      } catch (err) {
-        console.error('Ad push error:', err);
-      }
+      }, 500);
     } catch (err) {
       console.error('Ad creation error:', err);
     }
@@ -81,16 +112,17 @@ export function SidebarAd({ slot, className }: SidebarAdProps) {
     }, 3000);
 
     return () => clearTimeout(checkAd);
-  }, [slot, isAdLoaded, adAttempts]);
+  }, [slot, isAdLoaded, adAttempts, adVisible]);
 
   return (
     <div 
       ref={adRef}
       className={cn(
-        "min-h-[600px] w-[160px] hidden lg:block",
+        "min-h-[600px] min-w-[160px] w-[160px] hidden lg:block",
         className
       )}
       data-ad-slot={slot}
+      style={{ width: '160px', height: '600px' }}
     >
       {process.env.NODE_ENV === 'development' && (
         <div className="bg-gray-100 h-[600px] w-[160px] flex items-center justify-center text-gray-500 text-sm text-center p-2">
