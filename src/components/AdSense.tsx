@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 interface AdSenseProps {
   adSlot?: string;
@@ -14,8 +14,6 @@ export const AdSense: React.FC<AdSenseProps> = ({
   style = {},
   className = '',
 }) => {
-  const adRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     try {
       // Only run this effect in production environment
@@ -40,9 +38,8 @@ export const AdSense: React.FC<AdSenseProps> = ({
         data-ad-client="ca-pub-2328910037798111"
         data-ad-slot={adSlot}
         data-ad-format={adFormat}
-        ref={adRef}
         data-full-width-responsive="true"
-      ></ins>
+      />
     </div>
   );
 };
