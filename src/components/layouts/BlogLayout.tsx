@@ -1,3 +1,4 @@
+
 import { ReactNode, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -5,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
+import { AdSense } from "@/components/AdSense";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -69,6 +71,13 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
               </nav>
             </div>
           </header>
+          
+          {/* Add AdSense component before the content */}
+          {!isWritePage && (
+            <div className="mb-8">
+              <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+            </div>
+          )}
           
           <section 
             id="blog-content" 

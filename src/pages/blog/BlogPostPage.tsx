@@ -12,6 +12,7 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { AdSense } from "@/components/AdSense";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -172,6 +173,10 @@ export default function BlogPostPage() {
             >
               {post.content}
             </ReactMarkdown>
+          </div>
+          
+          <div className="my-8">
+            <AdSense adFormat="rectangle" style={{ minHeight: "280px" }} />
           </div>
           
           {post.tags && post.tags.length > 0 && (

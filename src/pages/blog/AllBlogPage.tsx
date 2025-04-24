@@ -7,6 +7,7 @@ import { getAllBlogPosts } from "@/services/blogService";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
+import { AdSense } from "@/components/AdSense";
 
 const POSTS_PER_PAGE = 9;
 
@@ -60,6 +61,11 @@ export default function AllBlogPage() {
         </div>
       ) : (
         <>
+          {/* Display top AdSense banner */}
+          <div className="mb-8">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
+          
           <BlogGridAnimation posts={displayedPosts} />
           
           {hasMorePosts && (
@@ -73,6 +79,11 @@ export default function AllBlogPage() {
               </Button>
             </div>
           )}
+          
+          {/* Display bottom AdSense banner */}
+          <div className="mt-10">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
         </>
       )}
     </BlogLayout>
