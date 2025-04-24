@@ -6,7 +6,6 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Banner } from "@/components/Banner";
 import { SEO } from "@/components/SEO";
-import { AdSense } from "@/components/AdSense";
 
 export default function YouTubeTranscriptPage() {
   return (
@@ -39,15 +38,7 @@ export default function YouTubeTranscriptPage() {
             YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다.
           </p>
           
-          <div className="mb-8">
-            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
-          
           <YouTubeTranscriptService />
-          
-          <div className="mt-12">
-            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
         </div>
       </main>
       
