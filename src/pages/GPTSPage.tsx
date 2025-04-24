@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -9,7 +8,6 @@ import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Banner } from "@/components/Banner";
-import { AdSense } from "@/components/AdSense";
 
 export default function GPTSPage() {
   const location = useLocation();
@@ -63,10 +61,6 @@ export default function GPTSPage() {
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
 
-          <div className="mb-12">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
-          
           <div className={`stagger-animation ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
             <div id="beginner" ref={beginnerSectionRef} className="transition-all duration-500 delay-100">
               <GPTSBeginnerSection />
@@ -83,10 +77,6 @@ export default function GPTSPage() {
             <div id="download" ref={downloadSectionRef} className="transition-all duration-500 delay-400">
               <GPTSDownloadSection />
             </div>
-          </div>
-
-          <div className="mt-12">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>
         </div>
       </main>
