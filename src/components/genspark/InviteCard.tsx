@@ -5,7 +5,6 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { getClientId } from "@/utils/clientIdUtils";
 import { toast } from "sonner";
 
 interface InviteCardProps {
@@ -49,10 +48,13 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
       // 낙관적으로 로컬 상태 업데이트
       setClickCount(newClickCount);
       
-      // 데이터베이스 직접 업데이트 (단순 업데이트 방식)
-      const { error } = await supabase.rpc('increment_invite_clicks', { 
-        invite_id: invite.id 
-      });
+      // 데이터베이스 직접 업데이트
+      // RPC 대신 일반 업데이트로 변경
+      const { data, error } = await supabase
+        .from('genspark_invites')
+        .update({ clicks: newClickCount })
+        .eq('id', invite.id)
+        .select();
       
       if (error) {
         console.error("클릭 수 업데이트 오류:", error);
@@ -75,6 +77,12 @@ export function InviteCard({ invite, onUpdateClick }: InviteCardProps) {
           id: invite.id,
           clicks: newClickCount
         });
+      }
+      
+      // 클릭 수가 최대에 도달하면 삭제 처리
+      if (newClickCount >= MAX_CLICKS) {
+        toast.success('초대 링크가 최대 클릭 수에 도달하여 자동 삭제됩니다!');
+        // 삭제는 백엔드에서 처리됨
       }
     } catch (error) {
       console.error("handleInviteClick 오류:", error);
