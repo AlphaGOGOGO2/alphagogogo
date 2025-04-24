@@ -5,6 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogButtonCreator } from "@/components/services/blog-button-creator/BlogButtonCreator";
 import { Banner } from "@/components/Banner";
+import { AdSense } from "@/components/AdSense";
 
 export default function BlogButtonCreatorPage() {
   return (
@@ -23,7 +24,6 @@ export default function BlogButtonCreatorPage() {
             </Link>
           </div>
           
-          {/* Add Banner component below the "Return Home" button */}
           <Banner className="mb-10" />
           
           <div className="mb-12">
@@ -34,7 +34,15 @@ export default function BlogButtonCreatorPage() {
             </p>
           </div>
           
+          <div className="mb-8">
+            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
+          
           <BlogButtonCreator />
+          
+          <div className="mt-12">
+            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
         </div>
       </main>
       

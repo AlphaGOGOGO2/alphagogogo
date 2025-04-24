@@ -5,6 +5,7 @@ import { URLShortenerService } from "@/components/services/URLShortenerService";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Banner } from "@/components/Banner";
+import { AdSense } from "@/components/AdSense";
 
 export default function URLShortenerPage() {
   return (
@@ -23,7 +24,6 @@ export default function URLShortenerPage() {
             </Link>
           </div>
           
-          {/* Add Banner component below the "Return Home" button */}
           <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">URL 단축</h1>
@@ -31,7 +31,15 @@ export default function URLShortenerPage() {
             긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다.
           </p>
           
+          <div className="mb-8">
+            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
+          
           <URLShortenerService />
+          
+          <div className="mt-12">
+            <AdSense adSlot="9376961126" adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
         </div>
       </main>
       
