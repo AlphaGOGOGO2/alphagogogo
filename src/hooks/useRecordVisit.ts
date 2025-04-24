@@ -10,6 +10,10 @@ export function useRecordVisit() {
   useEffect(() => {
     // 이미 기록했다면 중복 기록 방지하고 싶으면 아래 코드 주석 해제
     // if (window.sessionStorage.getItem("visit_logged")) return;
+    
+    // 개발 환경에서는 방문 로깅 건너뛰기
+    if (process.env.NODE_ENV === 'development') return;
+    
     fetchUserIpAndLog();
     // window.sessionStorage.setItem("visit_logged", "1");
     // eslint-disable-next-line
@@ -26,21 +30,26 @@ export function useRecordVisit() {
           ip = data.ip;
         }
       } catch (e) {
-        // ignore
+        // IP 가져오기 실패해도 계속 진행
+        console.log("IP 주소 가져오기 실패");
       }
 
       const userAgent = window.navigator.userAgent;
 
-      // Supabase에 기록
-      await supabase.from("visit_logs").insert([
+      // Supabase에 기록, apikey 헤더 추가 확인
+      const { error } = await supabase.from("visit_logs").insert([
         {
           ip_address: ip,
           user_agent: userAgent,
         }
       ]);
+      
+      if (error) {
+        console.log("방문 기록 실패:", error.message);
+      }
     } catch (e) {
       // 기록 실패해도 UI는 영향 없게 함
-      // console.log("방문 기록 실패", e);
+      console.log("방문 기록 처리 중 오류:", e);
     }
   }
 }

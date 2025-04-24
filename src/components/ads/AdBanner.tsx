@@ -1,5 +1,5 @@
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface AdBannerProps {
   slot: string;
@@ -10,9 +10,21 @@ interface AdBannerProps {
 
 export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerProps) => {
   const adRef = useRef<HTMLDivElement>(null);
+  const [isAdLoaded, setIsAdLoaded] = useState(false);
+  const [adAttempts, setAdAttempts] = useState(0);
+  const maxAttempts = 2;
 
   useEffect(() => {
+    // 개발 환경에서는 광고 표시 안함
+    if (process.env.NODE_ENV === 'development') return;
+    
     if (typeof window === 'undefined' || !adRef.current) return;
+    
+    // 이미 광고가 로드되었으면 다시 로드하지 않음
+    if (isAdLoaded) return;
+    
+    // 최대 시도 횟수를 초과했다면 더 이상 시도하지 않음
+    if (adAttempts >= maxAttempts) return;
 
     // 기존 광고 요소 제거
     adRef.current.innerHTML = '';
@@ -33,11 +45,14 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
       try {
         if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
           window.adsbygoogle.push({});
+          console.log('AdSense push successful for slot:', slot);
+          setAdAttempts(prev => prev + 1);
         } else {
           console.log('AdSense not loaded yet. Will retry.');
           setTimeout(() => {
             if (window.adsbygoogle) {
               window.adsbygoogle.push({});
+              setAdAttempts(prev => prev + 1);
             }
           }, 2000);
         }
@@ -50,16 +65,25 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
 
     // 광고 로딩 확인 및 재시도
     const checkAd = setTimeout(() => {
-      if (adRef.current && adRef.current.querySelector('iframe') === null) {
+      if (adRef.current && adRef.current.querySelector('iframe')) {
+        setIsAdLoaded(true);
+        console.log('Ad loaded successfully for slot:', slot);
+      } else if (adAttempts < maxAttempts) {
         console.log('Ad not loaded, retrying...');
+        setIsAdLoaded(false);
         if (window.adsbygoogle) {
-          window.adsbygoogle.push({});
+          try {
+            window.adsbygoogle.push({});
+            setAdAttempts(prev => prev + 1);
+          } catch (err) {
+            console.error('Retry ad push error:', err);
+          }
         }
       }
     }, 3000);
 
     return () => clearTimeout(checkAd);
-  }, [slot, format]);
+  }, [slot, format, isAdLoaded, adAttempts]);
 
   return (
     <div
