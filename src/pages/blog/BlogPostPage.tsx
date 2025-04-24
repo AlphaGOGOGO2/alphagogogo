@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -172,10 +173,6 @@ export default function BlogPostPage() {
             >
               {post.content}
             </ReactMarkdown>
-          </div>
-          
-          <div className="my-8">
-            <AdSense adFormat="rectangle" style={{ minHeight: "280px" }} />
           </div>
           
           {post.tags && post.tags.length > 0 && (
