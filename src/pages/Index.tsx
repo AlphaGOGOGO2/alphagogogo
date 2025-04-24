@@ -9,7 +9,6 @@ import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { useRecordVisit } from "@/hooks/useRecordVisit";
-import { AdSense } from "@/components/AdSense";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -84,26 +83,10 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
-        
         <FeaturedPosts />
-        <div className="flex justify-center">
-          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-        </div>
-        
         <GPTSUsage />
-        <div className="flex justify-center">
-          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-        </div>
-        
         <Services />
-        <div className="flex justify-center">
-          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-        </div>
-        
         <Community />
-        <div className="flex justify-center mb-12">
-          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-        </div>
       </main>
       <Footer />
     </div>
