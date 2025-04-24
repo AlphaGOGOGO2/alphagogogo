@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -9,6 +8,7 @@ import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Banner } from "@/components/Banner";
+import { AdSense } from "@/components/AdSense";
 
 export default function GPTSPage() {
   const location = useLocation();
@@ -18,13 +18,10 @@ export default function GPTSPage() {
   const downloadSectionRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Handle scrolling to sections when the page loads with a hash in the URL
   useEffect(() => {
-    // Get the hash from the URL (e.g., #blog, #other, #download)
-    const hash = location.hash.slice(1); // Remove the # character
+    const hash = location.hash.slice(1);
     
     if (hash) {
-      // Add a slight delay to ensure the page is fully loaded
       setTimeout(() => {
         const element = document.getElementById(hash);
         if (element) {
@@ -34,7 +31,6 @@ export default function GPTSPage() {
     }
   }, [location.hash]);
 
-  // Set visibility after component mounts for animation
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -59,16 +55,18 @@ export default function GPTSPage() {
             </Link>
           </div>
           
-          {/* Add Banner component below the "Return home" button */}
           <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">GPTS 이용하기</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
+
+          <div className="mb-12">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
           
           <div className={`stagger-animation ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-            {/* New Beginner Guide Section */}
             <div id="beginner" ref={beginnerSectionRef} className="transition-all duration-500 delay-100">
               <GPTSBeginnerSection />
             </div>
@@ -84,6 +82,10 @@ export default function GPTSPage() {
             <div id="download" ref={downloadSectionRef} className="transition-all duration-500 delay-400">
               <GPTSDownloadSection />
             </div>
+          </div>
+
+          <div className="mt-12">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>
         </div>
       </main>

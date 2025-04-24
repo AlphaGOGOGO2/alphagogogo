@@ -1,4 +1,3 @@
-
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ExternalLink } from "lucide-react";
@@ -8,11 +7,11 @@ import { Youtube, Link2, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Banner } from "@/components/Banner";
+import { AdSense } from "@/components/AdSense";
 
 export default function ServicesPage() {
   const [isVisible, setIsVisible] = useState(false);
 
-  // Set visibility after component mounts for animation
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(true);
@@ -37,13 +36,16 @@ export default function ServicesPage() {
             </Link>
           </div>
           
-          {/* Add Banner component below the "Return home" button */}
           <Banner className="mb-10" />
           
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">서비스</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
             알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요.
           </p>
+          
+          <div className="mb-12">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+          </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {[
@@ -103,6 +105,10 @@ export default function ServicesPage() {
                 </CardContent>
               </Card>
             ))}
+          </div>
+          
+          <div className="mt-12">
+            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>
         </div>
       </main>

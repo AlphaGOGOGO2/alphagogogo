@@ -10,6 +10,7 @@ import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { openInfoPopup } from "@/utils/popupUtils";
 import { useRecordVisit } from "@/hooks/useRecordVisit";
+import { AdSense } from "@/components/AdSense";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -98,7 +99,13 @@ const Index = () => {
       <main>
         <Hero />
         <FeaturedPosts />
+        <div className="my-12">
+          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+        </div>
         <GPTSUsage />
+        <div className="my-12">
+          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+        </div>
         <Services />
         <Community />
       </main>
