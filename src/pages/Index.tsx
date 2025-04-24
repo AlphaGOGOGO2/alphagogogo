@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -8,7 +9,6 @@ import { Services } from "@/components/landing/Services";
 import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { openInfoPopup } from "@/utils/popupUtils";
 import { useRecordVisit } from "@/hooks/useRecordVisit";
 import { AdSense } from "@/components/AdSense";
 
@@ -30,19 +30,6 @@ const Index = () => {
       document.body.classList.remove("page-transition");
     };
   }, []);
-
-  // Check if user directly navigated to the AI 품앗이 page
-  useEffect(() => {
-    if (location.pathname === "/genspark-invites") {
-      openInfoPopup({
-        title: "AI 품앗이 종료 안내",
-        message: "현재 AI 품앗이가 종료되었습니다. 다음 회차를 기대해 주세요!",
-        action: 'link',
-        actionData: "/"
-      });
-      navigate("/");
-    }
-  }, [location.pathname, navigate]);
   
   // 방문 기록 (최상단에서 실행)
   useRecordVisit();

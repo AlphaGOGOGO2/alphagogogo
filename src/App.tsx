@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -20,7 +21,7 @@ import ServicesPage from "./pages/ServicesPage";
 import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
-// import GensparkInvitesPage from "./pages/GensparkInvitesPage";
+// Genspark invites page removed as the event has ended
 
 // 관리자 페이지 가져오기
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
