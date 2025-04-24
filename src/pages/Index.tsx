@@ -1,4 +1,3 @@
-
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
@@ -86,16 +85,14 @@ const Index = () => {
       <main>
         <Hero />
         <FeaturedPosts />
-        {/* AdSense 배너 가운데 정렬 */}
-        <div className="flex justify-center my-12">
-          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-        </div>
         <GPTSUsage />
-        {/* 두 번째 AdSense 배너도 가운데 정렬 */}
         <div className="flex justify-center my-12">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
         <Services />
+        <div className="flex justify-center my-12">
+          <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
+        </div>
         <Community />
       </main>
       <Footer />
