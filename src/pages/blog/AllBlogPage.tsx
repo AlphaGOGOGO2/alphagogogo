@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
@@ -7,7 +6,6 @@ import { getAllBlogPosts } from "@/services/blogService";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
-import { AdSense } from "@/components/AdSense";
 
 const POSTS_PER_PAGE = 9;
 
@@ -61,15 +59,10 @@ export default function AllBlogPage() {
         </div>
       ) : (
         <>
-          {/* 상단 AdSense 배너 가운데 정렬 */}
-          <div className="flex justify-center mb-8">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
-          
           <BlogGridAnimation posts={displayedPosts} />
           
           {hasMorePosts && (
-            <div className="flex justify-center mt-10 mb-6">
+            <div className="flex justify-center mt-10">
               <Button 
                 onClick={handleLoadMore} 
                 className="bg-purple-600 hover:bg-purple-700 transition-all"
@@ -79,11 +72,6 @@ export default function AllBlogPage() {
               </Button>
             </div>
           )}
-          
-          {/* 하단 AdSense 배너 가운데 정렬 */}
-          <div className="flex justify-center mt-10">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
         </>
       )}
     </BlogLayout>
