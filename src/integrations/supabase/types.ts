@@ -186,6 +186,39 @@ export type Database = {
         }
         Relationships: []
       }
+      invites: {
+        Row: {
+          click_count: number | null
+          id: number
+        }
+        Insert: {
+          click_count?: number | null
+          id?: never
+        }
+        Update: {
+          click_count?: number | null
+          id?: never
+        }
+        Relationships: []
+      }
+      user_invites: {
+        Row: {
+          click_count: number | null
+          created_at: string | null
+          id: number
+        }
+        Insert: {
+          click_count?: number | null
+          created_at?: string | null
+          id?: never
+        }
+        Update: {
+          click_count?: number | null
+          created_at?: string | null
+          id?: never
+        }
+        Relationships: []
+      }
       visit_logs: {
         Row: {
           id: string
@@ -217,7 +250,14 @@ export type Database = {
         Returns: undefined
       }
       increment_invite_clicks: {
-        Args: { invite_id: string }
+        Args:
+          | Record<PropertyKey, never>
+          | { invite_id: number }
+          | { invite_id: string }
+        Returns: undefined
+      }
+      increment_user_invite_clicks: {
+        Args: { invite_id: number }
         Returns: undefined
       }
     }

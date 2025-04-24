@@ -12,31 +12,53 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
   const adRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || !adRef.current) return;
+
+    // 기존 광고 요소 제거
+    adRef.current.innerHTML = '';
+    
     try {
-      if (typeof window !== 'undefined' && adRef.current) {
-        // 기존 광고 요소 제거
-        adRef.current.innerHTML = '';
+      const adElement = document.createElement('ins');
+      adElement.className = 'adsbygoogle';
+      adElement.style.display = 'block';
+      adElement.style.textAlign = 'center';
+      adElement.dataset.adClient = 'ca-pub-2328910037798111';
+      adElement.dataset.adSlot = slot;
+      adElement.dataset.adFormat = format;
+      adElement.dataset.fullWidthResponsive = 'true';
 
-        const adElement = document.createElement('ins');
-        adElement.className = 'adsbygoogle';
-        adElement.style.display = 'block';
-        adElement.style.textAlign = 'center';
-        adElement.dataset.adClient = 'ca-pub-2328910037798111';
-        adElement.dataset.adSlot = slot;
-        adElement.dataset.adFormat = format;
-        adElement.dataset.fullWidthResponsive = 'true';
+      adRef.current.appendChild(adElement);
 
-        adRef.current.appendChild(adElement);
-
-        try {
-          ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-        } catch (err) {
-          console.error('Ad push error:', err);
+      // 광고 로딩
+      try {
+        if (window.adsbygoogle && Array.isArray(window.adsbygoogle)) {
+          window.adsbygoogle.push({});
+        } else {
+          console.log('AdSense not loaded yet. Will retry.');
+          setTimeout(() => {
+            if (window.adsbygoogle) {
+              window.adsbygoogle.push({});
+            }
+          }, 2000);
         }
+      } catch (err) {
+        console.error('Ad push error:', err);
       }
     } catch (err) {
       console.error('Ad creation error:', err);
     }
+
+    // 광고 로딩 확인 및 재시도
+    const checkAd = setTimeout(() => {
+      if (adRef.current && adRef.current.querySelector('iframe') === null) {
+        console.log('Ad not loaded, retrying...');
+        if (window.adsbygoogle) {
+          window.adsbygoogle.push({});
+        }
+      }
+    }, 3000);
+
+    return () => clearTimeout(checkAd);
   }, [slot, format]);
 
   return (
@@ -53,6 +75,7 @@ export const AdBanner = ({ slot, format = 'auto', style, className }: AdBannerPr
         alignItems: 'center',
         ...style
       }}
+      data-ad-slot={slot}
       aria-label="광고"
     >
       {process.env.NODE_ENV === 'development' && (
