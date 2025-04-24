@@ -1,4 +1,3 @@
-
 import { Users, MessageSquare, BellDot, Share2, HeartHandshake } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -37,9 +36,9 @@ export function Community() {
   ];
 
   return (
-    <section id="community" className="py-24 px-6 md:px-8 bg-gray-50 relative">
+    <section id="community" className="py-12 px-6 md:px-8 bg-gray-50 relative">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-16 text-center">
+        <div className="mb-12 text-center">
           <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-white bg-purple-600 rounded-full shadow-md">
             함께 성장하기
           </span>
@@ -51,7 +50,7 @@ export function Community() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {communityFeatures.map((feature, index) => (
             <div 
               key={index}
@@ -70,7 +69,7 @@ export function Community() {
           ))}
         </div>
         
-        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-md border border-purple-100">
+        <div className="bg-white p-8 md:p-12 rounded-2xl shadow-md border border-purple-100 mb-4">
           <div className="md:flex items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
               <h3 className="text-2xl font-bold mb-4 text-gray-800">

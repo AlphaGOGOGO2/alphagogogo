@@ -1,4 +1,3 @@
-
 import { 
   Youtube, 
   Link2, 
@@ -39,7 +38,7 @@ export function Services() {
     <section 
       id="services" 
       ref={sectionRef}
-      className="py-24 px-6 md:px-8 bg-white relative"
+      className="py-12 px-6 md:px-8 bg-white relative"
     >
       {/* Section separator - top wavy line */}
       <div className="absolute top-0 left-0 right-0 h-12 overflow-hidden">
@@ -51,7 +50,7 @@ export function Services() {
       </div>
       
       <div className="max-w-7xl mx-auto">
-        <div className={`mb-16 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <div className={`mb-12 text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <span className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-white bg-purple-600 rounded-full shadow-md">
             알파블로그 서비스
           </span>
@@ -63,7 +62,7 @@ export function Services() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
           {[
             {
               title: "유튜브 자막 추출기",
@@ -73,7 +72,7 @@ export function Services() {
             },
             {
               title: "URL 단축기",
-              description: "복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
+              description: "복잡한 URL을 간결하게 줄여 SNS, 메시��, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
               icon: <Link2 className="text-purple-600" size={24} />,
               path: "/url-shortener"
             },
@@ -114,7 +113,7 @@ export function Services() {
           ))}
         </div>
         
-        <div className={`text-center transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '500ms' }}>
+        <div className={`text-center mb-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '500ms' }}>
           <Link 
             to="/services" 
             className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-purple-600 text-white font-medium hover:bg-purple-700 transition-all hover:shadow-lg hover:shadow-purple-600/30"

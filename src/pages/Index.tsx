@@ -84,20 +84,24 @@ const Index = () => {
       <Navbar />
       <main>
         <Hero />
+        
         <FeaturedPosts />
-        <div className="flex justify-center my-12">
+        <div className="flex justify-center">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
+        
         <GPTSUsage />
-        <div className="flex justify-center my-12">
+        <div className="flex justify-center">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
+        
         <Services />
-        <div className="flex justify-center my-12">
+        <div className="flex justify-center">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
+        
         <Community />
-        <div className="flex justify-center my-12">
+        <div className="flex justify-center mb-12">
           <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
         </div>
       </main>
