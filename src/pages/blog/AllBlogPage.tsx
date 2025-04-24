@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
-// Number of posts to show initially
 const POSTS_PER_PAGE = 9;
 
 export default function AllBlogPage() {
@@ -19,7 +18,6 @@ export default function AllBlogPage() {
     queryFn: getAllBlogPosts
   });
   
-  // Get only the visible posts based on current pagination
   const displayedPosts = posts.slice(0, visiblePosts);
   const hasMorePosts = visiblePosts < posts.length;
   
@@ -27,7 +25,6 @@ export default function AllBlogPage() {
     setVisiblePosts(prev => prev + POSTS_PER_PAGE);
   };
   
-  // Blog category structured data
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
