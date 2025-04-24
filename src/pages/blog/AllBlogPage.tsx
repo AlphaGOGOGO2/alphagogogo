@@ -61,7 +61,7 @@ export default function AllBlogPage() {
         </div>
       ) : (
         <>
-          {/* Display top AdSense banner */}
+          {/* 상단 AdSense 배너는 유지 */}
           <div className="mb-8">
             <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>
@@ -80,7 +80,7 @@ export default function AllBlogPage() {
             </div>
           )}
           
-          {/* Display bottom AdSense banner */}
+          {/* 하단 AdSense 배너도 유지 */}
           <div className="mt-10">
             <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>

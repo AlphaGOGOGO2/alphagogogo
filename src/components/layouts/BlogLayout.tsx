@@ -72,12 +72,7 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
             </div>
           </header>
           
-          {/* Add AdSense component before the content */}
-          {!isWritePage && (
-            <div className="mb-8">
-              <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-            </div>
-          )}
+          {/* 여기서 AdSense 컴포넌트를 제거합니다 - 이것이 중복의 원인입니다 */}
           
           <section 
             id="blog-content" 

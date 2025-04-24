@@ -245,21 +245,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      enable_realtime_for_genspark_invites: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
-      increment_invite_clicks: {
-        Args:
-          | Record<PropertyKey, never>
-          | { invite_id: number }
-          | { invite_id: string }
-        Returns: undefined
-      }
-      increment_user_invite_clicks: {
-        Args: { invite_id: number }
-        Returns: undefined
-      }
+      [_ in never]: never
     }
     Enums: {
       [_ in never]: never
