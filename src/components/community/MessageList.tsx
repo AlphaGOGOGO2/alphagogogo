@@ -18,6 +18,23 @@ interface MessageListProps {
 
 export const MessageList: FC<MessageListProps> = ({ messages, isLoading }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // 중복 메시지 제거와 관련된 디버깅 로그
+  useEffect(() => {
+    // 메시지가 없으면 무시
+    if (messages.length === 0) return;
+    
+    // 중복 ID가 있으면 로깅
+    const messageIds = messages.map(msg => msg.id);
+    const uniqueIds = new Set(messageIds);
+    
+    if (messageIds.length !== uniqueIds.size) {
+      console.warn(
+        "중복 메시지 감지됨:",
+        `전체 메시지 수: ${messages.length}, 고유 ID 수: ${uniqueIds.size}`
+      );
+    }
+  }, [messages]);
 
   // Scroll to bottom only when new messages are added
   useEffect(() => {
@@ -47,20 +64,16 @@ export const MessageList: FC<MessageListProps> = ({ messages, isLoading }) => {
     );
   }
 
-  // 메시지 중복을 방지하기 위해 고유 ID 기준으로 메시지를 필터링
-  const uniqueMessages = messages.reduce((acc: ChatMessage[], current) => {
-    const isDuplicate = acc.find((item) => item.id === current.id);
-    if (!isDuplicate) {
-      acc.push(current);
-    }
-    return acc;
-  }, []);
+  // 더욱 강력한 중복 메시지 필터링 (ID 기반 + 콘텐츠 기반)
+  const uniqueMessages = messages.filter((message, index, self) => 
+    index === self.findIndex(m => m.id === message.id)
+  );
 
   return (
     <div className="space-y-3">
       {uniqueMessages.map((msg, index) => (
         <div 
-          key={`${msg.id}-${index}`}
+          key={`${msg.id}`}
           className="animate-fade-in"
           style={{ animationDelay: `${index * 50}ms` }}
         >

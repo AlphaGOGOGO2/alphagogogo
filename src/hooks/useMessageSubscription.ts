@@ -16,6 +16,8 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const lastReconnectTimeRef = useRef<number>(0); // 마지막 재연결 시간 추적
   const reconnectCooldown = 3000; // 재연결 쿨다운(ms)
   const heartbeatIntervalRef = useRef<number | null>(null); // 하트비트 인터벌
+  const messagesBufferRef = useRef<Map<string, ChatMessage>>(new Map()); // 메시지 버퍼 추가
+  const processingRef = useRef<boolean>(false); // 메시지 처리 중 상태
   
   // 연결 복구 전략 향상 - 지수 백오프 지연 시간 계산 개선
   const getBackoffDelay = useCallback(() => {
@@ -25,31 +27,57 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     return Math.min(baseDelay * Math.pow(1.5, attempt) + jitter, 12000); // 최대 12초
   }, []);
 
-  // 메시지 중복 처리 방지 (개선)
+  // 개선된 메시지 중복 처리 함수
   const addMessageIfNotExists = useCallback((newMsg: ChatMessage) => {
     if (!newMsg?.id) {
       console.warn("ID가 없는 메시지 무시");
       return false;
     }
     
+    // 이미 처리된 메시지인지 확인
     if (processedMessageIdsRef.current.has(newMsg.id)) {
       console.log("중복 메시지 무시:", newMsg.id);
       return false;
     }
     
-    // 이미 존재하는지 상태에서도 한 번 더 확인
-    setMessages(prev => {
-      const isDuplicate = prev.some(msg => msg.id === newMsg.id);
-      if (isDuplicate) {
-        console.log("상태에 이미 존재하는 메시지 무시:", newMsg.id);
-        return prev;
-      }
-      
-      processedMessageIdsRef.current.add(newMsg.id);
-      return [...prev, newMsg];
-    });
+    // 메시지를 버퍼에 추가하고 일괄 처리 스케줄링
+    messagesBufferRef.current.set(newMsg.id, newMsg);
+    processedMessageIdsRef.current.add(newMsg.id);
+    
+    // 이미 처리 중이 아니라면 일괄 처리 일정 잡기
+    if (!processingRef.current) {
+      processingRef.current = true;
+      setTimeout(() => processMessageBuffer(), 50);
+    }
     
     return true;
+  }, []);
+
+  // 메시지 버퍼 일괄 처리 함수
+  const processMessageBuffer = useCallback(() => {
+    if (messagesBufferRef.current.size === 0) {
+      processingRef.current = false;
+      return;
+    }
+    
+    const bufferMessages = Array.from(messagesBufferRef.current.values());
+    messagesBufferRef.current.clear();
+    
+    setMessages(prev => {
+      // 이미 존재하는 메시지 필터링
+      const newMessages = bufferMessages.filter(newMsg => 
+        !prev.some(existingMsg => existingMsg.id === newMsg.id)
+      );
+      
+      if (newMessages.length === 0) {
+        return prev; // 새 메시지가 없으면 상태 변경 안함
+      }
+      
+      console.log(`${newMessages.length}개의 새 메시지 추가`);
+      return [...prev, ...newMessages];
+    });
+    
+    processingRef.current = false;
   }, []);
 
   // 초기 메시지 업데이트
@@ -206,7 +234,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
         duration: 5000
       });
     }
-  }, [cleanupChannel, addMessageIfNotExists, logChannelStatus, getBackoffDelay]);
+  }, [cleanupChannel, addMessageIfNotExists, logChannelStatus, getBackoffDelay, processMessageBuffer]);
 
   useEffect(() => {
     isCleanedUpRef.current = false;
@@ -226,6 +254,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     cleanupChannel();
     connectionAttemptsRef.current = 0;
     processedMessageIdsRef.current.clear(); // 재연결 시 메시지 ID 캐시 초기화
+    messagesBufferRef.current.clear(); // 메시지 버퍼 초기화
     toast.info("채팅 서버에 다시 연결 중...");
     setTimeout(setupMessageSubscription, 500); // 약간의 지연 후 재연결 (이전 연결 정리 시간 확보)
   }, [cleanupChannel, setupMessageSubscription]);
