@@ -67,17 +67,26 @@ export const sendChatMessage = async (
   }
 };
 
-// 채널 상태를 확인하는 함수 추가
+// 채널 상태를 확인하는 함수 개선
 export const checkChannelHealth = async (): Promise<boolean> => {
   try {
-    // 간단한 쿼리를 실행해서 Supabase 연결 상태 확인
-    const { count, error } = await supabase
+    // 두 가지 방법으로 상태 확인
+    // 1. 간단한 쿼리로 데이터베이스 연결 확인
+    const { count, error: countError } = await supabase
       .from('community_messages')
       .select('*', { count: 'exact', head: true })
       .limit(1);
     
-    if (error) {
-      console.error("Channel health check failed:", error);
+    if (countError) {
+      console.error("Channel health check failed (query):", countError);
+      return false;
+    }
+    
+    // 2. 서버 시간 확인 (Supabase 서비스가 실행 중인지 여부 확인)
+    const { data: timeData, error: timeError } = await supabase.rpc('get_server_time');
+    
+    if (timeError) {
+      console.error("Channel health check failed (server time):", timeError);
       return false;
     }
     

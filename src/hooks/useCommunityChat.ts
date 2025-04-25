@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
-import { fetchRecentMessages, sendChatMessage } from "@/services/chatService";
+import { fetchRecentMessages, sendChatMessage, checkChannelHealth } from "@/services/chatService";
 import { useMessageSubscription } from "@/hooks/useMessageSubscription";
 import { usePresence } from "@/hooks/usePresence";
 import { ChatMessage } from "@/types/chat";
@@ -17,6 +17,7 @@ export function useCommunityChat() {
   const [connectionState, setConnectionState] = useState<ConnectionState>('connecting');
   const messagesLoadedRef = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
+  const healthCheckIntervalRef = useRef<number | null>(null);
 
   // Initialize user data only once
   useEffect(() => {
@@ -53,6 +54,35 @@ export function useCommunityChat() {
     }
   }, []);
 
+  // 주기적으로 채널 건강 상태 확인
+  useEffect(() => {
+    const startHealthCheck = () => {
+      if (healthCheckIntervalRef.current) {
+        clearInterval(healthCheckIntervalRef.current);
+      }
+      
+      healthCheckIntervalRef.current = window.setInterval(async () => {
+        if (connectionState === 'connected') {
+          const isHealthy = await checkChannelHealth();
+          if (!isHealthy && connectionState === 'connected') {
+            setConnectionState('error');
+            toast.error("채팅 연결이 끊어졌습니다. 재연결이 필요합니다.");
+          }
+        }
+      }, 30000) as unknown as number; // 30초마다 확인
+    };
+    
+    if (connectionState === 'connected') {
+      startHealthCheck();
+    }
+    
+    return () => {
+      if (healthCheckIntervalRef.current) {
+        clearInterval(healthCheckIntervalRef.current);
+      }
+    };
+  }, [connectionState]);
+
   const loadRecentMessages = async () => {
     setIsLoading(true);
     setConnectionState('connecting');
@@ -78,17 +108,23 @@ export function useCommunityChat() {
   };
 
   // Setup message subscription with initial messages
-  const { messages } = useMessageSubscription(initialMessages);
+  const { messages, subscriptionStatus, reconnect: reconnectMessages } = useMessageSubscription(initialMessages);
 
   // Setup presence
-  const { activeUsers, activeUsersCount, updatePresence } = usePresence(nickname, userColor);
+  const { activeUsers, activeUsersCount, presenceStatus, reconnect: reconnectPresence } = usePresence(nickname, userColor);
 
+  // 연결 상태 통합 관리
   useEffect(() => {
-    // Check if we have active users as an indicator of successful connection
-    if (activeUsersCount > 0 && connectionState === 'connecting') {
+    if (subscriptionStatus === 'connected' && presenceStatus === 'connected') {
       setConnectionState('connected');
+    } else if (subscriptionStatus === 'error' || presenceStatus === 'error') {
+      setConnectionState('error');
+    } else if (subscriptionStatus === 'connecting' || presenceStatus === 'connecting') {
+      setConnectionState('connecting');
+    } else {
+      setConnectionState('disconnected');
     }
-  }, [activeUsersCount, connectionState]);
+  }, [subscriptionStatus, presenceStatus]);
 
   const sendMessage = useCallback(async (messageContent: string) => {
     // Check for forbidden words
@@ -98,7 +134,7 @@ export function useCommunityChat() {
     }
 
     if (connectionState !== 'connected') {
-      toast.error("채팅 연결이 불안정합니다. 페이지를 새로고침 후 다시 시도해주세요.");
+      toast.error("채팅 연결이 불안정합니다. 재연결 후 다시 시도해주세요.");
       return;
     }
 
@@ -126,18 +162,17 @@ export function useCommunityChat() {
       setNickname(newNickname.trim());
       localStorage.setItem('chat_nickname', newNickname.trim());
       
-      // Update presence with new nickname
-      updatePresence();
-      
       toast.success(`닉네임이 ${newNickname.trim()}(으)로 변경되었습니다.`);
     }
-  }, [nickname, updatePresence]);
+  }, [nickname]);
 
   const reconnect = useCallback(() => {
     setConnectionState('connecting');
     messagesLoadedRef.current = false;
+    reconnectMessages();
+    reconnectPresence();
     loadRecentMessages();
-  }, []);
+  }, [reconnectMessages, reconnectPresence]);
 
   return {
     messages,

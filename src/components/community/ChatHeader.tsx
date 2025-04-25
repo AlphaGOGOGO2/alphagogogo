@@ -9,6 +9,7 @@ interface ChatHeaderProps {
   onChangeNickname: () => void;
   activeUsersCount?: number;
   connectionState?: 'disconnected' | 'connecting' | 'connected' | 'error';
+  onReconnect?: () => void;
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = ({
@@ -17,6 +18,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
   onChangeNickname,
   activeUsersCount = 0,
   connectionState = 'connected',
+  onReconnect
 }) => {
   const getConnectionStatusDisplay = () => {
     switch (connectionState) {
@@ -37,9 +39,22 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
       case 'disconnected':
       case 'error':
         return (
-          <div className="flex items-center text-red-600" title="연결 안됨">
-            <WifiOff className="h-4 w-4 mr-1" />
-            <span className="text-xs">연결 안됨</span>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center text-red-600" title="연결 안됨">
+              <WifiOff className="h-4 w-4 mr-1" />
+              <span className="text-xs">연결 안됨</span>
+            </div>
+            {onReconnect && (
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onReconnect}
+                className="text-xs bg-white hover:bg-red-50 transition-colors duration-200 h-6 px-2"
+              >
+                <RefreshCw className="h-3 w-3 mr-1" />
+                재연결
+              </Button>
+            )}
           </div>
         );
       default:
@@ -53,7 +68,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
         <h2 className="text-lg font-semibold text-purple-900">실시간 채팅</h2>
         {getConnectionStatusDisplay()}
         {activeUsersCount > 0 && (
-          <div className="flex items-center text-sm text-purple-700 animate-pulse">
+          <div className="flex items-center text-sm text-purple-700">
             <Users className="h-4 w-4 mr-1" />
             <span>{activeUsersCount}명 접속 중</span>
           </div>

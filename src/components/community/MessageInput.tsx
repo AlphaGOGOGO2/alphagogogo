@@ -6,14 +6,15 @@ import { Send } from "lucide-react";
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
+  disabled?: boolean;
 }
 
-export const MessageInput: FC<MessageInputProps> = ({ onSendMessage }) => {
+export const MessageInput: FC<MessageInputProps> = ({ onSendMessage, disabled = false }) => {
   const [newMessage, setNewMessage] = useState("");
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() || disabled) return;
     
     onSendMessage(newMessage);
     setNewMessage("");
@@ -22,7 +23,7 @@ export const MessageInput: FC<MessageInputProps> = ({ onSendMessage }) => {
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      if (newMessage.trim()) {
+      if (newMessage.trim() && !disabled) {
         onSendMessage(newMessage);
         setNewMessage("");
       }
@@ -36,19 +37,23 @@ export const MessageInput: FC<MessageInputProps> = ({ onSendMessage }) => {
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="메시지를 입력하세요..."
-          className="flex-1 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+          placeholder={disabled ? "채팅 연결이 끊어졌습니다. 재연결 후 이용해주세요." : "메시지를 입력하세요..."}
+          className={`flex-1 focus:ring-2 focus:ring-purple-200 transition-all duration-200 ${disabled ? 'bg-gray-100 text-gray-500' : ''}`}
           maxLength={500}
+          disabled={disabled}
         />
         <Button 
           type="submit" 
-          disabled={!newMessage.trim()}
+          disabled={!newMessage.trim() || disabled}
           className="bg-purple-600 hover:bg-purple-700 transition-colors duration-200"
         >
           <Send className="h-4 w-4" />
           <span className="sr-only">전송</span>
         </Button>
       </div>
+      {disabled && (
+        <p className="text-xs text-red-500 mt-1">채팅 서버와의 연결이 끊어졌습니다. 재연결 후 이용해주세요.</p>
+      )}
     </form>
   );
 };

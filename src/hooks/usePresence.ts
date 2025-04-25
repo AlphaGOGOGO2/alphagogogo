@@ -6,11 +6,27 @@ import { toast } from "sonner";
 
 export function usePresence(nickname: string, userColor: string) {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
+  const [presenceStatus, setPresenceStatus] = useState<'disconnected' | 'connecting' | 'connected' | 'error'>('disconnected');
   const presenceChannelRef = useRef<any>(null);
   const presenceInitializedRef = useRef(false);
   const isCleanedUpRef = useRef(false);
   const connectionAttemptsRef = useRef(0);
   const maxRetries = 3;
+  const backoffDelay = 2000; // 2초 (고정 백오프)
+  
+  // Cleanup presence channel
+  const cleanupPresenceChannel = useCallback(() => {
+    if (presenceChannelRef.current) {
+      try {
+        supabase.removeChannel(presenceChannelRef.current);
+      } catch (error) {
+        console.error("Error removing presence channel:", error);
+      } finally {
+        presenceChannelRef.current = null;
+        presenceInitializedRef.current = false;
+      }
+    }
+  }, []);
 
   // Setup presence channel
   const setupPresenceChannel = useCallback(() => {
@@ -18,6 +34,7 @@ export function usePresence(nickname: string, userColor: string) {
 
     try {
       console.log("Setting up presence channel for user:", nickname);
+      setPresenceStatus('connecting');
       connectionAttemptsRef.current += 1;
       
       presenceChannelRef.current = supabase.channel('room:community', {
@@ -60,50 +77,49 @@ export function usePresence(nickname: string, userColor: string) {
               });
               presenceInitializedRef.current = true;
               connectionAttemptsRef.current = 0;
+              setPresenceStatus('connected');
             } catch (error) {
               console.error("Error tracking presence:", error);
+              setPresenceStatus('error');
               toast.error("현재 접속자 정보 연결에 실패했습니다");
             }
           } else if (status === 'CHANNEL_ERROR') {
+            setPresenceStatus('error');
             toast.error("현재 접속자 정보 연결에 실패했습니다");
             
             // 재시도 로직
             if (connectionAttemptsRef.current < maxRetries) {
               console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}...`);
-              setTimeout(() => {
-                cleanupPresenceChannel();
-                setupPresenceChannel();
-              }, 2000);
+              const timeout = setTimeout(() => {
+                if (!isCleanedUpRef.current) {
+                  cleanupPresenceChannel();
+                  setupPresenceChannel();
+                }
+              }, backoffDelay);
+              
+              return () => clearTimeout(timeout);
             } else {
               console.error("최대 재시도 횟수에 도달했습니다.");
             }
           } else if (status === 'TIMED_OUT') {
+            setPresenceStatus('error');
             if (connectionAttemptsRef.current < maxRetries) {
-              setTimeout(() => {
-                cleanupPresenceChannel();
-                setupPresenceChannel();
-              }, 2000);
+              const timeout = setTimeout(() => {
+                if (!isCleanedUpRef.current) {
+                  cleanupPresenceChannel();
+                  setupPresenceChannel();
+                }
+              }, backoffDelay);
+              
+              return () => clearTimeout(timeout);
             }
           }
         });
     } catch (error) {
+      setPresenceStatus('error');
       console.error("Error setting up presence channel:", error);
     }
-  }, [nickname, userColor]);
-
-  // Cleanup presence channel
-  const cleanupPresenceChannel = useCallback(() => {
-    if (presenceChannelRef.current) {
-      try {
-        supabase.removeChannel(presenceChannelRef.current);
-      } catch (error) {
-        console.error("Error removing presence channel:", error);
-      } finally {
-        presenceChannelRef.current = null;
-        presenceInitializedRef.current = false;
-      }
-    }
-  }, []);
+  }, [nickname, userColor, cleanupPresenceChannel]);
 
   useEffect(() => {
     isCleanedUpRef.current = false;
@@ -138,9 +154,17 @@ export function usePresence(nickname: string, userColor: string) {
     }
   }, [nickname, userColor]);
 
+  const reconnect = useCallback(() => {
+    cleanupPresenceChannel();
+    connectionAttemptsRef.current = 0;
+    setupPresenceChannel();
+  }, [cleanupPresenceChannel, setupPresenceChannel]);
+
   return {
     activeUsers,
     activeUsersCount: activeUsers.length,
-    updatePresence
+    updatePresence,
+    presenceStatus,
+    reconnect
   };
 }
