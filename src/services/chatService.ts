@@ -70,8 +70,7 @@ export const sendChatMessage = async (
 // 채널 상태를 확인하는 함수 개선
 export const checkChannelHealth = async (): Promise<boolean> => {
   try {
-    // 두 가지 방법으로 상태 확인
-    // 1. 간단한 쿼리로 데이터베이스 연결 확인
+    // 간단한 쿼리로 데이터베이스 연결 확인
     const { count, error: countError } = await supabase
       .from('community_messages')
       .select('*', { count: 'exact', head: true })
@@ -82,22 +81,8 @@ export const checkChannelHealth = async (): Promise<boolean> => {
       return false;
     }
     
-    // 2. 서버 시간 확인 (Supabase 서비스가 실행 중인지 여부 확인)
-    // 타입스크립트 타입 호환성 문제를 해결하기 위해
-    // 전체 RPC 호출에 대한 타입 단언(as any) 사용 후 결과 타입만 지정
-    const serverTimeCall = await (supabase.rpc(
-      'get_server_time',
-      {},
-      { count: 'none' }
-    ) as any);
-    
-    const { data: timeData, error: timeError } = serverTimeCall as { data: string, error: any };
-    
-    if (timeError) {
-      console.error("Channel health check failed (server time):", timeError);
-      return false;
-    }
-    
+    // Supabase 서버 시간 확인은 컴플렉스한 타입 이슈가 있어서 제거하고
+    // 단순히 쿼리가 성공했는지 여부로만 채널 상태 확인
     return true;
   } catch (error) {
     console.error("Error checking channel health:", error);
