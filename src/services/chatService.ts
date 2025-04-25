@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
 import { toast } from "sonner";
@@ -242,8 +241,8 @@ export const diagnoseConnection = async (): Promise<{
 export const checkServerTime = async (): Promise<number | null> => {
   try {
     const startTime = Date.now();
-    // 타입 문제 해결: now 함수 호출 시 빈 객체를 인자로 전달
-    const { data, error } = await supabase.rpc('now');
+    // 타입 문제 해결: now 함수는 인자 없이 호출
+    const { data, error } = await supabase.rpc('now' as never);
     
     if (error) {
       console.error("서버 시간 확인 실패:", error);
