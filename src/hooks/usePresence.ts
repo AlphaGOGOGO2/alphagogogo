@@ -2,18 +2,24 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { UserPresence } from "@/types/chat";
+import { toast } from "sonner";
 
 export function usePresence(nickname: string, userColor: string) {
   const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
   const presenceChannelRef = useRef<any>(null);
   const presenceInitializedRef = useRef(false);
   const isCleanedUpRef = useRef(false);
+  const connectionAttemptsRef = useRef(0);
+  const maxRetries = 3;
 
   // Setup presence channel
   const setupPresenceChannel = useCallback(() => {
     if (presenceChannelRef.current !== null || isCleanedUpRef.current || !nickname || !userColor) return;
 
     try {
+      console.log("Setting up presence channel for user:", nickname);
+      connectionAttemptsRef.current += 1;
+      
       presenceChannelRef.current = supabase.channel('room:community', {
         config: {
           presence: {
@@ -42,6 +48,8 @@ export function usePresence(nickname: string, userColor: string) {
           }
         })
         .subscribe(async (status: string) => {
+          console.log(`Presence channel status: ${status}`);
+          
           if (status === 'SUBSCRIBED' && !isCleanedUpRef.current) {
             // Send presence data when successfully subscribed
             try {
@@ -51,8 +59,30 @@ export function usePresence(nickname: string, userColor: string) {
                 online_at: new Date().toISOString(),
               });
               presenceInitializedRef.current = true;
+              connectionAttemptsRef.current = 0;
             } catch (error) {
               console.error("Error tracking presence:", error);
+              toast.error("현재 접속자 정보 연결에 실패했습니다");
+            }
+          } else if (status === 'CHANNEL_ERROR') {
+            toast.error("현재 접속자 정보 연결에 실패했습니다");
+            
+            // 재시도 로직
+            if (connectionAttemptsRef.current < maxRetries) {
+              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}...`);
+              setTimeout(() => {
+                cleanupPresenceChannel();
+                setupPresenceChannel();
+              }, 2000);
+            } else {
+              console.error("최대 재시도 횟수에 도달했습니다.");
+            }
+          } else if (status === 'TIMED_OUT') {
+            if (connectionAttemptsRef.current < maxRetries) {
+              setTimeout(() => {
+                cleanupPresenceChannel();
+                setupPresenceChannel();
+              }, 2000);
             }
           }
         });

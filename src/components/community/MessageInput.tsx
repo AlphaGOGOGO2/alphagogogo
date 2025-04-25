@@ -1,5 +1,5 @@
 
-import { FC, FormEvent, useState } from "react";
+import { FC, FormEvent, useState, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
@@ -19,14 +19,26 @@ export const MessageInput: FC<MessageInputProps> = ({ onSendMessage }) => {
     setNewMessage("");
   };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (newMessage.trim()) {
+        onSendMessage(newMessage);
+        setNewMessage("");
+      }
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit} className="p-4 border-t border-purple-100 bg-white rounded-b-lg transition-all duration-200 focus-within:shadow-md">
       <div className="flex gap-2">
         <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="메시지를 입력하세요..."
           className="flex-1 focus:ring-2 focus:ring-purple-200 transition-all duration-200"
+          maxLength={500}
         />
         <Button 
           type="submit" 

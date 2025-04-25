@@ -14,7 +14,8 @@ export function CommunityChat() {
     userColor,
     sendMessage,
     changeNickname,
-    activeUsersCount
+    activeUsersCount,
+    connectionState
   } = useCommunityChat();
   
   const [isVisible, setIsVisible] = useState(false);
@@ -34,6 +35,7 @@ export function CommunityChat() {
         userColor={userColor} 
         onChangeNickname={changeNickname} 
         activeUsersCount={activeUsersCount}
+        connectionState={connectionState}
       />
       
       <div className="p-4 h-[500px] overflow-y-auto bg-white">

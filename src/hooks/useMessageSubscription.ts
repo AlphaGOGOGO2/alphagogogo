@@ -8,6 +8,8 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
   const channelRef = useRef<any>(null);
   const isCleanedUpRef = useRef(false);
+  const connectionAttemptsRef = useRef(0);
+  const maxRetries = 3;
 
   // Update messages when initialMessages changes
   useEffect(() => {
@@ -35,6 +37,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const setupMessageSubscription = () => {
     try {
       console.log("Setting up real-time message subscription");
+      connectionAttemptsRef.current += 1;
       
       // Create and subscribe to the channel
       channelRef.current = supabase
@@ -63,8 +66,30 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
           console.log(`Real-time subscription status: ${status}`);
           if (status === 'SUBSCRIBED') {
             toast.success("실시간 채팅에 연결되었습니다");
+            // 성공적으로 연결되면 시도 카운터 초기화
+            connectionAttemptsRef.current = 0;
           } else if (status === 'CHANNEL_ERROR') {
             toast.error("실시간 채팅 연결에 실패했습니다");
+            // 재시도 로직
+            if (connectionAttemptsRef.current < maxRetries) {
+              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}...`);
+              setTimeout(() => {
+                cleanupChannel();
+                setupMessageSubscription();
+              }, 2000); // 2초 후에 재시도
+            } else {
+              console.error("최대 재시도 횟수에 도달했습니다.");
+              toast.error("채팅 연결에 실패했습니다. 페이지를 새로고침해주세요.");
+            }
+          } else if (status === 'TIMED_OUT') {
+            toast.error("연결 시간이 초과되었습니다");
+            // 타임아웃 시에도 재시도 로직 추가
+            if (connectionAttemptsRef.current < maxRetries) {
+              setTimeout(() => {
+                cleanupChannel();
+                setupMessageSubscription();
+              }, 2000);
+            }
           }
         });
     } catch (error) {

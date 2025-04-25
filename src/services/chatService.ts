@@ -66,3 +66,24 @@ export const sendChatMessage = async (
     return false;
   }
 };
+
+// 채널 상태를 확인하는 함수 추가
+export const checkChannelHealth = async (): Promise<boolean> => {
+  try {
+    // 간단한 쿼리를 실행해서 Supabase 연결 상태 확인
+    const { count, error } = await supabase
+      .from('community_messages')
+      .select('*', { count: 'exact', head: true })
+      .limit(1);
+    
+    if (error) {
+      console.error("Channel health check failed:", error);
+      return false;
+    }
+    
+    return true;
+  } catch (error) {
+    console.error("Error checking channel health:", error);
+    return false;
+  }
+};
