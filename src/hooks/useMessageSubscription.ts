@@ -10,8 +10,13 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const channelRef = useRef<any>(null);
   const isCleanedUpRef = useRef(false);
   const connectionAttemptsRef = useRef(0);
-  const maxRetries = 3;
-  const backoffDelay = 2000; // 2초 (고정 백오프)
+  const maxRetries = 5; // 최대 재시도 횟수 증가
+  const baseDelay = 2000; // 기본 지연 시간 (2초)
+
+  // 지수 백오프 지연 시간 계산
+  const getBackoffDelay = () => {
+    return Math.min(baseDelay * Math.pow(2, connectionAttemptsRef.current), 30000); // 최대 30초
+  };
 
   // Update messages when initialMessages changes
   useEffect(() => {
@@ -66,7 +71,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
               return [...prev, newMsg];
             });
           })
-        .subscribe((status) => {
+        .subscribe(async (status) => {
           console.log(`Real-time subscription status: ${status}`);
           if (status === 'SUBSCRIBED') {
             setSubscriptionStatus('connected');
@@ -76,6 +81,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
           } else if (status === 'CHANNEL_ERROR') {
             setSubscriptionStatus('error');
             toast.error("실시간 채팅 연결에 실패했습니다");
+            
             // 재시도 로직
             if (connectionAttemptsRef.current < maxRetries) {
               console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}...`);
@@ -84,7 +90,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
                   cleanupChannel();
                   setupMessageSubscription();
                 }
-              }, backoffDelay);
+              }, getBackoffDelay());
               
               return () => clearTimeout(timeout);
             } else {
@@ -93,28 +99,24 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
             }
           } else if (status === 'TIMED_OUT') {
             setSubscriptionStatus('error');
-            toast.error("연결 시간이 초과되었습니다");
-            // 타임아웃 시에도 재시도 로직 추가
             if (connectionAttemptsRef.current < maxRetries) {
               const timeout = setTimeout(() => {
                 if (!isCleanedUpRef.current) {
                   cleanupChannel();
                   setupMessageSubscription();
                 }
-              }, backoffDelay);
+              }, getBackoffDelay());
               
               return () => clearTimeout(timeout);
             }
           }
         });
     } catch (error) {
-      console.error("Error setting up message subscription:", error);
       setSubscriptionStatus('error');
-      toast.error("실시간 채팅 연결에 실패했습니다");
+      console.error("Error setting up message subscription:", error);
     }
   }, [cleanupChannel]);
 
-  // Setup subscription on initial mount
   useEffect(() => {
     isCleanedUpRef.current = false;
     

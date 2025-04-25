@@ -70,19 +70,16 @@ export const sendChatMessage = async (
 // 채널 상태를 확인하는 함수 개선
 export const checkChannelHealth = async (): Promise<boolean> => {
   try {
-    // 간단한 쿼리로 데이터베이스 연결 확인
     const { count, error: countError } = await supabase
       .from('community_messages')
       .select('*', { count: 'exact', head: true })
       .limit(1);
     
     if (countError) {
-      console.error("Channel health check failed (query):", countError);
+      console.error("Channel health check failed:", countError);
       return false;
     }
     
-    // Supabase 서버 시간 확인은 컴플렉스한 타입 이슈가 있어서 제거하고
-    // 단순히 쿼리가 성공했는지 여부로만 채널 상태 확인
     return true;
   } catch (error) {
     console.error("Error checking channel health:", error);

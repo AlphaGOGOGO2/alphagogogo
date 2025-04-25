@@ -159,33 +159,6 @@ export type Database = {
         }
         Relationships: []
       }
-      genspark_invites: {
-        Row: {
-          clicks: number | null
-          created_at: string
-          id: string
-          invite_url: string
-          message: string
-          nickname: string
-        }
-        Insert: {
-          clicks?: number | null
-          created_at?: string
-          id?: string
-          invite_url: string
-          message: string
-          nickname: string
-        }
-        Update: {
-          clicks?: number | null
-          created_at?: string
-          id?: string
-          invite_url?: string
-          message?: string
-          nickname?: string
-        }
-        Relationships: []
-      }
       invites: {
         Row: {
           click_count: number | null
