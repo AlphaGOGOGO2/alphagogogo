@@ -1,5 +1,5 @@
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface AdSenseProps {
   adSlot?: string;
@@ -14,19 +14,27 @@ export const AdSense: React.FC<AdSenseProps> = ({
   style = {},
   className = '',
 }) => {
+  const [isAdInitialized, setIsAdInitialized] = useState(false);
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   useEffect(() => {
+    // 개발 환경에서는 광고 초기화 건너뛰기
+    if (isDevelopment) return;
+
+    // 이미 초기화된 경우 다시 초기화하지 않음
+    if (isAdInitialized) return;
+
     try {
-      // Only run this effect in production environment
-      if (!isDevelopment && window.adsbygoogle) {
+      // AdSense 초기화
+      if (window.adsbygoogle) {
         (window.adsbygoogle = window.adsbygoogle || []).push({});
+        setIsAdInitialized(true);
         console.log('AdSense ad pushed to queue');
       }
     } catch (error) {
       console.error('Error initializing AdSense ad:', error);
     }
-  }, []);
+  }, [isDevelopment, isAdInitialized]);
 
   if (isDevelopment) {
     return (
@@ -65,11 +73,10 @@ export const AdSense: React.FC<AdSenseProps> = ({
           ...style,
         }}
         data-ad-client="ca-pub-2328910037798111"
-        data-ad-slot={adSlot}
+        data-ad-slot={adSlot || ''}  // 필요한 경우 고유한 슬롯 지정
         data-ad-format={adFormat}
         data-full-width-responsive="true"
       />
     </div>
   );
 };
-
