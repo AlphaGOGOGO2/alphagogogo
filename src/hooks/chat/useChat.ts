@@ -1,10 +1,10 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Message } from "@/types/chat";
+import { ChatMessage } from "@/types/chat";
 
 export function useChat() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -63,7 +63,7 @@ export function useChat() {
           },
           (payload) => {
             // 새 메시지 추가
-            setMessages((prev) => [...prev, payload.new as Message]);
+            setMessages((prev) => [...prev, payload.new as ChatMessage]);
           }
         )
         .subscribe((status) => {
