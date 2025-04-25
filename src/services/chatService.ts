@@ -3,19 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
 import { toast } from "sonner";
 
-// 연결 상태 확인용 타임아웃 값 설정
-const CONNECTION_TIMEOUT = 10000; // 10초
-const CONNECTION_CHECK_INTERVAL = 45000; // 45초
+// 연결 상태 확인용 타임아웃 값 최적화
+const CONNECTION_TIMEOUT = 15000; // 15초로 증가 (기존 10초)
+const CONNECTION_CHECK_INTERVAL = 60000; // 60초로 증가 (기존 45초)
+const MAX_RETRIES = 5; // 최대 재시도 횟수
 
 export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
   let retries = 0;
-  const maxRetries = 3;
   
   const attemptFetch = async (): Promise<ChatMessage[]> => {
     try {
       console.log("Supabase에서 최근 메시지 가져오는 중");
       
-      // 타임아웃 처리 추가
+      // 타임아웃 처리 개선
       const timeoutPromise = new Promise<{data: null, error: Error}>((_, reject) => {
         setTimeout(() => reject(new Error("데이터베이스 연결 시간 초과")), CONNECTION_TIMEOUT);
       });
@@ -24,7 +24,7 @@ export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
         .from('community_messages')
         .select('*')
         .order('created_at', { ascending: true })
-        .limit(50);
+        .limit(100); // 초기 로드 메시지 수 증가
         
       // Race 조건으로 타임아웃 처리
       const { data, error } = await Promise.race([
@@ -35,16 +35,18 @@ export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
       if (error) {
         console.error("최근 메시지 가져오는 중 오류:", error);
         
-        if (retries < maxRetries) {
+        if (retries < MAX_RETRIES) {
           retries++;
-          console.log(`재시도 중... (${retries}/${maxRetries})`);
-          // 재시도마다 지연 시간 증가 (300ms, 600ms, 900ms)
-          await new Promise(r => setTimeout(r, retries * 300));
+          console.log(`재시도 중... (${retries}/${MAX_RETRIES})`);
+          // 지수 백오프 적용 (300ms, 600ms, 1200ms, 2400ms, 4800ms)
+          const delay = Math.min(300 * Math.pow(2, retries - 1), 5000);
+          await new Promise(r => setTimeout(r, delay));
           return attemptFetch();
         }
         
-        toast.error("메시지를 불러오는데 실패했습니다", {
-          id: "fetch-messages-error"
+        toast.error("메시지를 불러오는데 실패했습니다. 새로고침 후 다시 시도해주세요.", {
+          id: "fetch-messages-error",
+          duration: 5000
         });
         throw error;
       }
@@ -53,8 +55,9 @@ export const fetchRecentMessages = async (): Promise<ChatMessage[]> => {
       return data || [];
     } catch (error) {
       console.error("fetchRecentMessages에서 오류:", error);
-      toast.error("메시지를 불러오는데 실패했습니다", {
-        id: "fetch-messages-error"
+      toast.error("메시지를 불러오는데 실패했습니다. 새로고침 후 다시 시도해주세요.", {
+        id: "fetch-messages-error",
+        duration: 5000
       });
       return [];
     }
@@ -70,7 +73,7 @@ export const sendChatMessage = async (
   color: string
 ): Promise<boolean> => {
   let retries = 0;
-  const maxRetries = 2;
+  const maxRetries = MAX_RETRIES;
   
   const attemptSend = async (): Promise<boolean> => {
     try {
@@ -84,7 +87,7 @@ export const sendChatMessage = async (
       
       console.log("Supabase에 메시지 전송:", { messageId, nickname, content });
       
-      // 타임아웃 처리 추가
+      // 타임아웃 처리 개선
       const timeoutPromise = new Promise<{error: Error}>((_, reject) => {
         setTimeout(() => reject(new Error("메시지 전송 시간 초과")), CONNECTION_TIMEOUT);
       });
@@ -110,13 +113,15 @@ export const sendChatMessage = async (
         if (retries < maxRetries) {
           retries++;
           console.log(`메시지 전송 재시도 중... (${retries}/${maxRetries})`);
-          // 재시도마다 지연 시간 증가 (500ms, 1000ms)
-          await new Promise(r => setTimeout(r, retries * 500));
+          // 지수 백오프 적용
+          const delay = Math.min(500 * Math.pow(2, retries - 1), 8000);
+          await new Promise(r => setTimeout(r, delay));
           return attemptSend();
         }
         
-        toast.error("메시지 전송에 실패했습니다", {
-          id: "send-message-error"
+        toast.error("메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.", {
+          id: "send-message-error",
+          duration: 5000
         });
         throw error;
       }
@@ -125,8 +130,9 @@ export const sendChatMessage = async (
       return true;
     } catch (error) {
       console.error("sendChatMessage에서 오류:", error);
-      toast.error("메시지 전송에 실패했습니다", {
-        id: "send-message-error"
+      toast.error("메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.", {
+        id: "send-message-error",
+        duration: 5000
       });
       return false;
     }
@@ -140,7 +146,7 @@ export const checkChannelHealth = async (): Promise<boolean> => {
   try {
     console.log("채널 상태 확인 중...");
     
-    // 타임아웃 처리 추가
+    // 타임아웃 처리 최적화
     const timeoutPromise = new Promise<{data: null, error: Error}>((_, reject) => {
       setTimeout(() => reject(new Error("건강 확인 시간 초과")), CONNECTION_TIMEOUT / 2);
     });
@@ -167,7 +173,7 @@ export const checkChannelHealth = async (): Promise<boolean> => {
     }
     
     // 응답 시간이 비정상적으로 높으면 건강하지 않은 것으로 간주
-    if (responseTime > CONNECTION_TIMEOUT / 2) {
+    if (responseTime > CONNECTION_TIMEOUT / 3) {
       console.warn(`채널 응답 시간이 너무 깁니다: ${responseTime}ms`);
       return false;
     }
@@ -180,10 +186,11 @@ export const checkChannelHealth = async (): Promise<boolean> => {
   }
 };
 
-// 연결 진단 함수 추가
+// 연결 진단 함수 개선
 export const diagnoseConnection = async (): Promise<{
   status: 'good' | 'poor' | 'bad',
-  details: string
+  details: string,
+  responseTime?: number
 }> => {
   try {
     const checkStart = Date.now();
@@ -203,7 +210,10 @@ export const diagnoseConnection = async (): Promise<{
     }
     
     // 2. 데이터베이스 상태 확인
+    let responseTime = 0;
+    const dbHealthStartTime = Date.now();
     const dbHealthy = await checkChannelHealth();
+    responseTime = Date.now() - dbHealthStartTime;
     
     // 3. 진단 결과 종합
     const checkDuration = Date.now() - checkStart;
@@ -211,23 +221,27 @@ export const diagnoseConnection = async (): Promise<{
     if (networkStatus === 'disconnected') {
       return {
         status: 'bad',
-        details: '네트워크 연결 문제: Supabase 서버에 접근할 수 없습니다. 인터넷 연결을 확인해주세요.'
+        details: '네트워크 연결 문제: Supabase 서버에 접근할 수 없습니다. 인터넷 연결을 확인해주세요.',
+        responseTime
       };
     } else if (!dbHealthy) {
       return {
         status: 'poor',
-        details: '데이터베이스 연결 문제: Supabase 데이터베이스에 접근할 수 있으나 응답이 느립니다.'
+        details: `데이터베이스 연결 문제: Supabase 데이터베이스에 접근할 수 있으나 응답이 느립니다. (${responseTime}ms)`,
+        responseTime
       };
-    } else if (checkDuration > 3000) {
+    } else if (checkDuration > 5000) {
       return {
         status: 'poor',
-        details: `연결 성능 저하: 진단에 ${checkDuration}ms가 소요되었습니다. 네트워크 상태가 불안정할 수 있습니다.`
+        details: `연결 성능 저하: 진단에 ${checkDuration}ms가 소요되었습니다. 네트워크 상태가 불안정할 수 있습니다.`,
+        responseTime
       };
     }
     
     return {
       status: 'good',
-      details: `양호한 연결 상태: 진단에 ${checkDuration}ms가 소요되었습니다.`
+      details: `양호한 연결 상태: 진단에 ${checkDuration}ms가 소요되었습니다.`,
+      responseTime
     };
   } catch (error) {
     console.error("연결 진단 중 오류:", error);
@@ -257,5 +271,42 @@ export const checkServerTime = async (): Promise<number | null> => {
   } catch (error) {
     console.error("서버 시간 확인 중 오류:", error);
     return null;
+  }
+};
+
+// 새로운 함수 추가: 채팅 연결 품질 평가
+export const evaluateConnectionQuality = async (): Promise<{
+  quality: 'good' | 'acceptable' | 'poor',
+  latency: number | null,
+  recommendation: string
+}> => {
+  const latency = await checkServerTime();
+  
+  if (latency === null) {
+    return {
+      quality: 'poor',
+      latency: null,
+      recommendation: '서버 연결 상태를 확인할 수 없습니다. 네트워크 연결을 확인해주세요.'
+    };
+  }
+  
+  if (latency < 300) {
+    return {
+      quality: 'good',
+      latency,
+      recommendation: '연결 상태가 양호합니다.'
+    };
+  } else if (latency < 1000) {
+    return {
+      quality: 'acceptable',
+      latency,
+      recommendation: '연결 상태가 보통입니다. 안정적인 네트워크 환경에서 사용하는 것이 좋습니다.'
+    };
+  } else {
+    return {
+      quality: 'poor',
+      latency,
+      recommendation: '연결 상태가 좋지 않습니다. 새로고침을 하거나 네트워크 연결을 확인해주세요.'
+    };
   }
 };

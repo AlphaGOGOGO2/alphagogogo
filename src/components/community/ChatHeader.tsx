@@ -1,5 +1,5 @@
 
-import { FC } from "react";
+import { FC, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Users, RefreshCw, Wifi, WifiOff, AlertTriangle, ActivityIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -12,6 +12,7 @@ interface ChatHeaderProps {
   connectionState?: 'disconnected' | 'connecting' | 'connected' | 'error';
   onReconnect?: () => void;
   onDiagnoseConnection?: () => void;
+  connectionQualityIndicator?: ReactNode;
 }
 
 export const ChatHeader: FC<ChatHeaderProps> = ({
@@ -21,23 +22,27 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
   activeUsersCount = 0,
   connectionState = 'connected',
   onReconnect,
-  onDiagnoseConnection
+  onDiagnoseConnection,
+  connectionQualityIndicator
 }) => {
   const getConnectionStatusDisplay = () => {
     switch (connectionState) {
       case 'connected':
         return (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex items-center text-green-600 cursor-help" title="연결됨">
-                <Wifi className="h-4 w-4 mr-1" />
-                <span className="text-xs">연결됨</span>
-              </div>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p className="text-xs">실시간 채팅 서버에 정상적으로 연결되었습니다</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex items-center">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center text-green-600 cursor-help" title="연결됨">
+                  <Wifi className="h-4 w-4 mr-1" />
+                  <span className="text-xs">연결됨</span>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="text-xs">실시간 채팅 서버에 정상적으로 연결되었습니다</p>
+              </TooltipContent>
+            </Tooltip>
+            {connectionQualityIndicator}
+          </div>
         );
       case 'connecting':
         return (
@@ -106,7 +111,7 @@ export const ChatHeader: FC<ChatHeaderProps> = ({
 
   return (
     <div className="bg-purple-50 p-4 rounded-t-lg border-b border-purple-100 flex justify-between items-center transition-all duration-200 hover:bg-purple-100">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <h2 className="text-lg font-semibold text-purple-900">실시간 채팅</h2>
         {getConnectionStatusDisplay()}
         {activeUsersCount > 0 && (

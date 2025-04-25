@@ -1,7 +1,13 @@
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
-import { fetchRecentMessages, sendChatMessage, diagnoseConnection } from "@/services/chatService";
+import { 
+  fetchRecentMessages, 
+  sendChatMessage, 
+  diagnoseConnection,
+  evaluateConnectionQuality 
+} from "@/services/chatService";
 import { useMessageSubscription } from "@/hooks/useMessageSubscription";
 import { usePresence } from "@/hooks/usePresence";
 import { ChatMessage } from "@/types/chat";
@@ -15,12 +21,13 @@ export function useCommunityChat() {
   const [userColor, setUserColor] = useState("");
   const [connectionState, setConnectionState] = useState<ConnectionState>('connecting');
   const [connectionDiagnosis, setConnectionDiagnosis] = useState<string | null>(null);
+  const [connectionQuality, setConnectionQuality] = useState<'good' | 'acceptable' | 'poor' | 'unknown'>('unknown');
   const messagesLoadedRef = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
-  const healthCheckIntervalRef = useRef<number | null>(null);
-  const lastHealthCheckRef = useRef<number>(0);
-  const healthCheckFailuresRef = useRef(0);
+  const lastDiagnosisTimeRef = useRef<number>(0);
   const connectionDiagnosisRunningRef = useRef(false);
+  const autoReconnectTimeoutRef = useRef<number | null>(null);
+  const diagnosticCheckTimeoutRef = useRef<number | null>(null);
 
   // 사용자 데이터 초기화 (한 번만)
   useEffect(() => {
@@ -47,20 +54,92 @@ export function useCommunityChat() {
     };
     
     initUserData();
+    
+    // 페이지 가시성 변경 감지 (백그라운드에서 포그라운드로 전환 시 상태 확인)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // 페이지가 다시 보이게 되면 연결 상태 진단
+        checkConnectionStatus();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      
+      if (autoReconnectTimeoutRef.current) {
+        clearTimeout(autoReconnectTimeoutRef.current);
+      }
+      
+      if (diagnosticCheckTimeoutRef.current) {
+        clearTimeout(diagnosticCheckTimeoutRef.current);
+      }
+    };
   }, []);
+  
+  // 연결 품질 주기적 확인
+  const checkConnectionStatus = useCallback(async () => {
+    // 이미 연결 상태가 에러인 경우에는 진단 실행
+    if (connectionState === 'error') {
+      await runConnectionDiagnosis();
+      return;
+    }
+    
+    try {
+      const qualityResult = await evaluateConnectionQuality();
+      setConnectionQuality(qualityResult.quality);
+      
+      // 연결 품질이 좋지 않으면 자동 재연결 시도
+      if (qualityResult.quality === 'poor' && connectionState === 'connected') {
+        console.warn("연결 품질이 좋지 않아 자동 재연결을 준비합니다.");
+        
+        // 5초 후 자동 재연결 시도
+        if (autoReconnectTimeoutRef.current) {
+          clearTimeout(autoReconnectTimeoutRef.current);
+        }
+        
+        autoReconnectTimeoutRef.current = window.setTimeout(() => {
+          console.log("연결 품질이 좋지 않아 자동 재연결을 시도합니다.");
+          reconnect();
+        }, 5000) as unknown as number;
+      }
+      
+      // 일정 시간 후 다시 연결 상태 확인
+      if (diagnosticCheckTimeoutRef.current) {
+        clearTimeout(diagnosticCheckTimeoutRef.current);
+      }
+      
+      diagnosticCheckTimeoutRef.current = window.setTimeout(() => {
+        checkConnectionStatus();
+      }, 120000) as unknown as number; // 2분마다 확인
+      
+    } catch (err) {
+      console.error("연결 상태 확인 중 오류 발생:", err);
+    }
+  }, [connectionState]);
   
   // 초기 로딩 시 메시지 가져오기
   useEffect(() => {
     if (!messagesLoadedRef.current) {
       loadRecentMessages();
     }
-  }, []);
+    
+    // 초기 연결 후 일정 시간 후 연결 품질 확인 시작
+    const timer = setTimeout(() => {
+      checkConnectionStatus();
+    }, 10000); // 10초 후 첫 확인
+    
+    return () => clearTimeout(timer);
+  }, [checkConnectionStatus]);
 
   // 연결 진단 함수
   const runConnectionDiagnosis = useCallback(async () => {
     if (connectionDiagnosisRunningRef.current) return;
     
     connectionDiagnosisRunningRef.current = true;
+    lastDiagnosisTimeRef.current = Date.now();
+    
     try {
       const result = await diagnoseConnection();
       setConnectionDiagnosis(`연결 상태: ${
@@ -95,6 +174,11 @@ export function useCommunityChat() {
         setConnectionState('connected'); // 메시지가 없어도 연결은 성공한 것으로 간주
         messagesLoadedRef.current = true;
       }
+      
+      // 연결 성공 후 연결 품질 확인 시작
+      setTimeout(() => {
+        checkConnectionStatus();
+      }, 5000);
     } catch (error) {
       console.error('Error loading messages:', error);
       toast.error("메시지 로딩 실패: 최근 메시지를 불러오는데 실패했습니다.");
@@ -108,12 +192,22 @@ export function useCommunityChat() {
   };
 
   // 개선된 메시지 구독 설정
-  const { messages, subscriptionStatus, reconnect: reconnectMessages, pingServer } = 
-    useMessageSubscription(initialMessages);
+  const { 
+    messages, 
+    subscriptionStatus, 
+    reconnect: reconnectMessages, 
+    pingServer,
+    getChannelInfo: getMessageChannelInfo 
+  } = useMessageSubscription(initialMessages);
 
   // 개선된 프레즌스 설정
-  const { activeUsers, activeUsersCount, presenceStatus, reconnect: reconnectPresence } = 
-    usePresence(nickname, userColor);
+  const { 
+    activeUsers, 
+    activeUsersCount, 
+    presenceStatus, 
+    reconnect: reconnectPresence,
+    getChannelInfo: getPresenceChannelInfo 
+  } = usePresence(nickname, userColor);
 
   // 연결 상태 통합 관리 개선
   useEffect(() => {
@@ -121,13 +215,17 @@ export function useCommunityChat() {
     if (!isLoading) {
       if (subscriptionStatus === 'connected' && presenceStatus === 'connected') {
         setConnectionState('connected');
+        
         // 이전 진단 정보 초기화
-        setConnectionDiagnosis(null);
+        if (connectionDiagnosis) {
+          setTimeout(() => setConnectionDiagnosis(null), 10000); // 10초 후 진단 정보 숨김
+        }
       } else if (subscriptionStatus === 'error' || presenceStatus === 'error') {
         setConnectionState('error');
         
-        // 오류 발생 시 자동으로 진단 실행 (아직 실행 중이지 않은 경우에만)
-        if (!connectionDiagnosisRunningRef.current) {
+        // 오류 발생 시 자동으로 진단 실행 (아직 실행 중이지 않고, 마지막 진단으로부터 1분 이상 지난 경우에만)
+        const now = Date.now();
+        if (!connectionDiagnosisRunningRef.current && (now - lastDiagnosisTimeRef.current > 60000)) {
           runConnectionDiagnosis();
         }
       } else if (subscriptionStatus === 'connecting' || presenceStatus === 'connecting') {
@@ -136,7 +234,7 @@ export function useCommunityChat() {
         setConnectionState('disconnected');
       }
     }
-  }, [subscriptionStatus, presenceStatus, isLoading, runConnectionDiagnosis]);
+  }, [subscriptionStatus, presenceStatus, isLoading, runConnectionDiagnosis, connectionDiagnosis]);
 
   // 연결 상태 진단 실행 함수
   const diagnoseConnectionStatus = useCallback(async () => {
@@ -147,14 +245,23 @@ export function useCommunityChat() {
     const pingTime = await pingServer();
     
     if (pingTime !== null) {
-      toast.info(`서버 응답 시간: ${pingTime}ms`, {
+      const qualityText = pingTime < 300 ? '좋음' : pingTime < 1000 ? '보통' : '나쁨';
+      
+      toast.info(`서버 응답 시간: ${pingTime}ms (${qualityText})`, {
         id: "ping-result",
-        duration: 3000
+        duration: 5000
       });
+      
+      // 채널 정보 로그
+      const msgChannelInfo = getMessageChannelInfo();
+      const presenceChannelInfo = getPresenceChannelInfo();
+      
+      console.log("메시지 채널 정보:", msgChannelInfo);
+      console.log("프레즌스 채널 정보:", presenceChannelInfo);
     }
     
     return result;
-  }, [runConnectionDiagnosis, pingServer]);
+  }, [runConnectionDiagnosis, pingServer, getMessageChannelInfo, getPresenceChannelInfo]);
 
   const sendMessage = useCallback(async (messageContent: string) => {
     // 금지어 확인
@@ -205,8 +312,16 @@ export function useCommunityChat() {
     setConnectionState('connecting');
     toast.info("채팅 서버에 재연결 중...");
     
-    // 건강 상태 확인 실패 카운터 초기화
-    healthCheckFailuresRef.current = 0;
+    // 모든 타임아웃 정리
+    if (autoReconnectTimeoutRef.current) {
+      clearTimeout(autoReconnectTimeoutRef.current);
+      autoReconnectTimeoutRef.current = null;
+    }
+    
+    if (diagnosticCheckTimeoutRef.current) {
+      clearTimeout(diagnosticCheckTimeoutRef.current);
+      diagnosticCheckTimeoutRef.current = null;
+    }
     
     // 메시지 로드 상태 초기화
     messagesLoadedRef.current = false;
@@ -220,6 +335,7 @@ export function useCommunityChat() {
     
     // 진단 정보 초기화
     setConnectionDiagnosis(null);
+    setConnectionQuality('unknown');
   }, [reconnectMessages, reconnectPresence]);
 
   return {
@@ -233,6 +349,7 @@ export function useCommunityChat() {
     activeUsersCount,
     connectionState,
     connectionDiagnosis,
+    connectionQuality,
     diagnoseConnectionStatus,
     reconnect
   };

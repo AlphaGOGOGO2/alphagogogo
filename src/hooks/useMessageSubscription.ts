@@ -3,6 +3,17 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
 import { toast } from "sonner";
+import { checkChannelHealth } from "@/services/chatService";
+
+// 최적화된 설정 상수
+const CONNECTION_CONFIG = {
+  MAX_RETRIES: 15,               // 최대 재시도 횟수
+  BASE_DELAY: 800,               // 기본 지연 시간 최적화
+  RECONNECT_COOLDOWN: 5000,      // 5초로 증가 (기존 3초)
+  HEARTBEAT_INTERVAL: 30000,     // 하트비트 간격 30초
+  MESSAGE_BUFFER_DELAY: 100,     // 메시지 버퍼링 처리 지연시간
+  MAX_BACKOFF_DELAY: 15000       // 최대 백오프 지연시간
+};
 
 export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
@@ -10,21 +21,24 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const channelRef = useRef<any>(null);
   const isCleanedUpRef = useRef(false);
   const connectionAttemptsRef = useRef(0);
-  const maxRetries = 15; // 최대 재시도 횟수 증가
-  const baseDelay = 800; // 기본 지연 시간 최적화
   const processedMessageIdsRef = useRef<Set<string>>(new Set()); // 처리된 메시지 ID 추적
   const lastReconnectTimeRef = useRef<number>(0); // 마지막 재연결 시간 추적
-  const reconnectCooldown = 3000; // 재연결 쿨다운(ms)
   const heartbeatIntervalRef = useRef<number | null>(null); // 하트비트 인터벌
   const messagesBufferRef = useRef<Map<string, ChatMessage>>(new Map()); // 메시지 버퍼 추가
   const processingRef = useRef<boolean>(false); // 메시지 처리 중 상태
+  const lastHealthCheckRef = useRef<number>(Date.now());
+  const healthCheckFailuresRef = useRef(0);
+  const channelNameRef = useRef<string>('');
   
   // 연결 복구 전략 향상 - 지수 백오프 지연 시간 계산 개선
   const getBackoffDelay = useCallback(() => {
     const attempt = Math.min(connectionAttemptsRef.current, 10); // 최대 10번째 시도까지만 지수 증가
     // 지수 백오프 + 약간의 무작위성 추가 (Jitter)
     const jitter = Math.random() * 300;
-    return Math.min(baseDelay * Math.pow(1.5, attempt) + jitter, 12000); // 최대 12초
+    return Math.min(
+      CONNECTION_CONFIG.BASE_DELAY * Math.pow(1.7, attempt) + jitter, 
+      CONNECTION_CONFIG.MAX_BACKOFF_DELAY
+    );
   }, []);
 
   // 개선된 메시지 중복 처리 함수
@@ -47,7 +61,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     // 이미 처리 중이 아니라면 일괄 처리 일정 잡기
     if (!processingRef.current) {
       processingRef.current = true;
-      setTimeout(() => processMessageBuffer(), 50);
+      setTimeout(() => processMessageBuffer(), CONNECTION_CONFIG.MESSAGE_BUFFER_DELAY);
     }
     
     return true;
@@ -74,10 +88,26 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
       }
       
       console.log(`${newMessages.length}개의 새 메시지 추가`);
-      return [...prev, ...newMessages];
+      
+      // 타임스탬프 기준으로 정렬하여 추가
+      const allMessages = [...prev, ...newMessages].sort((a, b) => 
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      );
+      
+      // 최대 메시지 수 제한 (성능 최적화)
+      if (allMessages.length > 200) {
+        return allMessages.slice(allMessages.length - 200);
+      }
+      
+      return allMessages;
     });
     
     processingRef.current = false;
+    
+    // 버퍼에 메시지가 더 있으면 계속 처리
+    if (messagesBufferRef.current.size > 0) {
+      setTimeout(() => processMessageBuffer(), CONNECTION_CONFIG.MESSAGE_BUFFER_DELAY);
+    }
   }, []);
 
   // 초기 메시지 업데이트
@@ -98,7 +128,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     }
   }, [initialMessages]);
 
-  // 채널 정리 함수
+  // 채널 정리 함수 - 개선됨
   const cleanupChannel = useCallback(() => {
     if (channelRef.current) {
       try {
@@ -109,6 +139,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
         console.error("채널 제거 중 오류:", error);
       } finally {
         channelRef.current = null;
+        channelNameRef.current = '';
       }
     }
     
@@ -121,8 +152,38 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
 
   // 채널 상태 로깅 함수
   const logChannelStatus = useCallback((status: string) => {
-    console.log(`실시간 구독 상태: ${status} (시도: ${connectionAttemptsRef.current}/${maxRetries})`);
+    console.log(`실시간 구독 상태: ${status} (시도: ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES})`);
   }, []);
+  
+  // 채널 상태 확인 함수 추가
+  const checkChannelStatus = useCallback(async () => {
+    if (channelRef.current && subscriptionStatus === 'connected') {
+      const now = Date.now();
+      
+      // 마지막 상태 확인 후 일정 시간이 지났으면 검사
+      if (now - lastHealthCheckRef.current > CONNECTION_CONFIG.HEARTBEAT_INTERVAL) {
+        lastHealthCheckRef.current = now;
+        
+        const isHealthy = await checkChannelHealth();
+        
+        if (!isHealthy) {
+          healthCheckFailuresRef.current++;
+          console.warn(`채널 상태 확인 실패 (${healthCheckFailuresRef.current}번째)`);
+          
+          // 연속 3번 이상 실패하면 연결 재설정
+          if (healthCheckFailuresRef.current >= 3) {
+            console.error("연속된 채널 상태 확인 실패로 재연결합니다.");
+            setSubscriptionStatus('error');
+            reconnect();
+            return;
+          }
+        } else {
+          // 상태가 정상이면 실패 카운트 리셋
+          healthCheckFailuresRef.current = 0;
+        }
+      }
+    }
+  }, [subscriptionStatus]);
   
   // 개선된 구독 설정
   const setupMessageSubscription = useCallback(() => {
@@ -131,9 +192,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
 
     const now = Date.now();
     // 재연결 쿨다운 검사
-    if (now - lastReconnectTimeRef.current < reconnectCooldown && connectionAttemptsRef.current > 0) {
-      console.log(`재연결 쿨다운 대기 중... (${reconnectCooldown - (now - lastReconnectTimeRef.current)}ms 남음)`);
-      setTimeout(setupMessageSubscription, reconnectCooldown - (now - lastReconnectTimeRef.current));
+    if (now - lastReconnectTimeRef.current < CONNECTION_CONFIG.RECONNECT_COOLDOWN && connectionAttemptsRef.current > 0) {
+      console.log(`재연결 쿨다운 대기 중... (${CONNECTION_CONFIG.RECONNECT_COOLDOWN - (now - lastReconnectTimeRef.current)}ms 남음)`);
+      setTimeout(setupMessageSubscription, CONNECTION_CONFIG.RECONNECT_COOLDOWN - (now - lastReconnectTimeRef.current));
       return;
     }
     
@@ -146,6 +207,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
       
       // 채널 구독시 독립된 이름 사용 (타임스탬프로 고유화)
       const channelName = `community_messages:${Date.now()}`;
+      channelNameRef.current = channelName;
       
       // 채널 생성 및 구독
       channelRef.current = supabase
@@ -172,6 +234,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
           if (status === 'SUBSCRIBED') {
             setSubscriptionStatus('connected');
             connectionAttemptsRef.current = 0; // 연결 성공 시 카운터 리셋
+            healthCheckFailuresRef.current = 0; // 상태 확인 실패 카운터 리셋
             
             // 하트비트 인터벌 설정 (연결 유지를 위한 주기적 핑)
             if (heartbeatIntervalRef.current) {
@@ -179,21 +242,8 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
             }
             
             heartbeatIntervalRef.current = window.setInterval(() => {
-              if (channelRef.current) {
-                // 채널이 살아있는지 확인하는 간단한 핑 작업
-                supabase.from('community_messages')
-                  .select('created_at')
-                  .limit(1)
-                  .then(() => {
-                    console.log("채널 하트비트 성공");
-                  })
-                  .then(undefined, (err) => {  // catch 대신 then의 두 번째 인자로 에러 핸들링
-                    console.error("채널 하트비트 실패:", err);
-                    // 하트비트 실패 시 연결 상태를 오류로 설정
-                    setSubscriptionStatus('error');
-                  });
-              }
-            }, 30000) as unknown as number; // 30초마다 하트비트 전송
+              checkChannelStatus();
+            }, CONNECTION_CONFIG.HEARTBEAT_INTERVAL) as unknown as number;
           } 
           else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
             console.error(`채널 상태 오류: ${status}`);
@@ -205,9 +255,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
               heartbeatIntervalRef.current = null;
             }
             
-            if (status !== 'CLOSED' && connectionAttemptsRef.current < maxRetries) {
+            if (status !== 'CLOSED' && connectionAttemptsRef.current < CONNECTION_CONFIG.MAX_RETRIES) {
               const delay = getBackoffDelay();
-              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}, ${delay}ms 후...`);
+              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES}, ${delay}ms 후...`);
               
               // 재연결 지연
               setTimeout(() => {
@@ -217,7 +267,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
                 }
               }, delay);
             } 
-            else if (connectionAttemptsRef.current >= maxRetries) {
+            else if (connectionAttemptsRef.current >= CONNECTION_CONFIG.MAX_RETRIES) {
               console.error("최대 재시도 횟수에 도달했습니다.");
               toast.error("채팅 연결에 실패했습니다. 페이지를 새로고침해주세요.", { 
                 id: "realtime-failed",
@@ -234,7 +284,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
         duration: 5000
       });
     }
-  }, [cleanupChannel, addMessageIfNotExists, logChannelStatus, getBackoffDelay, processMessageBuffer]);
+  }, [cleanupChannel, addMessageIfNotExists, logChannelStatus, getBackoffDelay, checkChannelStatus]);
 
   useEffect(() => {
     isCleanedUpRef.current = false;
@@ -253,10 +303,12 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const reconnect = useCallback(() => {
     cleanupChannel();
     connectionAttemptsRef.current = 0;
+    healthCheckFailuresRef.current = 0;
+    lastHealthCheckRef.current = Date.now();
     processedMessageIdsRef.current.clear(); // 재연결 시 메시지 ID 캐시 초기화
     messagesBufferRef.current.clear(); // 메시지 버퍼 초기화
     toast.info("채팅 서버에 다시 연결 중...");
-    setTimeout(setupMessageSubscription, 500); // 약간의 지연 후 재연결 (이전 연결 정리 시간 확보)
+    setTimeout(setupMessageSubscription, 800); // 약간의 지연 후 재연결 (이전 연결 정리 시간 확보)
   }, [cleanupChannel, setupMessageSubscription]);
   
   // Ping 테스트 실행 (연결 상태 진단용)
@@ -285,11 +337,22 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     }
   }, []);
 
+  // 채널 정보 얻기
+  const getChannelInfo = useCallback(() => {
+    return {
+      channelName: channelNameRef.current,
+      healthFailures: healthCheckFailuresRef.current,
+      connectionAttempts: connectionAttemptsRef.current,
+      lastHealthCheck: new Date(lastHealthCheckRef.current).toISOString()
+    };
+  }, []);
+
   return { 
     messages, 
     setMessages, 
     subscriptionStatus, 
     reconnect,
-    pingServer 
+    pingServer,
+    getChannelInfo
   };
 }
