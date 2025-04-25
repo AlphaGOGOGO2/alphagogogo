@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
@@ -173,34 +172,20 @@ export function useCommunityChat() {
     const messageId = uuidv4();
     console.log("Sending message:", { messageId, nickname, messageContent });
     
-    // 낙관적 UI 업데이트 - 메시지 즉시 표시
-    const optimisticMessage: ChatMessage = {
-      id: messageId,
-      nickname,
-      content: messageContent,
-      color: userColor,
-      created_at: new Date().toISOString()
-    };
-    
-    // 즉시 로컬에 메시지 추가 (낙관적 업데이트)
-    messages.push(optimisticMessage);
-    
     try {
+      // 낙관적 UI 업데이트는 제거하고 실제 전송 성공 후 서버에서 받은 메시지만 표시
       const success = await sendChatMessage(messageId, nickname, messageContent, userColor);
       
       if (!success) {
         console.error("Failed to send message");
         toast.error("메시지 전송에 실패했습니다. 다시 시도해주세요.");
-        
-        // 실패시 낙관적으로 추가된 메시지 제거
-        const filteredMessages = messages.filter(msg => msg.id !== messageId);
-        // messages 상태 업데이트 (이 부분은 useMessageSubscription에서 처리할 수도 있음)
       }
+      // 실시간 구독을 통해 메시지가 자동으로 추가되므로 여기서는 추가하지 않음
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error("메시지 전송 실패: 메시지를 전송하는데 실패했습니다. 다시 시도해주세요.");
     }
-  }, [nickname, userColor, connectionState, messages]);
+  }, [nickname, userColor, connectionState]);
 
   const changeNickname = useCallback(() => {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);

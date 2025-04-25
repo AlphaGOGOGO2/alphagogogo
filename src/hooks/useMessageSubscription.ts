@@ -37,8 +37,18 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
       return false;
     }
     
-    processedMessageIdsRef.current.add(newMsg.id);
-    setMessages(prev => [...prev, newMsg]);
+    // 이미 존재하는지 상태에서도 한 번 더 확인
+    setMessages(prev => {
+      const isDuplicate = prev.some(msg => msg.id === newMsg.id);
+      if (isDuplicate) {
+        console.log("상태에 이미 존재하는 메시지 무시:", newMsg.id);
+        return prev;
+      }
+      
+      processedMessageIdsRef.current.add(newMsg.id);
+      return [...prev, newMsg];
+    });
+    
     return true;
   }, []);
 

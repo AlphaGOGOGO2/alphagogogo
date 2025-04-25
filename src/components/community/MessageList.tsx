@@ -47,11 +47,20 @@ export const MessageList: FC<MessageListProps> = ({ messages, isLoading }) => {
     );
   }
 
+  // 메시지 중복을 방지하기 위해 고유 ID 기준으로 메시지를 필터링
+  const uniqueMessages = messages.reduce((acc: ChatMessage[], current) => {
+    const isDuplicate = acc.find((item) => item.id === current.id);
+    if (!isDuplicate) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
+
   return (
     <div className="space-y-3">
-      {messages.map((msg, index) => (
+      {uniqueMessages.map((msg, index) => (
         <div 
-          key={msg.id}
+          key={`${msg.id}-${index}`}
           className="animate-fade-in"
           style={{ animationDelay: `${index * 50}ms` }}
         >
