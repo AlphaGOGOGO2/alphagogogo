@@ -149,7 +149,7 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
                   .then(() => {
                     console.log("채널 하트비트 성공");
                   })
-                  .catch(err => {
+                  .then(undefined, (err) => {  // catch 대신 then의 두 번째 인자로 에러 핸들링
                     console.error("채널 하트비트 실패:", err);
                     // 하트비트 실패 시 연결 상태를 오류로 설정
                     setSubscriptionStatus('error');

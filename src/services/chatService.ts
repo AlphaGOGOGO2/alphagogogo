@@ -242,7 +242,9 @@ export const diagnoseConnection = async (): Promise<{
 export const checkServerTime = async (): Promise<number | null> => {
   try {
     const startTime = Date.now();
-    const { data, error } = await supabase.rpc('now');
+    // string 타입 인자로 전달하는 대신 배열로 감싸서 전달합니다
+    // 여기가 오류가 발생했던 부분입니다
+    const { data, error } = await supabase.rpc('now', {});
     
     if (error) {
       console.error("서버 시간 확인 실패:", error);
