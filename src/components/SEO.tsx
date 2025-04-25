@@ -1,3 +1,4 @@
+
 import { Helmet } from "react-helmet-async";
 
 interface SEOProps {
@@ -119,8 +120,8 @@ export function SEO({
       <meta http-equiv="Feature-Policy" content="camera 'none'; microphone 'none'; geolocation 'none'" />
       <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()" />
       
-      {/* Updated Content Security Policy to allow Supabase font source */}
-      <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google https://tpc.googlesyndication.com; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
+      {/* Updated Content Security Policy to allow AdSense traffic quality domains */}
+      <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google https://tpc.googlesyndication.com; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
     </Helmet>
   );
 }
