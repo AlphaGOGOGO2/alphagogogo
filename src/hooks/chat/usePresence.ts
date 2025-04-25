@@ -1,79 +1,79 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPresence } from "@/types/chat";
-import { checkChannelHealth } from "@/services/chatService";
 
-export function usePresence(nickname: string, userColor: string) {
-  const [activeUsers, setActiveUsers] = useState<UserPresence[]>([]);
+export function usePresence(nickname: string, color: string) {
+  const [activeUsersCount, setActiveUsersCount] = useState(0);
   const [isConnected, setIsConnected] = useState(false);
-  const [channelSubscribed, setChannelSubscribed] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  
+  // 채널 구독 상태 추적
+  const presenceChannelRef = useRef<any>(null);
+  const isSubscribedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (!nickname || !userColor) return;
-
-    let channel: ReturnType<typeof supabase.channel> | null = null;
+    // 이미 구독 중인지 확인
+    if (isSubscribedRef.current) return;
     
-    // 아직 구독하지 않은 경우에만 채널 설정
-    if (!channelSubscribed) {
-      channel = supabase.channel('presence_users')
-        .on('presence', { event: 'sync' }, () => {
-          const state = channel?.presenceState();
-          if (!state) return;
-          
-          // 반환되는 데이터 구조가 기대한 형식과 다를 수 있으므로 필터링 및 변환 로직 개선
-          const users: UserPresence[] = [];
-          
-          // 각 키(사용자)에 대해 처리
-          Object.keys(state).forEach(key => {
-            if (Array.isArray(state[key])) {
-              state[key].forEach((presence: any) => {
-                // presence 객체에 필요한 필드가 모두 있는지 확인
-                if (presence && typeof presence === 'object' && 
-                    'nickname' in presence && 
-                    'color' in presence && 
-                    'online_at' in presence) {
-                  users.push({
-                    nickname: presence.nickname,
-                    color: presence.color,
-                    online_at: presence.online_at
-                  });
-                }
-              });
-            }
-          });
-          
-          setActiveUsers(users);
+    try {
+      // 기존 채널이 있으면 제거
+      if (presenceChannelRef.current) {
+        presenceChannelRef.current.unsubscribe();
+      }
+
+      // 새 채널 생성 및 구독
+      const presenceChannel = supabase.channel("community-presence", {
+        config: {
+          presence: {
+            key: nickname,
+          },
+        },
+      });
+
+      // 채널에 등록하고 사용자 상태 동기화
+      presenceChannel
+        .on("presence", { event: "sync" }, () => {
+          const state = presenceChannel.presenceState();
+          const count = Object.keys(state).length;
+          setActiveUsersCount(count);
+        })
+        .on("presence", { event: "join" }, ({ key, newPresences }) => {
+          console.log(`사용자 참가: ${key}`, newPresences);
+        })
+        .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+          console.log(`사용자 퇴장: ${key}`, leftPresences);
         })
         .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
+          if (status === "SUBSCRIBED") {
+            // 접속 상태 전송
+            await presenceChannel.track({ user: nickname, color: color });
             setIsConnected(true);
-            setChannelSubscribed(true);
-            
-            if (channel) {
-              await channel.track({
-                nickname,
-                color: userColor,
-                online_at: new Date().toISOString(),
-              });
-            }
-          } else {
-            setIsConnected(false);
+            isSubscribedRef.current = true;
           }
+          console.log("프레즌스 채널 상태:", status);
         });
+
+      // 채널 참조 저장
+      presenceChannelRef.current = presenceChannel;
+
+      return () => {
+        // 컴포넌트 언마운트 시 구독 해제
+        if (presenceChannelRef.current) {
+          console.log("프레즌스 채널 구독 해제");
+          presenceChannelRef.current.unsubscribe();
+          isSubscribedRef.current = false;
+        }
+      };
+    } catch (err: any) {
+      console.error("프레즌스 오류:", err);
+      setError(err);
+      setIsConnected(false);
     }
+  }, [nickname, color]);
 
-    return () => {
-      if (channel) {
-        supabase.removeChannel(channel);
-        setChannelSubscribed(false);
-      }
-    };
-  }, [nickname, userColor]);
-
-  return {
-    activeUsers,
-    activeUsersCount: activeUsers.length,
-    isConnected
+  return { 
+    activeUsersCount,
+    isConnected,
+    error
   };
 }
