@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
 import { toast } from "sonner";
@@ -242,8 +241,7 @@ export const diagnoseConnection = async (): Promise<{
 export const checkServerTime = async (): Promise<number | null> => {
   try {
     const startTime = Date.now();
-    // string 타입 인자로 전달하는 대신 배열로 감싸서 전달합니다
-    // 여기가 오류가 발생했던 부분입니다
+    // now 함수 호출 시 빈 객체를 인자로 전달
     const { data, error } = await supabase.rpc('now', {});
     
     if (error) {

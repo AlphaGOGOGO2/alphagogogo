@@ -4,7 +4,6 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CommunityChat } from "@/components/community/CommunityChat";
 import { AlertTriangle } from "lucide-react";
-import { AdSense } from "@/components/AdSense";
 
 export default function CommunityPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -47,16 +46,8 @@ export default function CommunityPage() {
             </div>
           </div>
           
-          <div className="mb-8">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
-          </div>
-          
           <div className={`transition-all duration-500 delay-150 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
             <CommunityChat />
-          </div>
-
-          <div className="mt-12">
-            <AdSense adFormat="horizontal" style={{ minHeight: "90px" }} />
           </div>
         </div>
       </main>
