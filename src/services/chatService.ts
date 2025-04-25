@@ -83,13 +83,15 @@ export const checkChannelHealth = async (): Promise<boolean> => {
     }
     
     // 2. 서버 시간 확인 (Supabase 서비스가 실행 중인지 여부 확인)
-    // 타입스크립트 오류 수정: string 매개변수 대신 빈 객체를 사용하고
-    // 명시적 타입 어설션을 추가합니다
-    const { data: timeData, error: timeError } = await supabase.rpc(
+    // 타입스크립트 타입 호환성 문제를 해결하기 위해
+    // 전체 RPC 호출에 대한 타입 단언(as any) 사용 후 결과 타입만 지정
+    const serverTimeCall = await (supabase.rpc(
       'get_server_time',
       {},
       { count: 'none' }
-    ) as { data: string, error: any };
+    ) as any);
+    
+    const { data: timeData, error: timeError } = serverTimeCall as { data: string, error: any };
     
     if (timeError) {
       console.error("Channel health check failed (server time):", timeError);
