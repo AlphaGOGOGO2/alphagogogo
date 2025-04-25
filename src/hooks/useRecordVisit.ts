@@ -37,17 +37,11 @@ export function useRecordVisit() {
       // visit_logs 테이블에 RLS 정책을 검토하고 필요시 수정 필요
       // 익명 사용자도 기록할 수 있도록 정책 수정 필요할 수 있음
       try {
-        // 명시적으로 apikey와 authorization 헤더 설정
-        const { error } = await supabase.from("visit_logs").insert([
-          {
-            ip_address: ip,
-            user_agent: userAgent,
-          }
-        ], {
-          headers: {
-            apikey: supabase.supabaseKey,
-            Authorization: `Bearer ${supabase.supabaseKey}`
-          }
+        // API 키는 supabase 객체에서 직접 접근할 수 없으므로 헤더 설정을 생략
+        // 대신 익명 액세스를 허용하는 RLS 정책을 권장
+        const { error } = await supabase.from("visit_logs").insert({
+          ip_address: ip,
+          user_agent: userAgent,
         });
         
         if (error) {
