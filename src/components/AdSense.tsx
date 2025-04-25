@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 interface AdSenseProps {
   adSlot?: string;
@@ -8,6 +8,9 @@ interface AdSenseProps {
   className?: string;
 }
 
+// 전역 변수로 이미 초기화된 슬롯을 추적
+const initializedSlots = new Set<string>();
+
 export const AdSense: React.FC<AdSenseProps> = ({
   adSlot,
   adFormat = 'auto',
@@ -15,26 +18,37 @@ export const AdSense: React.FC<AdSenseProps> = ({
   className = '',
 }) => {
   const [isAdInitialized, setIsAdInitialized] = useState(false);
+  const adRef = useRef<HTMLDivElement>(null);
   const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  // 광고 슬롯의 고유 식별자 (없으면 랜덤 생성)
+  const slotId = adSlot || `auto-ad-${Math.random().toString(36).substring(2, 15)}`;
 
   useEffect(() => {
     // 개발 환경에서는 광고 초기화 건너뛰기
     if (isDevelopment) return;
 
-    // 이미 초기화된 경우 다시 초기화하지 않음
+    // 이미 이 슬롯이 초기화되었는지 확인
+    if (initializedSlots.has(slotId)) {
+      console.log(`AdSense slot ${slotId} already initialized, skipping`);
+      return;
+    }
+
+    // 이미 컴포넌트 인스턴스가 초기화되었는지 확인
     if (isAdInitialized) return;
 
+    // DOM에 요소가 있는지 확인
+    if (!adRef.current) return;
+
     try {
-      // AdSense 초기화
-      if (window.adsbygoogle) {
-        (window.adsbygoogle = window.adsbygoogle || []).push({});
-        setIsAdInitialized(true);
-        console.log('AdSense ad pushed to queue');
-      }
+      // 자동 광고 설정이므로 추가 초기화 없이 슬롯만 추적
+      initializedSlots.add(slotId);
+      setIsAdInitialized(true);
+      console.log(`AdSense slot ${slotId} marked as initialized`);
     } catch (error) {
-      console.error('Error initializing AdSense ad:', error);
+      console.error('Error with AdSense slot:', error);
     }
-  }, [isDevelopment, isAdInitialized]);
+  }, [isDevelopment, isAdInitialized, slotId]);
 
   if (isDevelopment) {
     return (
@@ -65,7 +79,12 @@ export const AdSense: React.FC<AdSenseProps> = ({
   }
 
   return (
-    <div className={`adsense-container ${className}`}>
+    <div className={`adsense-container ${className}`} ref={adRef}>
+      {/* 
+        자동 광고를 사용하는 경우, 개별 광고 태그를 삽입하지 않아도 됩니다.
+        그러나 특정 위치에 광고를 추가하려면 아래 태그를 유지하되,
+        초기화는 전역에서 한 번만 수행합니다.
+      */}
       <ins
         className="adsbygoogle"
         style={{
@@ -73,7 +92,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
           ...style,
         }}
         data-ad-client="ca-pub-2328910037798111"
-        data-ad-slot={adSlot || ''}  // 필요한 경우 고유한 슬롯 지정
+        data-ad-slot={adSlot || ''}
         data-ad-format={adFormat}
         data-full-width-responsive="true"
       />
