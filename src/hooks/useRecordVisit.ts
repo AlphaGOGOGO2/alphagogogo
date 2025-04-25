@@ -34,15 +34,21 @@ export function useRecordVisit() {
 
       const userAgent = window.navigator.userAgent;
 
-      // 익명 사용자용 RLS 정책이 없을 수 있으므로, 서비스 역할 키 사용 고려
-      // 또는 해당 테이블에 대한 퍼블릭 액세스 허용 정책 필요
+      // visit_logs 테이블에 RLS 정책을 검토하고 필요시 수정 필요
+      // 익명 사용자도 기록할 수 있도록 정책 수정 필요할 수 있음
       try {
+        // 명시적으로 apikey와 authorization 헤더 설정
         const { error } = await supabase.from("visit_logs").insert([
           {
             ip_address: ip,
             user_agent: userAgent,
           }
-        ]);
+        ], {
+          headers: {
+            apikey: supabase.supabaseKey,
+            Authorization: `Bearer ${supabase.supabaseKey}`
+          }
+        });
         
         if (error) {
           console.log("방문 기록 실패:", error.message);
