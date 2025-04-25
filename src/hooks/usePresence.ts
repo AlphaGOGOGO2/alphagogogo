@@ -11,11 +11,13 @@ export function usePresence(nickname: string, userColor: string) {
   const presenceInitializedRef = useRef(false);
   const isCleanedUpRef = useRef(false);
   const connectionAttemptsRef = useRef(0);
-  const maxRetries = 5;
-  const baseDelay = 2000;
+  const maxRetries = 7;
+  const baseDelay = 1500;
 
   const getBackoffDelay = () => {
-    return Math.min(baseDelay * Math.pow(2, connectionAttemptsRef.current), 30000);
+    // 지수 백오프 + 약간의 무작위성 추가 (Jitter)
+    const jitter = Math.random() * 500;
+    return Math.min(baseDelay * Math.pow(1.5, connectionAttemptsRef.current) + jitter, 20000); // 최대 20초
   };
 
   // Cleanup presence channel
@@ -33,7 +35,7 @@ export function usePresence(nickname: string, userColor: string) {
     }
   }, []);
 
-  // Setup presence channel
+  // 개선된 Presence 채널 설정
   const setupPresenceChannel = useCallback(() => {
     if (presenceChannelRef.current !== null || isCleanedUpRef.current || !nickname || !userColor) return;
 
@@ -42,7 +44,11 @@ export function usePresence(nickname: string, userColor: string) {
       setPresenceStatus('connecting');
       connectionAttemptsRef.current += 1;
       
-      presenceChannelRef.current = supabase.channel('room:community', {
+      // 타임스탬프로 고유한 채널 이름 생성 (캐싱 방지)
+      const timestamp = Date.now();
+      const channelName = `room:community:${timestamp}`;
+      
+      presenceChannelRef.current = supabase.channel(channelName, {
         config: {
           presence: {
             key: nickname,
@@ -86,31 +92,24 @@ export function usePresence(nickname: string, userColor: string) {
               console.error("Error tracking presence:", error);
               setPresenceStatus('error');
             }
-          } else if (status === 'CHANNEL_ERROR') {
+          } 
+          else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+            console.error(`Presence 채널 상태 오류: ${status}`);
             setPresenceStatus('error');
             
-            if (connectionAttemptsRef.current < maxRetries) {
-              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}...`);
-              const timeout = setTimeout(() => {
+            if (status !== 'CLOSED' && connectionAttemptsRef.current < maxRetries) {
+              const delay = getBackoffDelay();
+              console.log(`Presence 재연결 시도 ${connectionAttemptsRef.current}/${maxRetries}, ${delay}ms 후...`);
+              
+              setTimeout(() => {
                 if (!isCleanedUpRef.current) {
                   cleanupPresenceChannel();
                   setupPresenceChannel();
                 }
-              }, getBackoffDelay());
-              
-              return () => clearTimeout(timeout);
-            }
-          } else if (status === 'TIMED_OUT') {
-            setPresenceStatus('error');
-            if (connectionAttemptsRef.current < maxRetries) {
-              const timeout = setTimeout(() => {
-                if (!isCleanedUpRef.current) {
-                  cleanupPresenceChannel();
-                  setupPresenceChannel();
-                }
-              }, getBackoffDelay());
-              
-              return () => clearTimeout(timeout);
+              }, delay);
+            } 
+            else if (connectionAttemptsRef.current >= maxRetries) {
+              console.error("Presence 최대 재시도 횟수에 도달했습니다.");
             }
           }
         });
@@ -123,7 +122,8 @@ export function usePresence(nickname: string, userColor: string) {
   useEffect(() => {
     isCleanedUpRef.current = false;
     
-    if (!presenceInitializedRef.current) {
+    // presence 채널 설정 (nickname과 userColor가 있을 때만)
+    if (nickname && userColor && !presenceInitializedRef.current) {
       setupPresenceChannel();
     }
     
@@ -133,8 +133,9 @@ export function usePresence(nickname: string, userColor: string) {
     };
   }, [nickname, userColor, setupPresenceChannel, cleanupPresenceChannel]);
 
+  // Presence 상태 업데이트
   const updatePresence = useCallback(async () => {
-    if (presenceChannelRef.current && !isCleanedUpRef.current) {
+    if (presenceChannelRef.current && presenceInitializedRef.current && !isCleanedUpRef.current) {
       try {
         await presenceChannelRef.current.track({
           nickname,
@@ -144,9 +145,12 @@ export function usePresence(nickname: string, userColor: string) {
       } catch (error) {
         console.error("Error updating presence:", error);
       }
+    } else if (!presenceInitializedRef.current && !isCleanedUpRef.current) {
+      setupPresenceChannel();
     }
-  }, [nickname, userColor]);
+  }, [nickname, userColor, setupPresenceChannel]);
 
+  // 재연결 함수
   const reconnect = useCallback(() => {
     cleanupPresenceChannel();
     connectionAttemptsRef.current = 0;

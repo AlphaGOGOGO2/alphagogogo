@@ -67,22 +67,25 @@ export const sendChatMessage = async (
   }
 };
 
-// 채널 상태를 확인하는 함수 개선
+// 개선된 채널 상태 확인 함수
 export const checkChannelHealth = async (): Promise<boolean> => {
   try {
-    const { count, error: countError } = await supabase
+    // 간단한 쿼리로 데이터베이스 연결 상태 확인
+    const { data, error } = await supabase
       .from('community_messages')
-      .select('*', { count: 'exact', head: true })
-      .limit(1);
+      .select('created_at')
+      .limit(1)
+      .maybeSingle();
     
-    if (countError) {
-      console.error("Channel health check failed:", countError);
+    if (error) {
+      console.error("채널 상태 확인 실패:", error);
       return false;
     }
     
+    // 연결이 정상적으로 작동하면 true 반환
     return true;
   } catch (error) {
-    console.error("Error checking channel health:", error);
+    console.error("채널 상태 확인 중 오류:", error);
     return false;
   }
 };
