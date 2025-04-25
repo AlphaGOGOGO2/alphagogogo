@@ -34,29 +34,26 @@ export function useRecordVisit() {
 
       const userAgent = window.navigator.userAgent;
 
-      // Supabase에 기록 시도
-      const { error } = await supabase.from("visit_logs").insert([
-        {
-          ip_address: ip,
-          user_agent: userAgent,
-        }
-      ]);
-      
-      // 개발자를 위한 디버그 메시지, 사용자에게는 표시되지 않음
-      if (error) {
-        console.log("방문 기록 실패 (RLS 정책으로 인한 제한일 수 있음):", error.message);
+      // 익명 사용자용 RLS 정책이 없을 수 있으므로, 서비스 역할 키 사용 고려
+      // 또는 해당 테이블에 대한 퍼블릭 액세스 허용 정책 필요
+      try {
+        const { error } = await supabase.from("visit_logs").insert([
+          {
+            ip_address: ip,
+            user_agent: userAgent,
+          }
+        ]);
         
-        // 운영 환경에서 중요한 오류만 관리자에게 알림
-        if (process.env.NODE_ENV === 'production' && error.code !== '42501') {
-          toast.error("방문 기록 중 오류가 발생했습니다.", {
-            id: "visit-log-error",
-            duration: 3000,
-          });
+        if (error) {
+          console.log("방문 기록 실패:", error.message);
+          // 사용자 경험에 영향을 주지 않도록 토스트 메시지는 표시하지 않음
         }
+      } catch (error: any) {
+        console.error("방문 기록 처리 오류:", error);
       }
     } catch (e) {
-      // 기록 실패해도 UI는 영향 없게 함
-      console.log("방문 기록 처리 중 오류:", e);
+      // 방문 기록 실패해도 UI에 영향 없게 처리
+      console.error("방문 기록 처리 중 예외 발생:", e);
     }
   }
 }
