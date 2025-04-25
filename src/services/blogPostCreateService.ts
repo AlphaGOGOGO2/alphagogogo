@@ -23,10 +23,14 @@ export const createBlogPost = async (
       slug,
       read_time: readTime,
       excerpt,
-      coverImageUrl
+      coverImageUrl,
+      published_at: post.published_at || new Date().toISOString()
     });
     
-    // Use post.published_at if it exists; otherwise, use now
+    // 예약발행 날짜가 있으면 사용하고, 없으면 현재 시간 사용
+    const publishedAt = post.published_at || new Date().toISOString();
+    console.log("Actual published_at date being used:", publishedAt);
+    
     const blogPostData = {
       title: post.title!,
       content: post.content!,
@@ -37,7 +41,7 @@ export const createBlogPost = async (
       excerpt,
       author_name: "알파GOGOGO", // Default author name
       author_avatar: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png", // Updated profile image URL
-      published_at: post.published_at ?? new Date().toISOString()
+      published_at: publishedAt
     };
     
     console.log("Final blog post data for insert:", blogPostData);
@@ -74,7 +78,14 @@ export const createBlogPost = async (
       }
     }
 
-    toast.success("블로그 포스트가 성공적으로 작성되었습니다");
+    // 예약발행 메시지 표시
+    const isScheduled = new Date(publishedAt) > new Date();
+    if (isScheduled) {
+      toast.success(`블로그 포스트가 ${new Date(publishedAt).toLocaleString('ko-KR')}에 발행되도록 예약되었습니다`);
+    } else {
+      toast.success("블로그 포스트가 성공적으로 작성되었습니다");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error creating blog post:", error);

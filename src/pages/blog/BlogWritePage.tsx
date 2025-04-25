@@ -9,6 +9,7 @@ import { BlogForm } from "@/components/blog/BlogForm";
 import { BlogPreview } from "@/components/blog/BlogPreview";
 import { BlogPost } from "@/types/blog";
 import { openInfoPopup } from "@/utils/popupUtils";
+import { format } from "date-fns";
 
 export default function BlogWritePage() {
   const navigate = useNavigate();
@@ -54,17 +55,35 @@ export default function BlogWritePage() {
       setContent(postToEdit.content);
       setCategory(postToEdit.category);
       setPostId(postToEdit.id);
-      // We don't have tags in the current data model, but if implemented, you could set them here
+      
+      // 수정 모드일 때 기존 발행 일정이 미래라면 예약발행 상태로 설정
+      const publishDate = new Date(postToEdit.publishedAt);
+      const now = new Date();
+      if (publishDate > now) {
+        setScheduled(true);
+        setScheduledDate(publishDate);
+        setScheduledTime(
+          format(publishDate, "HH:mm")
+        );
+      }
     }
   }, [isEditMode, postToEdit]);
 
   // 예약발행 시간 계산
   const getScheduledAt = () => {
-    if (!scheduled || !scheduledDate) return undefined;
+    if (!scheduled || !scheduledDate) return null;
+    
     // 시간(시:분) 입력값 파싱
     const [hours, minutes] = scheduledTime.split(":").map(Number);
     const date = new Date(scheduledDate);
     date.setHours(hours, minutes, 0, 0);
+    
+    // 현재 시간보다 이전인지 확인
+    const now = new Date();
+    if (date <= now) {
+      return null; // 과거 시간이면 null 반환 (현재 시간으로 설정됨)
+    }
+    
     return date.toISOString();
   };
 
@@ -81,7 +100,9 @@ export default function BlogWritePage() {
         toast.error("예약 날짜와 시간을 모두 선택해주세요");
         return;
       }
-      if (new Date(getScheduledAt()!) < new Date()) {
+      
+      const scheduledAt = getScheduledAt();
+      if (!scheduledAt) {
         toast.error("예약 발행 시간은 현재 시각 이후여야 합니다.");
         return;
       }
@@ -97,6 +118,7 @@ export default function BlogWritePage() {
         .filter(tag => tag !== "");
       
       let result;
+      const scheduledAt = getScheduledAt();
       
       if (isEditMode && postId) {
         // Update existing post
@@ -105,7 +127,7 @@ export default function BlogWritePage() {
           content,
           category,
           tags: parsedTags,
-          published_at: getScheduledAt(), // <-- FIXED: use published_at instead of scheduled_at
+          published_at: scheduledAt // null이면 기존 시간 유지됨
         });
       } else {
         // Create new post
@@ -114,14 +136,14 @@ export default function BlogWritePage() {
           content,
           category,
           tags: parsedTags,
-          published_at: getScheduledAt(), // <-- FIXED: use published_at instead of scheduled_at
+          published_at: scheduledAt // null이면 현재 시간으로 설정됨
         });
       }
       
       if (result) {
         toast.success(isEditMode 
           ? "블로그 포스트가 성공적으로 수정되었습니다"
-          : scheduled
+          : scheduled && scheduledAt
             ? "블로그 포스트가 예약되었습니다"
             : "블로그 포스트가 성공적으로 저장되었습니다"
         );
@@ -180,4 +202,3 @@ export default function BlogWritePage() {
     </BlogLayout>
   );
 }
-

@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
 import { calculateReadingTime, generateExcerpt, extractFirstImageUrl } from "@/utils/blogUtils";
@@ -22,7 +23,8 @@ export const updateBlogPost = async (
       category: post.category,
       read_time: readTime,
       excerpt,
-      coverImageUrl
+      coverImageUrl,
+      published_at: post.published_at
     });
     
     // Use post.published_at if given, otherwise leave unchanged
@@ -35,8 +37,10 @@ export const updateBlogPost = async (
       excerpt,
       updated_at: new Date().toISOString()
     };
+    
     if (post.published_at) {
       blogPostData.published_at = post.published_at;
+      console.log("Setting published_at to:", post.published_at);
     }
     
     console.log("Final blog post data for update:", blogPostData);
@@ -68,7 +72,18 @@ export const updateBlogPost = async (
       }
     }
 
-    toast.success("블로그 포스트가 성공적으로 수정되었습니다");
+    // 예약발행 또는 기본 성공 메시지 표시
+    if (post.published_at) {
+      const isScheduled = new Date(post.published_at) > new Date();
+      if (isScheduled) {
+        toast.success(`블로그 포스트가 ${new Date(post.published_at).toLocaleString('ko-KR')}에 발행되도록 예약되었습니다`);
+      } else {
+        toast.success("블로그 포스트가 성공적으로 수정되었습니다");
+      }
+    } else {
+      toast.success("블로그 포스트가 성공적으로 수정되었습니다");
+    }
+    
     return data;
   } catch (error) {
     console.error("Error updating blog post:", error);
