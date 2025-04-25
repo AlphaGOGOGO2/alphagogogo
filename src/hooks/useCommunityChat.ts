@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { containsForbiddenWords } from "@/utils/chatFilterUtils";
-import { fetchRecentMessages, sendChatMessage, checkChannelHealth } from "@/services/chatService";
+import { fetchRecentMessages, sendChatMessage, diagnoseConnection } from "@/services/chatService";
 import { useMessageSubscription } from "@/hooks/useMessageSubscription";
 import { usePresence } from "@/hooks/usePresence";
 import { ChatMessage } from "@/types/chat";
@@ -15,11 +15,13 @@ export function useCommunityChat() {
   const [nickname, setNickname] = useState("");
   const [userColor, setUserColor] = useState("");
   const [connectionState, setConnectionState] = useState<ConnectionState>('connecting');
+  const [connectionDiagnosis, setConnectionDiagnosis] = useState<string | null>(null);
   const messagesLoadedRef = useRef(false);
   const [initialMessages, setInitialMessages] = useState<ChatMessage[]>([]);
   const healthCheckIntervalRef = useRef<number | null>(null);
   const lastHealthCheckRef = useRef<number>(0);
   const healthCheckFailuresRef = useRef(0);
+  const connectionDiagnosisRunningRef = useRef(false);
 
   // 사용자 데이터 초기화 (한 번만)
   useEffect(() => {
@@ -52,68 +54,30 @@ export function useCommunityChat() {
   useEffect(() => {
     if (!messagesLoadedRef.current) {
       loadRecentMessages();
-      messagesLoadedRef.current = true;
     }
   }, []);
 
-  // 채널 건강 상태 확인 함수 - 방어적 접근 개선
-  const performHealthCheck = useCallback(async () => {
-    // 마지막 건강 확인 이후 최소 10초 지났는지 확인 (너무 자주 확인 방지)
-    const now = Date.now();
-    if (now - lastHealthCheckRef.current < 10000) {
-      return;
-    }
+  // 연결 진단 함수
+  const runConnectionDiagnosis = useCallback(async () => {
+    if (connectionDiagnosisRunningRef.current) return;
     
-    lastHealthCheckRef.current = now;
-    
+    connectionDiagnosisRunningRef.current = true;
     try {
-      if (connectionState === 'connected') {
-        const isHealthy = await checkChannelHealth();
-        
-        if (!isHealthy) {
-          healthCheckFailuresRef.current++;
-          console.warn(`채널 건강 확인 실패: ${healthCheckFailuresRef.current}회`);
-          
-          // 연속 3번 이상 실패하면 연결 상태 업데이트
-          if (healthCheckFailuresRef.current >= 3) {
-            setConnectionState('error');
-            toast.error("채팅 연결이 끊어졌습니다. 재연결이 필요합니다.", {
-              id: "connection-lost"
-            });
-            healthCheckFailuresRef.current = 0;
-          }
-        } else {
-          // 성공하면 실패 카운트 초기화
-          healthCheckFailuresRef.current = 0;
-        }
-      }
-    } catch (error) {
-      console.error("건강 확인 중 오류:", error);
-    }
-  }, [connectionState]);
-
-  // 주기적 채널 건강 상태 확인
-  useEffect(() => {
-    const startHealthCheck = () => {
-      if (healthCheckIntervalRef.current) {
-        clearInterval(healthCheckIntervalRef.current);
-      }
+      const result = await diagnoseConnection();
+      setConnectionDiagnosis(`연결 상태: ${
+        result.status === 'good' ? '양호' : 
+        result.status === 'poor' ? '불안정' : '나쁨'
+      }. ${result.details}`);
       
-      healthCheckIntervalRef.current = window.setInterval(() => {
-        performHealthCheck();
-      }, 30000) as unknown as number; // 30초마다 확인
-    };
-    
-    if (connectionState === 'connected') {
-      startHealthCheck();
+      connectionDiagnosisRunningRef.current = false;
+      return result;
+    } catch (error) {
+      console.error("연결 진단 중 오류:", error);
+      setConnectionDiagnosis("연결 진단 중 오류가 발생했습니다.");
+      connectionDiagnosisRunningRef.current = false;
+      return null;
     }
-    
-    return () => {
-      if (healthCheckIntervalRef.current) {
-        clearInterval(healthCheckIntervalRef.current);
-      }
-    };
-  }, [connectionState, performHealthCheck]);
+  }, []);
 
   const loadRecentMessages = async () => {
     setIsLoading(true);
@@ -126,24 +90,31 @@ export function useCommunityChat() {
         console.log(`Successfully loaded ${data.length} messages`);
         setInitialMessages(data);
         setConnectionState('connected');
+        messagesLoadedRef.current = true;
       } else {
         console.log("No messages found or empty response");
         setConnectionState('connected'); // 메시지가 없어도 연결은 성공한 것으로 간주
+        messagesLoadedRef.current = true;
       }
     } catch (error) {
       console.error('Error loading messages:', error);
       toast.error("메시지 로딩 실패: 최근 메시지를 불러오는데 실패했습니다.");
       setConnectionState('error');
+      
+      // 자동 연결 진단 실행
+      runConnectionDiagnosis();
     } finally {
       setIsLoading(false);
     }
   };
 
   // 개선된 메시지 구독 설정
-  const { messages, subscriptionStatus, reconnect: reconnectMessages } = useMessageSubscription(initialMessages);
+  const { messages, subscriptionStatus, reconnect: reconnectMessages, pingServer } = 
+    useMessageSubscription(initialMessages);
 
   // 개선된 프레즌스 설정
-  const { activeUsers, activeUsersCount, presenceStatus, reconnect: reconnectPresence } = usePresence(nickname, userColor);
+  const { activeUsers, activeUsersCount, presenceStatus, reconnect: reconnectPresence } = 
+    usePresence(nickname, userColor);
 
   // 연결 상태 통합 관리 개선
   useEffect(() => {
@@ -151,15 +122,40 @@ export function useCommunityChat() {
     if (!isLoading) {
       if (subscriptionStatus === 'connected' && presenceStatus === 'connected') {
         setConnectionState('connected');
+        // 이전 진단 정보 초기화
+        setConnectionDiagnosis(null);
       } else if (subscriptionStatus === 'error' || presenceStatus === 'error') {
         setConnectionState('error');
+        
+        // 오류 발생 시 자동으로 진단 실행 (아직 실행 중이지 않은 경우에만)
+        if (!connectionDiagnosisRunningRef.current) {
+          runConnectionDiagnosis();
+        }
       } else if (subscriptionStatus === 'connecting' || presenceStatus === 'connecting') {
         setConnectionState('connecting');
       } else {
         setConnectionState('disconnected');
       }
     }
-  }, [subscriptionStatus, presenceStatus, isLoading]);
+  }, [subscriptionStatus, presenceStatus, isLoading, runConnectionDiagnosis]);
+
+  // 연결 상태 진단 실행 함수
+  const diagnoseConnectionStatus = useCallback(async () => {
+    toast.info("연결 상태 진단 중...");
+    const result = await runConnectionDiagnosis();
+    
+    // Ping 테스트 실행
+    const pingTime = await pingServer();
+    
+    if (pingTime !== null) {
+      toast.info(`서버 응답 시간: ${pingTime}ms`, {
+        id: "ping-result",
+        duration: 3000
+      });
+    }
+    
+    return result;
+  }, [runConnectionDiagnosis, pingServer]);
 
   const sendMessage = useCallback(async (messageContent: string) => {
     // 금지어 확인
@@ -177,18 +173,34 @@ export function useCommunityChat() {
     const messageId = uuidv4();
     console.log("Sending message:", { messageId, nickname, messageContent });
     
+    // 낙관적 UI 업데이트 - 메시지 즉시 표시
+    const optimisticMessage: ChatMessage = {
+      id: messageId,
+      nickname,
+      content: messageContent,
+      color: userColor,
+      created_at: new Date().toISOString()
+    };
+    
+    // 즉시 로컬에 메시지 추가 (낙관적 업데이트)
+    messages.push(optimisticMessage);
+    
     try {
       const success = await sendChatMessage(messageId, nickname, messageContent, userColor);
       
       if (!success) {
         console.error("Failed to send message");
         toast.error("메시지 전송에 실패했습니다. 다시 시도해주세요.");
+        
+        // 실패시 낙관적으로 추가된 메시지 제거
+        const filteredMessages = messages.filter(msg => msg.id !== messageId);
+        // messages 상태 업데이트 (이 부분은 useMessageSubscription에서 처리할 수도 있음)
       }
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error("메시지 전송 실패: 메시지를 전송하는데 실패했습니다. 다시 시도해주세요.");
     }
-  }, [nickname, userColor, connectionState]);
+  }, [nickname, userColor, connectionState, messages]);
 
   const changeNickname = useCallback(() => {
     const newNickname = prompt("새로운 닉네임을 입력하세요:", nickname);
@@ -220,6 +232,9 @@ export function useCommunityChat() {
     
     // 최근 메시지 다시 로드
     loadRecentMessages();
+    
+    // 진단 정보 초기화
+    setConnectionDiagnosis(null);
   }, [reconnectMessages, reconnectPresence]);
 
   return {
@@ -232,6 +247,8 @@ export function useCommunityChat() {
     activeUsers,
     activeUsersCount,
     connectionState,
+    connectionDiagnosis,
+    diagnoseConnectionStatus,
     reconnect
   };
 }
