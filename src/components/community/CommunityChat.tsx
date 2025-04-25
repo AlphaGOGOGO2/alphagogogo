@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ChatHeader } from "./ChatHeader";
 import { MessageList } from "./MessageList";
 import { MessageInput } from "./MessageInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useChat } from "@/hooks/chat/useChat";
 import { usePresence } from "@/hooks/chat/usePresence";
 

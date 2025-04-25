@@ -13,6 +13,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [channelSubscribed, setChannelSubscribed] = useState(false);
 
   // 초기 메시지 로드
   const loadMessages = useCallback(async () => {
@@ -37,26 +38,38 @@ export function useChat() {
   useEffect(() => {
     loadMessages();
 
-    const channel = supabase.channel('chat_messages')
-      .on('postgres_changes', 
-        { event: 'INSERT', schema: 'public', table: 'community_messages' },
-        (payload) => {
-          const newMessage = payload.new as ChatMessage;
-          setMessages(prev => [...prev, newMessage]);
-        }
-      )
-      .subscribe((status) => {
-        setIsConnected(status === 'SUBSCRIBED');
-        if (status === 'CHANNEL_ERROR') {
-          toast.error('채팅 연결이 끊어졌습니다');
-          setTimeout(() => {
-            channel.subscribe();
-          }, RETRY_DELAY);
-        }
-      });
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    
+    // 아직 구독하지 않은 경우에만 채널 설정
+    if (!channelSubscribed) {
+      channel = supabase.channel('chat_messages')
+        .on('postgres_changes', 
+          { event: 'INSERT', schema: 'public', table: 'community_messages' },
+          (payload) => {
+            const newMessage = payload.new as ChatMessage;
+            setMessages(prev => [...prev, newMessage]);
+          }
+        )
+        .subscribe((status) => {
+          setIsConnected(status === 'SUBSCRIBED');
+          setChannelSubscribed(status === 'SUBSCRIBED');
+          
+          if (status === 'CHANNEL_ERROR') {
+            toast.error('채팅 연결이 끊어졌습니다');
+            setTimeout(() => {
+              if (channel) {
+                channel.subscribe();
+              }
+            }, RETRY_DELAY);
+          }
+        });
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+        setChannelSubscribed(false);
+      }
     };
   }, [loadMessages]);
 
