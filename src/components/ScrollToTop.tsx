@@ -7,11 +7,13 @@ export function ScrollToTop() {
 
   useEffect(() => {
     // Force scroll to top when pathname changes
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: "instant" // Changed from "smooth" to "instant" for more consistent behavior
-    });
+    window.scrollTo(0, 0);
+    
+    // Add a slight delay to ensure DOM has updated
+    setTimeout(() => {
+      // Trigger scroll event to ensure navbar updates correctly
+      window.dispatchEvent(new Event('scroll'));
+    }, 100);
   }, [pathname]);
 
   return null;

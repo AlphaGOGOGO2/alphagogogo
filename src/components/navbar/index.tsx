@@ -10,11 +10,17 @@ import { MobileBottomNav } from "./MobileBottomNav";
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   
+  // Force an initial check of scroll position on mount
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+    
+    // Run initial check immediately
+    handleScroll();
+    setIsInitialized(true);
     
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -37,7 +43,7 @@ export function Navbar() {
       <header 
         className={cn(
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-3 px-6 md:px-8",
-          isScrolled 
+          isInitialized && isScrolled 
             ? "bg-purple-50 shadow-md" 
             : "bg-[#1E293B] backdrop-blur-lg border-b border-white/10"
         )}
