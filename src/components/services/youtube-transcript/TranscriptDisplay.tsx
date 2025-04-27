@@ -2,45 +2,39 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DownloadCloud, ClipboardCopy, Check, Copy, Film, User } from "lucide-react";
+import { DownloadCloud, Check, Copy, Film, User, Languages } from "lucide-react";
 import { toast } from "sonner";
+import { YoutubeVideoInfo } from "@/types/youtubeTranscript";
 
 interface TranscriptDisplayProps {
   transcript: string;
-  videoInfo?: {
-    title?: string;
-    author?: string;
-  };
+  videoInfo: YoutubeVideoInfo | null;
 }
 
 export function TranscriptDisplay({ transcript, videoInfo }: TranscriptDisplayProps) {
   const [copied, setCopied] = useState(false);
 
-  // Format transcript with line breaks for better readability
+  // 자막 포맷팅 함수
   const formatTranscript = (text: string): string => {
     if (!text) return "";
     
-    // Split the text into sentences
+    // 문장 단위로 텍스트 분리
     const sentences = text
-      .replace(/([.!?])\s*/g, "$1|SPLIT|")  // Mark sentence boundaries
-      .split("|SPLIT|");                    // Split at those boundaries
+      .replace(/([.!?])\s*/g, "$1|SPLIT|")
+      .split("|SPLIT|");
     
-    // Join sentences with line breaks
-    const formattedText = sentences
-      .filter(sentence => sentence.trim().length > 0)  // Remove empty sentences
+    // 줄바꿈으로 문장 연결
+    return sentences
+      .filter(sentence => sentence.trim().length > 0)
       .join("\n\n")
       .trim();
-    
-    return formattedText;
   };
 
+  // 클립보드 복사 함수
   const copyToClipboard = () => {
     if (!transcript) return;
     
-    // Use the formatted transcript with line breaks for clipboard
-    const formattedText = formatTranscript(transcript);
-    
-    navigator.clipboard.writeText(formattedText)
+    navigator.clipboard.writeText(formatTranscript(transcript))
       .then(() => {
         setCopied(true);
         toast.success("클립보드에 복사되었습니다!");
@@ -52,13 +46,18 @@ export function TranscriptDisplay({ transcript, videoInfo }: TranscriptDisplayPr
       });
   };
 
+  // 자막 다운로드 함수
   const downloadTranscript = () => {
     if (!transcript) return;
     
+    const filename = videoInfo?.title 
+      ? `${videoInfo.title.slice(0, 30)}-transcript.txt` 
+      : `youtube-transcript-${new Date().toISOString().slice(0, 10)}.txt`;
+      
     const element = document.createElement("a");
     const file = new Blob([formatTranscript(transcript)], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `youtube-transcript-${new Date().toISOString().slice(0, 10)}.txt`;
+    element.download = filename;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -76,9 +75,17 @@ export function TranscriptDisplay({ transcript, videoInfo }: TranscriptDisplayPr
             </div>
           )}
           {videoInfo.author && (
-            <div className="flex items-center gap-2 text-gray-700">
+            <div className="flex items-center gap-2 mb-1 text-gray-700">
               <User className="h-4 w-4 text-purple-500" />
               <span className="font-medium">채널:</span> {videoInfo.author}
+            </div>
+          )}
+          {videoInfo.language && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <Languages className="h-4 w-4 text-purple-500" />
+              <span className="font-medium">언어:</span> {videoInfo.language === 'ko' ? '한국어' : 
+                                                        videoInfo.language === 'en' ? '영어' : 
+                                                        videoInfo.language}
             </div>
           )}
         </div>
@@ -127,6 +134,7 @@ export function TranscriptDisplay({ transcript, videoInfo }: TranscriptDisplayPr
       
       <div className="mt-3 text-xs text-gray-500">
         <p>* 이 서비스는 YouTube Data API v3를 통해 자막 정보를 가져옵니다.</p>
+        <p>* 현재 API 제한으로 인해 실제 자막 내용이 아닌 샘플 데이터가 표시됩니다.</p>
       </div>
     </div>
   );

@@ -1,39 +1,39 @@
 
 /**
- * Custom error classes for YouTube transcript operations
+ * YouTube 자막 관련 커스텀 에러 클래스
  */
 
-// Base error class for YouTube transcript operations
+// 기본 에러 클래스
 export class YoutubeTranscriptError extends Error {
   constructor(message: string) {
     super(`[YoutubeTranscript] 🚨 ${message}`);
   }
 }
 
-// Error for too many requests from the same IP
+// 요청이 너무 많을 때 발생하는 에러
 export class YoutubeTranscriptTooManyRequestError extends YoutubeTranscriptError {
   constructor() {
-    super('YouTube is receiving too many requests from this IP and now requires solving a captcha to continue');
+    super('요청이 너무 많습니다. 잠시 후 다시 시도해주세요.');
   }
 }
 
-// Error for when a video is unavailable
+// 비디오를 이용할 수 없을 때 발생하는 에러
 export class YoutubeTranscriptVideoUnavailableError extends YoutubeTranscriptError {
   constructor(videoId: string) {
-    super(`The video is no longer available (${videoId})`);
+    super(`이 영상은 더 이상 사용할 수 없습니다. (${videoId})`);
   }
 }
 
-// Error for when transcripts are disabled on a video
+// 자막 기능이 비활성화되었을 때 발생하는 에러
 export class YoutubeTranscriptDisabledError extends YoutubeTranscriptError {
   constructor(videoId: string) {
-    super(`Transcript is disabled on this video (${videoId})`);
+    super(`이 영상에서는 자막 기능이 비활성화되어 있습니다. (${videoId})`);
   }
 }
 
-// Error for when no transcripts are available
+// 자막을 이용할 수 없을 때 발생하는 에러
 export class YoutubeTranscriptNotAvailableError extends YoutubeTranscriptError {
   constructor(videoId: string) {
-    super(`No transcripts are available for this video (${videoId})`);
+    super(`이 영상에는 자막이 없거나 접근할 수 없습니다. (${videoId})`);
   }
 }

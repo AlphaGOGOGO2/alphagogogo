@@ -70,10 +70,10 @@ export function YouTubeTranscriptService() {
         <CardFooter className="bg-gray-50 py-4 px-8">
           <div className="space-y-2 text-xs text-gray-500">
             <p>
-              * YouTube Data API v3를 사용하여 자막 정보를 가져옵니다. 현재 구현에서는 자막 내용의 실제 텍스트를 가져오는 것에 제한이 있을 수 있습니다.
+              * 현재 YouTube Data API v3 제한으로 인해 실제 자막 내용이 아닌 샘플 데이터가 표시됩니다.
             </p>
             <p>
-              * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
+              * 완전한 자막 추출을 위해서는 서버 측 기능이 필요합니다.
             </p>
           </div>
         </CardFooter>

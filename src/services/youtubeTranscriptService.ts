@@ -1,281 +1,125 @@
 
+import { TranscriptSegment, YoutubeVideoInfo } from "@/types/youtubeTranscript";
 import {
-  YoutubeTranscriptDisabledError,
   YoutubeTranscriptError,
   YoutubeTranscriptNotAvailableError,
   YoutubeTranscriptTooManyRequestError,
   YoutubeTranscriptVideoUnavailableError
 } from "@/utils/youtubeTranscriptErrors";
-import { TranscriptSegment } from "@/types/youtubeTranscript";
 
-// YouTube API를 위한 설정
-const YOUTUBE_API_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8'; // 공개 API 키 (제한된 기능만 사용 가능)
-const BASE_API_URL = 'https://www.googleapis.com/youtube/v3';
+/**
+ * YouTube Data API v3을 사용하여 자막 정보 가져오기
+ */
 
-// 기본 헤더 설정
-const BASE_HEADERS = {
-  'Content-Type': 'application/json',
-  'Accept': 'application/json',
-};
-
-// 신뢰할 수 있는 CORS 프록시 목록
-const CORS_PROXIES = [
-  'https://api.allorigins.win/raw?url=',
-  'https://corsproxy.io/?',
-  'https://api.codetabs.com/v1/proxy?quest='
-];
-
-// 타임아웃이 있는 페치 함수
-async function fetchWithTimeout(url: string, options: RequestInit, timeout = 10000): Promise<Response> {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-
+// YouTube 동영상 정보 가져오기
+export async function getVideoDetails(videoId: string): Promise<YoutubeVideoInfo> {
   try {
+    // YouTube Data API v3 키는 환경 변수에서 가져옴 (수파베이스에 등록된 시크릿)
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY || 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
+    
+    const url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&id=${videoId}&key=${apiKey}`;
     const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
     });
-    clearTimeout(id);
-    return response;
-  } catch (error) {
-    clearTimeout(id);
-    throw error;
-  }
-}
 
-// 프록시를 통한 요청 처리
-async function fetchThroughProxy(url: string, options: RequestInit = {}): Promise<Response | null> {
-  // 각 프록시를 순차적으로 시도
-  for (const proxy of CORS_PROXIES) {
-    try {
-      console.log(`프록시 시도: ${proxy}`);
-      const proxyUrl = `${proxy}${encodeURIComponent(url)}`;
-      const response = await fetchWithTimeout(proxyUrl, options, 5000);
-      if (response.ok) {
-        console.log(`프록시 성공: ${proxy}`);
-        return response;
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new YoutubeTranscriptTooManyRequestError();
       }
-    } catch (error) {
-      console.warn(`프록시 실패: ${proxy}`, error);
-      continue; // 다음 프록시 시도
+      throw new Error(`API 요청 실패: ${response.status} ${response.statusText}`);
     }
-  }
-  
-  // 모든 프록시가 실패한 경우
-  console.error("모든 프록시 요청 실패");
-  return null;
-}
 
-// HTML 엔티티 디코딩 함수
-function decodeHtmlEntities(text: string): string {
-  if (!text) return '';
-  const textarea = document.createElement('textarea');
-  textarea.innerHTML = text
-    .replace(/&quot;/g, '"')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ');
-  return textarea.value;
-}
-
-// 유튜브 API를 통해 동영상 정보 가져오기
-async function getVideoDetails(videoId: string): Promise<any> {
-  try {
-    const url = `${BASE_API_URL}/videos?part=snippet,contentDetails&id=${videoId}&key=${YOUTUBE_API_KEY}`;
+    const data = await response.json();
     
-    // 직접 요청 먼저 시도
-    try {
-      const directResponse = await fetchWithTimeout(url, { headers: BASE_HEADERS }, 5000);
-      if (directResponse.ok) {
-        return await directResponse.json();
-      }
-    } catch (error) {
-      console.warn("직접 API 요청 실패, 프록시 시도");
-    }
-    
-    // 프록시를 통한 요청 시도
-    const proxyResponse = await fetchThroughProxy(url);
-    if (!proxyResponse) {
-      throw new Error('네트워크 연결 오류: API 서버에 연결할 수 없습니다.');
-    }
-    
-    const data = await proxyResponse.json();
     if (!data.items || data.items.length === 0) {
       throw new YoutubeTranscriptVideoUnavailableError(videoId);
     }
-    
-    return data;
-  } catch (error) {
-    console.error('Error fetching video details:', error);
-    throw error;
-  }
-}
 
-// 유튜브 API를 통해 자막 목록 가져오기
-async function getCaptionTracks(videoId: string): Promise<any[]> {
-  try {
-    const url = `${BASE_API_URL}/captions?part=snippet&videoId=${videoId}&key=${YOUTUBE_API_KEY}`;
-    
-    // 직접 요청 먼저 시도
-    try {
-      const directResponse = await fetchWithTimeout(url, { headers: BASE_HEADERS }, 5000);
-      if (directResponse.ok) {
-        const data = await directResponse.json();
-        return data.items || [];
-      }
-    } catch (error) {
-      console.warn("직접 API 요청 실패, 프록시 시도");
-    }
-    
-    // 프록시를 통한 요청 시도
-    const proxyResponse = await fetchThroughProxy(url);
-    if (!proxyResponse) {
-      throw new Error('네트워크 연결 오류: API 서버에 연결할 수 없습니다.');
-    }
-    
-    const data = await proxyResponse.json();
-    return data.items || [];
-  } catch (error) {
-    console.error('Error fetching caption tracks:', error);
-    throw error;
-  }
-}
-
-// 비디오 자막 가져오기 위한 별도 함수 (YouTube API v3 제한 때문에 대체 방법 필요)
-async function fetchTranscriptContent(videoId: string, languageCode: string): Promise<TranscriptSegment[]> {
-  // 실제 환경에서는 서버 측에서 처리하거나 별도 API 사용 권장
-  // 현재는 샘플 데이터 반환
-  return generateSampleTranscript(`실제 자막 내용은 YouTube API v3에서 직접 제공되지 않아 서버 측 기능이 필요합니다`, languageCode);
-}
-
-// YouTube Data API v3를 사용하여 자막 정보 가져오기
-export const fetchTranscript = async (
-  videoId: string, 
-  lang?: string
-): Promise<TranscriptSegment[]> => {
-  try {
-    console.log(`Fetching transcript for video ${videoId} using YouTube Data API v3`);
-    
-    // 1. 비디오 정보 확인
-    const videoDetails = await getVideoDetails(videoId);
-    console.log('Video details retrieved:', videoDetails.items[0].snippet.title);
-    
-    // 비디오 정보에서 제목과 채널명 추출
-    const videoTitle = videoDetails.items[0].snippet.title;
-    const channelTitle = videoDetails.items[0].snippet.channelTitle;
-    
-    // 2. 자막 트랙 목록 가져오기
-    const captionTracks = await getCaptionTracks(videoId);
-    console.log('Caption tracks found:', captionTracks.length);
-    
-    if (!captionTracks || captionTracks.length === 0) {
-      // 자막이 없는 경우
-      throw new YoutubeTranscriptNotAvailableError(videoId);
-    }
-    
-    // 선호하는 언어의 자막 찾기
-    let selectedTrack = null;
-    let selectedLanguage = lang || 'ko'; // 기본값은 한국어
-    
-    // 요청된 언어가 있으면 해당 언어 찾기
-    if (lang) {
-      selectedTrack = captionTracks.find((track: any) => 
-        track.snippet.language === lang
-      );
-      
-      if (selectedTrack) {
-        selectedLanguage = lang;
-      }
-    }
-    
-    // 요청 언어를 못 찾았거나 언어가 지정되지 않은 경우 한국어, 영어 순으로 시도
-    if (!selectedTrack) {
-      selectedTrack = captionTracks.find((track: any) => 
-        track.snippet.language === 'ko'
-      );
-      
-      if (selectedTrack) {
-        selectedLanguage = 'ko';
-      } else {
-        selectedTrack = captionTracks.find((track: any) => 
-          track.snippet.language === 'en'
-        );
-        
-        if (selectedTrack) {
-          selectedLanguage = 'en';
-        }
-      }
-      
-      // 그래도 없으면 첫번째 자막 사용
-      if (!selectedTrack && captionTracks.length > 0) {
-        selectedTrack = captionTracks[0];
-        selectedLanguage = selectedTrack.snippet.language;
-      }
-    }
-    
-    if (!selectedTrack) {
-      throw new YoutubeTranscriptNotAvailableError(videoId);
-    }
-    
-    // 실제 자막 콘텐츠를 가져오기
-    const transcript = await fetchTranscriptContent(videoId, selectedLanguage);
-    
-    // 비디오 메타데이터 추가
-    (transcript as any).videoInfo = {
-      title: videoTitle,
-      author: channelTitle,
-      language: selectedLanguage
+    const videoInfo: YoutubeVideoInfo = {
+      id: videoId,
+      title: data.items[0].snippet.title,
+      author: data.items[0].snippet.channelTitle
     };
-    
-    return transcript;
-      
-  } catch (error: any) {
-    console.error('Transcript fetch error:', error);
-    
+
+    return videoInfo;
+  } catch (error) {
+    console.error('비디오 정보 가져오기 실패:', error);
     if (error instanceof YoutubeTranscriptError) {
       throw error;
     }
-    
-    if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch') || 
-        error.message.includes('네트워크 연결 오류')) {
-      throw new Error('네트워크 연결 오류: API 서버에 연결할 수 없습니다.');
-    }
-    
-    throw new YoutubeTranscriptNotAvailableError(videoId);
+    throw new Error('YouTube API에서 비디오 정보를 가져오지 못했습니다.');
   }
-};
+}
 
-function generateSampleTranscript(videoTitle: string, language: string): TranscriptSegment[] {
+// 자막 목록 가져오기
+export async function getCaptionTracks(videoId: string): Promise<any[]> {
+  try {
+    const apiKey = process.env.YOUTUBE_DATA_API_KEY || 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
+    const url = `https://www.googleapis.com/youtube/v3/captions?part=snippet&videoId=${videoId}&key=${apiKey}`;
+    
+    const response = await fetch(url, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      if (response.status === 403) {
+        throw new YoutubeTranscriptTooManyRequestError();
+      }
+      throw new Error(`API 요청 실패: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data.items || [];
+  } catch (error) {
+    console.error('자막 트랙 가져오기 실패:', error);
+    if (error instanceof YoutubeTranscriptError) {
+      throw error;
+    }
+    throw new Error('YouTube API에서 자막 정보를 가져오지 못했습니다.');
+  }
+}
+
+// 자막 내용 가져오기 (YouTube Data API의 한계로 인해 샘플 데이터 반환)
+export async function generateTranscriptContent(videoInfo: YoutubeVideoInfo, language: string = 'ko'): Promise<TranscriptSegment[]> {
   // 언어별 샘플 자막 생성
-  let baseSamples;
+  let samples: string[];
   
   if (language === 'ko') {
-    baseSamples = [
-      "이 자막은 YouTube Data API v3 제한으로 인한 샘플입니다.",
+    samples = [
+      `"${videoInfo.title}" 영상의 자막입니다.`,
+      `업로더: ${videoInfo.author}`,
+      "YouTube Data API v3는 자막 내용에 직접 접근할 수 없는 제한이 있습니다.",
       "실제 자막 내용을 가져오려면 서버 측 기능이 필요합니다.",
-      "이 비디오에는 자막 트랙이 존재하지만 내용은 API를 통해 직접 접근할 수 없습니다.",
-      "API에서는 자막 존재 여부만 확인 가능합니다."
+      "이 영상에는 자막 트랙이 존재하지만, API를 통해 내용을 직접 가져올 수 없습니다.",
+      "대신 YouTube 자막 서비스를 활용하는 방법을 고려해보세요."
     ];
   } else if (language === 'en') {
-    baseSamples = [
-      "This transcript is a sample due to YouTube Data API v3 limitations.",
-      "Server-side functionality is required to retrieve the actual transcript content.",
-      "This video has caption tracks, but the content cannot be accessed directly through the API.",
-      "The API only allows checking for the existence of captions."
+    samples = [
+      `Transcript for "${videoInfo.title}"`,
+      `Uploader: ${videoInfo.author}`,
+      "YouTube Data API v3 has limitations on direct access to caption content.",
+      "Server-side functionality is required to retrieve the actual transcript.",
+      "This video has caption tracks, but the content can't be accessed directly through the API.",
+      "Consider using YouTube's caption service instead."
     ];
   } else {
-    baseSamples = [
-      `This is a sample transcript for "${videoTitle}"`,
-      "YouTube Data API v3 does not provide direct access to caption content.",
-      `Language: ${language} caption track exists for this video.`,
-      "A separate service or server-side code is needed for actual captions."
+    samples = [
+      `Transcript for "${videoInfo.title}" (${language})`,
+      `Uploader: ${videoInfo.author}`,
+      "Caption language: " + language,
+      "YouTube Data API v3 doesn't provide direct access to caption content.",
+      "Server-side functionality is needed for actual transcripts."
     ];
   }
   
   // 샘플 자막 세그먼트 생성
-  return baseSamples.map((text, index) => ({
+  return samples.map((text, index) => ({
     text,
     offset: index * 3000,
     duration: 3000,
@@ -283,16 +127,87 @@ function generateSampleTranscript(videoTitle: string, language: string): Transcr
   }));
 }
 
+// 메인 자막 가져오기 함수
+export async function fetchTranscript(videoId: string, lang?: string): Promise<{
+  segments: TranscriptSegment[],
+  videoInfo: YoutubeVideoInfo
+}> {
+  try {
+    console.log(`비디오 ID ${videoId}의 자막을 가져오는 중...`);
+    
+    // 1. 비디오 정보 확인
+    const videoInfo = await getVideoDetails(videoId);
+    console.log('비디오 정보 가져옴:', videoInfo.title);
+    
+    // 2. 자막 트랙 목록 가져오기
+    let captionTracks;
+    try {
+      captionTracks = await getCaptionTracks(videoId);
+      console.log('자막 트랙 찾음:', captionTracks.length);
+    } catch (error) {
+      console.error('자막 트랙 가져오기 오류:', error);
+      // 자막 트랙을 가져오는 데 실패해도 계속 진행
+      captionTracks = [];
+    }
+    
+    // 3. 가용 언어 확인
+    let selectedLanguage = lang || 'ko'; // 기본값은 한국어
+    
+    if (captionTracks && captionTracks.length > 0) {
+      // 요청된 언어가 있으면 해당 언어 찾기
+      if (lang) {
+        const trackExists = captionTracks.some((track: any) => 
+          track.snippet.language === lang
+        );
+        
+        if (trackExists) {
+          selectedLanguage = lang;
+        }
+      }
+      
+      // 요청 언어를 못 찾았거나 언어가 지정되지 않은 경우 한국어, 영어 순으로 시도
+      if (!lang || !captionTracks.some((track: any) => track.snippet.language === lang)) {
+        if (captionTracks.some((track: any) => track.snippet.language === 'ko')) {
+          selectedLanguage = 'ko';
+        } else if (captionTracks.some((track: any) => track.snippet.language === 'en')) {
+          selectedLanguage = 'en';
+        } else if (captionTracks.length > 0) {
+          // 첫 번째 가용 언어 사용
+          selectedLanguage = captionTracks[0].snippet.language;
+        }
+      }
+      
+      videoInfo.language = selectedLanguage;
+    } else {
+      // 자막이 없는 경우 메시지 표시
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+    
+    // 4. 자막 내용 생성 (API 제한으로 샘플 데이터)
+    const segments = await generateTranscriptContent(videoInfo, selectedLanguage);
+    
+    return { segments, videoInfo };
+      
+  } catch (error) {
+    console.error('자막 가져오기 오류:', error);
+    
+    if (error instanceof YoutubeTranscriptError) {
+      throw error;
+    }
+    
+    if (error instanceof Error && error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
+      throw new Error('네트워크 연결 오류: API 서버에 연결할 수 없습니다.');
+    }
+    
+    throw new YoutubeTranscriptNotAvailableError(videoId);
+  }
+}
+
+// 자막 세그먼트를 텍스트로 처리하는 함수
 export const processTranscriptSegments = (segments: TranscriptSegment[]): string => {
-  // 비디오 정보 추출
-  const videoInfo = (segments as any).videoInfo || {};
-  
   // 자막 텍스트만 추출하여 조합
-  const transcriptText = segments
+  return segments
     .map(segment => segment.text.trim())
     .filter(text => text.length > 0)
     .join('\n\n');
-  
-  // 결과에 비디오 정보도 포함
-  return transcriptText;
 };

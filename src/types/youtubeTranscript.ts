@@ -1,9 +1,9 @@
 
 /**
- * Types for YouTube transcript functionality
+ * YouTube 자막 기능 관련 타입 정의
  */
 
-// Individual transcript segment returned from the API
+// 자막 세그먼트 인터페이스
 export interface TranscriptSegment {
   text: string;
   duration: number;
@@ -11,16 +11,10 @@ export interface TranscriptSegment {
   lang?: string;
 }
 
-// Error response for transcript API
-export interface TranscriptError {
-  message: string;
-  code?: string;
-}
-
-// YouTube 동영상 정보
+// 비디오 정보 인터페이스
 export interface YoutubeVideoInfo {
   id: string;
   title?: string;
   author?: string;
-  availableLanguages?: string[];
+  language?: string;
 }

@@ -9,7 +9,7 @@ import {
   YoutubeTranscriptTooManyRequestError,
   YoutubeTranscriptVideoUnavailableError
 } from "@/utils/youtubeTranscriptErrors";
-import { TranscriptSegment } from "@/types/youtubeTranscript";
+import { TranscriptSegment, YoutubeVideoInfo } from "@/types/youtubeTranscript";
 
 export function useYoutubeTranscript() {
   const [youtubeUrl, setYoutubeUrl] = useState("");
@@ -17,13 +17,14 @@ export function useYoutubeTranscript() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
-  const [videoInfo, setVideoInfo] = useState<{title?: string, author?: string, language?: string}>({});
+  const [videoInfo, setVideoInfo] = useState<YoutubeVideoInfo | null>(null);
 
   const handleExtractTranscript = async () => {
+    // 초기화
     setTranscript("");
     setTranscriptSegments([]);
     setError("");
-    setVideoInfo({});
+    setVideoInfo(null);
     
     if (!youtubeUrl.trim()) {
       setError("YouTube URL을 입력해주세요.");
@@ -32,7 +33,7 @@ export function useYoutubeTranscript() {
     }
     
     const videoId = extractYouTubeVideoId(youtubeUrl);
-    console.log("Extracted Video ID:", videoId);
+    console.log("추출된 비디오 ID:", videoId);
     
     if (!videoId) {
       setError("유효한 YouTube URL을 입력해주세요.");
@@ -47,19 +48,14 @@ export function useYoutubeTranscript() {
       const preferredLang = navigator.language.split('-')[0];
       console.log(`선호 언어로 시도: ${preferredLang}`);
       
-      // API 호출
-      const segments = await fetchTranscript(videoId, preferredLang);
+      // 자막 가져오기
+      const result = await fetchTranscript(videoId, preferredLang);
+      const { segments, videoInfo } = result;
       
       if (segments && segments.length > 0) {
-        // 비디오 정보 추출 (타입 단언으로 추가 정보 접근)
-        const metaInfo = (segments as any).videoInfo || {};
-        setVideoInfo({
-          title: metaInfo.title || "YouTube 동영상",
-          author: metaInfo.author || "YouTube 채널",
-          language: metaInfo.language
-        });
-        
         setTranscriptSegments(segments);
+        setVideoInfo(videoInfo);
+        
         const fullTranscript = processTranscriptSegments(segments);
         setTranscript(fullTranscript);
         
@@ -78,7 +74,7 @@ export function useYoutubeTranscript() {
       } else if (error instanceof YoutubeTranscriptDisabledError) {
         errorMessage = "이 영상에서는 자막 기능이 비활성화되어 있습니다.";
       } else if (error instanceof YoutubeTranscriptNotAvailableError) {
-        errorMessage = "이 영상에는 자막이 없거나 접근할 수 없습니다. 다음과 같은 이유가 있을 수 있습니다:\n- 자막이 없는 영상\n- 자막 접근 권한이 제한된 영상\n- YouTube API 할당량 초과";
+        errorMessage = "이 영상에는 자막이 없거나 접근할 수 없습니다.";
       } else if (error instanceof Error) {
         errorMessage = error.message;
       }
