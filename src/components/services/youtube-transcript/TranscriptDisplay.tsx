@@ -2,14 +2,18 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { DownloadCloud, ClipboardCopy, Check, Copy } from "lucide-react";
+import { DownloadCloud, ClipboardCopy, Check, Copy, Film, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface TranscriptDisplayProps {
   transcript: string;
+  videoInfo?: {
+    title?: string;
+    author?: string;
+  };
 }
 
-export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
+export function TranscriptDisplay({ transcript, videoInfo }: TranscriptDisplayProps) {
   const [copied, setCopied] = useState(false);
 
   // Format transcript with line breaks for better readability
@@ -63,6 +67,23 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
 
   return (
     <div className="mt-6 bg-white/60 border border-purple-100 p-5 rounded-xl shadow-sm">
+      {videoInfo && (videoInfo.title || videoInfo.author) && (
+        <div className="mb-4 p-3 bg-gray-50 border border-gray-100 rounded-lg">
+          {videoInfo.title && (
+            <div className="flex items-center gap-2 mb-1 text-gray-700">
+              <Film className="h-4 w-4 text-purple-500" />
+              <span className="font-medium">제목:</span> {videoInfo.title}
+            </div>
+          )}
+          {videoInfo.author && (
+            <div className="flex items-center gap-2 text-gray-700">
+              <User className="h-4 w-4 text-purple-500" />
+              <span className="font-medium">채널:</span> {videoInfo.author}
+            </div>
+          )}
+        </div>
+      )}
+      
       <div className="flex justify-between items-center mb-3">
         <label htmlFor="transcript" className="block text-base font-medium text-gray-800">
           추출된 자막
@@ -103,6 +124,10 @@ export function TranscriptDisplay({ transcript }: TranscriptDisplayProps) {
         readOnly
         className="min-h-[300px] font-mono text-sm bg-white border-purple-100 rounded-lg focus-visible:ring-purple-400 whitespace-pre-wrap"
       />
+      
+      <div className="mt-3 text-xs text-gray-500">
+        <p>* 이 서비스는 YouTube Data API v3를 통해 자막 정보를 가져옵니다.</p>
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ export function YouTubeTranscriptService() {
     transcript,
     isLoading,
     error,
+    videoInfo,
     handleExtractTranscript
   } = useYoutubeTranscript();
   
@@ -58,15 +59,23 @@ export function YouTubeTranscriptService() {
             
             {transcript && (
               <div className="animate-fade-in">
-                <TranscriptDisplay transcript={transcript} />
+                <TranscriptDisplay 
+                  transcript={transcript} 
+                  videoInfo={videoInfo} 
+                />
               </div>
             )}
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 py-4 px-8 rounded-b-lg">
-          <p className="text-xs text-gray-500">
-            * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
-          </p>
+        <CardFooter className="bg-gray-50 py-4 px-8">
+          <div className="space-y-2 text-xs text-gray-500">
+            <p>
+              * YouTube Data API v3를 사용하여 자막 정보를 가져옵니다. 현재 구현에서는 자막 내용의 실제 텍스트를 가져오는 것에 제한이 있을 수 있습니다.
+            </p>
+            <p>
+              * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
+            </p>
+          </div>
         </CardFooter>
       </Card>
     </section>

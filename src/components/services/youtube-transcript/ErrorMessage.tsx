@@ -13,9 +13,9 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         <p className="font-medium text-base text-red-800 mb-1">오류 발생</p>
         <p>{error}</p>
         
-        {error.includes("네트워크 연결 오류") && (
+        {error.includes("요청이 너무 많습니다") && (
           <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
-            네트워크 연결을 확인하거나 잠시 후 다시 시도해보세요. CORS 문제일 수 있습니다.
+            YouTube API에서 허용하는 할당량을 초과했습니다. 잠시 후 다시 시도하세요.
           </p>
         )}
         
@@ -40,12 +40,6 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
           </p>
         )}
 
-        {error.includes("요청이 너무 많습니다") && (
-          <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
-            YouTube에서 너무 많은 요청을 받아 캡챠 확인이 필요합니다. 잠시 후 다시 시도하거나 다른 네트워크에서 접속해보세요.
-          </p>
-        )}
-
         {error.includes("더 이상 사용할 수 없습니다") && (
           <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
             이 영상은 삭제되었거나 비공개로 전환되었을 수 있습니다. 다른 영상을 시도해보세요.
@@ -55,6 +49,12 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         {error.includes("자막 기능이 비활성화") && (
           <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
             업로더가 이 영상의 자막 기능을 비활성화했습니다. 자막이 활성화된 다른 영상을 시도해보세요.
+          </p>
+        )}
+        
+        {error.includes("네트워크 연결 오류") && (
+          <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
+            YouTube API 서버에 연결할 수 없습니다. 인터넷 연결을 확인하거나 잠시 후 다시 시도해보세요.
           </p>
         )}
       </div>
