@@ -16,3 +16,11 @@ export interface TranscriptError {
   message: string;
   code?: string;
 }
+
+// YouTube 동영상 정보
+export interface YoutubeVideoInfo {
+  id: string;
+  title?: string;
+  author?: string;
+  availableLanguages?: string[];
+}
