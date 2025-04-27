@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,7 +20,6 @@ import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import ServicesPage from "./pages/ServicesPage";
-import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
