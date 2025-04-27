@@ -3,19 +3,11 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { YouTubeTranscriptService } from "@/components/services/YouTubeTranscriptService";
 import { ArrowLeft } from "lucide-react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Banner } from "@/components/Banner";
 import { SEO } from "@/components/SEO";
-import { useAuth } from "@/hooks/useAuth";
 
 export default function YouTubeTranscriptPage() {
-  const { session } = useAuth();
-
-  // 로그인하지 않은 경우 로그인 페이지로 리다이렉트
-  if (!session) {
-    return <Navigate to="/login" replace />;
-  }
-
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -44,9 +36,6 @@ export default function YouTubeTranscriptPage() {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">유튜브 자막 추출</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
             YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다.
-            {session?.user && <span className="block mt-2 text-sm text-purple-600">
-              {session.user.email} 계정으로 로그인됨
-            </span>}
           </p>
           
           <YouTubeTranscriptService />
