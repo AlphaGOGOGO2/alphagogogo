@@ -17,7 +17,7 @@ export function useYoutubeTranscript() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [transcriptSegments, setTranscriptSegments] = useState<TranscriptSegment[]>([]);
-  const [videoInfo, setVideoInfo] = useState<{title?: string, author?: string}>({});
+  const [videoInfo, setVideoInfo] = useState<{title?: string, author?: string, language?: string}>({});
 
   const handleExtractTranscript = async () => {
     setTranscript("");
@@ -51,14 +51,19 @@ export function useYoutubeTranscript() {
       const segments = await fetchTranscript(videoId, preferredLang);
       
       if (segments && segments.length > 0) {
+        // 비디오 정보 추출 (타입 단언으로 추가 정보 접근)
+        const metaInfo = (segments as any).videoInfo || {};
+        setVideoInfo({
+          title: metaInfo.title || "YouTube 동영상",
+          author: metaInfo.author || "YouTube 채널",
+          language: metaInfo.language
+        });
+        
         setTranscriptSegments(segments);
         const fullTranscript = processTranscriptSegments(segments);
         setTranscript(fullTranscript);
-        setVideoInfo({
-          title: "YouTube 동영상",
-          author: "YouTube 채널"
-        });
-        toast.success("자막을 성공적으로 가져왔습니다!");
+        
+        toast.success("자막 정보를 가져왔습니다!");
       } else {
         throw new YoutubeTranscriptNotAvailableError(videoId);
       }
@@ -79,7 +84,7 @@ export function useYoutubeTranscript() {
       }
       
       setError(errorMessage);
-      toast.error(errorMessage);
+      toast.error("자막을 가져오지 못했습니다");
     } finally {
       setIsLoading(false);
     }

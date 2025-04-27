@@ -53,9 +53,21 @@ export function ErrorMessage({ error }: ErrorMessageProps) {
         )}
         
         {error.includes("네트워크 연결 오류") && (
-          <p className="mt-2 bg-red-100/50 p-2 rounded-lg">
-            YouTube API 서버에 연결할 수 없습니다. 인터넷 연결을 확인하거나 잠시 후 다시 시도해보세요.
-          </p>
+          <div className="mt-2">
+            <p className="bg-red-100/50 p-2 rounded-lg">
+              YouTube API 서버에 연결할 수 없습니다. 인터넷 연결을 확인하거나 잠시 후 다시 시도해보세요.
+            </p>
+            <div className="bg-amber-50 border border-amber-100 p-3 mt-3 rounded-lg text-amber-800 text-xs">
+              <p className="font-medium mb-1">다음을 확인해보세요:</p>
+              <ul className="list-disc pl-4 mt-1 space-y-1.5">
+                <li>인터넷 연결이 정상적으로 작동하는지 확인</li>
+                <li>네트워크 방화벽이나 제한 설정이 API 접근을 막고 있는지 확인</li>
+                <li>브라우저의 개발자 도구 콘솔에서 네트워크 오류 확인</li>
+                <li>CORS 차단을 확인하려면 브라우저 확장 프로그램 설치를 고려해보세요</li>
+                <li>잠시 후 다시 시도해보세요 - API 서비스에 일시적인 장애가 있을 수 있습니다</li>
+              </ul>
+            </div>
+          </div>
         )}
       </div>
     </div>
