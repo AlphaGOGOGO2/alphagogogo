@@ -1,13 +1,6 @@
-
-import { createClient } from '@supabase/supabase-js'
 import { TranscriptSegment, YoutubeVideoInfo } from '@/types/youtubeTranscript'
 import { YoutubeTranscriptError, YoutubeTranscriptNotAvailableError } from '@/utils/youtubeTranscriptErrors'
-
-// Supabase 클라이언트 초기화
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-)
+import { supabase } from "@/integrations/supabase/client"
 
 /**
  * YouTube 비디오 ID를 사용해 자막 데이터를 가져옵니다.
