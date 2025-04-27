@@ -86,15 +86,19 @@ async function getTranscriptData(videoId: string, lang?: string): Promise<any> {
       throw new YoutubeTranscriptNotAvailableError(videoId);
     }
 
-    // 자막 URL 생성
+    // 자막 URL 생성 - 숫자 값들을 문자열로 변환
     const params = {
       v: videoId,
       fmt: 'json3',
-      xorb: 2,
-      xobt: 3,
-      xovt: 3,
-      ...(lang && { lang })
+      xorb: '2',  // 숫자를 문자열로 변경
+      xobt: '3',  // 숫자를 문자열로 변경
+      xovt: '3',  // 숫자를 문자열로 변경
     };
+    
+    // 언어 파라미터가 있는 경우에만 추가
+    if (lang) {
+      params['lang'] = lang;
+    }
     
     const url = `https://www.youtube.com/api/timedtext?${new URLSearchParams(params)}`;
     
