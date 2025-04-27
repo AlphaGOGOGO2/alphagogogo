@@ -16,6 +16,7 @@ export function useYoutubeTranscript() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [attemptCount, setAttemptCount] = useState(0);
+  const [lastVideoId, setLastVideoId] = useState<string | null>(null);
 
   useEffect(() => {
     if (attemptCount > 0 && error && error.includes("네트워크 연결 오류") && youtubeUrl) {
@@ -48,7 +49,7 @@ export function useYoutubeTranscript() {
     }
     
     const videoId = extractYouTubeVideoId(youtubeUrl);
-    console.log("Extracted Video ID:", videoId);
+    console.log("추출된 비디오 ID:", videoId);
     
     if (!videoId) {
       setError("유효한 YouTube URL을 입력해주세요.");
@@ -56,7 +57,15 @@ export function useYoutubeTranscript() {
       return;
     }
     
+    setLastVideoId(videoId);
     setIsLoading(true);
+    
+    // 테스트용 비디오 ID 체크 - 실제 배포 시 이 부분은 제거
+    const testVideoIds = ["dQw4w9WgXcQ", "9bZkp7q19f0", "example1", "example2"];
+    if (testVideoIds.includes(videoId)) {
+      console.log("테스트 비디오 ID를 사용합니다 - 데모 자막이 반환됩니다");
+      toast.info("테스트 URL이 감지되었습니다. 데모 자막이 표시됩니다.");
+    }
     
     try {
       // 한국어로 먼저 시도
@@ -115,6 +124,7 @@ export function useYoutubeTranscript() {
     transcript,
     isLoading,
     error,
+    lastVideoId,
     handleExtractTranscript
   };
 }

@@ -31,3 +31,10 @@ export interface PythonTranscriptSegment {
   start: number;
   duration: number;
 }
+
+// 임시 데모용 트랜스크립트 세그먼트
+export interface MockTranscriptSegment {
+  text: string;
+  start: number;
+  duration: number;
+}

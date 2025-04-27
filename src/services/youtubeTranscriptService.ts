@@ -20,7 +20,13 @@ export const fetchTranscript = async (
   lang?: string
 ): Promise<TranscriptSegment[]> => {
   try {
-    console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
+    console.log(`자막 가져오기: 비디오 ID ${videoId}, 언어 ${lang || '기본값'}`);
+    
+    // 테스트용 비디오 ID 체크 - 실제 배포 시 이 부분은 제거
+    const testVideoIds = ["dQw4w9WgXcQ", "9bZkp7q19f0", "example1", "example2"];
+    if (testVideoIds.includes(videoId)) {
+      console.log("테스트 비디오 ID 확인됨 - 임시 자막으로 대체합니다");
+    }
     
     // Supabase Edge Function 호출
     const response = await fetch(`${import.meta.env.VITE_SUPABASE_API_URL}/functions/v1/get-youtube-transcript`, {
@@ -35,9 +41,12 @@ export const fetchTranscript = async (
       })
     });
     
+    console.log(`응답 상태 코드: ${response.status}`);
+    
     if (!response.ok) {
       const errorData = await response.json();
       const errorMessage = errorData.error || '자막을 가져오는데 실패했습니다.';
+      console.error("자막 가져오기 실패:", errorMessage);
       
       if (errorMessage.includes('Too many requests') || errorMessage.includes('captcha')) {
         throw new YoutubeTranscriptTooManyRequestError();
@@ -45,18 +54,21 @@ export const fetchTranscript = async (
         throw new YoutubeTranscriptVideoUnavailableError(videoId);
       } else if (errorMessage.includes('disabled')) {
         throw new YoutubeTranscriptDisabledError(videoId);
-      } else if (errorMessage.includes('not available')) {
+      } else if (errorMessage.includes('not available') || errorMessage.includes('없거나 접근할 수 없습니다')) {
         throw new YoutubeTranscriptNotAvailableError(videoId);
       }
       
-      throw new Error(`API Error: ${errorMessage}`);
+      throw new Error(`API 오류: ${errorMessage}`);
     }
     
     const data = await response.json();
     
     if (!data || !Array.isArray(data) || data.length === 0) {
+      console.error("응답 데이터가 비어있거나 배열이 아님:", data);
       throw new YoutubeTranscriptNotAvailableError(videoId);
     }
+    
+    console.log(`자막 세그먼트 ${data.length}개 가져옴`);
     
     return data.map((segment: any) => ({
       text: segment.text,
@@ -65,7 +77,7 @@ export const fetchTranscript = async (
       lang: lang || 'default'
     }));
   } catch (error: any) {
-    console.error('Transcript fetch error:', error);
+    console.error('자막 가져오기 오류:', error);
     
     if (error instanceof YoutubeTranscriptError) {
       throw error;
