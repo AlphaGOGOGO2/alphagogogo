@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { extractYouTubeVideoId } from "@/utils/youtubeUtils";
 import { fetchTranscript, processTranscriptSegments } from "@/services/youtubeTranscriptService";
@@ -18,14 +18,36 @@ export function useYoutubeTranscript() {
   const [transcript, setTranscript] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [attemptCount, setAttemptCount] = useState(0);
+
+  // 자동 재시도 로직
+  useEffect(() => {
+    if (attemptCount > 0 && error && error.includes("네트워크 연결 오류") && youtubeUrl) {
+      const maxRetries = 2; // 최대 재시도 횟수
+      
+      if (attemptCount <= maxRetries) {
+        const timer = setTimeout(() => {
+          console.log(`자동 재시도 중... (${attemptCount}/${maxRetries})`);
+          handleExtractTranscript(true);
+        }, 2000);
+        
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [error, attemptCount, youtubeUrl]);
 
   /**
    * Handles the extraction of transcript from YouTube URL
    */
-  const handleExtractTranscript = async () => {
-    // Reset states
-    setTranscript("");
-    setError("");
+  const handleExtractTranscript = async (isRetry = false) => {
+    // 재시도가 아닌 경우에만 상태 초기화
+    if (!isRetry) {
+      setTranscript("");
+      setError("");
+      setAttemptCount(0);
+    } else {
+      setAttemptCount(prev => prev + 1);
+    }
     
     // Validate URL
     if (!youtubeUrl.trim()) {
@@ -103,6 +125,16 @@ export function useYoutubeTranscript() {
             error.message.includes("NetworkError") || 
             error.message.includes("네트워크 연결 오류")) {
           errorMessage = "네트워크 연결 오류: 서버에 연결할 수 없습니다.";
+          
+          if (!isRetry && attemptCount < 2) {
+            // 첫 번째 시도에서 네트워크 오류 시 자동으로 재시도
+            console.log("네트워크 오류로 자동 재시도 예약됨");
+            // 상태 변경하고 재시도를 위한 useEffect 트리거
+            setError(errorMessage);
+            setIsLoading(false);
+            setAttemptCount(prev => prev + 1);
+            return; // 여기서 함수 종료
+          }
         } else {
           errorMessage = error.message;
         }
