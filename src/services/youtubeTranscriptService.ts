@@ -7,6 +7,7 @@ import {
   YoutubeTranscriptTooManyRequestError,
   YoutubeTranscriptVideoUnavailableError
 } from "@/utils/youtubeTranscriptErrors";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * 유튜브 트랜스크립트(자막) API를 통해 자막을 가져옵니다.
@@ -22,25 +23,18 @@ export const fetchTranscript = async (
   try {
     console.log(`자막 가져오기: 비디오 ID ${videoId}, 언어 ${lang || '기본값'}`);
     
-    // Supabase Edge Function 호출
-    const response = await fetch(`${import.meta.env.VITE_SUPABASE_API_URL}/functions/v1/get-youtube-transcript`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-      },
-      body: JSON.stringify({
+    // Supabase SDK를 사용하여 Edge Function 호출
+    const { data, error } = await supabase.functions.invoke('get-youtube-transcript', {
+      body: {
         videoId,
         lang
-      })
+      }
     });
-    
-    console.log(`응답 상태 코드: ${response.status}`);
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      const errorMessage = errorData.error || '자막을 가져오는데 실패했습니다.';
-      console.error("자막 가져오기 실패:", errorMessage);
+
+    // 오류 처리
+    if (error) {
+      console.error("Edge Function 호출 오류:", error);
+      const errorMessage = error.message || '자막을 가져오는데 실패했습니다.';
       
       if (errorMessage.includes('Too many requests') || errorMessage.includes('captcha')) {
         throw new YoutubeTranscriptTooManyRequestError();
@@ -54,8 +48,6 @@ export const fetchTranscript = async (
       
       throw new Error(`API 오류: ${errorMessage}`);
     }
-    
-    const data = await response.json();
     
     if (!data || !Array.isArray(data) || data.length === 0) {
       console.error("응답 데이터가 비어있거나 배열이 아님:", data);
