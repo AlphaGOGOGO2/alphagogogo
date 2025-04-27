@@ -15,7 +15,9 @@ export function YouTubeTranscriptService() {
     isLoading,
     error,
     videoInfo,
-    handleExtractTranscript
+    handleExtractTranscript,
+    needsAuth,
+    authUrl
   } = useYoutubeTranscript();
   
   const [isVisible, setIsVisible] = useState(false);
@@ -48,6 +50,8 @@ export function YouTubeTranscriptService() {
                 setYoutubeUrl={setYoutubeUrl}
                 isLoading={isLoading}
                 onSubmit={handleExtractTranscript}
+                needsAuth={needsAuth}
+                authUrl={authUrl}
               />
             </div>
             
@@ -70,10 +74,10 @@ export function YouTubeTranscriptService() {
         <CardFooter className="bg-gray-50 py-4 px-8">
           <div className="space-y-2 text-xs text-gray-500">
             <p>
-              * 현재 YouTube Data API v3 제한으로 인해 실제 자막 내용이 아닌 샘플 데이터가 표시됩니다.
+              * YouTube Data API를 통해 자막 데이터를 가져옵니다.
             </p>
             <p>
-              * 완전한 자막 추출을 위해서는 서버 측 기능이 필요합니다.
+              * 자막이 없는 동영상의 경우 추출이 불가능합니다.
             </p>
           </div>
         </CardFooter>
