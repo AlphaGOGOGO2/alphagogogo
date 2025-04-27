@@ -1,141 +1,180 @@
-import { TranscriptSegment, YoutubeVideoInfo } from '@/types/youtubeTranscript'
-import { YoutubeTranscriptError, YoutubeTranscriptNotAvailableError } from '@/utils/youtubeTranscriptErrors'
-import { supabase } from "@/integrations/supabase/client"
 
-/**
- * YouTube 비디오 ID를 사용해 자막 데이터를 가져옵니다.
- */
-export async function fetchTranscript(videoId: string, lang?: string): Promise<{
-  segments: TranscriptSegment[],
-  videoInfo: YoutubeVideoInfo
-}> {
+import {
+  YoutubeTranscriptDisabledError,
+  YoutubeTranscriptError,
+  YoutubeTranscriptNotAvailableError,
+  YoutubeTranscriptTooManyRequestError,
+  YoutubeTranscriptVideoUnavailableError
+} from "@/utils/youtubeTranscriptErrors";
+import { TranscriptSegment } from "@/types/youtubeTranscript";
+
+// YouTube API를 위한 설정
+const INNERTUBE_CLIENT_VERSION = '2.20240221.01.00';
+const INNERTUBE_CLIENT_NAME = 'WEB';
+const INNERTUBE_API_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
+
+const BASE_HEADERS = {
+  'accept': '*/*',
+  'accept-language': 'ko,en;q=0.9',
+  'content-type': 'application/json',
+  'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'same-origin',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'x-youtube-client-name': '1',
+  'x-youtube-client-version': INNERTUBE_CLIENT_VERSION
+};
+
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
   try {
-    console.log(`비디오 ID ${videoId}의 자막을 가져오는 중...`)
-    
-    // Edge function을 호출하여 자막 데이터 요청
-    const { data, error } = await supabase.functions.invoke('youtube-captions', {
-      body: { 
-        videoId, 
-        language: lang || 'ko' 
-      }
-    })
-
-    if (error) {
-      console.error('Edge function 호출 오류:', error)
-      throw new Error(error.message)
-    }
-
-    if (!data || data.error) {
-      console.error('자막 가져오기 실패:', data?.error || '알 수 없는 오류')
-      throw new YoutubeTranscriptNotAvailableError(videoId)
-    }
-
-    console.log('Edge Function 응답:', data)
-
-    const { transcript, videoInfo } = data
-    
-    if (!transcript || typeof transcript !== 'string') {
-      console.error('자막 데이터가 올바른 형식이 아닙니다:', transcript)
-      throw new YoutubeTranscriptNotAvailableError(videoId)
-    }
-
-    // 자막 텍스트를 세그먼트로 변환
-    // 타임코드와 텍스트를 분리하는 로직 추가
-    const segments: TranscriptSegment[] = parseTranscriptToSegments(transcript, videoInfo.language)
-    
-    return { 
-      segments, 
-      videoInfo 
-    }
-      
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
   } catch (error) {
-    console.error('자막 가져오기 오류:', error)
+    clearTimeout(id);
+    throw error;
+  }
+}
+
+async function getInitialData(videoId: string): Promise<any> {
+  try {
+    const response = await fetchWithTimeout(
+      `https://www.youtube.com/watch?v=${videoId}`,
+      {
+        headers: BASE_HEADERS,
+        credentials: 'omit',
+        mode: 'cors'
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video page: ${response.status}`);
+    }
+
+    const html = await response.text();
+    
+    // ytInitialData 추출
+    const ytInitialDataMatch = html.match(/ytInitialData\s*=\s*({.+?});/);
+    if (!ytInitialDataMatch) {
+      throw new Error('Could not find ytInitialData');
+    }
+    
+    return JSON.parse(ytInitialDataMatch[1]);
+  } catch (error: any) {
+    console.error('Error fetching initial data:', error);
+    throw new Error('네트워크 연결 오류: YouTube 데이터를 가져올 수 없습니다.');
+  }
+}
+
+async function getTranscriptData(videoId: string, lang?: string): Promise<any> {
+  try {
+    const initialData = await getInitialData(videoId);
+    
+    // 자막 데이터 추출
+    const captions = initialData?.playerOverlays?.playerOverlayRenderer?.decoratedPlayerBarRenderer?.decoratedPlayerBarRenderer?.playerBar?.multiMarkersPlayerBarRenderer?.markersMap?.[0]?.value?.chapters;
+    
+    if (!captions) {
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+
+    // 자막 URL 생성 - 숫자 값들을 문자열로 변환
+    const params = {
+      v: videoId,
+      fmt: 'json3',
+      xorb: '2',  // 숫자를 문자열로 변경
+      xobt: '3',  // 숫자를 문자열로 변경
+      xovt: '3',  // 숫자를 문자열로 변경
+    };
+    
+    // 언어 파라미터가 있는 경우에만 추가
+    if (lang) {
+      params['lang'] = lang;
+    }
+    
+    const url = `https://www.youtube.com/api/timedtext?${new URLSearchParams(params)}`;
+    
+    const response = await fetchWithTimeout(url, {
+      headers: BASE_HEADERS,
+      credentials: 'omit',
+      mode: 'cors'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch transcript: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching transcript data:', error);
+    if (error instanceof YoutubeTranscriptError) {
+      throw error;
+    }
+    throw new Error('네트워크 연결 오류: 자막 데이터를 가져올 수 없습니다.');
+  }
+}
+
+// HTML 엔티티 디코딩 함수
+function decodeHtmlEntities(text: string): string {
+  const textarea = document.createElement('textarea');
+  textarea.innerHTML = text
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+  return textarea.value;
+}
+
+export const fetchTranscript = async (
+  videoId: string, 
+  lang?: string
+): Promise<TranscriptSegment[]> => {
+  try {
+    console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
+    
+    const transcriptData = await getTranscriptData(videoId, lang);
+    
+    if (!transcriptData?.events || transcriptData.events.length === 0) {
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+
+    return transcriptData.events
+      .filter((event: any) => event.segs && event.segs.length > 0)
+      .map((event: any) => ({
+        text: decodeHtmlEntities(event.segs.map((seg: any) => seg.utf8).join(' ')),
+        offset: event.tStartMs,
+        duration: event.dDurationMs,
+        lang: lang || 'default'
+      }));
+  } catch (error: any) {
+    console.error('Transcript fetch error:', error);
     
     if (error instanceof YoutubeTranscriptError) {
-      throw error
+      throw error;
     }
     
-    throw new YoutubeTranscriptNotAvailableError(videoId)
-  }
-}
-
-/**
- * 자막 텍스트를 구문 분석하여 세그먼트로 변환합니다.
- */
-function parseTranscriptToSegments(transcript: string, language: string = 'ko'): TranscriptSegment[] {
-  if (!transcript.trim()) {
-    return []
-  }
-  
-  try {
-    // 자막 텍스트를 줄 단위로 분리
-    const lines = transcript.split('\n')
-    const segments: TranscriptSegment[] = []
-    
-    // SRT나 일반 텍스트 형식에 따른 파싱 시도
-    // 기본적인 세그먼트 생성
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i].trim()
-      if (!line) continue
-      
-      // 타임스탬프가 있는지 확인 (00:00:00,000 --> 00:00:00,000 형식)
-      const timeRegex = /(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})/
-      const timeMatch = lines[i].match(timeRegex)
-      
-      if (timeMatch) {
-        // 타임스탬프가 있는 경우 시작 시간과 종료 시간 계산
-        const startTimeMs = 
-          (parseInt(timeMatch[1]) * 3600 + parseInt(timeMatch[2]) * 60 + parseInt(timeMatch[3])) * 1000 + 
-          parseInt(timeMatch[4])
-        
-        const endTimeMs = 
-          (parseInt(timeMatch[5]) * 3600 + parseInt(timeMatch[6]) * 60 + parseInt(timeMatch[7])) * 1000 + 
-          parseInt(timeMatch[8])
-        
-        // 다음 줄에 자막 텍스트가 있을 것으로 가정
-        i++
-        if (i < lines.length) {
-          segments.push({
-            text: lines[i].trim(),
-            offset: startTimeMs,
-            duration: endTimeMs - startTimeMs,
-            lang: language
-          })
-        }
-      } else {
-        // 타임스탬프가 없는 경우 일반 텍스트로 간주
-        segments.push({
-          text: line,
-          offset: segments.length * 3000, // 대략적인 시간 간격 부여
-          duration: 3000,
-          lang: language
-        })
-      }
+    if (error.message.includes('NetworkError') || error.message.includes('네트워크 연결 오류')) {
+      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다.');
     }
     
-    return segments
-  } catch (error) {
-    console.error('자막 파싱 오류:', error)
-    // 파싱에 실패한 경우 텍스트를 단순 분리
-    return transcript
-      .split('\n\n')
-      .filter(segment => segment.trim())
-      .map((segment, index) => ({
-        text: segment.trim(),
-        offset: index * 3000, // 예시 타임스탬프
-        duration: 3000,
-        lang: language
-      }))
+    throw new YoutubeTranscriptNotAvailableError(videoId);
   }
-}
+};
 
-/**
- * 자막 세그먼트를 텍스트로 변환합니다.
- */
 export const processTranscriptSegments = (segments: TranscriptSegment[]): string => {
-  // 자막 텍스트만 추출하여 조합
   return segments
     .map(segment => segment.text.trim())
     .filter(text => text.length > 0)
-    .join('\n\n');
+    .join('\n');
 };

@@ -14,10 +14,7 @@ export function YouTubeTranscriptService() {
     transcript,
     isLoading,
     error,
-    videoInfo,
-    handleExtractTranscript,
-    needsAuth,
-    authUrl
+    handleExtractTranscript
   } = useYoutubeTranscript();
   
   const [isVisible, setIsVisible] = useState(false);
@@ -28,14 +25,6 @@ export function YouTubeTranscriptService() {
     }, 100);
     
     return () => clearTimeout(timer);
-  }, []);
-
-  // URL에 code와 state가 있는지 확인
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has('code') && params.has('state')) {
-      console.log('인증 코드와 상태가 URL에 있습니다');
-    }
   }, []);
 
   return (
@@ -58,8 +47,6 @@ export function YouTubeTranscriptService() {
                 setYoutubeUrl={setYoutubeUrl}
                 isLoading={isLoading}
                 onSubmit={handleExtractTranscript}
-                needsAuth={needsAuth}
-                authUrl={authUrl}
               />
             </div>
             
@@ -71,26 +58,15 @@ export function YouTubeTranscriptService() {
             
             {transcript && (
               <div className="animate-fade-in">
-                <TranscriptDisplay 
-                  transcript={transcript} 
-                  videoInfo={videoInfo} 
-                />
+                <TranscriptDisplay transcript={transcript} />
               </div>
             )}
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 py-4 px-8">
-          <div className="space-y-2 text-xs text-gray-500">
-            <p>
-              * YouTube Data API를 통해 자막 데이터를 가져옵니다.
-            </p>
-            <p>
-              * 자막 추출을 위해서는 처음 사용 시 구글 계정 인증이 필요할 수 있습니다.
-            </p>
-            <p>
-              * 자막이 없는 동영상의 경우 추출이 불가능합니다.
-            </p>
-          </div>
+        <CardFooter className="bg-gray-50 py-4 px-8 rounded-b-lg">
+          <p className="text-xs text-gray-500">
+            * 일부 영상은 자막이 제공되지 않을 수 있습니다. 공개된 자막이 있는 영상에서만 동작합니다.
+          </p>
         </CardFooter>
       </Card>
     </section>

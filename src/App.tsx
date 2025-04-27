@@ -1,12 +1,14 @@
-import React from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "./components/ScrollToTop";
+import React from "react";
 
+// 모든 페이지 임포트는 유지
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AllBlogPage from "./pages/blog/AllBlogPage";
@@ -23,6 +25,7 @@ import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 
+// 관리자 페이지 가져오기
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
@@ -53,7 +56,6 @@ const App = () => (
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
-              
               {/* Redirect AI 품앗이 to home page with an alert */}
               <Route path="/genspark-invites" element={<Navigate to="/" replace />} />
               
