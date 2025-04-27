@@ -47,19 +47,33 @@ export function useYoutubeTranscript() {
     setIsLoading(true);
     
     try {
-      // Try to get transcript with Korean language first
+      // 여러 언어로 시도
       let transcriptData = [];
+      let attemptErrors = [];
       
       try {
         console.log("Attempting to fetch Korean transcript");
         transcriptData = await fetchTranscript(videoId, 'ko');
-      } catch (koreanError) {
-        console.log("Korean transcript failed, trying English", koreanError);
+      } catch (koreanError: any) {
+        console.log("Korean transcript failed:", koreanError);
+        attemptErrors.push({lang: 'ko', error: koreanError});
+        
         try {
+          console.log("Trying English transcript");
           transcriptData = await fetchTranscript(videoId, 'en');
-        } catch (englishError) {
-          console.log("English transcript failed, trying default language", englishError);
-          transcriptData = await fetchTranscript(videoId);
+        } catch (englishError: any) {
+          console.log("English transcript failed:", englishError);
+          attemptErrors.push({lang: 'en', error: englishError});
+          
+          try {
+            console.log("Trying with default language");
+            transcriptData = await fetchTranscript(videoId);
+          } catch (defaultError: any) {
+            console.log("Default language transcript failed:", defaultError);
+            attemptErrors.push({lang: 'default', error: defaultError});
+            // 마지막 오류를 던져 캐치 블록에서 처리
+            throw defaultError;
+          }
         }
       }
       
@@ -85,7 +99,9 @@ export function useYoutubeTranscript() {
       } else if (error instanceof YoutubeTranscriptNotAvailableError) {
         errorMessage = "이 영상에는 자막이 없거나 접근할 수 없습니다.";
       } else if (error instanceof Error) {
-        if (error.message.includes("Failed to fetch") || error.message.includes("NetworkError")) {
+        if (error.message.includes("Failed to fetch") || 
+            error.message.includes("NetworkError") || 
+            error.message.includes("네트워크 연결 오류")) {
           errorMessage = "네트워크 연결 오류: 서버에 연결할 수 없습니다.";
         } else {
           errorMessage = error.message;

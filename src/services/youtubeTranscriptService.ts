@@ -12,12 +12,13 @@ import { TranscriptSegment } from "@/types/youtubeTranscript";
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.83 Safari/537.36,gzip(gfe)';
 const RE_XML_TRANSCRIPT = /<text start="([^"]*)" dur="([^"]*)">([^<]*)<\/text>/g;
 
-// 더 안정적인 CORS 프록시 목록
+// 더 안정적인 CORS 프록시 목록 (최신 및 활성 상태인 프록시들)
 const CORS_PROXIES = [
+  'https://api.allorigins.win/raw?url=',
+  'https://api.codetabs.com/v1/proxy?quest=',
   'https://corsproxy.io/?',
-  'https://crossorigin.me/',
-  'https://cors-anywhere.herokuapp.com/',
-  'https://api.codetabs.com/v1/proxy?quest='
+  'https://yacdn.org/proxy/',
+  'https://proxy.cors.sh/'
 ];
 
 /**
@@ -42,7 +43,7 @@ export const fetchTranscript = async (
   lang?: string, 
   attemptIndex = 0
 ): Promise<TranscriptSegment[]> => {
-  console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
+  console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}, attempt: ${attemptIndex + 1}`);
   
   const corsProxy = getCorsProxy(attemptIndex);
   console.log(`Using CORS proxy: ${corsProxy}`);
@@ -57,7 +58,9 @@ export const fetchTranscript = async (
           'User-Agent': USER_AGENT,
         },
         cache: 'no-store',
-        referrerPolicy: 'no-referrer'
+        referrerPolicy: 'no-referrer',
+        mode: 'cors',
+        credentials: 'omit'
       }
     );
     
@@ -127,7 +130,9 @@ export const fetchTranscript = async (
         'User-Agent': USER_AGENT,
       },
       cache: 'no-store',
-      referrerPolicy: 'no-referrer'
+      referrerPolicy: 'no-referrer',
+      mode: 'cors',
+      credentials: 'omit'
     });
     
     if (!transcriptResponse.ok) {
@@ -151,10 +156,15 @@ export const fetchTranscript = async (
   } catch (error) {
     console.error(`Error fetching transcript:`, error);
     
-    // 재시도 로직: 다른 CORS 프록시로 한 번 더 시도
+    // 재시도 로직: 다른 CORS 프록시로 시도
     if (attemptIndex < CORS_PROXIES.length - 1) {
-      console.log(`Retrying with different CORS proxy, attempt ${attemptIndex + 1}`);
+      console.log(`Retrying with different CORS proxy, attempt ${attemptIndex + 2}`);
       return fetchTranscript(videoId, lang, attemptIndex + 1);
+    }
+    
+    // 모든 프록시를 시도했지만 실패한 경우
+    if (error instanceof Error && error.message.includes('Failed to fetch')) {
+      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다.');
     }
     
     throw error;
@@ -181,7 +191,8 @@ export const processTranscriptSegments = (segments: TranscriptSegment[]): string
         .replace(/&amp;/g, '&')
         .replace(/&lt;/g, '<')
         .replace(/&gt;/g, '>')
-        .replace(/&#39;/g, "'");
+        .replace(/&#39;/g, "'")
+        .replace(/&nbsp;/g, ' ');
       
       return decoded.trim();
     })
