@@ -24,3 +24,10 @@ export interface YoutubeVideoInfo {
   author?: string;
   availableLanguages?: string[];
 }
+
+// 파이썬 API에서 반환되는 자막 형식
+export interface PythonTranscriptSegment {
+  text: string;
+  start: number;
+  duration: number;
+}
