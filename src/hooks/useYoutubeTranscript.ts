@@ -60,13 +60,6 @@ export function useYoutubeTranscript() {
     setLastVideoId(videoId);
     setIsLoading(true);
     
-    // 테스트용 비디오 ID 체크 - 실제 배포 시 이 부분은 제거
-    const testVideoIds = ["dQw4w9WgXcQ", "9bZkp7q19f0", "example1", "example2"];
-    if (testVideoIds.includes(videoId)) {
-      console.log("테스트 비디오 ID를 사용합니다 - 데모 자막이 반환됩니다");
-      toast.info("테스트 URL이 감지되었습니다. 데모 자막이 표시됩니다.");
-    }
-    
     try {
       // 한국어로 먼저 시도
       let transcriptData = [];

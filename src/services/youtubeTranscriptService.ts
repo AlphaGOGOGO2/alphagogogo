@@ -22,12 +22,6 @@ export const fetchTranscript = async (
   try {
     console.log(`자막 가져오기: 비디오 ID ${videoId}, 언어 ${lang || '기본값'}`);
     
-    // 테스트용 비디오 ID 체크 - 실제 배포 시 이 부분은 제거
-    const testVideoIds = ["dQw4w9WgXcQ", "9bZkp7q19f0", "example1", "example2"];
-    if (testVideoIds.includes(videoId)) {
-      console.log("테스트 비디오 ID 확인됨 - 임시 자막으로 대체합니다");
-    }
-    
     // Supabase Edge Function 호출
     const response = await fetch(`${import.meta.env.VITE_SUPABASE_API_URL}/functions/v1/get-youtube-transcript`, {
       method: 'POST',
@@ -84,7 +78,7 @@ export const fetchTranscript = async (
     }
     
     if (error.message.includes('NetworkError') || error.message.includes('네트워크 연결 오류')) {
-      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다.');
+      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
     
     throw new YoutubeTranscriptNotAvailableError(videoId);
