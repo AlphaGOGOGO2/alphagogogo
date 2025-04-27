@@ -62,17 +62,11 @@ export function Services() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           {[
             {
-              title: "유튜브 자막 추출기",
-              description: "YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고 활용할 수 있습니다. 영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.",
-              icon: <Youtube className="text-purple-600" size={24} />,
-              path: "/youtube-transcript"
-            },
-            {
               title: "URL 단축기",
-              description: "복잡한 URL을 간결하게 줄여 SNS, 메시��, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
+              description: "복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
               icon: <Link2 className="text-purple-600" size={24} />,
               path: "/url-shortener"
             },

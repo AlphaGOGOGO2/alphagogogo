@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -8,7 +7,6 @@ import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "./components/ScrollToTop";
 import React from "react";
 
-// 모든 페이지 임포트는 유지
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AllBlogPage from "./pages/blog/AllBlogPage";
@@ -25,7 +23,6 @@ import YouTubeTranscriptPage from "./pages/YouTubeTranscriptPage";
 import URLShortenerPage from "./pages/URLShortenerPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 
-// 관리자 페이지 가져오기
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
@@ -50,26 +47,19 @@ const App = () => (
           <BrowserRouter>
             <ScrollToTop />
             <Routes>
-              {/* Main routes */}
               <Route path="/" element={<Index />} />
               <Route path="/gpts" element={<GPTSPage />} />
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
-              {/* Redirect AI 품앗이 to home page with an alert */}
               <Route path="/genspark-invites" element={<Navigate to="/" replace />} />
               
-              {/* Service sub-pages */}
-              <Route path="/youtube-transcript" element={<YouTubeTranscriptPage />} />
               <Route path="/url-shortener" element={<URLShortenerPage />} />
               <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
               
-              {/* Legacy services routes - redirect to new paths */}
-              <Route path="/services/youtube-transcript" element={<Navigate to="/youtube-transcript" replace />} />
               <Route path="/services/url-shortener" element={<Navigate to="/url-shortener" replace />} />
               <Route path="/services/blog-button-creator" element={<Navigate to="/blog-button-creator" replace />} />
               
-              {/* Blog routes */}
               <Route path="/blog" element={<AllBlogPage />} />
               <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
               <Route path="/blog/trending" element={<TrendingPage />} />
@@ -78,18 +68,15 @@ const App = () => (
               <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               
-              {/* 관리자 대시보드 라우트 */}
               <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/admin/posts" element={<AdminPostsPage />} />
               <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
               
-              {/* Redirect legacy paths or alternate paths */}
               <Route path="/latest-ai-updates" element={<Navigate to="/blog/latest-updates" replace />} />
               <Route path="/trending" element={<Navigate to="/blog/trending" replace />} />
               <Route path="/lifestyle" element={<Navigate to="/blog/lifestyle" replace />} />
               
-              {/* Catch-all route - must be last */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

@@ -42,16 +42,8 @@ export default function ServicesPage() {
             알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-16">
             {[
-              {
-                title: "유튜브 자막 추출 서비스",
-                description: "YouTube 동영상의 자막을 텍스트로 추출하여 저장하거나 복사할 수 있습니다.",
-                detailedDescription: "YouTube 동영상의 자막을 텍스트로 변환하여 쉽게 복사하고, 활용할 수 있습니다. 영어 교육 콘텐츠, TED 강연, 자막이 있는 공식 채널 영상에서 가장 잘 작동합니다.",
-                icon: <Youtube size={28} className="text-white" />,
-                path: "/youtube-transcript",
-                gradient: "from-purple-800 to-purple-600"
-              },
               {
                 title: "URL 단축 서비스",
                 description: "긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다.",
