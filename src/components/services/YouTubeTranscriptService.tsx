@@ -30,6 +30,14 @@ export function YouTubeTranscriptService() {
     return () => clearTimeout(timer);
   }, []);
 
+  // URL에 code와 state가 있는지 확인
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('code') && params.has('state')) {
+      console.log('인증 코드와 상태가 URL에 있습니다');
+    }
+  }, []);
+
   return (
     <section id="youtube-transcript" className="mb-16">
       <Card className={`shadow-lg overflow-hidden border-0 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -75,6 +83,9 @@ export function YouTubeTranscriptService() {
           <div className="space-y-2 text-xs text-gray-500">
             <p>
               * YouTube Data API를 통해 자막 데이터를 가져옵니다.
+            </p>
+            <p>
+              * 자막 추출을 위해서는 처음 사용 시 구글 계정 인증이 필요할 수 있습니다.
             </p>
             <p>
               * 자막이 없는 동영상의 경우 추출이 불가능합니다.

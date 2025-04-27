@@ -24,6 +24,16 @@ export function useYoutubeTranscript() {
   const [needsAuth, setNeedsAuth] = useState<boolean>(false);
   const [currentVideoId, setCurrentVideoId] = useState<string | null>(null);
 
+  // 현재 URL 가져오기
+  const getCurrentRedirectUrl = () => {
+    if (typeof window !== 'undefined') {
+      // 현재 페이지의 URL 경로 (pathname)만 가져옴
+      const { origin, pathname } = window.location;
+      return `${origin}${pathname}`;
+    }
+    return null;
+  };
+
   // URL에서 인증 코드 확인
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -42,8 +52,15 @@ export function useYoutubeTranscript() {
   // 인증 URL 가져오기
   const getAuthUrl = async (videoId: string) => {
     try {
+      const redirectUrl = getCurrentRedirectUrl();
+      console.log("현재 리디렉션 URL:", redirectUrl);
+      
       const { data, error } = await supabase.functions.invoke('youtube-oauth', {
-        body: { action: 'getAuthUrl', videoId }
+        body: { 
+          action: 'getAuthUrl', 
+          videoId,
+          redirectUrl
+        }
       });
       
       if (error) throw new Error(error.message);
@@ -51,6 +68,8 @@ export function useYoutubeTranscript() {
         setAuthUrl(data.authUrl);
         setNeedsAuth(true);
         setCurrentVideoId(videoId);
+        
+        console.log("생성된 인증 URL:", data.authUrl);
       }
     } catch (error: any) {
       console.error('인증 URL 가져오기 실패:', error);
@@ -62,8 +81,15 @@ export function useYoutubeTranscript() {
   const getAccessToken = async (code: string, videoId: string) => {
     setIsLoading(true);
     try {
+      const redirectUrl = getCurrentRedirectUrl();
+      console.log("토큰 요청 시 사용할 리디렉션 URL:", redirectUrl);
+      
       const { data, error } = await supabase.functions.invoke('youtube-oauth', {
-        body: { action: 'getToken', code }
+        body: { 
+          action: 'getToken', 
+          code,
+          redirectUrl 
+        }
       });
       
       if (error) throw new Error(error.message);

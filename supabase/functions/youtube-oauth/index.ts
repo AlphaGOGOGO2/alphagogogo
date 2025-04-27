@@ -7,7 +7,7 @@ const GOOGLE_CLIENT_SECRET = Deno.env.get('GOOGLE_CLIENT_SECRET')
 const YOUTUBE_API_KEY = Deno.env.get('YOUTUBE_DATA_API_KEY')
 
 // OAuth 설정
-const REDIRECT_URL = 'https://alphagogogo.com/youtube-transcript'
+const REDIRECT_URL = Deno.env.get('SITE_URL') || 'https://alphagogogo.com/youtube-transcript'
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token'
 const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth'
 
@@ -20,13 +20,17 @@ serve(async (req) => {
   }
   
   try {
-    const { action, code, videoId } = await req.json()
+    const { action, code, videoId, redirectUrl } = await req.json()
+    
+    // 요청에서 전달된 리디렉션 URL 또는 기본값 사용
+    const actualRedirectUrl = redirectUrl || REDIRECT_URL
+    console.log('사용할 리디렉션 URL:', actualRedirectUrl)
     
     if (action === 'getAuthUrl') {
       // 인증 URL 생성
       const authUrl = new URL(AUTH_ENDPOINT)
       authUrl.searchParams.append('client_id', GOOGLE_CLIENT_ID || '')
-      authUrl.searchParams.append('redirect_uri', REDIRECT_URL)
+      authUrl.searchParams.append('redirect_uri', actualRedirectUrl)
       authUrl.searchParams.append('response_type', 'code')
       authUrl.searchParams.append('scope', YOUTUBE_SCOPE)
       authUrl.searchParams.append('access_type', 'offline')
@@ -43,6 +47,9 @@ serve(async (req) => {
       }
       
       // 인증 코드로 토큰 요청
+      console.log(`토큰 요청 중 - 코드: ${code.substring(0, 10)}...`)
+      console.log(`리디렉션 URL: ${actualRedirectUrl}`)
+      
       const tokenResponse = await fetch(TOKEN_ENDPOINT, {
         method: 'POST',
         headers: {
@@ -52,7 +59,7 @@ serve(async (req) => {
           code,
           client_id: GOOGLE_CLIENT_ID || '',
           client_secret: GOOGLE_CLIENT_SECRET || '',
-          redirect_uri: REDIRECT_URL,
+          redirect_uri: actualRedirectUrl,
           grant_type: 'authorization_code'
         })
       })
@@ -60,7 +67,7 @@ serve(async (req) => {
       const tokenData = await tokenResponse.json()
       if (!tokenResponse.ok) {
         console.error('토큰 요청 실패:', tokenData)
-        throw new Error('토큰 요청 실패: ' + tokenData.error)
+        throw new Error('토큰 요청 실패: ' + (tokenData.error_description || tokenData.error || JSON.stringify(tokenData)))
       }
       
       return new Response(JSON.stringify({

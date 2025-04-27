@@ -1,7 +1,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Loader2, Search, Youtube } from "lucide-react";
+import { Loader2, Search, Youtube, ExternalLink } from "lucide-react";
 import { useState } from "react";
 
 interface TranscriptFormProps {
@@ -30,6 +30,7 @@ export function TranscriptForm({
   
   const handleAuth = () => {
     if (authUrl) {
+      // 새 창에서 인증 URL 열기
       window.location.href = authUrl;
     }
   };
@@ -83,22 +84,30 @@ export function TranscriptForm({
       </div>
       
       {needsAuth && authUrl && (
-        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <h3 className="text-sm font-medium text-yellow-800 flex items-center">
-            <Youtube className="h-4 w-4 mr-2" />
+        <div className="mt-6 p-5 bg-yellow-50 border border-yellow-200 rounded-lg shadow-sm">
+          <h3 className="text-md font-medium text-yellow-800 flex items-center">
+            <Youtube className="h-5 w-5 mr-2 text-red-600" />
             YouTube 계정 인증 필요
           </h3>
-          <p className="mt-1 text-sm text-yellow-700">
-            자막을 가져오기 위해 YouTube 계정에 접근 권한이 필요합니다.
+          <p className="mt-2 text-sm text-yellow-700">
+            YouTube API 정책에 따라 자막을 가져오기 위해서는 사용자 인증이 필요합니다. 
+            아래 버튼을 클릭하여 YouTube 계정에 접근 권한을 허용해주세요.
           </p>
-          <Button 
-            type="button" 
-            onClick={handleAuth}
-            className="mt-3 bg-red-600 hover:bg-red-700 text-white"
-          >
-            <Youtube className="h-4 w-4 mr-2" />
-            YouTube 계정 인증하기
-          </Button>
+          <div className="mt-4 flex justify-center">
+            <Button 
+              type="button" 
+              onClick={handleAuth}
+              className="bg-red-600 hover:bg-red-700 text-white font-medium px-6 py-2 h-auto"
+              size="lg"
+            >
+              <Youtube className="h-5 w-5 mr-2" />
+              YouTube 계정으로 인증하기
+              <ExternalLink className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-yellow-600 mt-3 text-center">
+            인증 후 자동으로 이 페이지로 돌아옵니다
+          </p>
         </div>
       )}
     </form>
