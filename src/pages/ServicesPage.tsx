@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Youtube, Link2, MousePointerClick } from "lucide-react";
+import { Link2, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Banner } from "@/components/Banner";
@@ -42,56 +42,35 @@ export default function ServicesPage() {
             알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요.
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8 mb-16">
-            {[
-              {
-                title: "URL 단축 서비스",
-                description: "긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다.",
-                detailedDescription: "복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
-                icon: <Link2 size={28} className="text-white" />,
-                path: "/url-shortener",
-                gradient: "from-purple-700 to-purple-500"
-              },
-              {
-                title: "블로그 버튼 생성기",
-                description: "블로그용 맞춤형 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다.",
-                detailedDescription: "색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 매력적인 버튼 HTML 코드를 생성합니다.",
-                icon: <MousePointerClick size={28} className="text-white" />,
-                path: "/blog-button-creator",
-                gradient: "from-purple-600 to-purple-400"
-              }
-            ].map((service, index) => (
-              <Card 
-                key={index} 
-                className={`shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col`}
-                style={{ 
-                  animation: `fade-in 0.6s ease-out forwards`,
-                  animationDelay: `${index * 150}ms`, 
-                  opacity: 0 
-                }}
-              >
-                <CardHeader className={`bg-gradient-to-r ${service.gradient} text-white rounded-t-lg py-8`}>
-                  <CardTitle className="flex items-center gap-3 text-2xl">
-                    {service.icon}
-                    {service.title}
-                  </CardTitle>
-                  <CardDescription className="text-white/90 text-base mt-2">
-                    {service.description}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="pt-6 pb-6 px-6 flex-grow flex flex-col">
-                  <p className="text-gray-700 mb-6 flex-grow">
-                    {service.detailedDescription}
-                  </p>
-                  <Link to={service.path}>
-                    <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white transition-all duration-300">
-                      <ExternalLink size={16} className="mr-2" />
-                      서비스 이용하기
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-8 mb-16">
+            <Card 
+              className={`shadow-md hover:shadow-lg transition-shadow border-0 overflow-hidden flex flex-col`}
+              style={{ 
+                animation: `fade-in 0.6s ease-out forwards`,
+                opacity: 0 
+              }}
+            >
+              <CardHeader className="bg-gradient-to-r from-purple-600 to-purple-400 text-white rounded-t-lg py-8">
+                <CardTitle className="flex items-center gap-3 text-2xl">
+                  <MousePointerClick className="text-white" size={24} />
+                  블로그 버튼 생성기
+                </CardTitle>
+                <CardDescription className="text-white/90 text-base mt-2">
+                  블로그용 커스텀 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="pt-6 pb-6 px-6 flex-grow flex flex-col">
+                <p className="text-gray-700 mb-6 flex-grow">
+                  색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 매력적인 버튼 HTML 코드를 생성합니다.
+                </p>
+                <Link to="/blog-button-creator">
+                  <Button className="w-full bg-purple-700 hover:bg-purple-800 text-white transition-all duration-300">
+                    <ExternalLink size={16} className="mr-2" />
+                    서비스 이용하기
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </main>

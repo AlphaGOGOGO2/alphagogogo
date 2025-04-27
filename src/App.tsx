@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -54,10 +53,8 @@ const App = () => (
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
               <Route path="/genspark-invites" element={<Navigate to="/" replace />} />
               
-              <Route path="/url-shortener" element={<URLShortenerPage />} />
               <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
               
-              <Route path="/services/url-shortener" element={<Navigate to="/url-shortener" replace />} />
               <Route path="/services/blog-button-creator" element={<Navigate to="/blog-button-creator" replace />} />
               
               <Route path="/blog" element={<AllBlogPage />} />

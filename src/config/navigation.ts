@@ -72,11 +72,6 @@ export const servicesCategories: ServicesCategory[] = [
     path: "/services",
     description: "알파블로그에서 제공하는 모든 서비스를 확인하세요."
   },
-  { 
-    name: "URL 단축", 
-    path: "/url-shortener",
-    description: "긴 URL을 짧고 간결한 링크로 변환하여 공유하기 쉽게 만듭니다."
-  },
   {
     name: "블로그 버튼 생성기",
     path: "/blog-button-creator",
