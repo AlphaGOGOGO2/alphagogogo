@@ -8,228 +8,118 @@ import {
 } from "@/utils/youtubeTranscriptErrors";
 import { TranscriptSegment } from "@/types/youtubeTranscript";
 
-// Constants for YouTube transcript extraction
-const USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36';
+// YouTube API를 위한 설정
+const INNERTUBE_CLIENT_VERSION = '2.20240221.01.00';
+const INNERTUBE_CLIENT_NAME = 'WEB';
+const INNERTUBE_API_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
 
-// 더 많은 CORS 프록시 목록 (더 안정적인 프록시 추가)
-const CORS_PROXIES = [
-  'https://corsproxy.org/?',
-  'https://corsproxy.io/?',
-  'https://cors.sh/',
-  'https://cors-anywhere.azm.workers.dev/',
-  'https://api.allorigins.win/raw?url=',
-  'https://api.codetabs.com/v1/proxy?quest=',
-  'https://yacdn.org/proxy/',
-  'https://proxy.cors.sh/',
-  'https://crossorigin.me/'
-];
-
-// 서버 없이 자막을 가져오는 방법 (브라우저단에서 실행)
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
-  let lastError;
-  
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
-    try {
-      const response = await fetch(url, {
-        ...options,
-        // 캐시 무효화 및 CORS 정책 우회
-        cache: 'no-store',
-        referrerPolicy: 'no-referrer',
-        mode: 'cors',
-        credentials: 'omit',
-      });
-      
-      if (response.ok) {
-        return response;
-      }
-      
-      lastError = new Error(`HTTP error: ${response.status}`);
-    } catch (error) {
-      console.error(`Fetch attempt ${attempt + 1} failed:`, error);
-      lastError = error;
-      // 잠시 대기 후 재시도 (지수 백오프)
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 500));
-    }
-  }
-  
-  throw lastError;
-}
-
-/**
- * Fetches transcript for a YouTube video
- * 
- * @param videoId - YouTube video ID
- * @param lang - Optional language code (e.g., 'ko', 'en')
- * @returns Array of transcript segments
- */
-export const fetchTranscript = async (
-  videoId: string, 
-  lang?: string
-): Promise<TranscriptSegment[]> => {
-  console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
-  
-  // 모든 CORS 프록시를 시도
-  const errors: any[] = [];
-  
-  for (const corsProxy of CORS_PROXIES) {
-    try {
-      console.log(`Trying CORS proxy: ${corsProxy}`);
-      
-      // Step 1: Fetch the video page to get caption data
-      const videoUrl = `${corsProxy}https://www.youtube.com/watch?v=${videoId}`;
-      console.log(`Fetching video page: ${videoUrl}`);
-      
-      const videoPageResponse = await fetchWithRetry(
-        videoUrl,
-        {
-          headers: {
-            ...(lang && { 'Accept-Language': lang }),
-            'User-Agent': USER_AGENT,
-            'Origin': window.location.origin
-          }
-        },
-        2 // 최대 2번 재시도
-      );
-      
-      const videoPageBody = await videoPageResponse.text();
-      console.log(`Video page fetched successfully, length: ${videoPageBody.length}`);
-
-      // Step 2: Extract caption data from the page
-      const splittedHTML = videoPageBody.split('"captions":');
-
-      if (splittedHTML.length <= 1) {
-        console.error('No captions found in the video page');
-        if (videoPageBody.includes('class="g-recaptcha"')) {
-          throw new YoutubeTranscriptTooManyRequestError();
-        }
-        if (!videoPageBody.includes('"playabilityStatus":')) {
-          throw new YoutubeTranscriptVideoUnavailableError(videoId);
-        }
-        throw new YoutubeTranscriptDisabledError(videoId);
-      }
-
-      // Step 3: Parse the captions data
-      const captions = (() => {
-        try {
-          return JSON.parse(
-            splittedHTML[1].split(',"videoDetails')[0].replace('\n', '')
-          );
-        } catch (e) {
-          console.error('Error parsing captions JSON:', e);
-          return undefined;
-        }
-      })()?.['playerCaptionsTracklistRenderer'];
-
-      if (!captions) {
-        console.error('Captions object not found');
-        throw new YoutubeTranscriptDisabledError(videoId);
-      }
-
-      if (!('captionTracks' in captions)) {
-        console.error('No caption tracks found');
-        throw new YoutubeTranscriptNotAvailableError(videoId);
-      }
-
-      console.log(`Found ${captions.captionTracks.length} caption tracks`);
-      
-      // Step 4: Get the transcript URL
-      const captionTrack = lang
-        ? captions.captionTracks.find((track: any) => track.languageCode === lang)
-        : captions.captionTracks[0];
-        
-      if (!captionTrack) {
-        console.error(`No caption track found for language: ${lang}`);
-        throw new YoutubeTranscriptNotAvailableError(videoId);
-      }
-      
-      const transcriptURL = captionTrack.baseUrl;
-      console.log(`Using transcript URL: ${transcriptURL}`);
-
-      // Step 5: Fetch the actual transcript
-      const transcriptResponse = await fetchWithRetry(
-        `${corsProxy}${transcriptURL}`,
-        {
-          headers: {
-            ...(lang && { 'Accept-Language': lang }),
-            'User-Agent': USER_AGENT,
-            'Origin': window.location.origin
-          }
-        },
-        2 // 최대 2번 재시도
-      );
-      
-      const transcriptBody = await transcriptResponse.text();
-      console.log(`Transcript fetched successfully, length: ${transcriptBody.length}`);
-
-      // Step 6: Parse the XML transcript
-      const results = parseTranscriptXml(transcriptBody);
-      console.log(`Parsed ${results.length} transcript segments`);
-      
-      return results.map((result) => ({
-        text: result.text,
-        duration: result.duration,
-        offset: result.offset,
-        lang: lang ?? captionTrack.languageCode,
-      }));
-    } catch (error) {
-      console.error(`Error with CORS proxy ${corsProxy}:`, error);
-      errors.push({ proxy: corsProxy, error });
-      // 다음 프록시로 계속 진행
-      continue;
-    }
-  }
-  
-  // 모든 프록시가 실패한 경우
-  console.error('All CORS proxies failed:', errors);
-  
-  if (errors.length > 0) {
-    // 네트워크 연결 오류가 있는지 확인
-    const networkErrors = errors.filter(err => 
-      err.error instanceof Error && 
-      (err.error.message.includes('Failed to fetch') || 
-       err.error.message.includes('NetworkError'))
-    );
-    
-    if (networkErrors.length > 0) {
-      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다.');
-    }
-    
-    // 다른 특정 오류 확인
-    if (errors.some(err => err.error instanceof YoutubeTranscriptDisabledError)) {
-      throw new YoutubeTranscriptDisabledError(videoId);
-    }
-    if (errors.some(err => err.error instanceof YoutubeTranscriptVideoUnavailableError)) {
-      throw new YoutubeTranscriptVideoUnavailableError(videoId);
-    }
-    if (errors.some(err => err.error instanceof YoutubeTranscriptTooManyRequestError)) {
-      throw new YoutubeTranscriptTooManyRequestError();
-    }
-  }
-  
-  // 기본 오류
-  throw new YoutubeTranscriptNotAvailableError(videoId);
+const BASE_HEADERS = {
+  'accept': '*/*',
+  'accept-language': 'ko,en;q=0.9',
+  'content-type': 'application/json',
+  'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"Windows"',
+  'sec-fetch-dest': 'empty',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-site': 'same-origin',
+  'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+  'x-youtube-client-name': '1',
+  'x-youtube-client-version': INNERTUBE_CLIENT_VERSION
 };
 
-// XML 파싱 개선 (정규식 대신 안전한 파싱)
-function parseTranscriptXml(xml: string): Array<{text: string, duration: number, offset: number}> {
-  const results: Array<{text: string, duration: number, offset: number}> = [];
-  const RE_XML_TRANSCRIPT = /<text start="([^"]*)" dur="([^"]*)">([^<]*)<\/text>/g;
-  
-  let match;
-  while ((match = RE_XML_TRANSCRIPT.exec(xml)) !== null) {
-    if (match && match.length >= 4) {
-      results.push({
-        offset: parseFloat(match[1]),
-        duration: parseFloat(match[2]),
-        text: decodeHtmlEntities(match[3])
-      });
-    }
+async function fetchWithTimeout(url: string, options: RequestInit, timeout = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    clearTimeout(id);
+    return response;
+  } catch (error) {
+    clearTimeout(id);
+    throw error;
   }
-  
-  return results;
 }
 
-// HTML 엔티티 디코딩 함수 개선
+async function getInitialData(videoId: string): Promise<any> {
+  try {
+    const response = await fetchWithTimeout(
+      `https://www.youtube.com/watch?v=${videoId}`,
+      {
+        headers: BASE_HEADERS,
+        credentials: 'omit',
+        mode: 'cors'
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch video page: ${response.status}`);
+    }
+
+    const html = await response.text();
+    
+    // ytInitialData 추출
+    const ytInitialDataMatch = html.match(/ytInitialData\s*=\s*({.+?});/);
+    if (!ytInitialDataMatch) {
+      throw new Error('Could not find ytInitialData');
+    }
+    
+    return JSON.parse(ytInitialDataMatch[1]);
+  } catch (error: any) {
+    console.error('Error fetching initial data:', error);
+    throw new Error('네트워크 연결 오류: YouTube 데이터를 가져올 수 없습니다.');
+  }
+}
+
+async function getTranscriptData(videoId: string, lang?: string): Promise<any> {
+  try {
+    const initialData = await getInitialData(videoId);
+    
+    // 자막 데이터 추출
+    const captions = initialData?.playerOverlays?.playerOverlayRenderer?.decoratedPlayerBarRenderer?.decoratedPlayerBarRenderer?.playerBar?.multiMarkersPlayerBarRenderer?.markersMap?.[0]?.value?.chapters;
+    
+    if (!captions) {
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+
+    // 자막 URL 생성
+    const params = {
+      v: videoId,
+      fmt: 'json3',
+      xorb: 2,
+      xobt: 3,
+      xovt: 3,
+      ...(lang && { lang })
+    };
+    
+    const url = `https://www.youtube.com/api/timedtext?${new URLSearchParams(params)}`;
+    
+    const response = await fetchWithTimeout(url, {
+      headers: BASE_HEADERS,
+      credentials: 'omit',
+      mode: 'cors'
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch transcript: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error: any) {
+    console.error('Error fetching transcript data:', error);
+    if (error instanceof YoutubeTranscriptError) {
+      throw error;
+    }
+    throw new Error('네트워크 연결 오류: 자막 데이터를 가져올 수 없습니다.');
+  }
+}
+
+// HTML 엔티티 디코딩 함수
 function decodeHtmlEntities(text: string): string {
   const textarea = document.createElement('textarea');
   textarea.innerHTML = text
@@ -242,19 +132,45 @@ function decodeHtmlEntities(text: string): string {
   return textarea.value;
 }
 
-/**
- * Processes multiple transcript segments into a single text
- * 
- * @param segments - Array of transcript segments
- * @returns Combined transcript text
- */
-export const processTranscriptSegments = (segments: TranscriptSegment[]): string => {
-  if (!segments || segments.length === 0) {
-    return '';
+export const fetchTranscript = async (
+  videoId: string, 
+  lang?: string
+): Promise<TranscriptSegment[]> => {
+  try {
+    console.log(`Fetching transcript for video ${videoId} in language ${lang || 'default'}`);
+    
+    const transcriptData = await getTranscriptData(videoId, lang);
+    
+    if (!transcriptData?.events || transcriptData.events.length === 0) {
+      throw new YoutubeTranscriptNotAvailableError(videoId);
+    }
+
+    return transcriptData.events
+      .filter((event: any) => event.segs && event.segs.length > 0)
+      .map((event: any) => ({
+        text: decodeHtmlEntities(event.segs.map((seg: any) => seg.utf8).join(' ')),
+        offset: event.tStartMs,
+        duration: event.dDurationMs,
+        lang: lang || 'default'
+      }));
+  } catch (error: any) {
+    console.error('Transcript fetch error:', error);
+    
+    if (error instanceof YoutubeTranscriptError) {
+      throw error;
+    }
+    
+    if (error.message.includes('NetworkError') || error.message.includes('네트워크 연결 오류')) {
+      throw new Error('네트워크 연결 오류: 서버에 연결할 수 없습니다.');
+    }
+    
+    throw new YoutubeTranscriptNotAvailableError(videoId);
   }
-  
-  // 자막 텍스트 처리 및 포맷팅
+};
+
+export const processTranscriptSegments = (segments: TranscriptSegment[]): string => {
   return segments
     .map(segment => segment.text.trim())
-    .join(' ');
+    .filter(text => text.length > 0)
+    .join('\n');
 };
