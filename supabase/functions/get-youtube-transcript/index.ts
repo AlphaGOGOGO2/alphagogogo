@@ -6,29 +6,75 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// 임시 데이터 처리 함수 - 실제 Python API 연동 전까지 사용할 예시 응답
-function getMockTranscript(videoId: string, lang?: string): Promise<any> {
-  console.log(`임시 트랜스크립트 생성: 비디오 ID ${videoId}, 언어: ${lang || '기본값'}`);
+// YouTube 동영상 ID에서 자막을 가져오는 함수
+async function fetchYoutubeTranscript(videoId: string, lang?: string): Promise<any> {
+  console.log(`자막 가져오기 시작: 비디오 ID ${videoId}, 언어: ${lang || '기본값'}`);
   
-  // 간단한 예제 자막 생성 (실제 구현 시 이 부분은 실제 API를 호출하도록 변경)
-  return new Promise((resolve, reject) => {
-    // 모든 비디오 ID에 대해 성공 응답을 반환하도록 수정
-    // 이렇게 하면 모든 유튜브 링크가 테스트용으로 작동합니다
-    setTimeout(() => {
-      try {
-        resolve([
-          { text: "안녕하세요 여러분.", start: 0.5, duration: 2.5 },
-          { text: "오늘은 좋은 날씨네요.", start: 3.0, duration: 2.0 },
-          { text: "이 비디오에 오신 것을 환영합니다.", start: 5.0, duration: 3.0 },
-          { text: "자막이 잘 작동하는지 테스트 중입니다.", start: 8.0, duration: 3.5 },
-          { text: `[비디오 ID: ${videoId}] 이 자막은 테스트용입니다.`, start: 11.5, duration: 4.0 },
-          { text: `언어 설정: ${lang || '기본값'}`, start: 15.5, duration: 2.0 }
-        ]);
-      } catch (error) {
-        reject(new Error("자막 생성 중 오류가 발생했습니다."));
+  try {
+    // YouTube 자막 API URL
+    const apiUrl = `https://youtube-transcript.p.rapidapi.com/api/transcript`;
+    
+    // API 요청 본문
+    const requestBody = {
+      videoId: videoId,
+      language: lang || 'ko'
+    };
+    
+    // RapidAPI 키
+    const RAPID_API_KEY = Deno.env.get("RAPID_API_KEY");
+    
+    if (!RAPID_API_KEY) {
+      throw new Error("RAPID_API_KEY 환경변수가 설정되지 않았습니다.");
+    }
+    
+    // API 요청 설정
+    const options = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-RapidAPI-Key": RAPID_API_KEY,
+        "X-RapidAPI-Host": "youtube-transcript.p.rapidapi.com"
+      },
+      body: JSON.stringify(requestBody)
+    };
+    
+    // API 요청 실행
+    const response = await fetch(apiUrl, options);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`API 응답 오류: ${response.status} - ${errorText}`);
+      
+      if (response.status === 404) {
+        throw new Error("자막을 찾을 수 없습니다.");
+      } else if (response.status === 403) {
+        throw new Error("자막 접근이 제한되었습니다.");
+      } else {
+        throw new Error(`API 오류: ${response.status}`);
       }
-    }, 300);
-  });
+    }
+    
+    const data = await response.json();
+    console.log("자막 API 응답:", JSON.stringify(data).substring(0, 300) + "...");
+    
+    if (!data.transcript || !Array.isArray(data.transcript)) {
+      throw new Error("응답 데이터가 유효하지 않습니다.");
+    }
+    
+    // API 응답에서 자막 데이터 추출
+    const transcriptData = data.transcript.map((item: any) => ({
+      text: item.text,
+      start: parseFloat(item.start),
+      duration: parseFloat(item.duration)
+    }));
+    
+    console.log(`자막 ${transcriptData.length}개 추출 완료`);
+    return transcriptData;
+    
+  } catch (error) {
+    console.error(`자막 가져오기 오류: ${error.message}`);
+    throw error;
+  }
 }
 
 serve(async (req) => {
@@ -57,9 +103,9 @@ serve(async (req) => {
 
     console.log(`요청 받음: 비디오 ID ${videoId}, 언어: ${lang || '기본값'}`);
     
-    // 테스트 모드: 실제 구현 전까지는 모든 비디오 ID에 대해 샘플 자막 반환
     try {
-      const transcriptData = await getMockTranscript(videoId, lang);
+      // 실제 YouTube 자막 API 호출
+      const transcriptData = await fetchYoutubeTranscript(videoId, lang);
       
       console.log(`트랜스크립트 성공적으로 가져옴: ${transcriptData.length}개 세그먼트`);
       

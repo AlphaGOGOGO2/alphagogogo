@@ -42,7 +42,8 @@ export const fetchTranscript = async (
         throw new YoutubeTranscriptVideoUnavailableError(videoId);
       } else if (errorMessage.includes('disabled')) {
         throw new YoutubeTranscriptDisabledError(videoId);
-      } else if (errorMessage.includes('not available') || errorMessage.includes('없거나 접근할 수 없습니다')) {
+      } else if (errorMessage.includes('not available') || errorMessage.includes('없거나 접근할 수 없습니다')
+                || errorMessage.includes('찾을 수 없습니다')) {
         throw new YoutubeTranscriptNotAvailableError(videoId);
       }
       

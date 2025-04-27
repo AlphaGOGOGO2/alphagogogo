@@ -18,10 +18,10 @@ export function TranscriptForm({
   onSubmit
 }: TranscriptFormProps) {
   const [exampleUrls] = useState([
-    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",  // Rick Astley - Never Gonna Give You Up
-    "https://www.youtube.com/watch?v=9bZkp7q19f0",  // PSY - Gangnam Style
-    "https://youtu.be/gL4wg5miBao",                 // 다른 샘플
-    "https://www.youtube.com/watch?v=aqz-KE-bpKQ"   // 또 다른 샘플
+    "https://www.youtube.com/watch?v=dQw4w9WgXcQ",  // Rick Astley - Never Gonna Give You Up (영어 자막)
+    "https://www.youtube.com/watch?v=9bZkp7q19f0",  // PSY - Gangnam Style (한국어 자막)
+    "https://www.youtube.com/watch?v=kTJczUoc26U",  // The Kid LAROI, Justin Bieber - STAY (영어 자막)
+    "https://www.youtube.com/watch?v=gdZLi9oWNZg"   // BTS - Dynamite (영어 자막)
   ]);
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
