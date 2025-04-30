@@ -1,6 +1,5 @@
+
 import { 
-  Youtube, 
-  Link2, 
   MousePointerClick, 
   ExternalLink
 } from "lucide-react";
@@ -62,14 +61,8 @@ export function Services() {
           </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-8 mb-12">
           {[
-            {
-              title: "URL 단축기",
-              description: "복잡한 URL을 간결하게 줄여 SNS, 메시지, 이메일 등에서 더 깔끔하게 공유할 수 있습니다. 단축된 URL은 영구적으로 사용할 수 있습니다.",
-              icon: <Link2 className="text-purple-600" size={24} />,
-              path: "/url-shortener"
-            },
             {
               title: "블로그 버튼 생성기",
               description: "색상, 폰트, 크기 등을 원하는 대로 커스터마이징하여 블로그에 사용할 수 있는 매력적인 버튼 HTML 코드를 생성합니다.",
