@@ -159,39 +159,6 @@ export type Database = {
         }
         Relationships: []
       }
-      invites: {
-        Row: {
-          click_count: number | null
-          id: number
-        }
-        Insert: {
-          click_count?: number | null
-          id?: never
-        }
-        Update: {
-          click_count?: number | null
-          id?: never
-        }
-        Relationships: []
-      }
-      user_invites: {
-        Row: {
-          click_count: number | null
-          created_at: string | null
-          id: number
-        }
-        Insert: {
-          click_count?: number | null
-          created_at?: string | null
-          id?: never
-        }
-        Update: {
-          click_count?: number | null
-          created_at?: string | null
-          id?: never
-        }
-        Relationships: []
-      }
       visit_logs: {
         Row: {
           id: string
