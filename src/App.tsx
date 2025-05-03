@@ -51,7 +51,6 @@ const App = () => (
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
-              <Route path="/genspark-invites" element={<Navigate to="/" replace />} />
               
               <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
               
