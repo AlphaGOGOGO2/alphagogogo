@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -281,7 +280,7 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
-      {/* 방문자 차트 컴포넌트 - 높이 및 가시성 개선 */}
+      {/* 방문자 차트 컴포넌트 - Y축 너비 조정 */}
       <Card className="mb-6 overflow-hidden">
         <CardHeader className="pb-0">
           <CardTitle>최근 7일 방문자 추이</CardTitle>
@@ -307,7 +306,7 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 5, right: 20, left: 5, bottom: 20 }}
+                    margin={{ top: 5, right: 20, left: 2, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
@@ -317,10 +316,10 @@ export default function AdminDashboardPage() {
                       tickMargin={5}
                     />
                     <YAxis 
-                      width={30}
+                      width={10}
                       tickCount={5}
                       tickFormatter={(value) => value.toString()}
-                      tick={{ fontSize: 14 }}
+                      tick={{ fontSize: 12 }}
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
