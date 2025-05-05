@@ -5,7 +5,7 @@ import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
 
 // 안전한 블로그 포스트 생성 - Edge Function 활용
 export const secureCreateBlogPost = async (
-  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
+  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] | string }
 ): Promise<SupabaseBlogPost | null> => {
   try {
     // 관리자 토큰 확인
@@ -82,7 +82,7 @@ export const secureCreateBlogPost = async (
 // 안전한 블로그 포스트 업데이트 - Edge Function 활용
 export const secureUpdateBlogPost = async (
   id: string,
-  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] }
+  post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] | string }
 ): Promise<SupabaseBlogPost | null> => {
   try {
     // 관리자 토큰 확인
