@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -59,17 +60,30 @@ export default function AdminDashboardPage() {
         todayStart.setHours(0,0,0,0);
         const todayISO = todayStart.toISOString();
 
-        // 오늘의 고유 방문자 수 조회
+        // 오늘의 고유 방문자 수 조회 (쿼리 최적화)
         const { data, error } = await supabase
           .from("visit_logs")
-          .select("id");
+          .select("id, client_id")
+          .gte("visited_at", todayISO);
           
         if (error) {
           console.error("방문자 데이터 조회 실패:", error);
           setTodayVisitCount(0);
         } else if (data) {
-          // 고유 ID 수를 계산 (client_id가 없는 경우 id 기준)
-          setTodayVisitCount(data.length);
+          // client_id 기준으로 고유 방문자 수 계산
+          const uniqueClientIds = new Set();
+          data.forEach(log => {
+            if (log.client_id) {
+              uniqueClientIds.add(log.client_id);
+            } else {
+              // client_id가 없는 경우 id 기준으로 집계
+              uniqueClientIds.add(log.id);
+            }
+          });
+          
+          setTodayVisitCount(uniqueClientIds.size);
+          console.log("오늘의 고유 방문자 수:", uniqueClientIds.size);
+          console.log("방문 로그 데이터:", data);
         }
         
         // 최근 7일간 방문자 통계 조회
@@ -100,7 +114,7 @@ export default function AdminDashboardPage() {
           
           const { data, error } = await supabase
             .from("visit_logs")
-            .select("id")
+            .select("id, client_id")
             .gte("visited_at", day.toISOString())
             .lt("visited_at", nextDay.toISOString());
             
@@ -113,8 +127,15 @@ export default function AdminDashboardPage() {
           }
           
           if (data) {
-            // 방문자 수를 계산
-            const uniqueVisitors = data.length;
+            // client_id 기준으로 고유 방문자 수 계산
+            const uniqueClientIds = new Set();
+            data.forEach(log => {
+              if (log.client_id) {
+                uniqueClientIds.add(log.client_id);
+              } else {
+                uniqueClientIds.add(log.id);
+              }
+            });
             
             // 날짜 포맷 (월/일)
             const month = day.getMonth() + 1;
@@ -123,7 +144,7 @@ export default function AdminDashboardPage() {
             
             return {
               date: formattedDate,
-              visitors: uniqueVisitors
+              visitors: uniqueClientIds.size
             };
           }
           
@@ -135,6 +156,7 @@ export default function AdminDashboardPage() {
         
         const weekStats = await Promise.all(statsPromises);
         setWeeklyVisits(weekStats);
+        console.log("주간 방문자 통계:", weekStats);
       } catch (err) {
         console.error("주간 통계 조회 오류:", err);
         setWeeklyVisits([]);
@@ -259,18 +281,18 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
-      {/* 방문자 차트 컴포넌트 - 비율 및 가시성 개선 */}
+      {/* 방문자 차트 컴포넌트 - 높이 및 가시성 개선 */}
       <Card className="mb-6 overflow-hidden">
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-0">
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
-        <CardContent className="pt-0 px-0 pb-2">
+        <CardContent className="p-0">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-48">
+            <div className="flex items-center justify-center h-80">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-52 w-full px-2">
+            <div className="h-80 w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -285,20 +307,20 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 5, right: 30, left: 5, bottom: 25 }}
+                    margin={{ top: 10, right: 30, left: 10, bottom: 30 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
                       dataKey="date" 
                       dy={10} 
-                      tick={{ fontSize: 12 }}
-                      tickMargin={8}
+                      tick={{ fontSize: 14 }}
+                      tickMargin={10}
                     />
                     <YAxis 
-                      width={30}
+                      width={40}
                       tickCount={5}
                       tickFormatter={(value) => value.toString()}
-                      tick={{ fontSize: 12 }}
+                      tick={{ fontSize: 14 }}
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
@@ -308,7 +330,7 @@ export default function AdminDashboardPage() {
                       name="visitors" 
                       fill="#7c3aed" 
                       radius={[4, 4, 0, 0]}
-                      maxBarSize={36}
+                      maxBarSize={50}
                     />
                   </BarChart>
                 </ResponsiveContainer>

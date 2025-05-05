@@ -10,13 +10,13 @@ import { getClientId } from "@/utils/clientIdUtils";
  */
 export function useRecordVisit() {
   useEffect(() => {
-    // 개발 환경에서는 방문 로깅 건너뛰기
-    if (process.env.NODE_ENV === 'development') return;
+    // 개발 환경에서도 방문 로깅 허용 (이전 코드 수정)
     
     async function logVisit() {
       try {
         // 클라이언트 ID 가져오기
         const clientId = getClientId();
+        console.log("현재 클라이언트 ID:", clientId); // 디버깅을 위한 로그 추가
         
         // 클라이언트의 IP는 서버에서 직접 알 수 없어 외부 API 사용
         let ip = null;
@@ -41,6 +41,10 @@ export function useRecordVisit() {
           .eq("client_id", clientId)
           .gte("visited_at", today.toISOString())
           .limit(1);
+          
+        if (fetchError) {
+          console.error("방문 기록 조회 실패:", fetchError.message);
+        }
           
         // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
         if (existingVisits && existingVisits.length > 0) {

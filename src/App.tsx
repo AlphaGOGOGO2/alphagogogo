@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { useRecordVisit } from "./hooks/useRecordVisit";
 import React from "react";
 
 import Index from "./pages/Index";
@@ -36,6 +37,12 @@ const queryClient = new QueryClient({
   },
 });
 
+// 방문 기록 컴포넌트
+const VisitRecorder = () => {
+  useRecordVisit();
+  return null;
+};
+
 const App = () => (
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
@@ -45,6 +52,7 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
             <ScrollToTop />
+            <VisitRecorder /> {/* 방문 기록 컴포넌트 추가 */}
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/gpts" element={<GPTSPage />} />
