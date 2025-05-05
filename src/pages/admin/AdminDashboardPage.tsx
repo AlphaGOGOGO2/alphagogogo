@@ -288,11 +288,11 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent className="p-0">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-80">
+            <div className="flex items-center justify-center h-96">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-80 w-full">
+            <div className="h-96 w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -307,17 +307,17 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 10, right: 30, left: 10, bottom: 30 }}
+                    margin={{ top: 5, right: 20, left: 5, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
                       dataKey="date" 
                       dy={10} 
                       tick={{ fontSize: 14 }}
-                      tickMargin={10}
+                      tickMargin={5}
                     />
                     <YAxis 
-                      width={40}
+                      width={30}
                       tickCount={5}
                       tickFormatter={(value) => value.toString()}
                       tick={{ fontSize: 14 }}
@@ -330,7 +330,7 @@ export default function AdminDashboardPage() {
                       name="visitors" 
                       fill="#7c3aed" 
                       radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
+                      maxBarSize={60}
                     />
                   </BarChart>
                 </ResponsiveContainer>

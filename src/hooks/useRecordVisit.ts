@@ -10,7 +10,7 @@ import { getClientId } from "@/utils/clientIdUtils";
  */
 export function useRecordVisit() {
   useEffect(() => {
-    // 개발 환경에서도 방문 로깅 허용 (이전 코드 수정)
+    // 개발 환경에서도 방문 로깅 허용
     
     async function logVisit() {
       try {
