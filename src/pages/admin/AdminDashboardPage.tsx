@@ -233,18 +233,18 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
       
-      {/* 방문자 차트 추가 */}
-      <Card className="mb-8">
+      {/* 방문자 차트 컴포넌트 - 더 높은 높이와 마진 적용 */}
+      <Card className="mb-10">
         <CardHeader>
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex items-center justify-center h-80">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-64">
+            <div className="h-80">
               <ChartContainer
                 config={{
                   visitors: {
@@ -257,14 +257,26 @@ export default function AdminDashboardPage() {
                 }}
               >
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={weeklyVisits}>
-                    <CartesianGrid strokeDasharray="3 3" />
+                  <BarChart 
+                    data={weeklyVisits}
+                    margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis dataKey="date" />
-                    <YAxis />
+                    <YAxis 
+                      width={30}
+                      tickCount={5}
+                      tickFormatter={(value) => value.toString()}
+                    />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
                     />
-                    <Bar dataKey="visitors" name="visitors" fill="#7c3aed" />
+                    <Bar 
+                      dataKey="visitors" 
+                      name="visitors" 
+                      fill="#7c3aed" 
+                      radius={[4, 4, 0, 0]}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -273,6 +285,7 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
+      {/* 카테고리 요약 섹션 */}
       <Card>
         <CardHeader>
           <CardTitle>카테고리 요약</CardTitle>
