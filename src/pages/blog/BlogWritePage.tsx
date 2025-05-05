@@ -2,7 +2,8 @@
 import { useState, useEffect } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBlogCategories, createBlogPost, updateBlogPost } from "@/services/blogService";
+import { getAllBlogCategories } from "@/services/blogService";
+import { secureCreateBlogPost, secureUpdateBlogPost } from "@/services/blogSecureService";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { toast } from "sonner";
 import { BlogForm } from "@/components/blog/BlogForm";
@@ -121,8 +122,8 @@ export default function BlogWritePage() {
       const scheduledAt = getScheduledAt();
       
       if (isEditMode && postId) {
-        // Update existing post
-        result = await updateBlogPost(postId, {
+        // Update existing post - 보안 서비스 사용
+        result = await secureUpdateBlogPost(postId, {
           title,
           content,
           category,
@@ -130,8 +131,8 @@ export default function BlogWritePage() {
           published_at: scheduledAt // null이면 기존 시간 유지됨
         });
       } else {
-        // Create new post
-        result = await createBlogPost({
+        // Create new post - 보안 서비스 사용
+        result = await secureCreateBlogPost({
           title,
           content,
           category,
@@ -141,20 +142,9 @@ export default function BlogWritePage() {
       }
       
       if (result) {
-        toast.success(isEditMode 
-          ? "블로그 포스트가 성공적으로 수정되었습니다"
-          : scheduled && scheduledAt
-            ? "블로그 포스트가 예약되었습니다"
-            : "블로그 포스트가 성공적으로 저장되었습니다"
-        );
         setTimeout(() => {
           navigate(`/blog/${result.slug}`);
         }, 1000);
-      } else {
-        toast.error(isEditMode 
-          ? "블로그 포스트 수정에 실패했습니다"
-          : "블로그 포스트 작성에 실패했습니다"
-        );
       }
     } catch (error) {
       toast.error(`블로그 포스트 ${isEditMode ? '수정' : '작성'}에 실패했습니다: ${error.message || '알 수 없는 오류'}`);
