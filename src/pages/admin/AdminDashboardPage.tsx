@@ -1,18 +1,20 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAllBlogPosts, getAllBlogCategories } from "@/services/blogService";
+import { getAllBlogPostsForAdmin, getAllBlogCategories } from "@/services/blogService";
 import { SEO } from "@/components/SEO";
 import { FileText, TrendingUp, Users, Tag, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboardPage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery({
-    queryKey: ["all-blog-posts"],
-    queryFn: getAllBlogPosts
+    queryKey: ["all-blog-posts-admin"],
+    queryFn: getAllBlogPostsForAdmin
   });
   
   const { data: categories = [], isLoading: categoriesLoading } = useQuery({
@@ -30,6 +32,9 @@ export default function AdminDashboardPage() {
     .slice(0, 5);
   
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
+  
+  // 예약된 포스트 수 계산
+  const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
   
   useEffect(() => {
     async function fetchTodayCount() {
@@ -96,6 +101,19 @@ export default function AdminDashboardPage() {
         
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium">예약 포스트</CardTitle>
+            <Calendar className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {scheduledPostsCount}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">발행 예정 포스트 수</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">트렌딩</CardTitle>
             <TrendingUp className="h-4 w-4 text-purple-600" />
           </CardHeader>
@@ -148,7 +166,14 @@ export default function AdminDashboardPage() {
                   {recentPosts.map((post) => (
                     <tr key={post.id} className="bg-white">
                       <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900">{post.title}</div>
+                        <div className="font-medium text-gray-900 flex items-center">
+                          {post.title}
+                          {new Date(post.publishedAt) > new Date() && (
+                            <Badge variant="outline" className="ml-2 bg-yellow-100 text-yellow-800 border-yellow-200">
+                              예약
+                            </Badge>
+                          )}
+                        </div>
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">{post.category}</td>
                       <td className="px-4 py-3 text-sm text-gray-500">{formatDate(post.publishedAt)}</td>
