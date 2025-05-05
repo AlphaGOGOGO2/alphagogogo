@@ -280,18 +280,18 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
-      {/* 방문자 차트 컴포넌트 - 디스플레이 최적화 */}
+      {/* 방문자 차트 컴포넌트 - 높이 및 여백 최적화 */}
       <Card className="mb-6">
         <CardHeader className="pb-0">
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4 pb-6">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-72">
+            <div className="flex items-center justify-center h-96">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-80 w-full">
+            <div className="h-96 w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -306,7 +306,7 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 10, right: 30, left: 10, bottom: 30 }}
+                    margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
