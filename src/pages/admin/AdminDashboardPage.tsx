@@ -233,18 +233,45 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
       
-      {/* 방문자 차트 컴포넌트 - 오버플로우 수정 및 여백 조정 */}
-      <Card className="mb-10 overflow-hidden">
+      {/* 카테고리 요약 섹션 - 순서 변경 */}
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>카테고리 요약</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {categoriesLoading ? (
+            <div className="text-center py-4">데이터 로딩 중...</div>
+          ) : categories.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {categories.map((category) => (
+                <Card key={category.id} className="shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="font-medium">{category.name}</div>
+                    <div className="text-sm text-gray-500 mt-1">
+                      포스트: {categoryPostCounts[category.name] || 0}개
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-4 text-gray-500">카테고리가 없습니다.</div>
+          )}
+        </CardContent>
+      </Card>
+      
+      {/* 방문자 차트 컴포넌트 - 크기 및 여백 최적화 */}
+      <Card className="mb-6 overflow-hidden">
         <CardHeader>
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
         <CardContent className="pt-2 px-2">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-64">
+            <div className="flex items-center justify-center h-60">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-64 w-full">
+            <div className="h-60 w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -276,39 +303,12 @@ export default function AdminDashboardPage() {
                       name="visitors" 
                       fill="#7c3aed" 
                       radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
+                      maxBarSize={40}
                     />
                   </BarChart>
                 </ResponsiveContainer>
               </ChartContainer>
             </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      {/* 카테고리 요약 섹션 */}
-      <Card>
-        <CardHeader>
-          <CardTitle>카테고리 요약</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {categoriesLoading ? (
-            <div className="text-center py-4">데이터 로딩 중...</div>
-          ) : categories.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {categories.map((category) => (
-                <Card key={category.id}>
-                  <CardContent className="p-4">
-                    <div className="font-medium">{category.name}</div>
-                    <div className="text-sm text-gray-500 mt-1">
-                      포스트: {categoryPostCounts[category.name] || 0}개
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-4 text-gray-500">카테고리가 없습니다.</div>
           )}
         </CardContent>
       </Card>
