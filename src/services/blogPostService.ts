@@ -6,7 +6,7 @@
  */
 
 // Re-export blog post service functions from separate files
-export { getAllBlogPosts, getBlogPostsByCategory, getBlogPostBySlug } from './blogPostRetrieveService';
+export { getAllBlogPosts, getBlogPostsByCategory, getBlogPostBySlug, getAllBlogPostsForAdmin } from './blogPostRetrieveService';
 export { createBlogPost } from './blogPostCreateService';
 export { updateBlogPost } from './blogPostUpdateService';
 export { handleBlogTags, removeExistingTags } from './blogPostTagsService';

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
-import { getAllBlogPosts } from "@/services/blogService";
+import { getAllBlogPostsForAdmin } from "@/services/blogPostRetrieveService";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,10 +23,10 @@ export default function AdminPostsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   
-  // 블로그 포스트 데이터 가져오기
+  // 블로그 포스트 데이터 가져오기 (관리자용 함수 사용)
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["all-blog-posts"],
-    queryFn: getAllBlogPosts
+    queryKey: ["all-blog-posts-admin"],
+    queryFn: getAllBlogPostsForAdmin
   });
   
   // 검색 및 정렬 적용
@@ -96,7 +96,18 @@ export default function AdminPostsPage() {
             <TableBody>
               {filteredPosts.map((post) => (
                 <TableRow key={post.id}>
-                  <TableCell className="font-medium">{post.title}</TableCell>
+                  <TableCell className="font-medium">
+                    {new Date(post.publishedAt) > new Date() ? (
+                      <span className="flex items-center">
+                        {post.title}
+                        <span className="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                          예약발행
+                        </span>
+                      </span>
+                    ) : (
+                      post.title
+                    )}
+                  </TableCell>
                   <TableCell>{post.category}</TableCell>
                   <TableCell>{formatDate(post.publishedAt)}</TableCell>
                   <TableCell>{post.updatedAt ? formatDate(post.updatedAt) : "-"}</TableCell>

@@ -30,6 +30,26 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
   }
 };
 
+// 관리자용 - 모든 블로그 포스트 가져오기 (예약발행 포함)
+export const getAllBlogPostsForAdmin = async (): Promise<BlogPost[]> => {
+  try {
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .order("published_at", { ascending: false });
+
+    if (error) {
+      throw error;
+    }
+
+    return (data || []).map(adaptBlogPost);
+  } catch (error) {
+    console.error("Error fetching all blog posts for admin:", error);
+    toast.error("블로그 포스트를 불러오는데 실패했습니다");
+    return [];
+  }
+};
+
 // Get blog posts by category
 export const getBlogPostsByCategory = async (category: string): Promise<BlogPost[]> => {
   try {
