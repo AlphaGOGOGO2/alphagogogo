@@ -61,11 +61,10 @@ export default function AdminDashboardPage() {
         const todayISO = todayStart.toISOString();
 
         // 오늘의 고유 방문자 수 조회
-        const { data, error, count } = await supabase
+        const { data, error } = await supabase
           .from("visit_logs")
           .select("client_id", { count: "exact", head: false })
-          .gte("visited_at", todayISO)
-          .limit(1000); // 최대 1000개까지 조회 (대부분의 경우 충분)
+          .gte("visited_at", todayISO);
 
         if (!error && data) {
           // 고유 client_id 수를 계산

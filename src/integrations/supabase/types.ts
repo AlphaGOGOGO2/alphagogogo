@@ -161,18 +161,21 @@ export type Database = {
       }
       visit_logs: {
         Row: {
+          client_id: string | null
           id: string
           ip_address: string | null
           user_agent: string | null
           visited_at: string
         }
         Insert: {
+          client_id?: string | null
           id?: string
           ip_address?: string | null
           user_agent?: string | null
           visited_at?: string
         }
         Update: {
+          client_id?: string | null
           id?: string
           ip_address?: string | null
           user_agent?: string | null
