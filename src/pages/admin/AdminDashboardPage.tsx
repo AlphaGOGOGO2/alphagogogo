@@ -280,18 +280,18 @@ export default function AdminDashboardPage() {
         </CardContent>
       </Card>
       
-      {/* 방문자 차트 컴포넌트 - 높이 확장 */}
+      {/* 방문자 차트 컴포넌트 - 높이 수정 */}
       <Card className="mb-6">
         <CardHeader className="pb-0">
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
         <CardContent className="pt-4 pb-6">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-[600px]">
+            <div className="flex items-center justify-center h-[200px]">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-[600px] w-full">
+            <div className="h-[200px] w-full">
               <ChartContainer
                 config={{
                   visitors: {
