@@ -101,7 +101,7 @@ export default function AdminPostsPage() {
                       <span className="flex items-center">
                         {post.title}
                         <span className="ml-2 px-2 py-0.5 text-xs bg-yellow-100 text-yellow-800 rounded-full">
-                          예약발행
+                          예약
                         </span>
                       </span>
                     ) : (

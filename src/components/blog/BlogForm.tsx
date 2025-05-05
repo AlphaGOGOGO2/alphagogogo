@@ -72,7 +72,7 @@ export function BlogForm({
             onCheckedChange={val => setScheduled(!!val)}
           />
           <label htmlFor="scheduled-checkbox" className="text-base text-purple-700 select-none cursor-pointer">
-            예약발행
+            예약
           </label>
           {scheduled && (
             <div className="flex items-center gap-2 ml-3 animate-fade-in">
