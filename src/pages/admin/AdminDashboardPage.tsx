@@ -287,11 +287,11 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent className="pt-4 pb-6">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-[200px]">
+            <div className="flex items-center justify-center h-[800px]">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-[200px] w-full">
+            <div className="h-[800px] w-full">
               <ChartContainer
                 config={{
                   visitors: {
