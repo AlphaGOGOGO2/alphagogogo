@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +10,20 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { 
+  ChartContainer, 
+  ChartTooltip, 
+  ChartTooltipContent 
+} from "@/components/ui/chart";
 
 export default function AdminDashboardPage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery({
@@ -31,27 +46,96 @@ export default function AdminDashboardPage() {
     .slice(0, 5);
   
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
+  const [weeklyVisits, setWeeklyVisits] = useState<any[]>([]);
+  const [isLoadingVisits, setIsLoadingVisits] = useState(true);
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
   
   useEffect(() => {
     async function fetchTodayCount() {
-      const todayStart = new Date();
-      todayStart.setHours(0,0,0,0);
-      const todayISO = todayStart.toISOString();
+      try {
+        setIsLoadingVisits(true);
+        const todayStart = new Date();
+        todayStart.setHours(0,0,0,0);
+        const todayISO = todayStart.toISOString();
 
-      const { data, error, count } = await supabase
-        .from("visit_logs")
-        .select("id", { count: "exact", head: false })
-        .gte("visited_at", todayISO);
+        // 오늘의 고유 방문자 수 조회
+        const { data, error, count } = await supabase
+          .from("visit_logs")
+          .select("client_id", { count: "exact", head: false })
+          .gte("visited_at", todayISO)
+          .limit(1000); // 최대 1000개까지 조회 (대부분의 경우 충분)
 
-      if (!error && typeof count === "number") {
-        setTodayVisitCount(count);
-      } else {
+        if (!error && data) {
+          // 고유 client_id 수를 계산
+          const uniqueClients = new Set(data.map(visit => visit.client_id));
+          setTodayVisitCount(uniqueClients.size);
+        } else {
+          console.error("방문자 데이터 조회 실패:", error);
+          setTodayVisitCount(null);
+        }
+        
+        // 최근 7일간 방문자 통계 조회
+        await fetchWeeklyStats();
+        
+        setIsLoadingVisits(false);
+      } catch (err) {
+        console.error("방문자 통계 처리 오류:", err);
+        setIsLoadingVisits(false);
         setTodayVisitCount(null);
       }
     }
+    
+    async function fetchWeeklyStats() {
+      try {
+        // 최근 7일 날짜 배열 생성
+        const days = Array.from({ length: 7 }, (_, i) => {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          date.setHours(0, 0, 0, 0);
+          return date;
+        }).reverse();
+        
+        // 각 날짜별 고유 방문자 수 조회
+        const statsPromises = days.map(async (day) => {
+          const nextDay = new Date(day);
+          nextDay.setDate(nextDay.getDate() + 1);
+          
+          const { data, error } = await supabase
+            .from("visit_logs")
+            .select("client_id")
+            .gte("visited_at", day.toISOString())
+            .lt("visited_at", nextDay.toISOString());
+            
+          if (!error && data) {
+            const uniqueVisitors = new Set(data.map(visit => visit.client_id)).size;
+            
+            // 날짜 포맷 (월/일)
+            const month = day.getMonth() + 1;
+            const date = day.getDate();
+            const formattedDate = `${month}/${date}`;
+            
+            return {
+              date: formattedDate,
+              visitors: uniqueVisitors
+            };
+          }
+          
+          return {
+            date: day.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+            visitors: 0
+          };
+        });
+        
+        const weekStats = await Promise.all(statsPromises);
+        setWeeklyVisits(weekStats);
+      } catch (err) {
+        console.error("주간 통계 조회 오류:", err);
+        setWeeklyVisits([]);
+      }
+    }
+    
     fetchTodayCount();
   }, []);
 
@@ -136,61 +220,49 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {todayVisitCount !== null ? todayVisitCount : "로딩중"}
+              {isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
             </div>
-            <p className="text-xs text-gray-500 mt-1">금일 방문한 사용자 수</p>
+            <p className="text-xs text-gray-500 mt-1">금일 고유 방문자 수</p>
           </CardContent>
         </Card>
       </div>
       
+      {/* 방문자 차트 추가 */}
       <Card className="mb-8">
         <CardHeader>
-          <CardTitle>최근 포스트</CardTitle>
+          <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
         <CardContent>
-          {postsLoading ? (
-            <div className="text-center py-4">데이터 로딩 중...</div>
-          ) : recentPosts.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 text-left">
-                  <tr>
-                    <th className="px-4 py-3 text-sm font-medium text-gray-500">제목</th>
-                    <th className="px-4 py-3 text-sm font-medium text-gray-500">카테고리</th>
-                    <th className="px-4 py-3 text-sm font-medium text-gray-500">발행일</th>
-                    <th className="px-4 py-3 text-sm font-medium text-gray-500">작업</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {recentPosts.map((post) => (
-                    <tr key={post.id} className="bg-white">
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-gray-900 flex items-center">
-                          {post.title}
-                          {new Date(post.publishedAt) > new Date() && (
-                            <Badge variant="outline" className="ml-2 bg-yellow-100 text-yellow-800 border-yellow-200">
-                              예약
-                            </Badge>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{post.category}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{formatDate(post.publishedAt)}</td>
-                      <td className="px-4 py-3 text-sm">
-                        <Link 
-                          to={`/blog/edit/${post.slug}`} 
-                          className="text-purple-600 hover:text-purple-800"
-                        >
-                          편집
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+          {isLoadingVisits ? (
+            <div className="flex items-center justify-center h-64">
+              <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-500">포스트가 없습니다.</div>
+            <div className="h-64">
+              <ChartContainer
+                config={{
+                  visitors: {
+                    label: "방문자",
+                    theme: {
+                      light: "#7c3aed",
+                      dark: "#9f67ff",
+                    },
+                  }
+                }}
+              >
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={weeklyVisits}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <ChartTooltip
+                      content={<ChartTooltipContent />}
+                    />
+                    <Bar dataKey="visitors" name="visitors" fill="#7c3aed" />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </div>
           )}
         </CardContent>
       </Card>

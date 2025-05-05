@@ -1,11 +1,11 @@
 
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { getClientId } from "@/utils/clientIdUtils";
 
 /**
  * 방문시마다 visit_logs 테이블에 방문 기록을 저장.
- * 중복 방문 허용(동일한 ip/useragent라도 각 새로고침마다 새로 기록)
+ * 클라이언트 ID를 사용하여 고유 방문자 식별
  * RLS 정책에 따라 익명 사용자도 방문 기록 가능
  */
 export function useRecordVisit() {
@@ -15,6 +15,9 @@ export function useRecordVisit() {
     
     async function logVisit() {
       try {
+        // 클라이언트 ID 가져오기
+        const clientId = getClientId();
+        
         // 클라이언트의 IP는 서버에서 직접 알 수 없어 외부 API 사용
         let ip = null;
         try {
@@ -28,17 +31,36 @@ export function useRecordVisit() {
         }
 
         const userAgent = window.navigator.userAgent;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인
+        const { data: existingVisits } = await supabase
+          .from("visit_logs")
+          .select("id")
+          .eq("client_id", clientId)
+          .gte("visited_at", today.toISOString())
+          .limit(1);
+          
+        // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
+        if (existingVisits && existingVisits.length > 0) {
+          console.log("오늘 이미 방문 기록이 있음:", clientId);
+          return;
+        }
 
         // RLS 정책에 따라 익명 사용자도 방문 기록 가능
         const { error } = await supabase.from("visit_logs").insert({
           ip_address: ip,
           user_agent: userAgent,
+          client_id: clientId,
           // visited_at은 기본값이 now()이므로 명시적으로 설정하지 않아도 됨
         });
         
         if (error) {
           // 콘솔에만 오류 기록 (사용자 경험에 영향을 주지 않도록)
           console.error("방문 기록 실패:", error.message);
+        } else {
+          console.log("방문 기록 성공:", clientId);
         }
       } catch (error) {
         // 방문 기록 실패해도 UI에 영향 없게 처리
