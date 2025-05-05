@@ -233,18 +233,18 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
       
-      {/* 방문자 차트 컴포넌트 - 더 높은 높이와 마진 적용 */}
-      <Card className="mb-10">
+      {/* 방문자 차트 컴포넌트 - 오버플로우 수정 및 여백 조정 */}
+      <Card className="mb-10 overflow-hidden">
         <CardHeader>
           <CardTitle>최근 7일 방문자 추이</CardTitle>
         </CardHeader>
-        <CardContent className="pt-4">
+        <CardContent className="pt-2 px-2">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-80">
+            <div className="flex items-center justify-center h-64">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-80">
+            <div className="h-64 w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -259,12 +259,12 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 10, right: 20, left: 10, bottom: 10 }}
+                    margin={{ top: 5, right: 10, left: 5, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="date" />
+                    <XAxis dataKey="date" dy={10} />
                     <YAxis 
-                      width={30}
+                      width={25}
                       tickCount={5}
                       tickFormatter={(value) => value.toString()}
                     />
@@ -276,6 +276,7 @@ export default function AdminDashboardPage() {
                       name="visitors" 
                       fill="#7c3aed" 
                       radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
                     />
                   </BarChart>
                 </ResponsiveContainer>
