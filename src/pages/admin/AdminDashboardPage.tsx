@@ -63,16 +63,14 @@ export default function AdminDashboardPage() {
         // 오늘의 고유 방문자 수 조회
         const { data, error } = await supabase
           .from("visit_logs")
-          .select("client_id", { count: "exact", head: false })
-          .gte("visited_at", todayISO);
-
-        if (!error && data) {
-          // 고유 client_id 수를 계산
-          const uniqueClients = new Set(data.map(visit => visit.client_id));
-          setTodayVisitCount(uniqueClients.size);
-        } else {
+          .select("id");
+          
+        if (error) {
           console.error("방문자 데이터 조회 실패:", error);
-          setTodayVisitCount(null);
+          setTodayVisitCount(0);
+        } else if (data) {
+          // 고유 ID 수를 계산 (client_id가 없는 경우 id 기준)
+          setTodayVisitCount(data.length);
         }
         
         // 최근 7일간 방문자 통계 조회
@@ -82,7 +80,7 @@ export default function AdminDashboardPage() {
       } catch (err) {
         console.error("방문자 통계 처리 오류:", err);
         setIsLoadingVisits(false);
-        setTodayVisitCount(null);
+        setTodayVisitCount(0);
       }
     }
     
@@ -96,19 +94,28 @@ export default function AdminDashboardPage() {
           return date;
         }).reverse();
         
-        // 각 날짜별 고유 방문자 수 조회
+        // 각 날짜별 방문자 수 조회
         const statsPromises = days.map(async (day) => {
           const nextDay = new Date(day);
           nextDay.setDate(nextDay.getDate() + 1);
           
           const { data, error } = await supabase
             .from("visit_logs")
-            .select("client_id")
+            .select("id")
             .gte("visited_at", day.toISOString())
             .lt("visited_at", nextDay.toISOString());
             
-          if (!error && data) {
-            const uniqueVisitors = new Set(data.map(visit => visit.client_id)).size;
+          if (error) {
+            console.error("일별 방문 통계 조회 실패:", error);
+            return {
+              date: day.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
+              visitors: 0
+            };
+          }
+          
+          if (data) {
+            // 방문자 수를 계산
+            const uniqueVisitors = data.length;
             
             // 날짜 포맷 (월/일)
             const month = day.getMonth() + 1;

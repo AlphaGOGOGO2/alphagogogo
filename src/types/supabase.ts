@@ -21,3 +21,11 @@ export interface BlogCategory {
   created_at: string;
   updated_at: string;
 }
+
+export interface VisitLog {
+  id: string;
+  visited_at: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  client_id: string | null;
+}

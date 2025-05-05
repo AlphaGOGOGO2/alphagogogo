@@ -35,7 +35,7 @@ export function useRecordVisit() {
         today.setHours(0, 0, 0, 0);
         
         // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인
-        const { data: existingVisits } = await supabase
+        const { data: existingVisits, error: fetchError } = await supabase
           .from("visit_logs")
           .select("id")
           .eq("client_id", clientId)
