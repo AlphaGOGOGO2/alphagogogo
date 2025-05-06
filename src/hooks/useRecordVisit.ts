@@ -12,8 +12,6 @@ export function useRecordVisit() {
   useEffect(() => {
     async function logVisit() {
       try {
-        console.log("방문 기록 시작...");
-        
         // 클라이언트 ID 가져오기 (없으면 새로 생성)
         const clientId = getClientId();
         
@@ -51,7 +49,7 @@ export function useRecordVisit() {
           // IP 주소는 서버에서 자동으로 설정 (브라우저에서 직접 접근 불가)
         };
 
-        // RLS 정책 변경으로 익명 사용자도 방문 기록 가능
+        // 방문 기록 추가
         const { data: insertResult, error } = await supabase
           .from("visit_logs")
           .insert(visitData)
@@ -59,8 +57,6 @@ export function useRecordVisit() {
         
         if (error) {
           console.error("방문 기록 실패:", error.message);
-        } else {
-          console.log("방문 기록 성공:", insertResult);
         }
       } catch (error) {
         // 방문 기록 실패해도 UI에 영향 없게 처리

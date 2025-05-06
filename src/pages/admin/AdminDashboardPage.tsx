@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,11 +46,19 @@ export default function AdminDashboardPage() {
     try {
       setIsLoadingVisits(true);
       
-      // 오늘 날짜 시작 시간 설정
+      // 오늘 날짜 시작 시간 설정 (자정 기준)
       const todayStart = new Date();
       todayStart.setHours(0,0,0,0);
       const todayISO = todayStart.toISOString();
 
+      // 이번 달 시작 날짜 계산
+      const currentMonth = new Date();
+      const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const monthStartISO = monthStart.toISOString();
+      
+      console.log("오늘 시작:", todayISO);
+      console.log("이번 달 시작:", monthStartISO);
+      
       // 오늘의 고유 방문자 수 조회
       const { data: todayData, error: todayError } = await supabase
         .from("visit_logs")
@@ -61,24 +70,20 @@ export default function AdminDashboardPage() {
         setTodayVisitCount(0);
       } else if (todayData) {
         // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
-        const uniqueIds = new Set();
+        const uniqueTodayIds = new Set<string>();
         
         todayData.forEach(log => {
           if (log.client_id && log.client_id.trim() !== '' && 
               log.client_id !== 'null' && log.client_id !== 'undefined') {
-            uniqueIds.add(log.client_id);
+            uniqueTodayIds.add(log.client_id);
           }
         });
         
-        setTodayVisitCount(uniqueIds.size);
+        setTodayVisitCount(uniqueTodayIds.size);
+        console.log("오늘 고유 방문자 수:", uniqueTodayIds.size);
       }
       
-      // 이번 달 시작 날짜 계산
-      const currentMonth = new Date();
-      const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-      const monthStartISO = monthStart.toISOString();
-      
-      // 이번 달의 고유 방문자 수 조회
+      // 이번 달의 고유 방문자 수 조회 - 오늘 데이터와 분리하여 실행
       const { data: monthData, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
@@ -110,6 +115,8 @@ export default function AdminDashboardPage() {
         
         // 월별 총 고유 방문자 수 설정
         setMonthlyVisitCount(uniqueMonthlyIds.size);
+        console.log("이번 달 고유 방문자 수:", uniqueMonthlyIds.size, 
+                    "오늘 방문자 수:", todayVisitCount);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
@@ -117,7 +124,7 @@ export default function AdminDashboardPage() {
             date: date,
             count: visitors.size
           }))
-          .sort((a, b) => a.date.localeCompare(b.date));
+          .sort((a, b) => b.date.localeCompare(a.date)); // 최신 날짜가 먼저 오도록 정렬
           
         setMonthlyVisitStats(visitStats);
       }
