@@ -48,9 +48,10 @@ export function useRecordVisit() {
         const visitData = {
           user_agent: window.navigator.userAgent,
           client_id: clientId,
+          // IP 주소는 서버에서 자동으로 설정 (브라우저에서 직접 접근 불가)
         };
 
-        // RLS 정책에 따라 익명 사용자도 방문 기록 가능
+        // RLS 정책 변경으로 익명 사용자도 방문 기록 가능
         const { data: insertResult, error } = await supabase
           .from("visit_logs")
           .insert(visitData)

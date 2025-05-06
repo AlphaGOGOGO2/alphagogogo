@@ -34,7 +34,6 @@ export default function AdminDashboardPage() {
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
   const [monthlyVisitCount, setMonthlyVisitCount] = useState<number | null>(null);
   const [isLoadingVisits, setIsLoadingVisits] = useState(true);
-  const [visitorQueryLogs, setVisitorQueryLogs] = useState<string[]>([]);
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
@@ -43,7 +42,6 @@ export default function AdminDashboardPage() {
   const fetchVisitCounts = async () => {
     try {
       setIsLoadingVisits(true);
-      const logs: string[] = [];
       
       // 오늘 날짜 시작 시간 설정
       const todayStart = new Date();
@@ -57,7 +55,7 @@ export default function AdminDashboardPage() {
         .gte("visited_at", todayISO);
         
       if (todayError) {
-        logs.push(`오류: ${todayError.message}`);
+        console.error("오늘 방문자 조회 오류:", todayError.message);
         setTodayVisitCount(0);
       } else if (todayData) {
         // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
@@ -85,7 +83,7 @@ export default function AdminDashboardPage() {
         .gte("visited_at", monthStartISO);
         
       if (monthError) {
-        logs.push(`오류: ${monthError.message}`);
+        console.error("월별 방문자 조회 오류:", monthError.message);
         setMonthlyVisitCount(0);
       } else if (monthData) {
         // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
@@ -101,11 +99,9 @@ export default function AdminDashboardPage() {
         setMonthlyVisitCount(uniqueIds.size);
       }
       
-      setVisitorQueryLogs(logs);
       setIsLoadingVisits(false);
     } catch (err) {
       console.error("방문자 통계 처리 오류:", err);
-      setVisitorQueryLogs(prev => [...prev, `처리 오류: ${String(err)}`]);
       setIsLoadingVisits(false);
       setTodayVisitCount(0);
       setMonthlyVisitCount(0);
@@ -220,22 +216,6 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
-      
-      {/* 디버깅 정보 (개발 모드에서만 표시) */}
-      {process.env.NODE_ENV === 'development' && (
-        <Card className="mt-6">
-          <CardHeader>
-            <CardTitle>방문자 로그 디버깅</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xs font-mono bg-gray-100 p-4 rounded">
-              {visitorQueryLogs.map((log, idx) => (
-                <div key={idx}>{log}</div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
       
       {/* 카테고리 요약 섹션 */}
       <Card className="mb-6 mt-6">
