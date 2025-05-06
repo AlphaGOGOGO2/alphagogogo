@@ -20,8 +20,16 @@ export function useRecordVisit() {
           return;
         }
         
+        // 오늘 날짜의 시작 시간 (자정)
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        
+        // 내일 날짜의 시작 시간
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        
+        console.log("방문자 기록 - 클라이언트 ID:", clientId);
+        console.log("방문자 기록 - 현재 시간:", new Date().toISOString());
         
         // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인
         const { data: existingVisits, error: fetchError } = await supabase
@@ -29,6 +37,7 @@ export function useRecordVisit() {
           .select("id")
           .eq("client_id", clientId)
           .gte("visited_at", today.toISOString())
+          .lt("visited_at", tomorrow.toISOString())
           .limit(1);
           
         if (fetchError) {
@@ -38,6 +47,7 @@ export function useRecordVisit() {
           
         // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
         if (existingVisits && existingVisits.length > 0) {
+          console.log("오늘 이미 방문 기록이 존재합니다.");
           return;
         }
 
@@ -56,6 +66,8 @@ export function useRecordVisit() {
         
         if (error) {
           console.error("방문 기록 실패:", error.message);
+        } else {
+          console.log("방문 기록 성공:", insertResult);
         }
       } catch (error) {
         // 방문 기록 실패해도 UI에 영향 없게 처리

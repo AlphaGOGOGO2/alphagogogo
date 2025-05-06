@@ -46,18 +46,30 @@ export default function AdminDashboardPage() {
     try {
       setIsLoadingVisits(true);
       
-      // 오늘 날짜와 시간 설정
+      // 현재 날짜와 시간
       const now = new Date();
-      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
-      // 이번 달 시작 날짜 계산
+      // 오늘 자정 (시작 시간)
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      
+      // 내일 자정 (종료 시간)
+      const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+      
+      // 이번 달 시작 날짜
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       
-      // 1. 오늘 방문자 데이터 쿼리
+      // 다음 달 시작 날짜 (이번 달의 종료 시간)
+      const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+      
+      console.log("오늘 시작 시간:", todayStart.toISOString());
+      console.log("내일 시작 시간:", tomorrowStart.toISOString());
+      
+      // 1. 오늘 방문자 데이터 쿼리 - 시작과 종료 시간 모두 지정
       const { data: todayVisits, error: todayError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
-        .gte("visited_at", today.toISOString());
+        .gte("visited_at", todayStart.toISOString())
+        .lt("visited_at", tomorrowStart.toISOString());
       
       if (todayError) {
         console.error("오늘 방문자 조회 오류:", todayError);
@@ -67,6 +79,8 @@ export default function AdminDashboardPage() {
         const uniqueTodayVisitors = new Set<string>();
         
         if (todayVisits) {
+          console.log("오늘 방문 기록 데이터:", todayVisits.length);
+          
           todayVisits.forEach(visit => {
             if (visit.client_id && 
                 visit.client_id !== 'null' && 
@@ -78,15 +92,15 @@ export default function AdminDashboardPage() {
         }
         
         setTodayVisitCount(uniqueTodayVisitors.size);
-        console.log("오늘 방문자 수:", uniqueTodayVisitors.size);
+        console.log("오늘 방문자 수 (고유 ID 기준):", uniqueTodayVisitors.size);
       }
       
-      // 2. 이번 달 방문자 데이터 쿼리 (월 전체)
+      // 2. 이번 달 방문자 데이터 쿼리 - 시작과 종료 시간 모두 지정
       const { data: monthVisits, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
         .gte("visited_at", monthStart.toISOString())
-        .lt("visited_at", new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString());
+        .lt("visited_at", nextMonthStart.toISOString());
       
       if (monthError) {
         console.error("월별 방문자 조회 오류:", monthError);
@@ -97,6 +111,8 @@ export default function AdminDashboardPage() {
         const dailyStats = new Map<string, Set<string>>();
         
         if (monthVisits) {
+          console.log("이번 달 방문 기록 데이터:", monthVisits.length);
+          
           monthVisits.forEach(visit => {
             if (visit.client_id && 
                 visit.client_id !== 'null' && 
@@ -117,7 +133,7 @@ export default function AdminDashboardPage() {
         }
         
         setMonthlyVisitCount(uniqueMonthlyVisitors.size);
-        console.log("이번 달 방문자 수:", uniqueMonthlyVisitors.size);
+        console.log("이번 달 방문자 수 (고유 ID 기준):", uniqueMonthlyVisitors.size);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
