@@ -15,10 +15,6 @@ export function useRecordVisit() {
       try {
         console.log("방문 기록 시작...");
         
-        // localStorage에 ID가 제대로 저장되어 있는지 먼저 확인
-        const existingClientId = verifyClientId();
-        console.log("기존 클라이언트 ID 확인 결과:", existingClientId);
-        
         // 클라이언트 ID 가져오기 (없으면 새로 생성)
         const clientId = getClientId();
         console.log("사용할 클라이언트 ID:", clientId);
@@ -27,25 +23,6 @@ export function useRecordVisit() {
           console.error("유효하지 않은 클라이언트 ID:", clientId);
           return;
         }
-        
-        // 클라이언트의 IP는 서버에서 직접 알 수 없어 외부 API 사용
-        let ip = null;
-        try {
-          console.log("IP 주소 가져오기 시도...");
-          const res = await fetch("https://api.ipify.org?format=json");
-          if (res.ok) {
-            const data = await res.json();
-            ip = data.ip;
-            console.log("IP 주소 확인됨:", ip);
-          } else {
-            console.error("IP 주소 가져오기 실패:", res.status, res.statusText);
-          }
-        } catch (error) {
-          console.error("IP 주소 가져오기 중 오류 발생:", error);
-        }
-
-        const userAgent = window.navigator.userAgent;
-        console.log("User Agent:", userAgent);
         
         const today = new Date();
         today.setHours(0, 0, 0, 0);
@@ -60,7 +37,7 @@ export function useRecordVisit() {
           .limit(1);
           
         if (fetchError) {
-          console.error("방문 기록 조회 실패:", fetchError.message, fetchError.code, fetchError.details);
+          console.error("방문 기록 조회 실패:", fetchError.message);
           return;
         }
           
@@ -73,12 +50,11 @@ export function useRecordVisit() {
           return;
         }
 
-        // 방문 기록 데이터 구성
+        // 방문 기록 데이터 구성 (간소화: user-agent와 client_id만 저장)
         const visitData = {
-          ip_address: ip,
-          user_agent: userAgent,
+          user_agent: window.navigator.userAgent,
           client_id: clientId,
-          // visited_at은 기본값이 now()이므로 명시적으로 설정하지 않아도 됨
+          // visited_at은 기본값이 now()이므로 명시적으로 설정하지 않음
         };
         
         console.log("저장할 방문 기록 데이터:", visitData);

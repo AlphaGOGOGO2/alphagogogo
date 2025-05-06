@@ -36,97 +36,107 @@ export default function AdminDashboardPage() {
   const [monthlyVisitCount, setMonthlyVisitCount] = useState<number | null>(null);
   const [isLoadingVisits, setIsLoadingVisits] = useState(true);
   const [clientIdStatus, setClientIdStatus] = useState<string>('확인 중...');
+  const [visitorQueryLogs, setVisitorQueryLogs] = useState<string[]>([]);
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
   
   // 클라이언트 ID 재설정 처리 함수
-  const handleResetClientId = () => {
+  const handleResetClientId = async () => {
     const newId = resetClientId();
     setClientIdStatus(`재설정됨: ${newId}`);
+    
+    // ID 재설정 후 방문 기록 쿼리 다시 실행
+    await fetchVisitCounts();
+  };
+  
+  // 방문자 수 조회 함수
+  const fetchVisitCounts = async () => {
+    try {
+      setIsLoadingVisits(true);
+      const logs: string[] = [];
+      
+      // 오늘 날짜 시작 시간 설정
+      const todayStart = new Date();
+      todayStart.setHours(0,0,0,0);
+      const todayISO = todayStart.toISOString();
+      
+      logs.push(`오늘 기준 날짜: ${todayISO}`);
+
+      // 오늘의 고유 방문자 수 조회 (간소화된 쿼리)
+      const { data: todayData, error: todayError } = await supabase
+        .from("visit_logs")
+        .select("client_id")
+        .gte("visited_at", todayISO);
+        
+      if (todayError) {
+        logs.push(`오류: ${todayError.message}`);
+        setTodayVisitCount(0);
+      } else if (todayData) {
+        // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
+        const uniqueIds = new Set();
+        let validCount = 0;
+        
+        todayData.forEach(log => {
+          if (log.client_id && log.client_id.trim() !== '' && 
+              log.client_id !== 'null' && log.client_id !== 'undefined') {
+            uniqueIds.add(log.client_id);
+            validCount++;
+          }
+        });
+        
+        logs.push(`오늘 총 방문 로그: ${todayData.length}개, 유효한 ID: ${validCount}개, 고유 방문자: ${uniqueIds.size}명`);
+        setTodayVisitCount(uniqueIds.size);
+      }
+      
+      // 이번 달 시작 날짜 계산
+      const currentMonth = new Date();
+      const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+      const monthStartISO = monthStart.toISOString();
+      
+      logs.push(`이번 달 기준 날짜: ${monthStartISO}`);
+      
+      // 이번 달의 고유 방문자 수 조회 (간소화된 쿼리)
+      const { data: monthData, error: monthError } = await supabase
+        .from("visit_logs")
+        .select("client_id")
+        .gte("visited_at", monthStartISO);
+        
+      if (monthError) {
+        logs.push(`오류: ${monthError.message}`);
+        setMonthlyVisitCount(0);
+      } else if (monthData) {
+        // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
+        const uniqueIds = new Set();
+        let validCount = 0;
+        
+        monthData.forEach(log => {
+          if (log.client_id && log.client_id.trim() !== '' && 
+              log.client_id !== 'null' && log.client_id !== 'undefined') {
+            uniqueIds.add(log.client_id);
+            validCount++;
+          }
+        });
+        
+        logs.push(`이번 달 총 방문 로그: ${monthData.length}개, 유효한 ID: ${validCount}개, 고유 방문자: ${uniqueIds.size}명`);
+        setMonthlyVisitCount(uniqueIds.size);
+      }
+      
+      setVisitorQueryLogs(logs);
+      setIsLoadingVisits(false);
+    } catch (err) {
+      console.error("방문자 통계 처리 오류:", err);
+      setVisitorQueryLogs(prev => [...prev, `처리 오류: ${String(err)}`]);
+      setIsLoadingVisits(false);
+      setTodayVisitCount(0);
+      setMonthlyVisitCount(0);
+    }
   };
   
   useEffect(() => {
     // 현재 클라이언트 ID 확인 및 표시
     const currentId = verifyClientId();
     setClientIdStatus(currentId ? `유효함: ${currentId}` : '없음 또는 유효하지 않음');
-    
-    async function fetchVisitCounts() {
-      try {
-        setIsLoadingVisits(true);
-        
-        // 오늘 날짜 시작 시간 설정
-        const todayStart = new Date();
-        todayStart.setHours(0,0,0,0);
-        const todayISO = todayStart.toISOString();
-        
-        console.log("오늘 방문자 통계 조회 시작, 기준 날짜:", todayISO);
-
-        // 오늘의 고유 방문자 수 조회
-        const { data: todayData, error: todayError } = await supabase
-          .from("visit_logs")
-          .select("id, client_id")
-          .gte("visited_at", todayISO);
-          
-        if (todayError) {
-          console.error("오늘 방문자 데이터 조회 실패:", todayError.message, todayError.code, todayError.details);
-          setTodayVisitCount(0);
-        } else if (todayData) {
-          // client_id 기준으로 고유 방문자 수 계산
-          const uniqueClientIds = new Set();
-          
-          todayData.forEach(log => {
-            if (log.client_id && log.client_id !== 'null' && log.client_id !== 'undefined' && log.client_id.trim() !== '') {
-              uniqueClientIds.add(log.client_id);
-            } else {
-              uniqueClientIds.add(log.id);
-            }
-          });
-          
-          setTodayVisitCount(uniqueClientIds.size);
-          console.log("오늘의 고유 방문자 수:", uniqueClientIds.size);
-        }
-        
-        // 이번 달 시작 날짜 계산
-        const currentMonth = new Date();
-        const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
-        const monthStartISO = monthStart.toISOString();
-        
-        console.log("월간 방문자 통계 조회 시작, 기준 날짜:", monthStartISO);
-        
-        // 이번 달의 고유 방문자 수 조회
-        const { data: monthData, error: monthError } = await supabase
-          .from("visit_logs")
-          .select("id, client_id")
-          .gte("visited_at", monthStartISO);
-          
-        if (monthError) {
-          console.error("월간 방문자 데이터 조회 실패:", monthError.message, monthError.code, monthError.details);
-          setMonthlyVisitCount(0);
-        } else if (monthData) {
-          // client_id 기준으로 고유 방문자 수 계산
-          const uniqueMonthlyClientIds = new Set();
-          
-          monthData.forEach(log => {
-            if (log.client_id && log.client_id !== 'null' && log.client_id !== 'undefined' && log.client_id.trim() !== '') {
-              uniqueMonthlyClientIds.add(log.client_id);
-            } else {
-              uniqueMonthlyClientIds.add(log.id);
-            }
-          });
-          
-          setMonthlyVisitCount(uniqueMonthlyClientIds.size);
-          console.log("이번 달 고유 방문자 수:", uniqueMonthlyClientIds.size);
-        }
-        
-        setIsLoadingVisits(false);
-      } catch (err) {
-        console.error("방문자 통계 처리 오류:", err);
-        setIsLoadingVisits(false);
-        setTodayVisitCount(0);
-        setMonthlyVisitCount(0);
-      }
-    }
     
     // 데이터 로드
     fetchVisitCounts();
@@ -245,8 +255,24 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
       
+      {/* 디버깅 정보 (개발 모드에서만 표시) */}
+      {process.env.NODE_ENV === 'development' && (
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle>방문자 로그 디버깅</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs font-mono bg-gray-100 p-4 rounded">
+              {visitorQueryLogs.map((log, idx) => (
+                <div key={idx}>{log}</div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* 카테고리 요약 섹션 */}
-      <Card className="mb-6">
+      <Card className="mb-6 mt-6">
         <CardHeader>
           <CardTitle>카테고리 요약</CardTitle>
         </CardHeader>
