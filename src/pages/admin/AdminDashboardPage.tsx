@@ -40,7 +40,7 @@ export default function AdminDashboardPage() {
   } = useVisitorStats();
 
   // 디버깅을 위한 로그 추가
-  console.log("AdminDashboardPage - 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+  console.log("[AdminDashboardPage] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
 
   return (
     <AdminLayout title="대시보드">

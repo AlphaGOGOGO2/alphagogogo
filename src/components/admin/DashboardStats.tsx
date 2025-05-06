@@ -33,7 +33,7 @@ export function DashboardStats({
   const today = new Date();
   
   // 디버깅을 위한 로그 추가
-  console.log("DashboardStats - 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+  console.log("[DashboardStats 컴포넌트] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
   
   return (
     <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">

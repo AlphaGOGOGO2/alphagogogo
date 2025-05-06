@@ -47,7 +47,7 @@ export function useVisitorStats(): VisitorStatsResult {
       console.log("오늘 시작 시간:", todayStart.toISOString());
       console.log("내일 시작 시간:", tomorrowStart.toISOString());
       
-      // 1. 오늘 방문자 데이터 쿼리 - 시작과 종료 시간 모두 지정
+      // 1. 오늘 방문자 데이터 쿼리 - 오늘 하루 데이터만 조회
       const { data: todayVisits, error: todayError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
@@ -62,7 +62,7 @@ export function useVisitorStats(): VisitorStatsResult {
         const uniqueTodayVisitors = new Set<string>();
         
         if (todayVisits) {
-          console.log("오늘 방문 기록 데이터:", todayVisits.length);
+          console.log("[오늘 전용] 방문 기록 데이터:", todayVisits.length);
           
           todayVisits.forEach(visit => {
             if (visit.client_id && 
@@ -75,11 +75,11 @@ export function useVisitorStats(): VisitorStatsResult {
         }
         
         const todayCount = uniqueTodayVisitors.size;
-        console.log("오늘 방문자 수 계산 결과:", todayCount);
+        console.log("[오늘 전용] 방문자 수 계산 결과:", todayCount);
         setTodayVisitCount(todayCount);
       }
       
-      // 2. 이번 달 방문자 데이터 쿼리
+      // 2. 이번 달 방문자 데이터 쿼리 - 이번 달 전체 데이터 조회
       const { data: monthVisits, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
@@ -95,7 +95,7 @@ export function useVisitorStats(): VisitorStatsResult {
         const dailyStats = new Map<string, Set<string>>();
         
         if (monthVisits) {
-          console.log("이번 달 방문 기록 데이터:", monthVisits.length);
+          console.log("[이번 달 전용] 방문 기록 데이터:", monthVisits.length);
           
           monthVisits.forEach(visit => {
             if (visit.client_id && 
@@ -117,7 +117,7 @@ export function useVisitorStats(): VisitorStatsResult {
         }
         
         const monthlyCount = uniqueMonthlyVisitors.size;
-        console.log("이번 달 방문자 수 계산 결과:", monthlyCount);
+        console.log("[이번 달 전용] 방문자 수 계산 결과:", monthlyCount);
         setMonthlyVisitCount(monthlyCount);
         
         // 일별 방문자 통계 정렬 및 설정
@@ -133,7 +133,7 @@ export function useVisitorStats(): VisitorStatsResult {
       
       setIsLoadingVisits(false);
     } catch (error) {
-      console.error("방문자 통계 처리 오류:", error);
+      console.error("[오늘/이달] 방문자 통계 처리 오류:", error);
       setIsLoadingVisits(false);
       setTodayVisitCount(0);
       setMonthlyVisitCount(0);
