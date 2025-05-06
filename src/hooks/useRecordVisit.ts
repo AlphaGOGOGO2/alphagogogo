@@ -38,7 +38,6 @@ export function useRecordVisit() {
           
         // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
         if (existingVisits && existingVisits.length > 0) {
-          console.log("오늘 이미 방문 기록이 있음:", clientId);
           return;
         }
 

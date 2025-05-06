@@ -56,13 +56,10 @@ export default function AdminDashboardPage() {
       const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const monthStartISO = monthStart.toISOString();
       
-      console.log("오늘 시작:", todayISO);
-      console.log("이번 달 시작:", monthStartISO);
-      
-      // 오늘의 고유 방문자 수 조회
+      // 오늘의 고유 방문자 수 조회 - 오늘 방문한 사람만 계산
       const { data: todayData, error: todayError } = await supabase
         .from("visit_logs")
-        .select("client_id, visited_at")
+        .select("client_id")
         .gte("visited_at", todayISO);
         
       if (todayError) {
@@ -80,10 +77,9 @@ export default function AdminDashboardPage() {
         });
         
         setTodayVisitCount(uniqueTodayIds.size);
-        console.log("오늘 고유 방문자 수:", uniqueTodayIds.size);
       }
       
-      // 이번 달의 고유 방문자 수 조회 - 오늘 데이터와 분리하여 실행
+      // 이번 달의 고유 방문자 수 조회 - 이번 달 1일부터 현재까지의 모든 방문자 계산
       const { data: monthData, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
@@ -115,8 +111,6 @@ export default function AdminDashboardPage() {
         
         // 월별 총 고유 방문자 수 설정
         setMonthlyVisitCount(uniqueMonthlyIds.size);
-        console.log("이번 달 고유 방문자 수:", uniqueMonthlyIds.size, 
-                    "오늘 방문자 수:", todayVisitCount);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
