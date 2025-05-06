@@ -3,6 +3,7 @@ import React from "react";
 import { StatCard } from "./StatCard";
 import { FileText, TrendingUp, Users, Tag, Clock, Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface DashboardStatsProps {
   posts: any[];
@@ -12,7 +13,8 @@ interface DashboardStatsProps {
   scheduledPostsCount: number;
   todayVisitCount: number | null;
   monthlyVisitCount: number | null;
-  isLoadingVisits: boolean;
+  isLoadingTodayVisits: boolean;
+  isLoadingMonthlyVisits: boolean;
 }
 
 export function DashboardStats({
@@ -23,7 +25,8 @@ export function DashboardStats({
   scheduledPostsCount,
   todayVisitCount,
   monthlyVisitCount,
-  isLoadingVisits
+  isLoadingTodayVisits,
+  isLoadingMonthlyVisits
 }: DashboardStatsProps) {
   
   const trendingCategory = Object.entries(categoryPostCounts).length > 0 
@@ -33,7 +36,8 @@ export function DashboardStats({
   const today = new Date();
   
   // 디버깅을 위한 명확한 로그 추가
-  console.log("[DashboardStats 컴포넌트] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+  console.log("[DashboardStats 컴포넌트] 오늘 방문자:", todayVisitCount, "로딩 상태:", isLoadingTodayVisits);
+  console.log("[DashboardStats 컴포넌트] 이달 방문자:", monthlyVisitCount, "로딩 상태:", isLoadingMonthlyVisits);
   
   return (
     <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -72,23 +76,23 @@ export function DashboardStats({
         icon={TrendingUp}
       />
       
-      {/* 오늘 방문자 카드 - 수정: 확실하게 오늘 방문자 수만 표시하도록 함 */}
+      {/* 오늘 방문자 카드 - 개선: 명확한 로딩 상태 표시 */}
       <StatCard
         title="오늘 방문자"
-        value={isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
+        value={isLoadingTodayVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
         description="금일 고유 방문자 수"
         icon={Users}
-        loading={isLoadingVisits}
+        loading={isLoadingTodayVisits}
         additionalInfo={`오늘(${today.getMonth() + 1}월 ${today.getDate()}일) 방문자`}
       />
       
-      {/* 이달 방문자 카드 */}
+      {/* 이달 방문자 카드 - 개선: 명확한 로딩 상태 표시 */}
       <StatCard
         title="이달 방문자"
-        value={isLoadingVisits ? "로딩중" : (monthlyVisitCount !== null ? monthlyVisitCount : "오류")}
+        value={isLoadingMonthlyVisits ? "로딩중" : (monthlyVisitCount !== null ? monthlyVisitCount : "오류")}
         description="이번 달 누적 고유 방문자 수"
         icon={Users}
-        loading={isLoadingVisits}
+        loading={isLoadingMonthlyVisits}
         additionalInfo={`${today.getMonth() + 1}월 1일부터 현재까지`}
       />
     </div>

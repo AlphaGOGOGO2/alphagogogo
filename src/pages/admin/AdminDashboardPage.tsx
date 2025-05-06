@@ -31,16 +31,18 @@ export default function AdminDashboardPage() {
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
   
-  // 방문자 통계 훅 사용
+  // 방문자 통계 훅 사용 - 개선된 버전
   const { 
     todayVisitCount, 
     monthlyVisitCount, 
     monthlyVisitStats,
-    isLoadingVisits 
+    isLoadingTodayVisits,
+    isLoadingMonthlyVisits
   } = useVisitorStats();
 
   // 디버깅을 위한 명확한 로그 추가
-  console.log("[AdminDashboardPage] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+  console.log("[AdminDashboardPage] 오늘 방문자:", todayVisitCount, "로딩 상태:", isLoadingTodayVisits);
+  console.log("[AdminDashboardPage] 이달 방문자:", monthlyVisitCount, "로딩 상태:", isLoadingMonthlyVisits);
 
   return (
     <AdminLayout title="대시보드">
@@ -49,7 +51,7 @@ export default function AdminDashboardPage() {
         description="알파GOGOGO 사이트 관리자 대시보드" 
       />
       
-      {/* 대시보드 통계 카드 */}
+      {/* 대시보드 통계 카드 - 개선된 로딩 상태 포함 */}
       <DashboardStats 
         posts={posts}
         categories={categories}
@@ -58,13 +60,14 @@ export default function AdminDashboardPage() {
         scheduledPostsCount={scheduledPostsCount}
         todayVisitCount={todayVisitCount}
         monthlyVisitCount={monthlyVisitCount}
-        isLoadingVisits={isLoadingVisits}
+        isLoadingTodayVisits={isLoadingTodayVisits}
+        isLoadingMonthlyVisits={isLoadingMonthlyVisits}
       />
       
       {/* 방문자 통계 표 */}
       <VisitorStatsTable 
         stats={monthlyVisitStats} 
-        loading={isLoadingVisits}
+        loading={isLoadingMonthlyVisits}
       />
       
       {/* 카테고리 요약 섹션 */}
