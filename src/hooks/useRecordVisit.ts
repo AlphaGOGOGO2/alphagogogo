@@ -28,8 +28,10 @@ export function useRecordVisit() {
         const tomorrow = new Date(today);
         tomorrow.setDate(tomorrow.getDate() + 1);
         
-        console.log("방문자 기록 - 클라이언트 ID:", clientId);
-        console.log("방문자 기록 - 현재 시간:", new Date().toISOString());
+        console.log("[방문자 기록] - 클라이언트 ID:", clientId);
+        console.log("[방문자 기록] - 현재 시간:", new Date().toISOString());
+        console.log("[방문자 기록] - 오늘 시작:", today.toISOString());
+        console.log("[방문자 기록] - 내일 시작:", tomorrow.toISOString());
         
         // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인
         const { data: existingVisits, error: fetchError } = await supabase
@@ -41,13 +43,13 @@ export function useRecordVisit() {
           .limit(1);
           
         if (fetchError) {
-          console.error("방문 기록 조회 실패:", fetchError.message);
+          console.error("[방문자 기록] - 방문 기록 조회 실패:", fetchError.message);
           return;
         }
           
         // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
         if (existingVisits && existingVisits.length > 0) {
-          console.log("오늘 이미 방문 기록이 존재합니다.");
+          console.log("[방문자 기록] - 오늘 이미 방문 기록이 존재합니다.");
           return;
         }
 
@@ -65,13 +67,13 @@ export function useRecordVisit() {
           .select();
         
         if (error) {
-          console.error("방문 기록 실패:", error.message);
+          console.error("[방문자 기록] - 방문 기록 실패:", error.message);
         } else {
-          console.log("방문 기록 성공:", insertResult);
+          console.log("[방문자 기록] - 방문 기록 성공:", insertResult);
         }
       } catch (error) {
         // 방문 기록 실패해도 UI에 영향 없게 처리
-        console.error("방문 기록 처리 중 예외 발생:", error);
+        console.error("[방문자 기록] - 방문 기록 처리 중 예외 발생:", error);
       }
     }
 

@@ -91,8 +91,9 @@ export default function AdminDashboardPage() {
           });
         }
         
-        setTodayVisitCount(uniqueTodayVisitors.size);
-        console.log("오늘 방문자 수 (고유 ID 기준):", uniqueTodayVisitors.size);
+        const todayCount = uniqueTodayVisitors.size;
+        console.log("오늘 방문자 수 계산 결과:", todayCount);
+        setTodayVisitCount(todayCount);
       }
       
       // 2. 이번 달 방문자 데이터 쿼리 - 시작과 종료 시간 모두 지정
@@ -132,8 +133,9 @@ export default function AdminDashboardPage() {
           });
         }
         
-        setMonthlyVisitCount(uniqueMonthlyVisitors.size);
-        console.log("이번 달 방문자 수 (고유 ID 기준):", uniqueMonthlyVisitors.size);
+        const monthlyCount = uniqueMonthlyVisitors.size;
+        console.log("이번 달 방문자 수 계산 결과:", monthlyCount);
+        setMonthlyVisitCount(monthlyCount);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
@@ -244,6 +246,9 @@ export default function AdminDashboardPage() {
               {isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
             </div>
             <p className="text-xs text-gray-500 mt-1">금일 고유 방문자 수</p>
+            <div className="mt-2 text-xs text-gray-500">
+              오늘({new Date().getMonth() + 1}월 {new Date().getDate()}일) 방문자
+            </div>
           </CardContent>
         </Card>
         
