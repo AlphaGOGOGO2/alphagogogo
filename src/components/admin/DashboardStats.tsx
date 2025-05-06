@@ -32,6 +32,9 @@ export function DashboardStats({
   
   const today = new Date();
   
+  // 디버깅을 위한 로그 추가
+  console.log("DashboardStats - 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+  
   return (
     <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
       <StatCard
@@ -72,8 +75,9 @@ export function DashboardStats({
       <StatCard
         title="오늘 방문자"
         value={isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
-        description="금일 고유 방문자 수"
+        description="오늘 고유 방문자 수"
         icon={Users}
+        loading={isLoadingVisits}
         additionalInfo={`오늘(${today.getMonth() + 1}월 ${today.getDate()}일) 방문자`}
       />
       
@@ -82,6 +86,7 @@ export function DashboardStats({
         value={isLoadingVisits ? "로딩중" : (monthlyVisitCount !== null ? monthlyVisitCount : "오류")}
         description="이번 달 누적 고유 방문자 수"
         icon={Users}
+        loading={isLoadingVisits}
         additionalInfo={`${today.getMonth() + 1}월 1일부터 현재까지`}
       />
     </div>

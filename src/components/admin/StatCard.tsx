@@ -9,9 +9,17 @@ interface StatCardProps {
   description: string;
   icon: LucideIcon;
   additionalInfo?: ReactNode;
+  loading?: boolean;
 }
 
-export function StatCard({ title, value, description, icon: Icon, additionalInfo }: StatCardProps) {
+export function StatCard({ 
+  title, 
+  value, 
+  description, 
+  icon: Icon, 
+  additionalInfo,
+  loading = false 
+}: StatCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -19,7 +27,11 @@ export function StatCard({ title, value, description, icon: Icon, additionalInfo
         <Icon className="h-4 w-4 text-purple-600" />
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        {loading ? (
+          <div className="text-2xl font-bold animate-pulse">로딩중...</div>
+        ) : (
+          <div className="text-2xl font-bold">{value}</div>
+        )}
         <p className="text-xs text-gray-500 mt-1">{description}</p>
         {additionalInfo && (
           <div className="mt-2 text-xs text-gray-500">

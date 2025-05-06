@@ -39,6 +39,9 @@ export default function AdminDashboardPage() {
     isLoadingVisits 
   } = useVisitorStats();
 
+  // 디버깅을 위한 로그 추가
+  console.log("AdminDashboardPage - 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
+
   return (
     <AdminLayout title="대시보드">
       <SEO 
@@ -59,7 +62,10 @@ export default function AdminDashboardPage() {
       />
       
       {/* 방문자 통계 표 */}
-      <VisitorStatsTable stats={monthlyVisitStats} />
+      <VisitorStatsTable 
+        stats={monthlyVisitStats} 
+        loading={isLoadingVisits}
+      />
       
       {/* 카테고리 요약 섹션 */}
       <CategorySummary 
