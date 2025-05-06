@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,6 +9,8 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 
 export default function AdminDashboardPage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery({
@@ -34,6 +35,7 @@ export default function AdminDashboardPage() {
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
   const [monthlyVisitCount, setMonthlyVisitCount] = useState<number | null>(null);
   const [isLoadingVisits, setIsLoadingVisits] = useState(true);
+  const [monthlyVisitStats, setMonthlyVisitStats] = useState<{ date: string; count: number }[]>([]);
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
@@ -51,7 +53,7 @@ export default function AdminDashboardPage() {
       // 오늘의 고유 방문자 수 조회
       const { data: todayData, error: todayError } = await supabase
         .from("visit_logs")
-        .select("client_id")
+        .select("client_id, visited_at")
         .gte("visited_at", todayISO);
         
       if (todayError) {
@@ -79,24 +81,45 @@ export default function AdminDashboardPage() {
       // 이번 달의 고유 방문자 수 조회
       const { data: monthData, error: monthError } = await supabase
         .from("visit_logs")
-        .select("client_id")
+        .select("client_id, visited_at")
         .gte("visited_at", monthStartISO);
         
       if (monthError) {
         console.error("월별 방문자 조회 오류:", monthError.message);
         setMonthlyVisitCount(0);
       } else if (monthData) {
-        // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
-        const uniqueIds = new Set();
+        // 월별 통계를 위한 데이터 처리
+        const dailyStats = new Map<string, Set<string>>();
+        const uniqueMonthlyIds = new Set<string>();
         
         monthData.forEach(log => {
           if (log.client_id && log.client_id.trim() !== '' && 
               log.client_id !== 'null' && log.client_id !== 'undefined') {
-            uniqueIds.add(log.client_id);
+            
+            // 월별 총 고유 방문자
+            uniqueMonthlyIds.add(log.client_id);
+            
+            // 일별 방문자 통계 계산
+            const visitDate = new Date(log.visited_at).toISOString().split('T')[0];
+            if (!dailyStats.has(visitDate)) {
+              dailyStats.set(visitDate, new Set<string>());
+            }
+            dailyStats.get(visitDate)?.add(log.client_id);
           }
         });
         
-        setMonthlyVisitCount(uniqueIds.size);
+        // 월별 총 고유 방문자 수 설정
+        setMonthlyVisitCount(uniqueMonthlyIds.size);
+        
+        // 일별 방문자 통계 정렬 및 설정
+        const visitStats = Array.from(dailyStats.entries())
+          .map(([date, visitors]) => ({
+            date: date,
+            count: visitors.size
+          }))
+          .sort((a, b) => a.date.localeCompare(b.date));
+          
+        setMonthlyVisitStats(visitStats);
       }
       
       setIsLoadingVisits(false);
@@ -216,6 +239,33 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+      
+      {/* 방문자 통계 표 */}
+      {monthlyVisitStats.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle>이번 달 일별 방문자 통계</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>날짜</TableHead>
+                  <TableHead className="text-right">방문자 수</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {monthlyVisitStats.map((stat) => (
+                  <TableRow key={stat.date}>
+                    <TableCell>{stat.date}</TableCell>
+                    <TableCell className="text-right">{stat.count}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
       
       {/* 카테고리 요약 섹션 */}
       <Card className="mb-6 mt-6">
