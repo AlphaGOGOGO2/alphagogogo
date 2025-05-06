@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -328,11 +329,11 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent className="pt-4 pb-6">
           {isLoadingVisits ? (
-            <div className="flex items-center justify-center h-[800px]">
+            <div className="flex items-center justify-center h-[400px]">
               <p>데이터 로딩 중...</p>
             </div>
           ) : (
-            <div className="h-[800px] w-full">
+            <div className="h-[400px] w-full">
               <ChartContainer
                 config={{
                   visitors: {
@@ -359,9 +360,10 @@ export default function AdminDashboardPage() {
                     <YAxis 
                       width={40}
                       tickCount={5}
-                      tickFormatter={(value) => value.toString()}
+                      tickFormatter={(value) => Math.floor(value).toString()} // 정수로 변환
                       tick={{ fontSize: 14 }}
-                      domain={[0, 'dataMax + 1']} // y축 범위를 데이터 최대값 + 1로 설정
+                      domain={[0, 'auto']} // y축 범위를 0부터 자동 계산
+                      allowDecimals={false} // 소수점 표시 제거
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
