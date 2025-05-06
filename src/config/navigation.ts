@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 export interface NavItem {
@@ -54,9 +53,7 @@ export const communityCategories: CommunityCategory[] = [
   { name: "오픈 채팅방", path: "/open-chat-rooms" },
   { 
     name: "비즈니스 문의", 
-    path: "mailto:skssk01033@naver.com", 
-    action: 'popup',
-    actionData: "skssk01033@naver.com"
+    path: "/business-inquiry"
   }
 ];
 

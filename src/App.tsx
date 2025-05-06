@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -22,6 +21,7 @@ import CommunityPage from "./pages/CommunityPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import ServicesPage from "./pages/ServicesPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
+import BusinessInquiryPage from "./pages/BusinessInquiryPage";
 
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
@@ -59,6 +59,7 @@ const App = () => (
               <Route path="/services" element={<ServicesPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
+              <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
               
               <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
               

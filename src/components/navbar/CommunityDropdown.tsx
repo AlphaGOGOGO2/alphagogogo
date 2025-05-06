@@ -54,11 +54,13 @@ export function CommunityDropdown({
   const handleCategoryClick = (category: CommunityCategory, event: React.MouseEvent) => {
     onOpenChange(false);
     
+    // 액션이 없는 일반 경로는 navigate로 처리
     if (!category.action) {
       navigate(category.path);
       return;
     }
     
+    // 팝업 액션이 있는 항목만 특별 처리
     event.preventDefault();
     
     if (category.action === 'popup' && category.actionData) {
