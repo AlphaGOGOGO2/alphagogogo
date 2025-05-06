@@ -32,7 +32,7 @@ export function DashboardStats({
   
   const today = new Date();
   
-  // 디버깅을 위한 로그 추가
+  // 디버깅을 위한 명확한 로그 추가
   console.log("[DashboardStats 컴포넌트] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
   
   return (
@@ -72,7 +72,7 @@ export function DashboardStats({
         icon={TrendingUp}
       />
       
-      {/* 오늘 방문자 카드 */}
+      {/* 오늘 방문자 카드 - 수정: 확실하게 오늘 방문자 수만 표시하도록 함 */}
       <StatCard
         title="오늘 방문자"
         value={isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}

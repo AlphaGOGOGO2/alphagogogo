@@ -39,7 +39,7 @@ export default function AdminDashboardPage() {
     isLoadingVisits 
   } = useVisitorStats();
 
-  // 디버깅을 위한 로그 추가
+  // 디버깅을 위한 명확한 로그 추가
   console.log("[AdminDashboardPage] 오늘 방문자:", todayVisitCount, "이달 방문자:", monthlyVisitCount);
 
   return (
