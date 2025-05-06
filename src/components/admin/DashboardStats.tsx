@@ -72,17 +72,19 @@ export function DashboardStats({
         icon={TrendingUp}
       />
       
+      {/* 오늘 방문자 카드 */}
       <StatCard
         title="오늘 방문자"
         value={isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
-        description="오늘 고유 방문자 수"
+        description="금일 고유 방문자 수"
         icon={Users}
         loading={isLoadingVisits}
         additionalInfo={`오늘(${today.getMonth() + 1}월 ${today.getDate()}일) 방문자`}
       />
       
+      {/* 이달 방문자 카드 */}
       <StatCard
-        title="이달의 방문자"
+        title="이달 방문자"
         value={isLoadingVisits ? "로딩중" : (monthlyVisitCount !== null ? monthlyVisitCount : "오류")}
         description="이번 달 누적 고유 방문자 수"
         icon={Users}

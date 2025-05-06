@@ -79,7 +79,7 @@ export function useVisitorStats(): VisitorStatsResult {
         setTodayVisitCount(todayCount);
       }
       
-      // 2. 이번 달 방문자 데이터 쿼리 - 시작과 종료 시간 모두 지정
+      // 2. 이번 달 방문자 데이터 쿼리
       const { data: monthVisits, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
