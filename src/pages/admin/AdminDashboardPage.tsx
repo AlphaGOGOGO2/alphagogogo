@@ -10,7 +10,6 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
-import { verifyClientId, resetClientId } from "@/utils/clientIdUtils";
 
 export default function AdminDashboardPage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery({
@@ -35,20 +34,10 @@ export default function AdminDashboardPage() {
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
   const [monthlyVisitCount, setMonthlyVisitCount] = useState<number | null>(null);
   const [isLoadingVisits, setIsLoadingVisits] = useState(true);
-  const [clientIdStatus, setClientIdStatus] = useState<string>('확인 중...');
   const [visitorQueryLogs, setVisitorQueryLogs] = useState<string[]>([]);
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
-  
-  // 클라이언트 ID 재설정 처리 함수
-  const handleResetClientId = async () => {
-    const newId = resetClientId();
-    setClientIdStatus(`재설정됨: ${newId}`);
-    
-    // ID 재설정 후 방문 기록 쿼리 다시 실행
-    await fetchVisitCounts();
-  };
   
   // 방문자 수 조회 함수
   const fetchVisitCounts = async () => {
@@ -60,10 +49,8 @@ export default function AdminDashboardPage() {
       const todayStart = new Date();
       todayStart.setHours(0,0,0,0);
       const todayISO = todayStart.toISOString();
-      
-      logs.push(`오늘 기준 날짜: ${todayISO}`);
 
-      // 오늘의 고유 방문자 수 조회 (간소화된 쿼리)
+      // 오늘의 고유 방문자 수 조회
       const { data: todayData, error: todayError } = await supabase
         .from("visit_logs")
         .select("client_id")
@@ -75,17 +62,14 @@ export default function AdminDashboardPage() {
       } else if (todayData) {
         // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
         const uniqueIds = new Set();
-        let validCount = 0;
         
         todayData.forEach(log => {
           if (log.client_id && log.client_id.trim() !== '' && 
               log.client_id !== 'null' && log.client_id !== 'undefined') {
             uniqueIds.add(log.client_id);
-            validCount++;
           }
         });
         
-        logs.push(`오늘 총 방문 로그: ${todayData.length}개, 유효한 ID: ${validCount}개, 고유 방문자: ${uniqueIds.size}명`);
         setTodayVisitCount(uniqueIds.size);
       }
       
@@ -94,9 +78,7 @@ export default function AdminDashboardPage() {
       const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const monthStartISO = monthStart.toISOString();
       
-      logs.push(`이번 달 기준 날짜: ${monthStartISO}`);
-      
-      // 이번 달의 고유 방문자 수 조회 (간소화된 쿼리)
+      // 이번 달의 고유 방문자 수 조회
       const { data: monthData, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id")
@@ -108,17 +90,14 @@ export default function AdminDashboardPage() {
       } else if (monthData) {
         // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
         const uniqueIds = new Set();
-        let validCount = 0;
         
         monthData.forEach(log => {
           if (log.client_id && log.client_id.trim() !== '' && 
               log.client_id !== 'null' && log.client_id !== 'undefined') {
             uniqueIds.add(log.client_id);
-            validCount++;
           }
         });
         
-        logs.push(`이번 달 총 방문 로그: ${monthData.length}개, 유효한 ID: ${validCount}개, 고유 방문자: ${uniqueIds.size}명`);
         setMonthlyVisitCount(uniqueIds.size);
       }
       
@@ -134,10 +113,6 @@ export default function AdminDashboardPage() {
   };
   
   useEffect(() => {
-    // 현재 클라이언트 ID 확인 및 표시
-    const currentId = verifyClientId();
-    setClientIdStatus(currentId ? `유효함: ${currentId}` : '없음 또는 유효하지 않음');
-    
     // 데이터 로드
     fetchVisitCounts();
   }, []);
@@ -226,15 +201,6 @@ export default function AdminDashboardPage() {
               {isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
             </div>
             <p className="text-xs text-gray-500 mt-1">금일 고유 방문자 수</p>
-            <div className="mt-2 text-xs">
-              <p>클라이언트 ID: <span className="font-mono">{clientIdStatus}</span></p>
-              <button 
-                onClick={handleResetClientId}
-                className="text-xs mt-1 text-purple-600 hover:text-purple-800"
-              >
-                ID 재설정 (테스트용)
-              </button>
-            </div>
           </CardContent>
         </Card>
         
