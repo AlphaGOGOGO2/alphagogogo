@@ -23,6 +23,7 @@ import {
   ChartTooltip, 
   ChartTooltipContent 
 } from "@/components/ui/chart";
+import { verifyClientId, resetClientId } from "@/utils/clientIdUtils";
 
 export default function AdminDashboardPage() {
   const { data: posts = [], isLoading: postsLoading } = useQuery({
@@ -47,17 +48,30 @@ export default function AdminDashboardPage() {
   const [todayVisitCount, setTodayVisitCount] = useState<number | null>(null);
   const [weeklyVisits, setWeeklyVisits] = useState<any[]>([]);
   const [isLoadingVisits, setIsLoadingVisits] = useState(true);
+  const [clientIdStatus, setClientIdStatus] = useState<string>('확인 중...');
   
   // 예약된 포스트 수 계산
   const scheduledPostsCount = posts.filter(post => new Date(post.publishedAt) > new Date()).length;
   
+  // 클라이언트 ID 재설정 처리 함수
+  const handleResetClientId = () => {
+    const newId = resetClientId();
+    setClientIdStatus(`재설정됨: ${newId}`);
+  };
+  
   useEffect(() => {
+    // 현재 클라이언트 ID 확인 및 표시
+    const currentId = verifyClientId();
+    setClientIdStatus(currentId ? `유효함: ${currentId}` : '없음 또는 유효하지 않음');
+    
     async function fetchTodayCount() {
       try {
         setIsLoadingVisits(true);
         const todayStart = new Date();
         todayStart.setHours(0,0,0,0);
         const todayISO = todayStart.toISOString();
+        
+        console.log("오늘 방문자 통계 조회 시작, 기준 날짜:", todayISO);
 
         // 오늘의 고유 방문자 수 조회 (쿼리 최적화)
         const { data, error } = await supabase
@@ -66,16 +80,18 @@ export default function AdminDashboardPage() {
           .gte("visited_at", todayISO);
           
         if (error) {
-          console.error("방문자 데이터 조회 실패:", error);
+          console.error("방문자 데이터 조회 실패:", error.message, error.code, error.details);
           setTodayVisitCount(0);
         } else if (data) {
           // client_id 기준으로 고유 방문자 수 계산
           const uniqueClientIds = new Set();
+          
           data.forEach(log => {
-            if (log.client_id) {
+            if (log.client_id && log.client_id !== 'null' && log.client_id !== 'undefined' && log.client_id.trim() !== '') {
               uniqueClientIds.add(log.client_id);
             } else {
               // client_id가 없는 경우 id 기준으로 집계
+              console.log("유효하지 않은 client_id, id로 대체:", log.id, "client_id 값:", log.client_id);
               uniqueClientIds.add(log.id);
             }
           });
@@ -83,6 +99,14 @@ export default function AdminDashboardPage() {
           setTodayVisitCount(uniqueClientIds.size);
           console.log("오늘의 고유 방문자 수:", uniqueClientIds.size);
           console.log("방문 로그 데이터:", data);
+          
+          // client_id별 카운트 로깅 (디버깅용)
+          const clientIdCounts = {};
+          data.forEach(log => {
+            const id = log.client_id || 'null';
+            clientIdCounts[id] = (clientIdCounts[id] || 0) + 1;
+          });
+          console.log("client_id별 방문 횟수:", clientIdCounts);
         }
         
         // 최근 7일간 방문자 통계 조회
@@ -98,6 +122,8 @@ export default function AdminDashboardPage() {
     
     async function fetchWeeklyStats() {
       try {
+        console.log("주간 방문자 통계 조회 시작");
+        
         // 최근 7일 날짜 배열 생성
         const days = Array.from({ length: 7 }, (_, i) => {
           const date = new Date();
@@ -105,6 +131,8 @@ export default function AdminDashboardPage() {
           date.setHours(0, 0, 0, 0);
           return date;
         }).reverse();
+        
+        console.log("주간 통계 기준 날짜:", days.map(d => d.toISOString()));
         
         // 각 날짜별 방문자 수 조회
         const statsPromises = days.map(async (day) => {
@@ -118,7 +146,7 @@ export default function AdminDashboardPage() {
             .lt("visited_at", nextDay.toISOString());
             
           if (error) {
-            console.error("일별 방문 통계 조회 실패:", error);
+            console.error("일별 방문 통계 조회 실패:", error.message, day.toLocaleDateString());
             return {
               date: day.toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }),
               visitors: 0
@@ -129,7 +157,7 @@ export default function AdminDashboardPage() {
             // client_id 기준으로 고유 방문자 수 계산
             const uniqueClientIds = new Set();
             data.forEach(log => {
-              if (log.client_id) {
+              if (log.client_id && log.client_id !== 'null' && log.client_id !== 'undefined' && log.client_id.trim() !== '') {
                 uniqueClientIds.add(log.client_id);
               } else {
                 uniqueClientIds.add(log.id);
@@ -140,6 +168,9 @@ export default function AdminDashboardPage() {
             const month = day.getMonth() + 1;
             const date = day.getDate();
             const formattedDate = `${month}/${date}`;
+            
+            // 디버깅용 로그
+            console.log(`${formattedDate} 방문자 수:`, uniqueClientIds.size, "로그 수:", data.length);
             
             return {
               date: formattedDate,
@@ -162,6 +193,7 @@ export default function AdminDashboardPage() {
       }
     }
     
+    // 데이터 로드
     fetchTodayCount();
   }, []);
 
@@ -249,6 +281,15 @@ export default function AdminDashboardPage() {
               {isLoadingVisits ? "로딩중" : (todayVisitCount !== null ? todayVisitCount : "오류")}
             </div>
             <p className="text-xs text-gray-500 mt-1">금일 고유 방문자 수</p>
+            <div className="mt-2 text-xs">
+              <p>클라이언트 ID: <span className="font-mono">{clientIdStatus}</span></p>
+              <button 
+                onClick={handleResetClientId}
+                className="text-xs mt-1 text-purple-600 hover:text-purple-800"
+              >
+                ID 재설정 (테스트용)
+              </button>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -306,7 +347,7 @@ export default function AdminDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={weeklyVisits}
-                    margin={{ top: 10, right: 30, left: 20, bottom: 30 }}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" vertical={false} />
                     <XAxis 
@@ -320,6 +361,7 @@ export default function AdminDashboardPage() {
                       tickCount={5}
                       tickFormatter={(value) => value.toString()}
                       tick={{ fontSize: 14 }}
+                      domain={[0, 'dataMax + 1']} // y축 범위를 데이터 최대값 + 1로 설정
                     />
                     <ChartTooltip
                       content={<ChartTooltipContent />}
@@ -336,6 +378,10 @@ export default function AdminDashboardPage() {
               </ChartContainer>
             </div>
           )}
+          <div className="mt-4 text-sm text-gray-500">
+            <p>※ Y축은 각 날짜별 고유 방문자 수를 나타냅니다. (클라이언트 ID 기준)</p>
+            <p>※ 차트에 표시된 0은 해당 날짜에 방문자가 없음을 의미합니다.</p>
+          </div>
         </CardContent>
       </Card>
     </AdminLayout>
