@@ -46,21 +46,18 @@ export default function AdminDashboardPage() {
     try {
       setIsLoadingVisits(true);
       
-      // 오늘 날짜 시작 시간 설정 (자정 기준)
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      // 오늘 날짜 문자열 (YYYY-MM-DD 형식)
-      const todayDateStr = today.toISOString().split('T')[0];
+      // 오늘 날짜와 시간 설정
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
       
       // 이번 달 시작 날짜 계산
-      const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       
       // 1. 오늘 방문자 데이터 쿼리
       const { data: todayVisits, error: todayError } = await supabase
         .from("visit_logs")
-        .select("client_id")
-        .gte("visited_at", todayDateStr);
+        .select("client_id, visited_at")
+        .gte("visited_at", today.toISOString());
       
       if (todayError) {
         console.error("오늘 방문자 조회 오류:", todayError);
@@ -81,21 +78,21 @@ export default function AdminDashboardPage() {
         }
         
         setTodayVisitCount(uniqueTodayVisitors.size);
+        console.log("오늘 방문자 수:", uniqueTodayVisitors.size);
       }
       
       // 2. 이번 달 방문자 데이터 쿼리 (월 전체)
-      const monthStartISO = monthStart.toISOString();
-      
       const { data: monthVisits, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
-        .gte("visited_at", monthStartISO);
+        .gte("visited_at", monthStart.toISOString())
+        .lt("visited_at", new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString());
       
       if (monthError) {
         console.error("월별 방문자 조회 오류:", monthError);
         setMonthlyVisitCount(0);
       } else {
-        // 이번 달 전체 고유 방문자 계산 (오늘 방문자와 구분)
+        // 이번 달 전체 고유 방문자 계산
         const uniqueMonthlyVisitors = new Set<string>();
         const dailyStats = new Map<string, Set<string>>();
         
@@ -120,6 +117,7 @@ export default function AdminDashboardPage() {
         }
         
         setMonthlyVisitCount(uniqueMonthlyVisitors.size);
+        console.log("이번 달 방문자 수:", uniqueMonthlyVisitors.size);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
