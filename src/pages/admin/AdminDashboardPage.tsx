@@ -49,68 +49,78 @@ export default function AdminDashboardPage() {
       // 오늘 날짜 시작 시간 설정 (자정 기준)
       const todayStart = new Date();
       todayStart.setHours(0,0,0,0);
-      const todayISO = todayStart.toISOString();
-
+      
+      // 일자 문자열 생성 - YYYY-MM-DD 형식
+      const todayDateStr = todayStart.toISOString().split('T')[0];
+      
       // 이번 달 시작 날짜 계산
       const currentMonth = new Date();
       const monthStart = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
       const monthStartISO = monthStart.toISOString();
       
-      // 오늘의 고유 방문자 수 조회 - 오늘 방문한 사람만 계산
-      const { data: todayData, error: todayError } = await supabase
+      // 1. 오늘 방문자 데이터 쿼리 - 오늘 자정부터 현재까지의 방문 기록만 조회
+      const { data: todayVisits, error: todayError } = await supabase
         .from("visit_logs")
         .select("client_id")
-        .gte("visited_at", todayISO);
-        
+        .gte("visited_at", todayDateStr);
+      
       if (todayError) {
-        console.error("오늘 방문자 조회 오류:", todayError.message);
+        console.error("오늘 방문자 조회 오류:", todayError);
         setTodayVisitCount(0);
-      } else if (todayData) {
-        // 클라이언트 ID 기반 고유 방문자 계산 (중복 제거)
-        const uniqueTodayIds = new Set<string>();
+      } else {
+        // 고유한 방문자 ID 계산
+        const uniqueTodayVisitors = new Set<string>();
         
-        todayData.forEach(log => {
-          if (log.client_id && log.client_id.trim() !== '' && 
-              log.client_id !== 'null' && log.client_id !== 'undefined') {
-            uniqueTodayIds.add(log.client_id);
-          }
-        });
+        if (todayVisits) {
+          todayVisits.forEach(visit => {
+            if (visit.client_id && 
+                visit.client_id !== 'null' && 
+                visit.client_id !== 'undefined' && 
+                visit.client_id.trim() !== '') {
+              uniqueTodayVisitors.add(visit.client_id);
+            }
+          });
+        }
         
-        setTodayVisitCount(uniqueTodayIds.size);
+        setTodayVisitCount(uniqueTodayVisitors.size);
       }
       
-      // 이번 달의 고유 방문자 수 조회 - 이번 달 1일부터 현재까지의 모든 방문자 계산
-      const { data: monthData, error: monthError } = await supabase
+      // 2. 이번 달 방문자 데이터 쿼리 - 월 시작일부터 현재까지의 방문 기록 조회
+      const { data: monthVisits, error: monthError } = await supabase
         .from("visit_logs")
         .select("client_id, visited_at")
         .gte("visited_at", monthStartISO);
-        
+      
       if (monthError) {
-        console.error("월별 방문자 조회 오류:", monthError.message);
+        console.error("월별 방문자 조회 오류:", monthError);
         setMonthlyVisitCount(0);
-      } else if (monthData) {
-        // 월별 통계를 위한 데이터 처리
+      } else {
+        // 월별 고유 방문자 및 일별 통계 계산
+        const uniqueMonthlyVisitors = new Set<string>();
         const dailyStats = new Map<string, Set<string>>();
-        const uniqueMonthlyIds = new Set<string>();
         
-        monthData.forEach(log => {
-          if (log.client_id && log.client_id.trim() !== '' && 
-              log.client_id !== 'null' && log.client_id !== 'undefined') {
-            
-            // 월별 총 고유 방문자
-            uniqueMonthlyIds.add(log.client_id);
-            
-            // 일별 방문자 통계 계산
-            const visitDate = new Date(log.visited_at).toISOString().split('T')[0];
-            if (!dailyStats.has(visitDate)) {
-              dailyStats.set(visitDate, new Set<string>());
+        if (monthVisits) {
+          monthVisits.forEach(visit => {
+            if (visit.client_id && 
+                visit.client_id !== 'null' && 
+                visit.client_id !== 'undefined' && 
+                visit.client_id.trim() !== '') {
+              
+              // 월별 고유 방문자 추가
+              uniqueMonthlyVisitors.add(visit.client_id);
+              
+              // 일별 방문자 통계 계산
+              const visitDate = new Date(visit.visited_at).toISOString().split('T')[0];
+              if (!dailyStats.has(visitDate)) {
+                dailyStats.set(visitDate, new Set<string>());
+              }
+              dailyStats.get(visitDate)?.add(visit.client_id);
             }
-            dailyStats.get(visitDate)?.add(log.client_id);
-          }
-        });
+          });
+        }
         
         // 월별 총 고유 방문자 수 설정
-        setMonthlyVisitCount(uniqueMonthlyIds.size);
+        setMonthlyVisitCount(uniqueMonthlyVisitors.size);
         
         // 일별 방문자 통계 정렬 및 설정
         const visitStats = Array.from(dailyStats.entries())
@@ -119,13 +129,13 @@ export default function AdminDashboardPage() {
             count: visitors.size
           }))
           .sort((a, b) => b.date.localeCompare(a.date)); // 최신 날짜가 먼저 오도록 정렬
-          
+        
         setMonthlyVisitStats(visitStats);
       }
       
       setIsLoadingVisits(false);
-    } catch (err) {
-      console.error("방문자 통계 처리 오류:", err);
+    } catch (error) {
+      console.error("방문자 통계 처리 오류:", error);
       setIsLoadingVisits(false);
       setTodayVisitCount(0);
       setMonthlyVisitCount(0);
