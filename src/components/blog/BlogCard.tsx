@@ -49,8 +49,10 @@ export function BlogCard({ post }: BlogCardProps) {
       duration: 2000,
     });
     
-    // React Router 네비게이션 사용
-    navigate(`/blog/${post.slug}`);
+    // 중요: setTimeout으로 토스트 메시지가 보이도록 약간의 지연 후 이동
+    setTimeout(() => {
+      navigate(`/blog/${post.slug}`);
+    }, 300);
   };
 
   return (

@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { getTagsForBlogPost } from "./blogTagService";
 import { isFutureDate, formatReadableDate, getTimeUntilPublish } from "@/utils/dateUtils";
 
-// 시간 버퍼 상수 (분 단위)
+// 시간 버퍼 상수 (분 단위) - 예약발행을 위한 여유시간
 const TIME_BUFFER_MINUTES = 5;
 
 // Get all blog posts
@@ -120,11 +120,15 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     
     // 발행 시간 확인
     const publishedAt = new Date(postData.published_at);
+    const now = new Date();
+    
+    // 현재 시간과 발행 시간의 차이를 분 단위로 계산
+    const diffMinutes = Math.floor((publishedAt.getTime() - now.getTime()) / (1000 * 60));
     
     // 예약 발행 글인지 확인 (미래 발행 예정)
-    if (isFutureDate(publishedAt, TIME_BUFFER_MINUTES)) {
+    if (diffMinutes > TIME_BUFFER_MINUTES) {
       const timeUntil = getTimeUntilPublish(publishedAt);
-      console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil})`);
+      console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil}) - 차이: ${diffMinutes}분`);
       toast.warning(`이 글은 ${formatReadableDate(publishedAt)}에 발행될 예정입니다 (${timeUntil})`);
       return null;
     }

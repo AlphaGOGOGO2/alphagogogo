@@ -21,17 +21,19 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 쿼리 구성 개선
+  // 쿼리 구성 개선 - timestamp 포함하여 캐시 무효화 보장
+  const timestamp = Date.now(); // 현재 타임스탬프
+  
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug],
+    queryKey: ["blog-post", slug, timestamp], // 타임스탬프 추가로 항상 최신 데이터 보장
     queryFn: () => {
       if (!slug) return null;
       console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작`);
       return getBlogPostBySlug(slug);
     },
-    staleTime: 1000 * 60 * 5, // 5분간 데이터 신선함 유지
-    gcTime: 1000 * 60 * 10,   // 10분간 가비지 컬렉션 방지
-    retry: 1,                  // 한 번만 재시도
+    staleTime: 0, // 항상 새로운 데이터 가져오기
+    gcTime: 1000 * 60 * 1, // 1분간 데이터 캐시 유지
+    retry: 1, // 한 번만 재시도
     enabled: !!slug,
     refetchOnWindowFocus: false
   });
