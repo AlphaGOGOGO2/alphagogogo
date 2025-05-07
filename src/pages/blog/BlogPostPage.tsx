@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -12,6 +13,7 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { toast } from "sonner";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -19,11 +21,13 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
+  // 쿼리 키에 타임스탬프 추가하여 항상 새로운 데이터 가져오도록 설정
+  const timestamp = Date.now();
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug],
+    queryKey: ["blog-post", slug, timestamp],
     queryFn: () => {
       if (!slug) return null;
-      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작`);
+      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (${new Date().toLocaleString('ko-KR')})`);
       return getBlogPostBySlug(slug);
     },
     retry: 1, // 한 번만 재시도
@@ -32,14 +36,17 @@ export default function BlogPostPage() {
   
   useEffect(() => {
     if (!isLoading) {
-      if (!post) {
-        console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음. 오류:`, error);
+      if (error) {
+        console.error(`[블로그페이지] "${slug}" 글 로드 오류:`, error);
+        toast.error("블로그 글을 불러오는 중 오류가 발생했습니다.");
+      } else if (!post) {
+        console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음.`);
         // 글이 없을 때 리디렉션은 하지 않고 페이지 내에서 "글을 찾을 수 없습니다" 표시
       } else {
         console.log(`[블로그페이지] "${slug}" 글 로드 완료:`, post.title);
       }
     }
-  }, [isLoading, post, error, navigate, slug]);
+  }, [isLoading, post, error, slug]);
 
   useEffect(() => {
     const timer = setTimeout(() => {

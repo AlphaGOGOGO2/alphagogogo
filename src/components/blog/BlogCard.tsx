@@ -1,6 +1,6 @@
 
 import { BlogPost } from "@/types/blog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
@@ -16,6 +16,8 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
+  const navigate = useNavigate();
+  
   // Use the specified profile image URL instead of the one from the post data
   const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
   // 제목에서 # 같은 것 제거
@@ -26,9 +28,21 @@ export function BlogCard({ post }: BlogCardProps) {
   // Get image for card display - prioritize coverImage, then try to extract from content
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
+  // 블로그 카드 클릭 핸들러
+  const handleCardClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    console.log(`[블로그카드] "${post.slug}" 카드 클릭됨, 게시일: ${post.publishedAt}`);
+    
+    // 직접 내비게이션 처리
+    navigate(`/blog/${post.slug}`);
+  };
+
   return (
-    <Link to={`/blog/${post.slug}`} className="block h-full">
-      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col cursor-pointer hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
+    <div 
+      onClick={handleCardClick}
+      className="block h-full cursor-pointer"
+    >
+      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
         {cardImage && (
           <div className="block overflow-hidden h-48">
             <img 
@@ -90,6 +104,6 @@ export function BlogCard({ post }: BlogCardProps) {
           </div>
         </div>
       </article>
-    </Link>
+    </div>
   );
 }
