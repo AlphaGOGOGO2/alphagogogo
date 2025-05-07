@@ -9,9 +9,9 @@ import { getTagsForBlogPost } from "./blogTagService";
 // Get all blog posts
 export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
   try {
-    // 현재 날짜 가져오기 (2분의 여유 시간 추가)
+    // 현재 날짜 가져오기 (5분의 여유 시간 추가)
     const now = new Date();
-    now.setMinutes(now.getMinutes() + 2); // 2분 여유 추가
+    now.setMinutes(now.getMinutes() + 5); // 5분 여유 추가
     const nowIsoString = now.toISOString();
     
     console.log(`[블로그] 모든 글 조회 시작, 기준 시간: ${nowIsoString}`);
@@ -20,7 +20,7 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
     const { data, error } = await supabase
       .from("blog_posts")
       .select("*")
-      .lte("published_at", nowIsoString) // 2분 여유를 준 현재 시간보다 이전이거나 같은 경우만
+      .lte("published_at", nowIsoString) // 5분 여유를 준 현재 시간보다 이전이거나 같은 경우만
       .order("published_at", { ascending: false });
 
     if (error) {
@@ -68,9 +68,9 @@ export const getAllBlogPostsForAdmin = async (): Promise<BlogPost[]> => {
 // Get blog posts by category
 export const getBlogPostsByCategory = async (category: string): Promise<BlogPost[]> => {
   try {
-    // 현재 날짜 가져오기 (2분의 여유 시간 추가)
+    // 현재 날짜 가져오기 (5분의 여유 시간 추가)
     const now = new Date();
-    now.setMinutes(now.getMinutes() + 2); // 2분 여유 추가
+    now.setMinutes(now.getMinutes() + 5); // 5분 여유 추가
     const nowIsoString = now.toISOString();
     
     console.log(`[블로그] ${category} 카테고리 글 조회 시작, 기준 시간: ${nowIsoString}`);
@@ -102,9 +102,9 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
   try {
     console.log(`[블로그] "${slug}" 슬러그 글 조회 시작`);
     
-    // 발행 시간에 대한 여유를 조금 더 늘림 (10분)
+    // 발행 시간에 대한 여유를 조금 더 늘림 (15분)
     const now = new Date();
-    now.setMinutes(now.getMinutes() + 10); // 10분 여유 추가로 변경 (시간대 문제 완전히 해결)
+    now.setMinutes(now.getMinutes() + 15); // 15분 여유로 확장 (시간대 문제 완전히 해결)
     const nowIsoString = now.toISOString();
     
     console.log(`[블로그] "${slug}" 슬러그 조회 기준 시간: ${nowIsoString}`);

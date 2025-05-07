@@ -21,7 +21,7 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 쿼리 구성 개선 - staleTime 및 cacheTime 설정 추가
+  // 쿼리 구성 개선 - staleTime 및 gcTime(이전 cacheTime) 설정 추가
   const { data: post, isLoading, error } = useQuery({
     queryKey: ["blog-post", slug],
     queryFn: () => {
@@ -30,7 +30,7 @@ export default function BlogPostPage() {
       return getBlogPostBySlug(slug);
     },
     staleTime: 60 * 1000, // 1분 동안 데이터를 신선하게 유지
-    cacheTime: 5 * 60 * 1000, // 5분 동안 캐시 유지
+    gcTime: 5 * 60 * 1000, // 5분 동안 캐시 유지 (이전의 cacheTime)
     retry: 1, // 한 번만 재시도
     enabled: !!slug,
     refetchOnWindowFocus: false // 윈도우 포커스 시 재요청 방지

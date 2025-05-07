@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
+import { toast } from "sonner";
 
 // 마크다운 #, ## 같은 제목 앞 기호 제거 함수
 function extractPlainTitle(markdownTitle: string): string {
@@ -37,11 +38,17 @@ export function BlogCard({ post }: BlogCardProps) {
     console.log(`[블로그카드] "${post.slug}" 카드 클릭, 제목: "${post.title}"`);
     console.log(`[블로그카드] 발행일: ${pubDate.toLocaleString('ko-KR')}, 현재: ${now.toLocaleString('ko-KR')}`);
     
+    // 토스트 메시지 추가로 사용자 피드백 제공
+    toast.success(`"${displayTitle}" 글로 이동합니다...`, {
+      duration: 2000,
+    });
+    
     // 네비게이션 실행 - 명시적인 경로 사용
     const blogPath = `/blog/${post.slug}`;
     console.log(`[블로그카드] 페이지 이동: ${blogPath}`);
     
-    navigate(blogPath);
+    // 직접 window.location 사용하여 강제 새로고침 (캐시 문제 방지)
+    window.location.href = blogPath;
   };
 
   return (
