@@ -2,7 +2,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { getBlogPostBySlug } from "@/services/blogPostService";
+import { getBlogPostBySlug, getBlogPostById } from "@/services/blogPostService";
 import { Loader2, Calendar, Clock, User, Pencil } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -12,26 +12,60 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export default function BlogPostPage() {
-  const { slug } = useParams<{ slug: string }>();
+  const { slug, id } = useParams<{ slug?: string; id?: string }>();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 간소화된 쿼리 구성
-  const { data: post, isLoading } = useQuery({
-    queryKey: ["blog-post", slug],
-    queryFn: () => slug ? getBlogPostBySlug(slug) : null,
-    staleTime: 60000, // 1분 캐시
-    refetchOnWindowFocus: false
+  // 디버깅을 위한 로깅
+  useEffect(() => {
+    console.log("BlogPostPage 로드됨. 파라미터:", { slug, id });
+  }, [slug, id]);
+  
+  // 쿼리 키와 함수 결정 (slug 또는 id 기반)
+  const queryKey = slug ? ["blog-post", "slug", slug] : ["blog-post", "id", id];
+  const queryFn = async () => {
+    if (slug) {
+      const post = await getBlogPostBySlug(slug);
+      if (!post) {
+        console.log(`[BlogPostPage] slug: ${slug}로 포스트를 찾을 수 없음`);
+      }
+      return post;
+    } else if (id) {
+      const post = await getBlogPostById(id);
+      if (!post) {
+        console.log(`[BlogPostPage] id: ${id}로 포스트를 찾을 수 없음`);
+      }
+      return post;
+    }
+    return null;
+  };
+  
+  // 블로그 포스트 쿼리
+  const { data: post, isLoading, error } = useQuery({
+    queryKey,
+    queryFn,
+    staleTime: 10000, // 10초 캐시
+    refetchOnWindowFocus: false,
+    retry: 2
   });
+  
+  // 에러 처리
+  useEffect(() => {
+    if (error) {
+      console.error("블로그 포스트 로딩 중 오류:", error);
+      toast.error("블로그 포스트를 불러오는 중 오류가 발생했습니다.");
+    }
+  }, [error]);
   
   const handleEdit = () => {
     const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
     
     if (isAuthorized && post) {
-      navigate(`/blog/edit/${post.slug}`, { state: { post } });
+      navigate(`/blog/edit/${post.slug || post.id}`, { state: { post } });
     } else {
       setShowAuthModal(true);
     }
@@ -80,12 +114,12 @@ export default function BlogPostPage() {
       <SEO 
         title={post.title}
         description={post.excerpt || generateExcerpt(post.content)}
-        canonicalUrl={`https://alphablog.app/blog/${post.slug}`}
+        canonicalUrl={`https://alphablog.app/blog/${post.slug || `post/${post.id}`}`}
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"}
         ogType="article"
         keywords={postKeywords}
       />
-      <BlogPostSchema post={post} url={`https://alphablog.app/blog/${post.slug}`} />
+      <BlogPostSchema post={post} url={`https://alphablog.app/blog/${post.slug || `post/${post.id}`}`} />
       
       <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
         {post.coverImage && (

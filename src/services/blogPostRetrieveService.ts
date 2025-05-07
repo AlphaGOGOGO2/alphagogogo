@@ -96,6 +96,51 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
   }
 };
 
+// ID로 블로그 포스트 가져오기
+export const getBlogPostById = async (id: string): Promise<BlogPost | null> => {
+  try {
+    if (!id) return null;
+    
+    // 글 데이터 조회
+    const { data: postData, error: postError } = await supabase
+      .from("blog_posts")
+      .select("*")
+      .eq("id", id)
+      .maybeSingle();
+    
+    if (postError || !postData) {
+      console.error(`[블로그] ID "${id}" 포스트 조회 실패:`, postError);
+      return null;
+    }
+    
+    // 발행 시간 확인
+    const publishedAt = new Date(postData.published_at);
+    const now = new Date();
+    
+    // 미래 발행 예정 글이면 null 반환 (5초 버퍼 추가)
+    if (publishedAt.getTime() > now.getTime() + 5000) {
+      console.log(`[블로그] ID "${id}" 포스트는 아직 발행 전입니다. 발행일: ${formatDateForLog(publishedAt)}, 현재: ${formatDateForLog(now)}`);
+      return null;
+    }
+    
+    // 데이터 변환
+    const blogPost = adaptBlogPost(postData);
+    
+    // 태그 조회
+    try {
+      const tags = await getTagsForBlogPost(postData.id);
+      blogPost.tags = tags.map(tag => tag.name);
+    } catch {
+      blogPost.tags = [];
+    }
+    
+    return blogPost;
+  } catch (error) {
+    console.error(`[블로그] ID "${id}" 포스트 조회 실패:`, error);
+    return null;
+  }
+};
+
 // Get blog post by slug - 간소화 버전
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   try {
@@ -108,14 +153,20 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       .eq("slug", slug)
       .maybeSingle();
     
-    if (postError || !postData) return null;
+    if (postError || !postData) {
+      console.error(`[블로그] "${slug}" 슬러그 글 조회 실패:`, postError || "데이터 없음");
+      return null;
+    }
     
     // 발행 시간 확인
     const publishedAt = new Date(postData.published_at);
     const now = new Date();
     
-    // 미래 발행 예정 글이면 null 반환
-    if (publishedAt > now) return null;
+    // 미래 발행 예정 글이면 null 반환 (5초 버퍼 추가)
+    if (publishedAt.getTime() > now.getTime() + 5000) {
+      console.log(`[블로그] "${slug}" 포스트는 아직 발행 전입니다. 발행일: ${formatDateForLog(publishedAt)}, 현재: ${formatDateForLog(now)}`);
+      return null;
+    }
     
     // 데이터 변환
     const blogPost = adaptBlogPost(postData);
@@ -134,3 +185,8 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     return null;
   }
 };
+
+// 로그용 날짜 포맷 함수
+function formatDateForLog(date: Date): string {
+  return `${date.toISOString()} (${date.getTime()})`;
+}

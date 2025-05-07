@@ -28,10 +28,20 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - 단순화된 네비게이션 처리
+  // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
-    // 간단하게 페이지 이동 처리
-    navigate(`/blog/${post.slug}`);
+    // slug가 있으면 slug로, 없으면 id로 네비게이션
+    if (post.slug && post.slug.trim() !== '') {
+      navigate(`/blog/${post.slug}`);
+    } else if (post.id) {
+      // slug가 없는 경우 id를 사용
+      navigate(`/blog/post/${post.id}`);
+      console.log(`포스트 ID로 이동: ${post.id} (slug 누락)`);
+    } else {
+      console.error("블로그 포스트에 slug와 id가 모두 없습니다", post);
+      // 기본 블로그 페이지로 리디렉션
+      navigate('/blog');
+    }
   };
 
   return (

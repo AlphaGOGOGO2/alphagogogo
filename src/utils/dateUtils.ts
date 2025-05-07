@@ -3,7 +3,7 @@
  * 날짜와 시간 관련 유틸리티 함수 - 간소화 버전
  */
 
-// 주어진 날짜가 현재보다 미래인지 확인
+// 주어진 날짜가 현재보다 미래인지 확인 (5초 버퍼 추가)
 export const isFutureDate = (date: Date | string): boolean => {
   if (!date) return false;
   
@@ -15,7 +15,24 @@ export const isFutureDate = (date: Date | string): boolean => {
     return false;
   }
   
-  return compareDate > now;
+  // 5초 버퍼 추가 (밀리초 단위)
+  return compareDate.getTime() > now.getTime() + 5000;
+};
+
+// 주어진 날짜가 현재보다 과거인지 확인 (5초 버퍼 추가)
+export const isPastDate = (date: Date | string): boolean => {
+  if (!date) return false;
+  
+  const compareDate = date instanceof Date ? date : new Date(date);
+  const now = new Date();
+  
+  // 유효하지 않은 날짜 처리
+  if (isNaN(compareDate.getTime())) {
+    return false;
+  }
+  
+  // 5초 버퍼 추가 (밀리초 단위)
+  return compareDate.getTime() <= now.getTime() + 5000;
 };
 
 // 가독성 있는 형식으로 날짜 변환
@@ -62,5 +79,25 @@ export const getTimeUntilPublish = (publishDate: Date | string): string => {
     }
   } catch {
     return '정보 없음';
+  }
+};
+
+// 디버깅용 날짜 비교 함수
+export const logDateComparison = (
+  date1: Date | string, 
+  date2: Date | string, 
+  label1: string = "날짜1", 
+  label2: string = "날짜2"
+): void => {
+  try {
+    const d1 = date1 instanceof Date ? date1 : new Date(date1);
+    const d2 = date2 instanceof Date ? date2 : new Date(date2);
+    
+    console.log(`[날짜 비교] ${label1}: ${d1.toISOString()} (${d1.getTime()})`);
+    console.log(`[날짜 비교] ${label2}: ${d2.toISOString()} (${d2.getTime()})`);
+    console.log(`[날짜 비교] ${label1} ${d1 > d2 ? '>' : d1 < d2 ? '<' : '=='} ${label2}`);
+    console.log(`[날짜 비교] 차이: ${Math.abs(d1.getTime() - d2.getTime())}ms`);
+  } catch (error) {
+    console.error("[날짜 비교] 오류:", error);
   }
 };
