@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -20,22 +21,19 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 쿼리 키에 타임스탬프 추가하여 강제 새로고침 효과
-  const timestamp = Date.now(); // 현재 타임스탬프
-  
-  // 쿼리 구성 개선 - staleTime 및 gcTime(이전 cacheTime) 설정 추가
+  // 쿼리 구성 개선
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug, timestamp], // 타임스탬프 추가로 캐시 방지
+    queryKey: ["blog-post", slug],
     queryFn: () => {
       if (!slug) return null;
-      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (${new Date().toLocaleString('ko-KR')})`);
+      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작`);
       return getBlogPostBySlug(slug);
     },
-    staleTime: 0, // 항상 최신 데이터를 요청하도록 설정
-    gcTime: 5 * 60 * 1000, // 5분 동안 캐시 유지 (이전의 cacheTime)
-    retry: 1, // 한 번만 재시도
+    staleTime: 1000 * 60 * 5, // 5분간 데이터 신선함 유지
+    gcTime: 1000 * 60 * 10,   // 10분간 가비지 컬렉션 방지
+    retry: 1,                  // 한 번만 재시도
     enabled: !!slug,
-    refetchOnWindowFocus: false // 윈도우 포커스 시 재요청 방지
+    refetchOnWindowFocus: false
   });
   
   useEffect(() => {
@@ -45,9 +43,8 @@ export default function BlogPostPage() {
         toast.error("블로그 글을 불러오는 중 오류가 발생했습니다.");
       } else if (!post) {
         console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음.`);
-        // 글이 없을 때 리디렉션은 하지 않고 페이지 내에서 "글을 찾을 수 없습니다" 표시
       } else {
-        console.log(`[블로그페이지] "${slug}" 글 로드 완료: "${post.title}"`);
+        console.log(`[블로그페이지] "${slug}" 글 로드 완료.`);
       }
     }
   }, [isLoading, post, error, slug]);

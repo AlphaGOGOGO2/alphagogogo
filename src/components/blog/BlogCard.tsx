@@ -5,6 +5,7 @@ import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
 import { toast } from "sonner";
+import { isFutureDate, formatReadableDate, getTimeUntilPublish } from "@/utils/dateUtils";
 
 // 마크다운 #, ## 같은 제목 앞 기호 제거 함수
 function extractPlainTitle(markdownTitle: string): string {
@@ -29,27 +30,27 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - 네비게이션 개선
+  // 블로그 카드 클릭 핸들러 - React Router 네비게이션 사용
   const handleCardClick = () => {
-    const now = new Date();
-    const pubDate = new Date(post.publishedAt);
+    const publishDate = new Date(post.publishedAt);
+    const isScheduledPost = isFutureDate(publishDate);
     
-    // 자세한 로깅 추가
-    console.log(`[블로그카드] "${post.slug}" 카드 클릭, 제목: "${post.title}"`);
-    console.log(`[블로그카드] 발행일: ${pubDate.toLocaleString('ko-KR')}, 현재: ${now.toLocaleString('ko-KR')}`);
-    
-    // 토스트 메시지 추가로 사용자 피드백 제공
+    if (isScheduledPost) {
+      // 예약 발행 글인 경우 토스트 메시지로 안내
+      const timeUntil = getTimeUntilPublish(publishDate);
+      toast.info(`"${displayTitle}" 글은 ${formatReadableDate(publishDate)}에 발행될 예정입니다 (${timeUntil})`, {
+        duration: 3000
+      });
+      return;
+    }
+
+    // 일반 발행 글인 경우 네비게이션
     toast.success(`"${displayTitle}" 글로 이동합니다...`, {
       duration: 2000,
     });
     
-    // 네비게이션 실행 - 명시적인 경로 사용
-    const blogPath = `/blog/${post.slug}`;
-    console.log(`[블로그카드] 페이지 이동: ${blogPath}`);
-    
-    // window.location을 사용하지만, replace를 사용하여 브라우저 히스토리에 추가하지 않음
-    // 이렇게 하면 새로고침되면서 캐시 문제를 방지하고 뒤로가기 시 문제가 없어짐
-    window.location.replace(blogPath);
+    // React Router 네비게이션 사용
+    navigate(`/blog/${post.slug}`);
   };
 
   return (
