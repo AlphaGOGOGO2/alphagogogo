@@ -21,17 +21,19 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 쿼리 키에 타임스탬프 추가하여 항상 새로운 데이터 가져오도록 설정
-  const timestamp = Date.now();
+  // 쿼리 구성 개선 - staleTime 및 cacheTime 설정 추가
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug, timestamp],
+    queryKey: ["blog-post", slug],
     queryFn: () => {
       if (!slug) return null;
       console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (${new Date().toLocaleString('ko-KR')})`);
       return getBlogPostBySlug(slug);
     },
+    staleTime: 60 * 1000, // 1분 동안 데이터를 신선하게 유지
+    cacheTime: 5 * 60 * 1000, // 5분 동안 캐시 유지
     retry: 1, // 한 번만 재시도
-    enabled: !!slug
+    enabled: !!slug,
+    refetchOnWindowFocus: false // 윈도우 포커스 시 재요청 방지
   });
   
   useEffect(() => {
@@ -43,7 +45,7 @@ export default function BlogPostPage() {
         console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음.`);
         // 글이 없을 때 리디렉션은 하지 않고 페이지 내에서 "글을 찾을 수 없습니다" 표시
       } else {
-        console.log(`[블로그페이지] "${slug}" 글 로드 완료:`, post.title);
+        console.log(`[블로그페이지] "${slug}" 글 로드 완료: "${post.title}"`);
       }
     }
   }, [isLoading, post, error, slug]);
@@ -71,7 +73,10 @@ export default function BlogPostPage() {
       <BlogLayout title="블로그 글 로딩중...">
         <SEO title="블로그 글 로딩중..." />
         <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+          <div className="text-center">
+            <Loader2 className="h-10 w-10 text-purple-600 animate-spin mx-auto mb-3" />
+            <p className="text-gray-600">글을 불러오는 중입니다...</p>
+          </div>
         </div>
       </BlogLayout>
     );
@@ -126,6 +131,7 @@ export default function BlogPostPage() {
           </div>
         )}
         
+        {/* 본문 내용 부분 */}
         <div className="p-6 md:p-8">
           <div className="flex justify-between items-center mb-6">
             <span className="inline-block px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded-full">
