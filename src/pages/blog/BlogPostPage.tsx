@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -19,21 +20,25 @@ export default function BlogPostPage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [loadingTimeout, setLoadingTimeout] = useState(false);
   
-  // 짧은 로딩 대기 시간 설정 (최대 1.5초만 로딩 표시)
+  // 타임스탬프 추가로 캐시 갱신 최적화
+  const timestamp = new Date().getTime();
+  
   useEffect(() => {
+    // 로딩 상태가 너무 빨리 사라지는 것을 방지하기 위한 최소 시간 설정
     const timer = setTimeout(() => {
       setLoadingTimeout(true);
-    }, 1500);
+    }, 800);
+    
     return () => clearTimeout(timer);
   }, []);
   
-  // 간소화된 쿼리 구성, 캐시 키에 현재 시간 추가하여 예약발행 글도 제대로 가져오도록 함
+  // 블로그 포스트 데이터 가져오기 - 캐시 키에 타임스탬프 추가
   const { data: post, isLoading, isError } = useQuery({
-    queryKey: ["blog-post", slug, Date.now()], // 현재 시간 추가로 캐싱 제한
+    queryKey: ["blog-post", slug, timestamp],
     queryFn: () => slug ? getBlogPostBySlug(slug) : null,
-    staleTime: 30000, // 30초 캐시
+    staleTime: 0, // 캐시 사용하지 않음
     refetchOnWindowFocus: false,
-    retry: 1 // 재시도 횟수 제한
+    retry: 1
   });
   
   const handleEdit = () => {
@@ -46,7 +51,20 @@ export default function BlogPostPage() {
     }
   };
   
-  // 로딩 중이지만 시간 초과 안됐을 때만 로딩 표시
+  // 디버깅을 위한 로그
+  useEffect(() => {
+    if (slug) {
+      console.log(`[BlogPostPage] 슬러그 "${slug}" 로딩 중, 타임스탬프: ${timestamp}`);
+    }
+    if (post) {
+      console.log(`[BlogPostPage] 포스트 로드 성공: "${post.title}", 발행일: ${post.publishedAt}`);
+    }
+    if (isError) {
+      console.error(`[BlogPostPage] 에러 발생: 슬러그 "${slug}" 로딩 실패`);
+    }
+  }, [slug, post, isError, timestamp]);
+  
+  // 로딩 중이고 타임아웃이 안됐을 때만 로딩 UI 표시
   if (isLoading && !loadingTimeout) {
     return (
       <BlogLayout title="블로그 글 로딩중...">
@@ -61,7 +79,7 @@ export default function BlogPostPage() {
     );
   }
   
-  // 로딩 시간이 초과되었지만 아직 데이터가 없거나 오류 발생 시
+  // 포스트가 없거나 에러 발생 시
   if (!post || isError) {
     return (
       <BlogLayout title="글을 찾을 수 없습니다">

@@ -96,3 +96,20 @@ export const safeParseDate = (dateStr: string | Date): Date | null => {
     return null;
   }
 };
+
+// 날짜가 현재보다 과거인지 확인 (발행된 게시글인지 확인용)
+export const isPastDate = (date: Date | string): boolean => {
+  if (!date) return false;
+  
+  const compareDate = date instanceof Date ? date : new Date(date);
+  const now = new Date();
+  
+  // 유효하지 않은 날짜 처리
+  if (isNaN(compareDate.getTime())) {
+    return false;
+  }
+  
+  // 현재 시간보다 5초 미만의 차이는 같은 시간으로 간주 (시간 동기화 문제 방지)
+  const diffMs = now.getTime() - compareDate.getTime();
+  return diffMs > -5000; // 5초의 여유를 둠
+};

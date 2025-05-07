@@ -28,16 +28,15 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - 단순화된 네비게이션 처리
+  // 블로그 카드 클릭 핸들러 - 직접 URL 이동으로 단순화
   const handleCardClick = () => {
-    // URL을 직접 설정하여 이동 (queryClient 의존성 제거)
     const blogUrl = `/blog/${post.slug}`;
     
-    // 간단한 로깅
-    console.log(`[BlogCard] 이동: ${blogUrl}, 제목: ${post.title}, 발행일: ${post.publishedAt}`);
+    // 디버깅 정보 기록
+    console.log(`[BlogCard] 이동: ${blogUrl}, 제목: ${displayTitle}, 발행일: ${post.publishedAt}`);
     
-    // 직접 페이지 이동
-    navigate(blogUrl);
+    // 단순화된 직접 URL 이동
+    window.location.href = blogUrl;
   };
 
   return (
