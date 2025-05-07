@@ -2,18 +2,17 @@
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
-import { getBlogPostsByCategory } from "@/services/blogPostService"; // 직접 import 경로 수정
+import { getBlogPostsByCategory } from "@/services/blogPostService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
-  // 현재 타임스탬프를 쿼리 키에 포함시켜 최신 데이터 가져오기
-  const timestamp = Date.now();
-  
+  // 더 명확한 캐시 키 사용 및 재시도 설정
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", "최신 AI소식", timestamp],
+    queryKey: ["blog-posts", "최신 AI소식"],
     queryFn: () => getBlogPostsByCategory("최신 AI소식"),
-    staleTime: 10000, // 10초 동안 데이터 유지 (기존 60초에서 단축)
+    staleTime: 10000, // 10초 동안 데이터 유지
     refetchOnWindowFocus: true, // 화면 포커스시 새로고침 활성화
+    retry: 2, // 실패시 2번 더 시도
   });
   
   console.log("[LatestAIUpdates] 로딩 상태:", isLoading, "포스트 수:", posts?.length);

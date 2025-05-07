@@ -1,38 +1,54 @@
 
 /**
- * 날짜와 시간 관련 유틸리티 함수 - 간소화 버전
+ * 날짜와 시간 관련 유틸리티 함수 - 최적화 버전
  */
 
 // 주어진 날짜가 현재보다 미래인지 확인 (5초 버퍼 추가)
 export const isFutureDate = (date: Date | string): boolean => {
-  if (!date) return false;
-  
-  const compareDate = date instanceof Date ? date : new Date(date);
-  const now = new Date();
-  
-  // 유효하지 않은 날짜 처리
-  if (isNaN(compareDate.getTime())) {
+  try {
+    if (!date) return false;
+    
+    const compareDate = date instanceof Date ? date : new Date(date);
+    const now = new Date();
+    
+    // 유효하지 않은 날짜 처리
+    if (isNaN(compareDate.getTime())) {
+      console.error("[isFutureDate] 유효하지 않은 날짜:", date);
+      return false;
+    }
+    
+    // 5초 버퍼 추가
+    const result = compareDate.getTime() > (now.getTime() + 5000);
+    console.log(`[isFutureDate] 비교: ${compareDate.toISOString()} > ${now.toISOString()}? ${result}`);
+    return result;
+  } catch (error) {
+    console.error("[isFutureDate] 오류:", error);
     return false;
   }
-  
-  // 5초 버퍼 추가 (밀리초 단위)
-  return compareDate.getTime() > now.getTime() + 5000;
 };
 
 // 주어진 날짜가 현재보다 과거인지 확인 (5초 버퍼 추가)
 export const isPastDate = (date: Date | string): boolean => {
-  if (!date) return false;
-  
-  const compareDate = date instanceof Date ? date : new Date(date);
-  const now = new Date();
-  
-  // 유효하지 않은 날짜 처리
-  if (isNaN(compareDate.getTime())) {
+  try {
+    if (!date) return false;
+    
+    const compareDate = date instanceof Date ? date : new Date(date);
+    const now = new Date();
+    
+    // 유효하지 않은 날짜 처리
+    if (isNaN(compareDate.getTime())) {
+      console.error("[isPastDate] 유효하지 않은 날짜:", date);
+      return false;
+    }
+    
+    // 5초 버퍼 추가 (미래 날짜가 아니면 과거 날짜로 간주)
+    const result = compareDate.getTime() <= (now.getTime() + 5000);
+    console.log(`[isPastDate] 비교: ${compareDate.toISOString()} <= ${now.toISOString()}? ${result}`);
+    return result;
+  } catch (error) {
+    console.error("[isPastDate] 오류:", error);
     return false;
   }
-  
-  // 5초 버퍼 추가 (밀리초 단위)
-  return compareDate.getTime() <= now.getTime() + 5000;
 };
 
 // 가독성 있는 형식으로 날짜 변환

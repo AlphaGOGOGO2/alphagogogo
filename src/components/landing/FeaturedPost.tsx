@@ -2,8 +2,8 @@
 import { useState, useEffect } from "react";
 import { ArrowRight, Clock, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Link } from "react-router-dom";
-import { getAllBlogPosts } from "@/services/blogService";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllBlogPosts } from "@/services/blogPostService";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
@@ -12,6 +12,7 @@ export function FeaturedPosts() {
   const [hoveredPost, setHoveredPost] = useState<string | null>(null);
   const [featuredPosts, setFeaturedPosts] = useState<BlogPost[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchPosts = async () => {
@@ -28,6 +29,22 @@ export function FeaturedPosts() {
     
     fetchPosts();
   }, []);
+  
+  // 블로그 포스트 클릭 핸들러
+  const handlePostClick = (post: BlogPost, event: React.MouseEvent) => {
+    event.preventDefault(); // 기본 동작 방지
+    
+    // slug가 있으면 slug로, 없으면 id로 네비게이션
+    if (post.slug && post.slug.trim() !== '') {
+      navigate(`/blog/${post.slug}`);
+    } else if (post.id) {
+      navigate(`/blog/post/${post.id}`);
+      console.log(`포스트 ID로 이동: ${post.id} (slug 누락)`);
+    } else {
+      console.error("블로그 포스트에 slug와 id가 모두 없습니다", post);
+      navigate('/blog');
+    }
+  };
   
   return (
     <section id="featured-posts" className="py-20 px-6 md:px-8 bg-white">
@@ -57,12 +74,13 @@ export function FeaturedPosts() {
               const postImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
               
               return (
-                <Link 
-                  to={`/blog/${post.slug}`} 
+                <div 
                   key={post.id}
                   className="block h-full"
                   onMouseEnter={() => setHoveredPost(post.id)}
                   onMouseLeave={() => setHoveredPost(null)}
+                  onClick={(e) => handlePostClick(post, e)}
+                  style={{ cursor: 'pointer' }}
                 >
                   <article 
                     className={cn(
@@ -142,7 +160,7 @@ export function FeaturedPosts() {
                       </div>
                     </div>
                   </article>
-                </Link>
+                </div>
               );
             })}
           </div>

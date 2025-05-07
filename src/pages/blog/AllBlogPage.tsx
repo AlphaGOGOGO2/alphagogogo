@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBlogPosts } from "@/services/blogPostService"; // 직접 import 경로 수정
+import { getAllBlogPosts } from "@/services/blogPostService";
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
@@ -13,14 +12,13 @@ const POSTS_PER_PAGE = 9;
 export default function AllBlogPage() {
   const [visiblePosts, setVisiblePosts] = useState(POSTS_PER_PAGE);
   
-  // 현재 타임스탬프를 쿼리 키에 포함시켜 최신 데이터 가져오기
-  const timestamp = Date.now();
-  
+  // 더 명확한 캐시 키 사용 및 타임아웃 설정
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", timestamp],
+    queryKey: ["blog-posts", "all"],
     queryFn: getAllBlogPosts,
     staleTime: 10000, // 10초 동안 데이터 유지
-    refetchOnWindowFocus: true // 화면 포커스시 새로고침
+    refetchOnWindowFocus: true, // 화면 포커스시 새로고침
+    retry: 2, // 실패시 2번 더 시도
   });
   
   console.log("[AllBlogPage] 로딩 상태:", isLoading, "포스트 수:", posts?.length);
