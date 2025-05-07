@@ -6,12 +6,11 @@ import { getBlogPostsByCategory } from "@/services/blogService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
-  // 쿼리 최적화 (staleTime, cacheTime 설정)
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", "최신 AI소식", Date.now()], // 타임스탬프 추가로 캐시 문제 해결
+    queryKey: ["blog-posts", "최신 AI소식"],
     queryFn: () => getBlogPostsByCategory("최신 AI소식"),
-    staleTime: 30000, // 30초 동안 데이터 신선함 유지
-    refetchOnWindowFocus: false, // 창 포커스 시 재요청 방지
+    staleTime: 60000, // 1분 동안 데이터 유지
+    refetchOnWindowFocus: false,
   });
   
   return (

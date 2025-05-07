@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -12,57 +12,20 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { toast } from "sonner";
+import { useState } from "react";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 현재 시간을 쿼리 키에 포함시켜 캐시 문제 해결
-  const timestamp = Date.now();
-  
-  // 쿼리 구성 개선
-  const { data: post, isLoading, error, isError } = useQuery({
-    queryKey: ["blog-post", slug, timestamp], // 타임스탬프를 키에 추가해 캐싱 문제 방지
-    queryFn: async () => {
-      if (!slug) {
-        console.error("[블로그페이지] 슬러그가 없습니다");
-        return null;
-      }
-      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (타임스탬프: ${timestamp})`);
-      const result = await getBlogPostBySlug(slug);
-      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 결과:`, result ? "성공" : "실패");
-      return result;
-    },
-    staleTime: 0,      // 항상 최신 데이터 사용
-    gcTime: 1000 * 60, // 1분간 가비지 컬렉션 방지
-    retry: 1,          // 한 번만 재시도
-    enabled: !!slug,   // slug가 있을 때만 쿼리 실행
+  // 간소화된 쿼리 구성
+  const { data: post, isLoading } = useQuery({
+    queryKey: ["blog-post", slug],
+    queryFn: () => slug ? getBlogPostBySlug(slug) : null,
+    staleTime: 60000, // 1분 캐시
     refetchOnWindowFocus: false
   });
-  
-  useEffect(() => {
-    if (!isLoading) {
-      if (isError || error) {
-        console.error(`[블로그페이지] "${slug}" 글 로드 오류:`, error);
-        toast.error("블로그 글을 불러오는 중 오류가 발생했습니다.");
-      } else if (!post) {
-        console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음.`);
-      } else {
-        console.log(`[블로그페이지] "${slug}" 글 로드 완료.`);
-      }
-    }
-  }, [isLoading, post, error, isError, slug]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsVisible(true);
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
   
   const handleEdit = () => {
     const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
@@ -108,8 +71,6 @@ export default function BlogPostPage() {
     );
   }
   
-  const postUrl = `https://alphablog.app/blog/${post.slug}`;
-  const excerpt = post.excerpt || generateExcerpt(post.content);
   const postKeywords = post.tags && post.tags.length > 0
     ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
     : "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,인공지능,AI";
@@ -126,7 +87,7 @@ export default function BlogPostPage() {
       />
       <BlogPostSchema post={post} url={`https://alphablog.app/blog/${post.slug}`} />
       
-      <article className={`max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+      <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
         {post.coverImage && (
           <div className="w-full h-80 overflow-hidden">
             <img 
