@@ -118,17 +118,14 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     
     console.log(`[블로그] "${slug}" 슬러그 글 발견: "${postData.title}"`);
     
-    // 발행 시간 확인
+    // 발행 시간이 미래인지 단순하게 확인 (시간 버퍼 적용)
     const publishedAt = new Date(postData.published_at);
     const now = new Date();
     
-    // 현재 시간과 발행 시간의 차이를 분 단위로 계산
-    const diffMinutes = Math.floor((publishedAt.getTime() - now.getTime()) / (1000 * 60));
-    
-    // 예약 발행 글인지 확인 (미래 발행 예정)
-    if (diffMinutes > TIME_BUFFER_MINUTES) {
+    // 단순한 시간 비교 - 발행시간이 현재보다 TIME_BUFFER_MINUTES분 이상 미래인 경우
+    if (publishedAt.getTime() > (now.getTime() + TIME_BUFFER_MINUTES * 60 * 1000)) {
       const timeUntil = getTimeUntilPublish(publishedAt);
-      console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil}) - 차이: ${diffMinutes}분`);
+      console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil})`);
       toast.warning(`이 글은 ${formatReadableDate(publishedAt)}에 발행될 예정입니다 (${timeUntil})`);
       return null;
     }

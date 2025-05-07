@@ -44,15 +44,14 @@ export function BlogCard({ post }: BlogCardProps) {
       return;
     }
 
-    // 일반 발행 글인 경우 네비게이션
+    // 직접 URL을 구성하여 프로그래매틱 이동 (React Router 네비게이션)
+    console.log(`[블로그카드] "${post.slug}" 글로 이동 시작`);
+    navigate(`/blog/${post.slug}`);
+    
+    // 성공 토스트 메시지
     toast.success(`"${displayTitle}" 글로 이동합니다...`, {
       duration: 2000,
     });
-    
-    // 중요: setTimeout으로 토스트 메시지가 보이도록 약간의 지연 후 이동
-    setTimeout(() => {
-      navigate(`/blog/${post.slug}`);
-    }, 300);
   };
 
   return (

@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,19 +20,19 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
-  // 쿼리 구성 개선 - timestamp 포함하여 캐시 무효화 보장
-  const timestamp = Date.now(); // 현재 타임스탬프
+  // slug가 바뀔 때마다 고유한 키 생성 (캐시 최적화)
+  const queryKey = slug ? [`blog-post-${slug}`, Date.now()] : [];
   
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug, timestamp], // 타임스탬프 추가로 항상 최신 데이터 보장
+    queryKey: queryKey,
     queryFn: () => {
       if (!slug) return null;
       console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작`);
       return getBlogPostBySlug(slug);
     },
-    staleTime: 0, // 항상 새로운 데이터 가져오기
-    gcTime: 1000 * 60 * 1, // 1분간 데이터 캐시 유지
-    retry: 1, // 한 번만 재시도
+    staleTime: 0,        // 항상 새로운 데이터 가져오기
+    gcTime: 1000 * 60,   // 1분간 데이터 캐시 유지
+    retry: 0,            // 재시도 안함
     enabled: !!slug,
     refetchOnWindowFocus: false
   });
