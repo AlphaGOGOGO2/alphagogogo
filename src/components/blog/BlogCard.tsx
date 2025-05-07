@@ -47,8 +47,9 @@ export function BlogCard({ post }: BlogCardProps) {
     const blogPath = `/blog/${post.slug}`;
     console.log(`[블로그카드] 페이지 이동: ${blogPath}`);
     
-    // 직접 window.location 사용하여 강제 새로고침 (캐시 문제 방지)
-    window.location.href = blogPath;
+    // window.location을 사용하지만, replace를 사용하여 브라우저 히스토리에 추가하지 않음
+    // 이렇게 하면 새로고침되면서 캐시 문제를 방지하고 뒤로가기 시 문제가 없어짐
+    window.location.replace(blogPath);
   };
 
   return (

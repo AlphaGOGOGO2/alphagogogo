@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,15 +20,18 @@ export default function BlogPostPage() {
   const [isVisible, setIsVisible] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   
+  // 쿼리 키에 타임스탬프 추가하여 강제 새로고침 효과
+  const timestamp = Date.now(); // 현재 타임스탬프
+  
   // 쿼리 구성 개선 - staleTime 및 gcTime(이전 cacheTime) 설정 추가
   const { data: post, isLoading, error } = useQuery({
-    queryKey: ["blog-post", slug],
+    queryKey: ["blog-post", slug, timestamp], // 타임스탬프 추가로 캐시 방지
     queryFn: () => {
       if (!slug) return null;
       console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (${new Date().toLocaleString('ko-KR')})`);
       return getBlogPostBySlug(slug);
     },
-    staleTime: 60 * 1000, // 1분 동안 데이터를 신선하게 유지
+    staleTime: 0, // 항상 최신 데이터를 요청하도록 설정
     gcTime: 5 * 60 * 1000, // 5분 동안 캐시 유지 (이전의 cacheTime)
     retry: 1, // 한 번만 재시도
     enabled: !!slug,
@@ -102,7 +104,7 @@ export default function BlogPostPage() {
     );
   }
   
-  const postUrl = `https://alphagogogo.com/blog/${post.slug}`;
+  const postUrl = `https://alphablog.app/blog/${post.slug}`;
   const excerpt = post.excerpt || generateExcerpt(post.content);
   const postKeywords = post.tags && post.tags.length > 0
     ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
@@ -112,13 +114,13 @@ export default function BlogPostPage() {
     <BlogLayout title={post.title}>
       <SEO 
         title={post.title}
-        description={excerpt}
-        canonicalUrl={postUrl}
+        description={post.excerpt || generateExcerpt(post.content)}
+        canonicalUrl={`https://alphablog.app/blog/${post.slug}`}
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"}
         ogType="article"
         keywords={postKeywords}
       />
-      <BlogPostSchema post={post} url={postUrl} />
+      <BlogPostSchema post={post} url={`https://alphablog.app/blog/${post.slug}`} />
       
       <article className={`max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         {post.coverImage && (
