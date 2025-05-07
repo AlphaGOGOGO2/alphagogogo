@@ -15,10 +15,11 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
   try {
     // 현재 날짜 기준으로 버퍼 적용
     const now = new Date();
-    now.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
-    const nowIsoString = now.toISOString();
+    const queryTime = new Date(now);
+    queryTime.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
+    const nowIsoString = queryTime.toISOString();
     
-    console.log(`[블로그] 모든 글 조회 시작, 기준 시간: ${formatReadableDate(now)}, ISO: ${nowIsoString}`);
+    console.log(`[블로그] 모든 글 조회 시작, 기준 시간: ${formatReadableDate(queryTime)}, ISO: ${nowIsoString}`);
     
     const { data, error } = await supabase
       .from("blog_posts")
@@ -33,8 +34,12 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
 
     console.log(`[블로그] 총 ${data?.length || 0}개 글 조회 완료`);
     
+    if (!data || data.length === 0) {
+      return [];
+    }
+    
     // 모든 포스트에 대해 태그 정보 조회
-    const postsWithTags = await Promise.all((data || []).map(async (post) => {
+    const postsWithTags = await Promise.all(data.map(async (post) => {
       const adaptedPost = adaptBlogPost(post);
       try {
         const tags = await getTagsForBlogPost(post.id);
@@ -79,10 +84,11 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
   try {
     // 현재 날짜 기준으로 버퍼 적용
     const now = new Date();
-    now.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
-    const nowIsoString = now.toISOString();
+    const queryTime = new Date(now);
+    queryTime.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
+    const nowIsoString = queryTime.toISOString();
     
-    console.log(`[블로그] ${category} 카테고리 글 조회 시작, 기준 시간: ${formatReadableDate(now)}, ISO: ${nowIsoString}`);
+    console.log(`[블로그] ${category} 카테고리 글 조회 시작, 기준 시간: ${formatReadableDate(queryTime)}, ISO: ${nowIsoString}`);
     
     const { data, error } = await supabase
       .from("blog_posts")
@@ -98,8 +104,12 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
 
     console.log(`[블로그] ${category} 카테고리 총 ${data?.length || 0}개 글 조회 완료`);
     
+    if (!data || data.length === 0) {
+      return [];
+    }
+    
     // 모든 포스트에 대해 태그 정보 조회
-    const postsWithTags = await Promise.all((data || []).map(async (post) => {
+    const postsWithTags = await Promise.all(data.map(async (post) => {
       const adaptedPost = adaptBlogPost(post);
       try {
         const tags = await getTagsForBlogPost(post.id);
@@ -124,6 +134,12 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
   try {
     console.log(`[블로그] "${slug}" 슬러그 글 조회 시작`);
     
+    if (!slug) {
+      console.error("[블로그] 슬러그가 제공되지 않았습니다");
+      toast.error("유효하지 않은 블로그 포스트 주소입니다");
+      return null;
+    }
+    
     // 글 데이터 조회
     const { data: postData, error: postError } = await supabase
       .from("blog_posts")
@@ -146,6 +162,13 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     
     console.log(`[블로그] "${slug}" 슬러그 글 발견: "${postData.title}"`);
     
+    // 발행 시간이 유효한지 확인
+    if (!postData.published_at) {
+      console.error(`[블로그] "${slug}" 슬러그 글 발행 시간이 없습니다`);
+      toast.error("블로그 포스트 정보가 유효하지 않습니다");
+      return null;
+    }
+    
     // 발행 시간 확인
     const publishedAt = new Date(postData.published_at);
     const now = new Date();
@@ -154,7 +177,8 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     console.log(`[블로그] "${slug}" 슬러그 글 발행 시간: ${publishedAt.toISOString()}, 현재 시간: ${now.toISOString()}`);
     
     // 예약 발행 글인지 확인 (미래 발행 예정) - 버퍼 0분으로 비교
-    if (isFutureDate(publishedAt, 0)) {
+    const isFuture = isFutureDate(publishedAt, 0);
+    if (isFuture) {
       const timeUntil = getTimeUntilPublish(publishedAt);
       console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil})`);
       toast.warning(`이 글은 ${formatReadableDate(publishedAt)}에 발행될 예정입니다 (${timeUntil})`);

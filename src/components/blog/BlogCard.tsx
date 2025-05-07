@@ -32,32 +32,50 @@ export function BlogCard({ post }: BlogCardProps) {
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
-    // 현재 시간과 여유 시간 0분으로 미래 발행글인지 검사
-    // 미래 발행글은 아예 카드에 표시되지 않도록 서비스에서 조회하지 않음
-    const publishDate = new Date(post.publishedAt);
-    const isScheduledPost = isFutureDate(publishDate, 0);
-    
-    if (isScheduledPost) {
-      // 예약 발행 글인 경우 토스트 메시지로 안내
-      const timeUntil = getTimeUntilPublish(publishDate);
-      toast.info(`"${displayTitle}" 글은 ${formatReadableDate(publishDate)}에 발행될 예정입니다 (${timeUntil})`, {
-        duration: 3000
-      });
+    // 글 데이터 유효성 검사
+    if (!post || !post.publishedAt) {
+      toast.error("포스트 정보가 유효하지 않습니다");
       return;
     }
+    
+    try {
+      // 현재 시간과 여유 시간 0분으로 미래 발행글인지 검사
+      const publishDate = new Date(post.publishedAt);
+      
+      if (isNaN(publishDate.getTime())) {
+        console.error(`[블로그카드] 유효하지 않은 발행일: ${post.publishedAt}`);
+        toast.error("포스트 정보가 유효하지 않습니다");
+        return;
+      }
+      
+      const isScheduledPost = isFutureDate(publishDate, 0);
+      
+      if (isScheduledPost) {
+        // 예약 발행 글인 경우 토스트 메시지로 안내
+        const timeUntil = getTimeUntilPublish(publishDate);
+        toast.info(`"${displayTitle}" 글은 ${formatReadableDate(publishDate)}에 발행될 예정입니다 (${timeUntil})`, {
+          duration: 3000
+        });
+        return;
+      }
 
-    // 일반 발행 글인 경우 네비게이션
-    toast.success(`"${displayTitle}" 글로 이동합니다...`, {
-      duration: 2000,
-    });
-    
-    console.log(`[블로그] 카드 클릭: "${post.slug}" 글로 이동합니다.`);
-    
-    // React Router의 navigate 사용 - 직접 URL 사용
-    const targetUrl = `/blog/${post.slug}`;
-    
-    // 즉시 네비게이션
-    navigate(targetUrl);
+      // 일반 발행 글인 경우 네비게이션
+      toast.success(`"${displayTitle}" 글로 이동합니다...`, {
+        duration: 2000,
+      });
+      
+      console.log(`[블로그] 카드 클릭: "${post.slug}" 글로 이동합니다.`);
+      
+      // 직접 URL 사용해서 페이지 이동
+      const targetUrl = `/blog/${post.slug}`;
+      window.location.href = targetUrl;
+      
+      // React Router는 사용하지 않음 (히스토리 스택 문제 방지)
+      // navigate(targetUrl);
+    } catch (error) {
+      console.error(`[블로그카드] 카드 클릭 처리 오류:`, error);
+      toast.error("페이지 이동 중 오류가 발생했습니다");
+    }
   };
 
   return (

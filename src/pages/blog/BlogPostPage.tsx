@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -25,23 +24,28 @@ export default function BlogPostPage() {
   const timestamp = Date.now();
   
   // 쿼리 구성 개선
-  const { data: post, isLoading, error } = useQuery({
+  const { data: post, isLoading, error, isError } = useQuery({
     queryKey: ["blog-post", slug, timestamp], // 타임스탬프를 키에 추가해 캐싱 문제 방지
-    queryFn: () => {
-      if (!slug) return null;
+    queryFn: async () => {
+      if (!slug) {
+        console.error("[블로그페이지] 슬러그가 없습니다");
+        return null;
+      }
       console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작 (타임스탬프: ${timestamp})`);
-      return getBlogPostBySlug(slug);
+      const result = await getBlogPostBySlug(slug);
+      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 결과:`, result ? "성공" : "실패");
+      return result;
     },
     staleTime: 0,      // 항상 최신 데이터 사용
     gcTime: 1000 * 60, // 1분간 가비지 컬렉션 방지
     retry: 1,          // 한 번만 재시도
-    enabled: !!slug,
+    enabled: !!slug,   // slug가 있을 때만 쿼리 실행
     refetchOnWindowFocus: false
   });
   
   useEffect(() => {
     if (!isLoading) {
-      if (error) {
+      if (isError || error) {
         console.error(`[블로그페이지] "${slug}" 글 로드 오류:`, error);
         toast.error("블로그 글을 불러오는 중 오류가 발생했습니다.");
       } else if (!post) {
@@ -50,7 +54,7 @@ export default function BlogPostPage() {
         console.log(`[블로그페이지] "${slug}" 글 로드 완료.`);
       }
     }
-  }, [isLoading, post, error, slug]);
+  }, [isLoading, post, error, isError, slug]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
