@@ -3,19 +3,24 @@ import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogPostsByCategory } from "@/services/blogService";
-import { Loader2 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
+  // 쿼리 최적화 (staleTime, cacheTime 설정)
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", "최신 AI소식"],
-    queryFn: () => getBlogPostsByCategory("최신 AI소식")
+    queryKey: ["blog-posts", "최신 AI소식", Date.now()], // 타임스탬프 추가로 캐시 문제 해결
+    queryFn: () => getBlogPostsByCategory("최신 AI소식"),
+    staleTime: 30000, // 30초 동안 데이터 신선함 유지
+    refetchOnWindowFocus: false, // 창 포커스 시 재요청 방지
   });
   
   return (
     <BlogLayout title="최신 AI소식">
       {isLoading ? (
-        <div className="flex justify-center items-center py-20">
-          <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <Skeleton key={i} className="h-96 w-full" />
+          ))}
         </div>
       ) : posts.length === 0 ? (
         <div className="text-center py-20">

@@ -1,6 +1,5 @@
 
 import { BlogPost } from "@/types/blog";
-import { useNavigate } from "react-router-dom";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
@@ -18,8 +17,6 @@ interface BlogCardProps {
 }
 
 export function BlogCard({ post }: BlogCardProps) {
-  const navigate = useNavigate();
-  
   // 저장된 프로필 이미지 URL 사용
   const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png";
   // 제목에서 마크다운 기호 제거
@@ -30,50 +27,42 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
+  // 블로그 카드 클릭 핸들러 - 최적화된 네비게이션 처리
   const handleCardClick = () => {
-    // 글 데이터 유효성 검사
-    if (!post || !post.publishedAt) {
+    // 글 데이터 유효성 간단 검사
+    if (!post || !post.slug) {
       toast.error("포스트 정보가 유효하지 않습니다");
       return;
     }
     
     try {
-      // 현재 시간과 여유 시간 0분으로 미래 발행글인지 검사
-      const publishDate = new Date(post.publishedAt);
-      
-      if (isNaN(publishDate.getTime())) {
-        console.error(`[블로그카드] 유효하지 않은 발행일: ${post.publishedAt}`);
-        toast.error("포스트 정보가 유효하지 않습니다");
-        return;
+      // 발행일 있는 경우만 확인
+      if (post.publishedAt) {
+        const publishDate = new Date(post.publishedAt);
+        
+        // 유효하지 않은 날짜인 경우
+        if (isNaN(publishDate.getTime())) {
+          toast.error("포스트 정보가 유효하지 않습니다");
+          return;
+        }
+        
+        // 예약 발행 글인지 즉시 확인
+        const isScheduledPost = isFutureDate(publishDate, 0);
+        
+        if (isScheduledPost) {
+          // 예약 발행 글인 경우 토스트 메시지로 안내
+          const timeUntil = getTimeUntilPublish(publishDate);
+          toast.info(`"${displayTitle}" 글은 ${formatReadableDate(publishDate)}에 발행될 예정입니다 (${timeUntil})`, {
+            duration: 3000
+          });
+          return;
+        }
       }
       
-      const isScheduledPost = isFutureDate(publishDate, 0);
-      
-      if (isScheduledPost) {
-        // 예약 발행 글인 경우 토스트 메시지로 안내
-        const timeUntil = getTimeUntilPublish(publishDate);
-        toast.info(`"${displayTitle}" 글은 ${formatReadableDate(publishDate)}에 발행될 예정입니다 (${timeUntil})`, {
-          duration: 3000
-        });
-        return;
-      }
-
-      // 일반 발행 글인 경우 네비게이션
-      toast.success(`"${displayTitle}" 글로 이동합니다...`, {
-        duration: 2000,
-      });
-      
-      console.log(`[블로그] 카드 클릭: "${post.slug}" 글로 이동합니다.`);
-      
-      // 직접 URL 사용해서 페이지 이동
+      // 표준 페이지 이동 - 즉시 이동 처리
       const targetUrl = `/blog/${post.slug}`;
       window.location.href = targetUrl;
-      
-      // React Router는 사용하지 않음 (히스토리 스택 문제 방지)
-      // navigate(targetUrl);
-    } catch (error) {
-      console.error(`[블로그카드] 카드 클릭 처리 오류:`, error);
+    } catch {
       toast.error("페이지 이동 중 오류가 발생했습니다");
     }
   };
@@ -99,6 +88,7 @@ export function BlogCard({ post }: BlogCardProps) {
               src={cardImage} 
               alt={displayTitle} 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              loading="lazy" // 이미지 지연 로딩 추가
             />
           </div>
         )}
@@ -138,6 +128,7 @@ export function BlogCard({ post }: BlogCardProps) {
                 src={authorAvatarUrl} 
                 alt={post.author.name} 
                 className="w-6 h-6 rounded-full mr-2 object-cover" 
+                loading="lazy" // 이미지 지연 로딩 추가
               />
               <span>{post.author.name}</span>
             </div>

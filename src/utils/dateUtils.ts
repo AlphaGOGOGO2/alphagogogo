@@ -16,18 +16,16 @@ export const isFutureDate = (date: Date | string, bufferMinutes = 0): boolean =>
     now.setMinutes(now.getMinutes() + bufferMinutes);
   }
   
-  // Date 객체가 유효한지 확인
+  // Date 객체가 유효한지 확인 - 빠른 검증
   if (isNaN(compareDate.getTime())) {
     console.error(`[날짜비교] 유효하지 않은 날짜 입력: ${date}`);
     return false;
   }
   
-  const isFuture = compareDate > now;
-  console.log(`[날짜비교] 비교날짜: ${compareDate.toISOString()}, 현재(버퍼포함): ${now.toISOString()}, 결과: ${isFuture}`);
-  return isFuture;
+  return compareDate > now;
 };
 
-// 가독성 있는 형식으로 날짜 변환
+// 가독성 있는 형식으로 날짜 변환 - 성능 최적화
 export const formatReadableDate = (date: Date | string): string => {
   // 입력이 null이나 undefined인 경우 처리
   if (!date) return '날짜 정보 없음';
@@ -35,19 +33,18 @@ export const formatReadableDate = (date: Date | string): string => {
   try {
     const d = date instanceof Date ? date : new Date(date);
     
-    // 날짜가 유효하지 않은 경우
+    // 날짜가 유효하지 않은 경우 - 빠른 검증
     if (isNaN(d.getTime())) {
       return '날짜 정보 없음';
     }
     
     return d.toLocaleString('ko-KR');
-  } catch (error) {
-    console.error(`[날짜변환] 오류 발생: ${error}`);
+  } catch {
     return '날짜 정보 없음';
   }
 };
 
-// 발행 예정 시간까지 남은 시간을 문자열로 반환
+// 발행 예정 시간까지 남은 시간을 문자열로 반환 - 성능 최적화
 export const getTimeUntilPublish = (publishDate: Date | string): string => {
   // 입력이 null이나 undefined인 경우 처리
   if (!publishDate) return '정보 없음';
@@ -56,7 +53,7 @@ export const getTimeUntilPublish = (publishDate: Date | string): string => {
     const pubDate = publishDate instanceof Date ? publishDate : new Date(publishDate);
     const now = new Date();
     
-    // 날짜가 유효하지 않은 경우
+    // 날짜가 유효하지 않은 경우 - 빠른 검증
     if (isNaN(pubDate.getTime())) {
       return '정보 없음';
     }
@@ -75,8 +72,7 @@ export const getTimeUntilPublish = (publishDate: Date | string): string => {
     } else {
       return `약 ${minutesDiff}분 후`;
     }
-  } catch (error) {
-    console.error(`[시간계산] 오류 발생: ${error}`);
+  } catch {
     return '정보 없음';
   }
 };
