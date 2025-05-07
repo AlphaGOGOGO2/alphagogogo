@@ -18,7 +18,7 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
     now.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
     const nowIsoString = now.toISOString();
     
-    console.log(`[블로그] 모든 글 조회 시작, 기준 시간: ${formatReadableDate(now)}`);
+    console.log(`[블로그] 모든 글 조회 시작, 기준 시간: ${formatReadableDate(now)}, ISO: ${nowIsoString}`);
     
     const { data, error } = await supabase
       .from("blog_posts")
@@ -32,7 +32,21 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
     }
 
     console.log(`[블로그] 총 ${data?.length || 0}개 글 조회 완료`);
-    return (data || []).map(adaptBlogPost);
+    
+    // 모든 포스트에 대해 태그 정보 조회
+    const postsWithTags = await Promise.all((data || []).map(async (post) => {
+      const adaptedPost = adaptBlogPost(post);
+      try {
+        const tags = await getTagsForBlogPost(post.id);
+        adaptedPost.tags = tags.map(tag => tag.name);
+      } catch (error) {
+        console.error(`[블로그] "${post.slug}" 글 태그 조회 오류:`, error);
+        adaptedPost.tags = [];
+      }
+      return adaptedPost;
+    }));
+    
+    return postsWithTags;
   } catch (error) {
     console.error("[블로그] 모든 글 조회 실패:", error);
     toast.error("블로그 포스트를 불러오는데 실패했습니다");
@@ -68,7 +82,7 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
     now.setMinutes(now.getMinutes() + TIME_BUFFER_MINUTES);
     const nowIsoString = now.toISOString();
     
-    console.log(`[블로그] ${category} 카테고리 글 조회 시작, 기준 시간: ${formatReadableDate(now)}`);
+    console.log(`[블로그] ${category} 카테고리 글 조회 시작, 기준 시간: ${formatReadableDate(now)}, ISO: ${nowIsoString}`);
     
     const { data, error } = await supabase
       .from("blog_posts")
@@ -83,7 +97,21 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
     }
 
     console.log(`[블로그] ${category} 카테고리 총 ${data?.length || 0}개 글 조회 완료`);
-    return (data || []).map(adaptBlogPost);
+    
+    // 모든 포스트에 대해 태그 정보 조회
+    const postsWithTags = await Promise.all((data || []).map(async (post) => {
+      const adaptedPost = adaptBlogPost(post);
+      try {
+        const tags = await getTagsForBlogPost(post.id);
+        adaptedPost.tags = tags.map(tag => tag.name);
+      } catch (error) {
+        console.error(`[블로그] "${post.slug}" 글 태그 조회 오류:`, error);
+        adaptedPost.tags = [];
+      }
+      return adaptedPost;
+    }));
+    
+    return postsWithTags;
   } catch (error) {
     console.error(`[블로그] ${category} 카테고리 글 조회 실패:`, error);
     toast.error("블로그 포스트를 불러오는데 실패했습니다");
@@ -120,9 +148,13 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     
     // 발행 시간 확인
     const publishedAt = new Date(postData.published_at);
+    const now = new Date();
     
-    // 예약 발행 글인지 확인 (미래 발행 예정)
-    if (isFutureDate(publishedAt, TIME_BUFFER_MINUTES)) {
+    // 현재 시간과 직접 비교 (버퍼 없음)
+    console.log(`[블로그] "${slug}" 슬러그 글 발행 시간: ${publishedAt.toISOString()}, 현재 시간: ${now.toISOString()}`);
+    
+    // 예약 발행 글인지 확인 (미래 발행 예정) - 버퍼 0분으로 비교
+    if (isFutureDate(publishedAt, 0)) {
       const timeUntil = getTimeUntilPublish(publishedAt);
       console.log(`[블로그] "${slug}" 슬러그 글은 아직 발행 예정 (${timeUntil})`);
       toast.warning(`이 글은 ${formatReadableDate(publishedAt)}에 발행될 예정입니다 (${timeUntil})`);

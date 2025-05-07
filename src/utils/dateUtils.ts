@@ -9,8 +9,11 @@ export const isFutureDate = (date: Date | string, bufferMinutes = 5): boolean =>
   const now = new Date();
   
   // 비교를 위해 버퍼 시간(분) 추가
-  now.setMinutes(now.getMinutes() + bufferMinutes);
+  if (bufferMinutes > 0) {
+    now.setMinutes(now.getMinutes() + bufferMinutes);
+  }
   
+  console.log(`[날짜비교] 비교날짜: ${compareDate.toISOString()}, 현재(버퍼포함): ${now.toISOString()}, 결과: ${compareDate > now}`);
   return compareDate > now;
 };
 

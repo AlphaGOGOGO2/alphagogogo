@@ -30,10 +30,12 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - React Router 네비게이션 사용
+  // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
+    // 현재 시간과 여유 시간 0분으로 미래 발행글인지 검사
+    // 미래 발행글은 아예 카드에 표시되지 않도록 서비스에서 조회하지 않음
     const publishDate = new Date(post.publishedAt);
-    const isScheduledPost = isFutureDate(publishDate);
+    const isScheduledPost = isFutureDate(publishDate, 0);
     
     if (isScheduledPost) {
       // 예약 발행 글인 경우 토스트 메시지로 안내
@@ -49,8 +51,13 @@ export function BlogCard({ post }: BlogCardProps) {
       duration: 2000,
     });
     
-    // React Router 네비게이션 사용
-    navigate(`/blog/${post.slug}`);
+    console.log(`[블로그] 카드 클릭: "${post.slug}" 글로 이동합니다.`);
+    
+    // React Router의 navigate 사용 - 직접 URL 사용
+    const targetUrl = `/blog/${post.slug}`;
+    
+    // 즉시 네비게이션
+    navigate(targetUrl);
   };
 
   return (
