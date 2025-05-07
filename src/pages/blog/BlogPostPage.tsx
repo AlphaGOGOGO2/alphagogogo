@@ -1,9 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { getBlogPostBySlug } from "@/services/blogService";
+import { getBlogPostBySlug } from "@/services/blogPostService";
 import { Loader2, Calendar, Clock, User, Pencil } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -22,16 +21,25 @@ export default function BlogPostPage() {
   
   const { data: post, isLoading, error } = useQuery({
     queryKey: ["blog-post", slug],
-    queryFn: () => getBlogPostBySlug(slug!),
+    queryFn: () => {
+      if (!slug) return null;
+      console.log(`[블로그페이지] "${slug}" 글 데이터 요청 시작`);
+      return getBlogPostBySlug(slug);
+    },
+    retry: 1, // 한 번만 재시도
     enabled: !!slug
   });
   
   useEffect(() => {
-    if (!isLoading && !post && error) {
-      console.error("Blog post not found:", error);
-      navigate("/blog");
+    if (!isLoading) {
+      if (!post) {
+        console.log(`[블로그페이지] "${slug}" 글을 찾을 수 없음. 오류:`, error);
+        // 글이 없을 때 리디렉션은 하지 않고 페이지 내에서 "글을 찾을 수 없습니다" 표시
+      } else {
+        console.log(`[블로그페이지] "${slug}" 글 로드 완료:`, post.title);
+      }
     }
-  }, [isLoading, post, error, navigate]);
+  }, [isLoading, post, error, navigate, slug]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -68,6 +76,15 @@ export default function BlogPostPage() {
         <SEO title="글을 찾을 수 없습니다" />
         <div className="text-center py-20">
           <h3 className="text-xl font-medium text-gray-700">요청하신 블로그 글을 찾을 수 없습니다</h3>
+          <p className="mt-4 text-gray-600">
+            해당 글이 존재하지 않거나 아직 발행되지 않은 글입니다.
+          </p>
+          <Button 
+            onClick={() => navigate('/blog')} 
+            className="mt-6 bg-purple-600 hover:bg-purple-700"
+          >
+            전체 글 목록으로 돌아가기
+          </Button>
         </div>
       </BlogLayout>
     );
