@@ -19,3 +19,8 @@ export * from "./blogMediaService";
 // Data adapters and utilities
 export * from "./blogAdapters";
 export * from "@/utils/blogUtils";
+
+// 추가 디버깅용 함수
+export const debugBlogService = (message: string) => {
+  console.log(`[Blog Service Debug] ${message}`);
+};

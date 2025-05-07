@@ -2,7 +2,7 @@
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
-import { getBlogPostsByCategory } from "@/services/blogService";
+import { getBlogPostsByCategory } from "@/services/blogPostService"; // 직접 import 경로 수정
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
@@ -15,6 +15,8 @@ export default function LatestAIUpdates() {
     staleTime: 10000, // 10초 동안 데이터 유지 (기존 60초에서 단축)
     refetchOnWindowFocus: true, // 화면 포커스시 새로고침 활성화
   });
+  
+  console.log("[LatestAIUpdates] 로딩 상태:", isLoading, "포스트 수:", posts?.length);
   
   return (
     <BlogLayout title="최신 AI소식">

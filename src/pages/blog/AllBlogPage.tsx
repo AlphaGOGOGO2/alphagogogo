@@ -3,7 +3,7 @@ import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
 import { useQuery } from "@tanstack/react-query";
-import { getAllBlogPosts } from "@/services/blogService";
+import { getAllBlogPosts } from "@/services/blogPostService"; // 직접 import 경로 수정
 import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,8 @@ export default function AllBlogPage() {
     staleTime: 10000, // 10초 동안 데이터 유지
     refetchOnWindowFocus: true // 화면 포커스시 새로고침
   });
+  
+  console.log("[AllBlogPage] 로딩 상태:", isLoading, "포스트 수:", posts?.length);
   
   const displayedPosts = posts.slice(0, visiblePosts);
   const hasMorePosts = visiblePosts < posts.length;
