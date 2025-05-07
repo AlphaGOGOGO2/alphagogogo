@@ -64,3 +64,35 @@ export const getTimeUntilPublish = (publishDate: Date | string): string => {
     return '정보 없음';
   }
 };
+
+// 두 날짜가 동일한지 비교 (ISO 문자열 처리 개선)
+export const isSameDate = (date1: Date | string, date2: Date | string): boolean => {
+  if (!date1 || !date2) return false;
+  
+  try {
+    const d1 = date1 instanceof Date ? date1 : new Date(date1);
+    const d2 = date2 instanceof Date ? date2 : new Date(date2);
+    
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) {
+      return false;
+    }
+    
+    return d1.getTime() === d2.getTime();
+  } catch {
+    return false;
+  }
+};
+
+// ISO 문자열을 Date 객체로 안전하게 변환
+export const safeParseDate = (dateStr: string | Date): Date | null => {
+  if (!dateStr) return null;
+  
+  if (dateStr instanceof Date) return dateStr;
+  
+  try {
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
+};

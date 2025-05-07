@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -12,19 +11,29 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [loadingTimeout, setLoadingTimeout] = useState(false);
   
-  // 간소화된 쿼리 구성
-  const { data: post, isLoading } = useQuery({
-    queryKey: ["blog-post", slug],
+  // 짧은 로딩 대기 시간 설정 (최대 1.5초만 로딩 표시)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoadingTimeout(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // 간소화된 쿼리 구성, 캐시 키에 현재 시간 추가하여 예약발행 글도 제대로 가져오도록 함
+  const { data: post, isLoading, isError } = useQuery({
+    queryKey: ["blog-post", slug, Date.now()], // 현재 시간 추가로 캐싱 제한
     queryFn: () => slug ? getBlogPostBySlug(slug) : null,
-    staleTime: 60000, // 1분 캐시
-    refetchOnWindowFocus: false
+    staleTime: 30000, // 30초 캐시
+    refetchOnWindowFocus: false,
+    retry: 1 // 재시도 횟수 제한
   });
   
   const handleEdit = () => {
@@ -37,7 +46,8 @@ export default function BlogPostPage() {
     }
   };
   
-  if (isLoading) {
+  // 로딩 중이지만 시간 초과 안됐을 때만 로딩 표시
+  if (isLoading && !loadingTimeout) {
     return (
       <BlogLayout title="블로그 글 로딩중...">
         <SEO title="블로그 글 로딩중..." />
@@ -51,7 +61,8 @@ export default function BlogPostPage() {
     );
   }
   
-  if (!post) {
+  // 로딩 시간이 초과되었지만 아직 데이터가 없거나 오류 발생 시
+  if (!post || isError) {
     return (
       <BlogLayout title="글을 찾을 수 없습니다">
         <SEO title="글을 찾을 수 없습니다" />
@@ -94,6 +105,7 @@ export default function BlogPostPage() {
               src={post.coverImage} 
               alt={post.title} 
               className="w-full h-full object-cover"
+              loading="eager" // 중요 이미지는 즉시 로딩
             />
           </div>
         )}
@@ -165,7 +177,7 @@ export default function BlogPostPage() {
                 table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
                 th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
                 td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
-                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" {...props} />,
+                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" loading="lazy" {...props} />,
               }}
             >
               {post.content}

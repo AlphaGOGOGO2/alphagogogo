@@ -7,10 +7,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", "최신 AI소식"],
+    queryKey: ["blog-posts", "최신 AI소식", Date.now()], // 현재 시간 추가로 캐싱 제한
     queryFn: () => getBlogPostsByCategory("최신 AI소식"),
-    staleTime: 60000, // 1분 동안 데이터 유지
+    staleTime: 30000, // 30초 동안 데이터 유지
     refetchOnWindowFocus: false,
+    retry: 1 // 재시도 횟수 제한
   });
   
   return (

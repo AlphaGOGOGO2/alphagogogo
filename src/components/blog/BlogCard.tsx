@@ -30,8 +30,14 @@ export function BlogCard({ post }: BlogCardProps) {
 
   // 블로그 카드 클릭 핸들러 - 단순화된 네비게이션 처리
   const handleCardClick = () => {
-    // 간단하게 페이지 이동 처리
-    navigate(`/blog/${post.slug}`);
+    // URL을 직접 설정하여 이동 (queryClient 의존성 제거)
+    const blogUrl = `/blog/${post.slug}`;
+    
+    // 간단한 로깅
+    console.log(`[BlogCard] 이동: ${blogUrl}, 제목: ${post.title}, 발행일: ${post.publishedAt}`);
+    
+    // 직접 페이지 이동
+    navigate(blogUrl);
   };
 
   return (
@@ -55,6 +61,7 @@ export function BlogCard({ post }: BlogCardProps) {
               src={cardImage} 
               alt={displayTitle} 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              loading="lazy" // 이미지 지연 로딩
             />
           </div>
         )}
@@ -94,6 +101,7 @@ export function BlogCard({ post }: BlogCardProps) {
                 src={authorAvatarUrl} 
                 alt={post.author.name} 
                 className="w-6 h-6 rounded-full mr-2 object-cover" 
+                loading="lazy"
               />
               <span>{post.author.name}</span>
             </div>
