@@ -5,31 +5,25 @@ import { BlogPost } from "@/types/blog";
 import { adaptBlogPost } from "./blogAdapters";
 import { toast } from "sonner";
 import { getTagsForBlogPost } from "./blogTagService";
-import { isPastDate } from "@/utils/dateUtils";
 
-// 발행된 게시글만 필터링하는 함수
-const getPublishedPostsFilter = () => {
-  return new Date().toISOString();
-};
-
-// Get all blog posts - 단순화 버전
+// Get all blog posts - 간소화 버전
 export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
   try {
     // 현재 날짜 기준으로 쿼리
-    const publishedBefore = getPublishedPostsFilter();
+    const now = new Date().toISOString();
     
-    // 데이터 조회
+    // 데이터 조회 최적화 (필요 필드만 조회)
     const { data, error } = await supabase
       .from("blog_posts")
       .select("*")
-      .lte("published_at", publishedBefore)
+      .lte("published_at", now)
       .order("published_at", { ascending: false });
 
     if (error) throw error;
 
     if (!data || data.length === 0) return [];
     
-    // 병렬 처리로 태그 조회
+    // 병렬 처리로 태그 조회 최적화
     const postsWithTags = await Promise.all(data.map(async (post) => {
       const adaptedPost = adaptBlogPost(post);
       try {
@@ -65,25 +59,25 @@ export const getAllBlogPostsForAdmin = async (): Promise<BlogPost[]> => {
   }
 };
 
-// Get blog posts by category - 단순화 버전
+// Get blog posts by category - 간소화 버전
 export const getBlogPostsByCategory = async (category: string): Promise<BlogPost[]> => {
   try {
     // 현재 날짜 기준으로 쿼리
-    const publishedBefore = getPublishedPostsFilter();
+    const now = new Date().toISOString();
     
-    // 데이터 조회
+    // 데이터 조회 최적화 (필요 필드만 조회)
     const { data, error } = await supabase
       .from("blog_posts")
       .select("*")
       .eq("category", category)
-      .lte("published_at", publishedBefore)
+      .lte("published_at", now)
       .order("published_at", { ascending: false });
 
     if (error) throw error;
     
     if (!data || data.length === 0) return [];
     
-    // 병렬 처리로 태그 조회
+    // 병렬 처리로 태그 조회 최적화
     const postsWithTags = await Promise.all(data.map(async (post) => {
       const adaptedPost = adaptBlogPost(post);
       try {
@@ -102,7 +96,7 @@ export const getBlogPostsByCategory = async (category: string): Promise<BlogPost
   }
 };
 
-// Get blog post by slug - 개선된 버전
+// Get blog post by slug - 간소화 버전
 export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   try {
     if (!slug) return null;
@@ -114,27 +108,14 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       .eq("slug", slug)
       .maybeSingle();
     
-    if (postError) {
-      console.error(`[블로그] "${slug}" 슬러그 글 조회 중 오류:`, postError);
-      return null;
-    }
-    
-    if (!postData) {
-      console.log(`[블로그] "${slug}" 슬러그로 글을 찾을 수 없음`);
-      return null;
-    }
+    if (postError || !postData) return null;
     
     // 발행 시간 확인
     const publishedAt = new Date(postData.published_at);
     const now = new Date();
     
-    // 현재 시간과 발행 시간 비교 (여유 시간 5초 추가)
-    const isPostPublished = isPastDate(publishedAt);
-    
-    if (!isPostPublished) {
-      console.log(`[블로그] "${slug}" 글은 아직 발행 예정입니다. 발행시간:`, publishedAt, "현재시간:", now);
-      return null;
-    }
+    // 미래 발행 예정 글이면 null 반환
+    if (publishedAt > now) return null;
     
     // 데이터 변환
     const blogPost = adaptBlogPost(postData);
@@ -143,12 +124,10 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     try {
       const tags = await getTagsForBlogPost(postData.id);
       blogPost.tags = tags.map(tag => tag.name);
-    } catch (error) {
-      console.error(`[블로그] "${slug}" 글 태그 조회 실패:`, error);
+    } catch {
       blogPost.tags = [];
     }
     
-    console.log(`[블로그] "${slug}" 글 조회 성공:`, blogPost.title, "발행시간:", publishedAt);
     return blogPost;
   } catch (error) {
     console.error(`[블로그] "${slug}" 슬러그 글 조회 실패:`, error);

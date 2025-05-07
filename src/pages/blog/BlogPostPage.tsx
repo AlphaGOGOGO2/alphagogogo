@@ -12,33 +12,19 @@ import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
 import { generateExcerpt } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
   
-  // 타임스탬프 추가로 캐시 갱신 최적화
-  const timestamp = new Date().getTime();
-  
-  useEffect(() => {
-    // 로딩 상태가 너무 빨리 사라지는 것을 방지하기 위한 최소 시간 설정
-    const timer = setTimeout(() => {
-      setLoadingTimeout(true);
-    }, 800);
-    
-    return () => clearTimeout(timer);
-  }, []);
-  
-  // 블로그 포스트 데이터 가져오기 - 캐시 키에 타임스탬프 추가
-  const { data: post, isLoading, isError } = useQuery({
-    queryKey: ["blog-post", slug, timestamp],
+  // 간소화된 쿼리 구성
+  const { data: post, isLoading } = useQuery({
+    queryKey: ["blog-post", slug],
     queryFn: () => slug ? getBlogPostBySlug(slug) : null,
-    staleTime: 0, // 캐시 사용하지 않음
-    refetchOnWindowFocus: false,
-    retry: 1
+    staleTime: 60000, // 1분 캐시
+    refetchOnWindowFocus: false
   });
   
   const handleEdit = () => {
@@ -51,21 +37,7 @@ export default function BlogPostPage() {
     }
   };
   
-  // 디버깅을 위한 로그
-  useEffect(() => {
-    if (slug) {
-      console.log(`[BlogPostPage] 슬러그 "${slug}" 로딩 중, 타임스탬프: ${timestamp}`);
-    }
-    if (post) {
-      console.log(`[BlogPostPage] 포스트 로드 성공: "${post.title}", 발행일: ${post.publishedAt}`);
-    }
-    if (isError) {
-      console.error(`[BlogPostPage] 에러 발생: 슬러그 "${slug}" 로딩 실패`);
-    }
-  }, [slug, post, isError, timestamp]);
-  
-  // 로딩 중이고 타임아웃이 안됐을 때만 로딩 UI 표시
-  if (isLoading && !loadingTimeout) {
+  if (isLoading) {
     return (
       <BlogLayout title="블로그 글 로딩중...">
         <SEO title="블로그 글 로딩중..." />
@@ -79,8 +51,7 @@ export default function BlogPostPage() {
     );
   }
   
-  // 포스트가 없거나 에러 발생 시
-  if (!post || isError) {
+  if (!post) {
     return (
       <BlogLayout title="글을 찾을 수 없습니다">
         <SEO title="글을 찾을 수 없습니다" />
@@ -123,7 +94,6 @@ export default function BlogPostPage() {
               src={post.coverImage} 
               alt={post.title} 
               className="w-full h-full object-cover"
-              loading="eager" // 중요 이미지는 즉시 로딩
             />
           </div>
         )}
@@ -195,7 +165,7 @@ export default function BlogPostPage() {
                 table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
                 th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
                 td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
-                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" loading="lazy" {...props} />,
+                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" {...props} />,
               }}
             >
               {post.content}

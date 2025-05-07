@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
@@ -12,14 +11,10 @@ const POSTS_PER_PAGE = 9;
 
 export default function AllBlogPage() {
   const [visiblePosts, setVisiblePosts] = useState(POSTS_PER_PAGE);
-  // 타임스탬프로 캐시 갱신 보장
-  const timestamp = new Date().getTime();
   
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", timestamp],
-    queryFn: getAllBlogPosts,
-    staleTime: 0, // 캐시 사용 안함
-    refetchOnWindowFocus: false
+    queryKey: ["blog-posts"],
+    queryFn: getAllBlogPosts
   });
   
   const displayedPosts = posts.slice(0, visiblePosts);

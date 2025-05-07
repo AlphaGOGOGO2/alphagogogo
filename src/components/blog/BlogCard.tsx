@@ -28,15 +28,10 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
   const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
 
-  // 블로그 카드 클릭 핸들러 - 직접 URL 이동으로 단순화
+  // 블로그 카드 클릭 핸들러 - 단순화된 네비게이션 처리
   const handleCardClick = () => {
-    const blogUrl = `/blog/${post.slug}`;
-    
-    // 디버깅 정보 기록
-    console.log(`[BlogCard] 이동: ${blogUrl}, 제목: ${displayTitle}, 발행일: ${post.publishedAt}`);
-    
-    // 단순화된 직접 URL 이동
-    window.location.href = blogUrl;
+    // 간단하게 페이지 이동 처리
+    navigate(`/blog/${post.slug}`);
   };
 
   return (
@@ -60,7 +55,6 @@ export function BlogCard({ post }: BlogCardProps) {
               src={cardImage} 
               alt={displayTitle} 
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              loading="lazy" // 이미지 지연 로딩
             />
           </div>
         )}
@@ -100,7 +94,6 @@ export function BlogCard({ post }: BlogCardProps) {
                 src={authorAvatarUrl} 
                 alt={post.author.name} 
                 className="w-6 h-6 rounded-full mr-2 object-cover" 
-                loading="lazy"
               />
               <span>{post.author.name}</span>
             </div>

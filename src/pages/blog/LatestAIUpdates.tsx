@@ -6,15 +6,11 @@ import { getBlogPostsByCategory } from "@/services/blogService";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function LatestAIUpdates() {
-  // 쿼리 키에 타임스탬프 추가로 캐시를 매번 새로 갱신하도록 설정
-  const timestamp = new Date().getTime();
-  
   const { data: posts = [], isLoading } = useQuery({
-    queryKey: ["blog-posts", "최신 AI소식", timestamp],
+    queryKey: ["blog-posts", "최신 AI소식"],
     queryFn: () => getBlogPostsByCategory("최신 AI소식"),
-    staleTime: 0, // 캐시 지속시간 0으로 설정하여 항상 새로 불러오도록 함
+    staleTime: 60000, // 1분 동안 데이터 유지
     refetchOnWindowFocus: false,
-    retry: 1
   });
   
   return (
