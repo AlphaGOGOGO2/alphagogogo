@@ -24,18 +24,18 @@ export default function SitemapPage() {
         
         // 기본 URL들에 대한 sitemap 항목 생성
         const staticUrls = [
-          { loc: `${SITE_DOMAIN}/`, priority: '1.0', changefreq: 'daily' },
-          { loc: `${SITE_DOMAIN}/blog`, priority: '0.9', changefreq: 'daily' },
-          { loc: `${SITE_DOMAIN}/blog/latest-updates`, priority: '0.8', changefreq: 'daily' },
-          { loc: `${SITE_DOMAIN}/blog/trending`, priority: '0.8', changefreq: 'weekly' },
-          { loc: `${SITE_DOMAIN}/blog/lifestyle`, priority: '0.7', changefreq: 'weekly' },
-          { loc: `${SITE_DOMAIN}/gpts`, priority: '0.7', changefreq: 'weekly' },
-          { loc: `${SITE_DOMAIN}/services`, priority: '0.7', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/community`, priority: '0.6', changefreq: 'daily' },
-          { loc: `${SITE_DOMAIN}/services/url-shortener`, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/services/youtube-transcript`, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/services/blog-button-creator`, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/rss.xml`, priority: '0.5', changefreq: 'daily' }
+          { loc: `${SITE_DOMAIN}/`, lastmod: today, priority: '1.0', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog`, lastmod: today, priority: '0.9', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog/latest-updates`, lastmod: today, priority: '0.8', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog/trending`, lastmod: today, priority: '0.8', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/blog/lifestyle`, lastmod: today, priority: '0.7', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/gpts`, lastmod: today, priority: '0.7', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/services`, lastmod: today, priority: '0.7', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/community`, lastmod: today, priority: '0.6', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/services/url-shortener`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/services/youtube-transcript`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/services/blog-button-creator`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/rss.xml`, lastmod: today, priority: '0.5', changefreq: 'daily' }
         ];
         
         // 모든 블로그 포스트에 대한 sitemap 항목 생성
