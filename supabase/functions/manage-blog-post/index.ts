@@ -34,6 +34,20 @@ serve(async (req) => {
     
     // 요청 본문 파싱
     const { action, postData, postId } = await req.json();
+
+    // 기본 데이터 검증
+    if (action === "create" && (!postData?.title || !postData?.content)) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          message: "필수 필드 누락: 제목과 내용이 필요합니다" 
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
     
     // Supabase 클라이언트 생성 (서비스 롤을 사용하여 RLS 우회)
     const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
@@ -48,8 +62,14 @@ serve(async (req) => {
     let result;
     
     if (action === "create") {
+      console.log("새 포스트 생성 시작, 제목:", postData.title);
       // 새 포스트 생성
       const slug = generateSlug(postData.title);
+      console.log("생성된 슬러그:", slug);
+      
+      if (!slug || slug === "") {
+        throw new Error("슬러그 생성 실패: 유효한 슬러그를 생성할 수 없습니다");
+      }
       
       const newPost = {
         title: postData.title,
@@ -63,6 +83,12 @@ serve(async (req) => {
         author_avatar: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png",
         published_at: postData.published_at || new Date().toISOString()
       };
+
+      console.log("DB 삽입 시작, 데이터:", {
+        title: newPost.title,
+        slug: newPost.slug,
+        category: newPost.category
+      });
       
       const { data, error } = await supabase
         .from("blog_posts")
@@ -71,8 +97,11 @@ serve(async (req) => {
         .single();
       
       if (error) {
+        console.error("DB 삽입 중 오류:", error);
         throw error;
       }
+      
+      console.log("DB 삽입 성공, ID:", data.id);
       
       // 태그 처리
       if (postData.tags && postData.tags.length > 0) {
@@ -82,6 +111,7 @@ serve(async (req) => {
       result = data;
       
     } else if (action === "update") {
+      console.log("기존 포스트 업데이트 시작, ID:", postId);
       // 기존 포스트 업데이트
       if (!postId) {
         throw new Error("포스트 ID가 필요합니다");
@@ -101,6 +131,11 @@ serve(async (req) => {
       if (postData.published_at) {
         updateData.published_at = postData.published_at;
       }
+
+      console.log("포스트 업데이트 데이터:", {
+        title: updateData.title,
+        category: updateData.category
+      });
       
       const { data, error } = await supabase
         .from("blog_posts")
@@ -110,8 +145,11 @@ serve(async (req) => {
         .single();
         
       if (error) {
+        console.error("포스트 업데이트 중 오류:", error);
         throw error;
       }
+
+      console.log("포스트 업데이트 성공, ID:", data.id);
       
       // 태그 처리 - 기존 태그 삭제 후 새로운 태그 추가
       if (postData.tags) {
@@ -206,7 +244,7 @@ function calculateReadingTime(content) {
 
 // 발췌문 생성 함수
 function generateExcerpt(content) {
-  if (!content) return null;
+  if (!content) return "";
   let plainText = content.replace(/<[^>]*>/g, '');
   return plainText.length > 300 ? plainText.substring(0, 297) + '...' : plainText;
 }
@@ -219,13 +257,23 @@ function extractFirstImageUrl(content) {
   return match ? match[1] : null;
 }
 
-// 슬러그 생성 함수
+// 슬러그 생성 함수 개선 - 비어있는 슬러그 방지
 function generateSlug(title) {
-  if (!title) return '';
-  return title
-    .toLowerCase()
+  if (!title || title.trim() === '') {
+    return `post-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
+  }
+
+  // 한글 및 특수문자에 대한 처리 강화
+  const processed = title
     .trim()
-    .replace(/[^\w\s-]/g, '')
-    .replace(/[\s_-]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^\wㄱ-ㅎㅏ-ㅣ가-힣\-]/g, '') // 한글, 영문, 숫자, 하이픈만 유지
+    .replace(/-+/g, '-'); // 연속된 하이픈 정리
+  
+  // 처리 후 결과가 비었을 경우 기본값 지정
+  const base = processed || `post-${Date.now()}`;
+  
+  // 고유성 보장을 위한 타임스탬프와 랜덤값 추가
+  return `${base}-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6)}`;
 }

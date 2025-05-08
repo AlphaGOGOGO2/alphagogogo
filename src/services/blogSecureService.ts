@@ -8,6 +8,12 @@ export const secureCreateBlogPost = async (
   post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] | string }
 ): Promise<SupabaseBlogPost | null> => {
   try {
+    // 필수 필드 검증
+    if (!post.title || !post.content || !post.category) {
+      toast.error("제목, 내용, 카테고리는 필수입력 항목입니다");
+      return null;
+    }
+
     // 관리자 토큰 확인
     const token = sessionStorage.getItem("blogAuthToken");
     if (!token) {
@@ -48,7 +54,16 @@ export const secureCreateBlogPost = async (
 
     if (error) {
       console.error("Edge Function 호출 오류:", error);
-      toast.error(`블로그 포스트 작성에 실패했습니다: ${error.message || '서버 오류'}`);
+      
+      // 오류 유형에 따라 다양한 메시지 표시
+      if (error.message && error.message.includes("key value violates unique constraint")) {
+        toast.error(`슬러그 생성 오류: 중복된 슬러그가 발생했습니다. 제목을 조금 변경해보세요.`);
+      } else if (error.message && error.message.includes("network")) {
+        toast.error(`네트워크 오류: 인터넷 연결을 확인해주세요.`);
+      } else {
+        toast.error(`블로그 포스트 작성에 실패했습니다: ${error.message || '서버 오류'}`);
+      }
+      
       return null;
     }
 
@@ -74,7 +89,20 @@ export const secureCreateBlogPost = async (
     return data.data;
   } catch (error) {
     console.error("블로그 포스트 생성 중 예외 발생:", error);
-    toast.error("블로그 포스트 작성에 실패했습니다");
+    
+    // 더 세분화된 오류 메시지
+    let errorMessage = "블로그 포스트 작성에 실패했습니다";
+    if (error.message) {
+      if (error.message.includes("duplicate key")) {
+        errorMessage += ": 중복된 포스트가 존재합니다";
+      } else if (error.message.includes("network")) {
+        errorMessage += ": 네트워크 연결을 확인해주세요";
+      } else {
+        errorMessage += `: ${error.message}`;
+      }
+    }
+    
+    toast.error(errorMessage);
     return null;
   }
 };
@@ -85,6 +113,12 @@ export const secureUpdateBlogPost = async (
   post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] | string }
 ): Promise<SupabaseBlogPost | null> => {
   try {
+    // 필수 필드 검증
+    if (!post.title || !post.content || !post.category) {
+      toast.error("제목, 내용, 카테고리는 필수입력 항목입니다");
+      return null;
+    }
+    
     // 관리자 토큰 확인
     const token = sessionStorage.getItem("blogAuthToken");
     if (!token) {
@@ -127,7 +161,14 @@ export const secureUpdateBlogPost = async (
 
     if (error) {
       console.error("Edge Function 호출 오류:", error);
-      toast.error(`블로그 포스트 수정에 실패했습니다: ${error.message || '서버 오류'}`);
+      
+      // 오류 유형에 따라 다양한 메시지 표시
+      if (error.message && error.message.includes("network")) {
+        toast.error(`네트워크 오류: 인터넷 연결을 확인해주세요.`);
+      } else {
+        toast.error(`블로그 포스트 수정에 실패했습니다: ${error.message || '서버 오류'}`);
+      }
+      
       return null;
     }
 
@@ -153,7 +194,18 @@ export const secureUpdateBlogPost = async (
     return data.data;
   } catch (error) {
     console.error("블로그 포스트 수정 중 예외 발생:", error);
-    toast.error("블로그 포스트 수정에 실패했습니다");
+    
+    // 더 세분화된 오류 메시지
+    let errorMessage = "블로그 포스트 수정에 실패했습니다";
+    if (error.message) {
+      if (error.message.includes("network")) {
+        errorMessage += ": 네트워크 연결을 확인해주세요";
+      } else {
+        errorMessage += `: ${error.message}`;
+      }
+    }
+    
+    toast.error(errorMessage);
     return null;
   }
 };
