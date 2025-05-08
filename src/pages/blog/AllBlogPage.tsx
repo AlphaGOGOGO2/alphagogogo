@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
@@ -7,6 +8,8 @@ import { Loader2 } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 
+// 사이트 기본 도메인
+const SITE_DOMAIN = 'https://alphagogogo.com';
 const POSTS_PER_PAGE = 9;
 
 export default function AllBlogPage() {
@@ -30,28 +33,55 @@ export default function AllBlogPage() {
     setVisiblePosts(prev => prev + POSTS_PER_PAGE);
   };
   
+  // 페이지에 대한 구조화 데이터 준비
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "블로그",
     "description": "알파블로그의 모든 글 모음입니다. 인공지능, 기술, 라이프스타일에 관한 다양한 콘텐츠를 확인하세요.",
-    "url": "https://alphablog.app/blog",
+    "url": `${SITE_DOMAIN}/blog`,
     "isPartOf": {
       "@type": "WebSite",
-      "name": "알파블로그",
-      "url": "https://alphablog.app"
+      "name": "알파고고고",
+      "url": SITE_DOMAIN
     },
     "keywords": "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작"
+  };
+
+  // breadcrumb 데이터 추가
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "홈",
+        "item": SITE_DOMAIN
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "블로그",
+        "item": `${SITE_DOMAIN}/blog`
+      }
+    ]
+  };
+  
+  // 구조화 데이터 결합
+  const combinedSchema = {
+    "@context": "https://schema.org",
+    "@graph": [structuredData, breadcrumbSchema]
   };
   
   return (
     <BlogLayout title="블로그">
       <SEO 
-        title="블로그 - 알파블로그"
-        description="알파블로그의 모든 글 모음입니다. 인공지능, 기술, 라이프스타일에 관한 다양한 콘텐츠를 확인하세요."
-        canonicalUrl="https://alphablog.app/blog"
-        structuredData={structuredData}
-        keywords="알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작"
+        title="블로그 - 알파고고고"
+        description="알파고고고의 모든 글 모음입니다. 인공지능, 기술, 라이프스타일에 관한 다양한 콘텐츠를 확인하세요."
+        canonicalUrl={`${SITE_DOMAIN}/blog`}
+        structuredData={combinedSchema}
+        keywords="알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼"
       />
       
       {isLoading ? (

@@ -9,13 +9,16 @@ Disallow: /admin/
 Disallow: /private/
 Disallow: /*?*
 
-# Prevent crawling of unnecessary parameters
+# 검색엔진이 유용하지 않은 파라미터 페이지를 크롤링하지 않도록 설정
 Disallow: /*?*utm_source=
 Disallow: /*?*utm_medium=
 Disallow: /*?*utm_campaign=
 Disallow: /*?*utm_term=
 Disallow: /*?*utm_content=
 
-# Sitemap and RSS location
+# 다이나믹 sitemap과 RSS 위치
 Sitemap: https://alphagogogo.com/sitemap.xml
+Sitemap: https://alphagogogo.com/api/sitemap
 Sitemap: https://alphagogogo.com/rss.xml
+Sitemap: https://alphagogogo.com/api/rss
+

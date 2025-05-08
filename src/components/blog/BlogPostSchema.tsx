@@ -7,21 +7,31 @@ interface BlogPostSchemaProps {
 }
 
 export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
-  // Use full absolute URL for structured data
-  const fullUrl = url.startsWith('http') ? url : `https://alphagogogo.com${url.startsWith('/') ? '' : '/'}${url}`;
+  // 공식 도메인 설정
+  const SITE_DOMAIN = 'https://alphagogogo.com';
   
-  // Create a keywords array from tags if available, or use default keywords
+  // 전체 URL 생성 - 항상 일관된 도메인 사용
+  const fullUrl = url.startsWith('http') 
+    ? url 
+    : `${SITE_DOMAIN}${url.startsWith('/') ? '' : '/'}${url}`;
+  
+  // 포스트 URL 확인 - slug 또는 id 기반 URL 정규화
+  const canonicalUrl = post.slug 
+    ? `${SITE_DOMAIN}/blog/${post.slug}` 
+    : `${SITE_DOMAIN}/blog/post/${post.id}`;
+  
+  // 태그에서 키워드 배열 생성 또는 기본 키워드 사용
   const keywordsArray = post.tags && post.tags.length > 0 
     ? [...post.tags, "알파고고고", "알파고", "알파GOGOGO", "블로그", "AI", "인공지능"] 
     : ["알파고고고", "알파고", "알파GOGOGO", "유튜브 알파GOGOGO", "유튜브 알파고고고", "본질을 찾아서", "블로그", "블로그 자동화", "알파블로그", "블로그 GPTS", "챗GPT", "블로그 AI", "블로그 GPT"];
   
-  // Format dates correctly for schema
+  // 날짜 형식 정확히 지정
   const publishDate = new Date(post.publishedAt).toISOString();
   const modifiedDate = post.updatedAt 
     ? new Date(post.updatedAt).toISOString() 
     : publishDate;
   
-  // Create the structured data object
+  // 구조화 데이터 객체 생성
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -30,7 +40,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "author": {
       "@type": "Person",
       "name": post.author.name,
-      "url": "https://alphagogogo.com/author/" + encodeURIComponent(post.author.name.toLowerCase().replace(/\s+/g, '-'))
+      "url": `${SITE_DOMAIN}/author/${encodeURIComponent(post.author.name.toLowerCase().replace(/\s+/g, '-'))}`
     },
     "publisher": {
       "@type": "Organization",
@@ -46,18 +56,18 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "dateModified": modifiedDate,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": fullUrl
+      "@id": canonicalUrl
     },
     "keywords": keywordsArray.join(","),
-    "inLanguage": "ko-KR"
+    "inLanguage": "ko-KR",
+    "url": canonicalUrl
   };
 
-  // Add image if available, or use default OG image
+  // 이미지 추가 - 포스트 커버 이미지 또는 기본 OG 이미지 사용
   if (post.coverImage) {
     structuredData["image"] = {
       "@type": "ImageObject",
       "url": post.coverImage,
-      // Assume standard dimensions if actual dimensions are not available
       "width": 1200,
       "height": 630
     };
@@ -70,21 +80,22 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     };
   }
 
-  // Extra validation to ensure JSON is properly formed
+  // JSON 유효성 검사 및 변환
   try {
-    // Convert to string - IMPORTANT: Use replacer function to handle any circular references
+    // 문자열로 변환 - 순환 참조 처리를 위해 replacer 함수 사용
     const jsonString = JSON.stringify(structuredData, (key, value) => {
-      // Check for special characters in string values that might break JSON
+      // 문자열 값의 특수 문자 확인 및 처리
       if (typeof value === 'string') {
-        // Replace any unescaped quotes or control characters that might break JSON
+        // JSON을 손상시킬 수 있는 이스케이프되지 않은 따옴표나 제어 문자 대체
         return value.replace(/\\(?!["\\/bfnrt])/g, '\\\\');
       }
       return value;
-    });
+    }, 2); // 포맷팅을 위해 들여쓰기 2 사용
     
-    // This will throw if JSON is invalid
+    // 유효성 검증
     JSON.parse(jsonString);
     
+    // 구조화 데이터를 script 태그로 반환
     return (
       <script
         type="application/ld+json"
@@ -92,8 +103,8 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       />
     );
   } catch (error) {
-    console.error("Invalid schema JSON:", error);
-    // Return empty fragment if invalid JSON to prevent rendering errors
+    console.error("구조화 데이터 JSON 오류:", error);
+    // 오류 시 빈 프래그먼트 반환하여 렌더링 오류 방지
     return <></>;
   }
 }

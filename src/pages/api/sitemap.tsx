@@ -1,0 +1,96 @@
+
+import { useEffect, useState } from 'react';
+import { getAllBlogPosts, getBlogPostsByCategory } from '@/services/blogPostService';
+import { formatDate } from '@/lib/utils';
+import { BlogPost } from '@/types/blog';
+
+// 도메인 설정 - 프로덕션에서는 이 도메인을 사용합니다
+const SITE_DOMAIN = 'https://alphagogogo.com';
+
+export default function SitemapPage() {
+  const [xml, setXml] = useState<string>('');
+
+  useEffect(() => {
+    const generateSitemap = async () => {
+      try {
+        // 모든 블로그 포스트 가져오기
+        const allPosts = await getAllBlogPosts();
+        const aiPosts = await getBlogPostsByCategory("최신 AI소식");
+        const trendingPosts = await getBlogPostsByCategory("화제의 이슈");
+        const lifestylePosts = await getBlogPostsByCategory("라이프스타일");
+        
+        // 현재 날짜 포맷팅
+        const today = new Date().toISOString().split('T')[0];
+        
+        // 기본 URL들에 대한 sitemap 항목 생성
+        const staticUrls = [
+          { loc: `${SITE_DOMAIN}/`, priority: '1.0', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog`, priority: '0.9', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog/latest-updates`, priority: '0.8', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/blog/trending`, priority: '0.8', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/blog/lifestyle`, priority: '0.7', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/gpts`, priority: '0.7', changefreq: 'weekly' },
+          { loc: `${SITE_DOMAIN}/services`, priority: '0.7', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/community`, priority: '0.6', changefreq: 'daily' },
+          { loc: `${SITE_DOMAIN}/services/url-shortener`, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/services/youtube-transcript`, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/services/blog-button-creator`, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/rss.xml`, priority: '0.5', changefreq: 'daily' }
+        ];
+        
+        // 모든 블로그 포스트에 대한 sitemap 항목 생성
+        const postUrls = allPosts.map(post => {
+          const url = post.slug 
+            ? `${SITE_DOMAIN}/blog/${post.slug}` 
+            : `${SITE_DOMAIN}/blog/post/${post.id}`;
+          
+          return {
+            loc: url,
+            lastmod: (post.updatedAt || post.publishedAt).split('T')[0],
+            priority: '0.7',
+            changefreq: 'weekly'
+          };
+        });
+        
+        // 정적 URL과 포스트 URL 결합
+        const urlItems = [...staticUrls, ...postUrls];
+        
+        // XML 생성
+        let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlItems.map(item => `  <url>
+    <loc>${item.loc}</loc>
+    <lastmod>${item.lastmod || today}</lastmod>
+    <changefreq>${item.changefreq}</changefreq>
+    <priority>${item.priority}</priority>
+  </url>`).join('\n')}
+</urlset>`;
+        
+        setXml(sitemapXml);
+      } catch (error) {
+        console.error("Sitemap 생성 중 오류 발생:", error);
+        setXml(`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 오류로 인해 완전한 sitemap을 생성하지 못했습니다 -->
+</urlset>`);
+      }
+    };
+    
+    generateSitemap();
+  }, []);
+
+  // XML 컨텐츠 타입으로 반환
+  return (
+    <pre style={{ display: 'none' }}>
+      {xml}
+    </pre>
+  );
+}
+
+// 서버로 직접 전송될 때 올바른 HTTP 헤더 추가를 위한 getServerSideProps
+export async function getServerSideProps({ res }: { res: any }) {
+  if (res) {
+    res.setHeader('Content-Type', 'application/xml');
+  }
+  return { props: {} };
+}

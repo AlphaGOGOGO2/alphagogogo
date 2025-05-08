@@ -37,8 +37,11 @@
   ExpiresByType application/pdf "access plus 1 month"
   ExpiresByType application/x-shockwave-flash "access plus 1 month"
   
-  # RSS Feed
+  # RSS Feed - 짧게 설정하여 더 자주 업데이트되도록 함
   ExpiresByType application/rss+xml "access plus 1 hour"
+  
+  # 사이트맵 - 짧게 설정하여 검색엔진이 최신 정보를 얻도록 함
+  ExpiresByType application/xml "access plus 1 hour"
 </IfModule>
 
 # Send correct headers
@@ -49,6 +52,11 @@
   
   <FilesMatch "\.(xml|txt|rss)$">
     Header set Cache-Control "max-age=3600, public"
+  </FilesMatch>
+  
+  # 동적 sitemap과 RSS 피드에 대한 캐시 제어 설정
+  <FilesMatch "(sitemap\.xml|rss\.xml|api/sitemap|api/rss)$">
+    Header set Cache-Control "max-age=1800, public"
   </FilesMatch>
   
   # Secure cookie settings
@@ -72,8 +80,15 @@
   Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google https://tpc.googlesyndication.com https://*.adtrafficquality.google; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://*.adtrafficquality.google; img-src 'self' data: https: http:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://*.adtrafficquality.google https://api.ipify.org;"
 </IfModule>
 
-# 301 Redirect from non-www to www
+# 301 Redirect from non-www to www 및 도메인 통합
+# primaryDomain=alphagogogo.com
 RewriteEngine On
+
+# alphablog.app에서 alphagogogo.com으로 리다이렉트
+RewriteCond %{HTTP_HOST} ^(www\.)?alphablog\.app$ [NC]
+RewriteRule ^(.*)$ https://alphagogogo.com/$1 [L,R=301]
+
+# non-www에서 www로 리다이렉트
 RewriteCond %{HTTP_HOST} ^alphagogogo.com [NC]
 RewriteRule ^(.*)$ https://www.alphagogogo.com/$1 [L,R=301]
 
@@ -89,11 +104,34 @@ ErrorDocument 404 /
 RewriteCond %{HTTPS} off
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-# Set content type for RSS feed
+# XML 파일에 대한 Content-Type 설정
 <FilesMatch "\.xml$">
+  ForceType application/xml
+  Header set Content-Type application/xml
+</FilesMatch>
+
+# RSS 파일에 대한 Content-Type 설정
+<FilesMatch "(rss\.xml|api/rss)$">
   ForceType application/rss+xml
   Header set Content-Type application/rss+xml
 </FilesMatch>
+
+# Sitemap 파일에 대한 Content-Type 설정
+<FilesMatch "(sitemap\.xml|api/sitemap)$">
+  ForceType application/xml
+  Header set Content-Type application/xml
+</FilesMatch>
+
+# SPA 라우팅을 위한 설정
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_URI} !^/api
+  RewriteRule . /index.html [L]
+</IfModule>
 
 # Block access to hidden files and directories
 <IfModule mod_rewrite.c>
