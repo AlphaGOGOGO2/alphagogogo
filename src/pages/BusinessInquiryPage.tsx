@@ -1,8 +1,7 @@
-
 import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
-import { Mail, Handshake, Megaphone, Code, ExternalLink, FileText, Users, Globe, PenTool } from "lucide-react";
+import { Mail, Handshake, Megaphone, Code, ExternalLink, FileText, Users, Globe, PenTool, Youtube, Video, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/SEO";
 import { cn } from "@/lib/utils";
@@ -88,15 +87,15 @@ export default function BusinessInquiryPage() {
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-700 to-purple-500 mt-2.5"></div>
                       <div>
-                        <h4 className="font-medium text-gray-800 mb-1">공동 블로그 포스팅</h4>
-                        <p className="text-gray-600 text-sm">전문성을 결합한 심층적인 콘텐츠 제작과 배포</p>
+                        <h4 className="font-medium text-gray-800 mb-1">유튜브 플랫폼 제안</h4>
+                        <p className="text-gray-600 text-sm">영상 콘텐츠 협업을 통한 시각적 브랜딩 및 영향력 확대</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-700 to-purple-500 mt-2.5"></div>
                       <div>
-                        <h4 className="font-medium text-gray-800 mb-1">전문가 인터뷰 및 기고문</h4>
-                        <p className="text-gray-600 text-sm">업계 전문가의 인사이트를 담은 고급 콘텐츠 제작</p>
+                        <h4 className="font-medium text-gray-800 mb-1">콘텐츠 마케팅 전략 협업</h4>
+                        <p className="text-gray-600 text-sm">효과적인 콘텐츠 마케팅을 위한 전략적 파트너십</p>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
@@ -320,4 +319,3 @@ export default function BusinessInquiryPage() {
     </>
   );
 }
-
