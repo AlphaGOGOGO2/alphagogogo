@@ -25,7 +25,7 @@ export default function BusinessInquiryPage() {
               비즈니스 문의
             </h1>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              알파블로그와 함께 성장할 수 있는 파트너십과 협업 기회를 찾고 계신가요? 
+              알파블로그와 함께 성장할 수 있는 파트너십과 협업 기회를 찾고 계신가요?<br /> 
               아래 제안 분야를 확인하시고 이메일로 문의해 주시면 빠른 시일 내에 답변 드리겠습니다.
             </p>
           </div>
@@ -107,15 +107,6 @@ export default function BusinessInquiryPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-6 text-right">
-                    <Button 
-                      onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[콘텐츠 제휴 문의]'} 
-                      variant="outline" 
-                      className="border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 transition-all"
-                    >
-                      제휴 문의하기
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -162,15 +153,6 @@ export default function BusinessInquiryPage() {
                         <p className="text-gray-600 text-sm">온라인 이벤트를 통한 브랜드 인지도 및 신뢰도 향상</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-6 text-right">
-                    <Button 
-                      onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[광고 및 스폰서십 문의]'} 
-                      variant="outline" 
-                      className="border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 transition-all"
-                    >
-                      광고 문의하기
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -219,15 +201,6 @@ export default function BusinessInquiryPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-6 text-right">
-                    <Button 
-                      onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[SEO 개발 문의]'} 
-                      variant="outline" 
-                      className="border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 transition-all"
-                    >
-                      개발 문의하기
-                    </Button>
-                  </div>
                 </div>
               </div>
             </div>
@@ -274,15 +247,6 @@ export default function BusinessInquiryPage() {
                         <p className="text-gray-600 text-sm">혁신적인 아이디어를 실현하는 창의적 프로젝트 협업</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-6 text-right">
-                    <Button 
-                      onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[협업 제안]'} 
-                      variant="outline" 
-                      className="border-purple-300 text-purple-700 hover:bg-purple-50 hover:border-purple-400 transition-all"
-                    >
-                      협업 제안하기
-                    </Button>
                   </div>
                 </div>
               </div>
@@ -356,3 +320,4 @@ export default function BusinessInquiryPage() {
     </>
   );
 }
+
