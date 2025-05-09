@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
@@ -41,14 +42,6 @@ export default function BusinessInquiryPage() {
                 <h3 className="text-xl font-bold text-gray-800 mb-2">이메일 문의</h3>
                 <p className="text-lg font-medium bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">skssk01033@naver.com</p>
                 <p className="text-gray-500 mt-2">월-금: 10:00 - 18:00 (공휴일 제외)</p>
-              </div>
-              <div className="md:ml-auto">
-                <Button
-                  onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[비즈니스 문의]'}
-                  className="bg-gradient-to-r from-purple-700 to-purple-600 hover:opacity-90 transition-all shadow-md hover:shadow-purple-300/30"
-                >
-                  메일 보내기 <ExternalLink className="ml-2 h-4 w-4" />
-                </Button>
               </div>
             </div>
           </div>
@@ -304,12 +297,6 @@ export default function BusinessInquiryPage() {
                 알파블로그는 항상 새로운 아이디어와 협업에 열려 있습니다. <br />
                 여러분의 비즈니스와 함께 성장할 수 있는 기회를 찾고 있습니다.
               </p>
-              <Button 
-                onClick={() => window.location.href = 'mailto:skssk01033@naver.com?subject=[비즈니스 제안]'} 
-                className="bg-gradient-to-r from-purple-700 to-purple-500 hover:opacity-90 shadow-lg hover:shadow-purple-300/30 transition-all px-8 py-6 text-lg"
-              >
-                지금 문의하기 <Mail className="ml-2 h-5 w-5" />
-              </Button>
             </div>
           </div>
         </section>
