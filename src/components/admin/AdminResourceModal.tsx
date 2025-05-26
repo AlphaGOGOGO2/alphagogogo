@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Resource, ResourceCategory } from "@/types/resources";
 import { resourceService } from "@/services/resourceService";
 import { toast } from "sonner";
-import { Upload, X, FileText, Image, Video, Music, Archive, File } from "lucide-react";
+import { Upload, X, FileText, Image, Video, Music, Archive, File, Plus } from "lucide-react";
 
 interface AdminResourceModalProps {
   isOpen: boolean;
@@ -147,39 +147,26 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileTypeIcon className="w-5 h-5" />
+      <DialogContent className="max-w-5xl max-h-[95vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0 border-b pb-4">
+          <DialogTitle className="flex items-center gap-2 text-xl">
+            <FileTypeIcon className="w-6 h-6 text-purple-600" />
             {resource ? "자료 수정" : "자료 추가"}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* 기본 정보 섹션 */}
-          <div className="bg-gray-50 p-4 rounded-lg space-y-4">
-            <h3 className="font-medium text-gray-900">기본 정보</h3>
+        <form onSubmit={handleSubmit} className="flex-1 overflow-hidden flex flex-col">
+          <div className="flex-1 overflow-y-auto p-6 space-y-8">
             
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label htmlFor="title">제목 *</Label>
-                <Input
-                  id="title"
-                  value={formData.title}
-                  onChange={(e) => handleInputChange("title", e.target.value)}
-                  placeholder="예: AI 활용 가이드 북"
-                  required
-                  className="text-lg font-medium"
-                />
-              </div>
-
+            {/* 상단 메타 정보 */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border">
               <div>
-                <Label htmlFor="category">카테고리 *</Label>
+                <Label htmlFor="category" className="text-sm font-semibold text-gray-700">카테고리 *</Label>
                 <select
                   id="category"
                   value={formData.category}
                   onChange={(e) => handleInputChange("category", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                   required
                 >
                   <option value="">카테고리 선택</option>
@@ -192,44 +179,12 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
               </div>
 
               <div>
-                <Label htmlFor="author_name">작성자</Label>
-                <Input
-                  id="author_name"
-                  value={formData.author_name}
-                  onChange={(e) => handleInputChange("author_name", e.target.value)}
-                  placeholder="작성자명"
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="description">설명</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="자료에 대한 상세한 설명을 입력하세요..."
-                rows={4}
-                className="resize-none"
-              />
-            </div>
-          </div>
-
-          {/* 파일 정보 섹션 */}
-          <div className="bg-blue-50 p-4 rounded-lg space-y-4">
-            <h3 className="font-medium text-gray-900 flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              파일 정보
-            </h3>
-            
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="file_type">파일 유형</Label>
+                <Label htmlFor="file_type" className="text-sm font-semibold text-gray-700">파일 유형</Label>
                 <select
                   id="file_type"
                   value={formData.file_type}
                   onChange={(e) => handleInputChange("file_type", e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
                 >
                   <option value="document">📄 문서</option>
                   <option value="image">🖼️ 이미지</option>
@@ -241,113 +196,169 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
               </div>
 
               <div>
-                <Label htmlFor="file_size">파일 크기 (bytes)</Label>
+                <Label htmlFor="author_name" className="text-sm font-semibold text-gray-700">작성자</Label>
                 <Input
-                  id="file_size"
-                  value={formData.file_size}
-                  onChange={(e) => handleInputChange("file_size", parseInt(e.target.value) || 0)}
-                  placeholder="예: 1048576"
-                  type="number"
-                  min="0"
+                  id="author_name"
+                  value={formData.author_name}
+                  onChange={(e) => handleInputChange("author_name", e.target.value)}
+                  placeholder="작성자명"
+                  className="mt-2 px-4 py-3 border-gray-200 focus:ring-purple-500 focus:border-transparent"
                 />
-                <p className="text-xs text-gray-500 mt-1">
-                  {formData.file_size > 0 && `약 ${(formData.file_size / 1024 / 1024).toFixed(2)}MB`}
-                </p>
               </div>
             </div>
 
+            {/* 제목 */}
             <div>
-              <Label htmlFor="file_url">파일 URL</Label>
+              <Label htmlFor="title" className="text-lg font-semibold text-gray-800 mb-3 block">제목 *</Label>
               <Input
-                id="file_url"
-                value={formData.file_url}
-                onChange={(e) => handleInputChange("file_url", e.target.value)}
-                placeholder="https://example.com/file.pdf"
-                type="url"
+                id="title"
+                value={formData.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+                placeholder="자료의 제목을 입력하세요..."
+                required
+                className="text-xl px-4 py-4 border-gray-200 focus:ring-purple-500 focus:border-transparent transition-all"
               />
             </div>
-          </div>
 
-          {/* 태그 및 설정 섹션 */}
-          <div className="bg-green-50 p-4 rounded-lg space-y-4">
-            <h3 className="font-medium text-gray-900">태그 및 설정</h3>
-            
+            {/* 설명 */}
             <div>
-              <Label htmlFor="tags">태그</Label>
-              <Input
-                id="tags"
-                value={tagsInput}
-                onChange={(e) => setTagsInput(e.target.value)}
-                placeholder="쉼표로 구분하여 입력하세요"
+              <Label htmlFor="description" className="text-lg font-semibold text-gray-800 mb-3 block">설명</Label>
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                placeholder="자료에 대한 상세한 설명을 입력하세요..."
+                rows={6}
+                className="resize-none px-4 py-4 text-base leading-relaxed border-gray-200 focus:ring-purple-500 focus:border-transparent transition-all"
               />
+              <p className="text-sm text-gray-500 mt-2">사용자가 자료를 이해할 수 있도록 상세히 작성해주세요.</p>
+            </div>
+
+            {/* 파일 정보 */}
+            <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                <Upload className="w-5 h-5 text-blue-600" />
+                파일 정보
+              </h3>
               
-              {/* 추천 태그 */}
-              <div className="mt-2">
-                <p className="text-sm text-gray-600 mb-2">추천 태그:</p>
-                <div className="flex flex-wrap gap-2">
-                  {suggestedTags.map((tag) => (
-                    <button
-                      key={tag}
-                      type="button"
-                      onClick={() => handleTagAdd(tag)}
-                      className="px-2 py-1 text-xs bg-white border border-gray-300 rounded-full hover:bg-gray-50 transition-colors"
-                    >
-                      + {tag}
-                    </button>
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="file_url" className="text-sm font-semibold text-gray-700">파일 URL</Label>
+                  <Input
+                    id="file_url"
+                    value={formData.file_url}
+                    onChange={(e) => handleInputChange("file_url", e.target.value)}
+                    placeholder="https://example.com/file.pdf"
+                    type="url"
+                    className="mt-2 px-4 py-3 border-gray-200 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="file_size" className="text-sm font-semibold text-gray-700">파일 크기 (bytes)</Label>
+                  <Input
+                    id="file_size"
+                    value={formData.file_size}
+                    onChange={(e) => handleInputChange("file_size", parseInt(e.target.value) || 0)}
+                    placeholder="예: 1048576"
+                    type="number"
+                    min="0"
+                    className="mt-2 px-4 py-3 border-gray-200 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  {formData.file_size > 0 && (
+                    <p className="text-sm text-gray-600 mt-1">
+                      약 {(formData.file_size / 1024 / 1024).toFixed(2)}MB
+                    </p>
+                  )}
                 </div>
               </div>
+            </div>
 
-              {/* 현재 태그 표시 */}
-              {tagsInput && (
-                <div className="mt-3">
-                  <p className="text-sm text-gray-600 mb-2">현재 태그:</p>
+            {/* 태그 */}
+            <div className="bg-green-50 p-6 rounded-lg border border-green-100">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">태그 관리</h3>
+              
+              <div>
+                <Label htmlFor="tags" className="text-sm font-semibold text-gray-700">태그</Label>
+                <Input
+                  id="tags"
+                  value={tagsInput}
+                  onChange={(e) => setTagsInput(e.target.value)}
+                  placeholder="쉼표로 구분하여 입력하세요"
+                  className="mt-2 px-4 py-3 border-gray-200 focus:ring-green-500 focus:border-transparent"
+                />
+                
+                {/* 추천 태그 */}
+                <div className="mt-4">
+                  <p className="text-sm text-gray-600 mb-3 font-medium">추천 태그:</p>
                   <div className="flex flex-wrap gap-2">
-                    {tagsInput.split(",").map((tag, index) => {
-                      const trimmedTag = tag.trim();
-                      if (!trimmedTag) return null;
-                      return (
-                        <span
-                          key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm"
-                        >
-                          {trimmedTag}
-                          <button
-                            type="button"
-                            onClick={() => removeTag(trimmedTag)}
-                            className="hover:text-purple-900"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
-                      );
-                    })}
+                    {suggestedTags.map((tag) => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => handleTagAdd(tag)}
+                        className="inline-flex items-center gap-1 px-3 py-1 text-sm bg-white border border-green-200 rounded-full hover:bg-green-50 hover:border-green-300 transition-colors"
+                      >
+                        <Plus className="w-3 h-3" />
+                        {tag}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              )}
+
+                {/* 현재 태그 표시 */}
+                {tagsInput && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-600 mb-3 font-medium">현재 태그:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tagsInput.split(",").map((tag, index) => {
+                        const trimmedTag = tag.trim();
+                        if (!trimmedTag) return null;
+                        return (
+                          <span
+                            key={index}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm font-medium"
+                          >
+                            {trimmedTag}
+                            <button
+                              type="button"
+                              onClick={() => removeTag(trimmedTag)}
+                              className="hover:text-purple-900 transition-colors"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center space-x-3 p-3 bg-white rounded-lg border">
+            {/* 추천 설정 */}
+            <div className="flex items-center space-x-4 p-6 bg-yellow-50 rounded-lg border border-yellow-100">
               <Switch
                 id="is_featured"
                 checked={formData.is_featured}
                 onCheckedChange={(checked) => handleInputChange("is_featured", checked)}
               />
               <div>
-                <Label htmlFor="is_featured" className="text-sm font-medium">추천 자료로 설정</Label>
-                <p className="text-xs text-gray-500">메인 페이지에 우선적으로 표시됩니다</p>
+                <Label htmlFor="is_featured" className="text-base font-semibold text-gray-800">추천 자료로 설정</Label>
+                <p className="text-sm text-gray-600 mt-1">메인 페이지에 우선적으로 표시됩니다</p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end gap-3 pt-6 border-t">
-            <Button type="button" variant="outline" onClick={onClose}>
+          {/* 하단 버튼 */}
+          <div className="flex-shrink-0 border-t bg-gray-50 px-6 py-4 flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose} className="px-6">
               취소
             </Button>
             <Button 
               type="submit" 
               disabled={saveResourceMutation.isPending}
-              className="min-w-[100px]"
+              className="min-w-[120px] bg-purple-600 hover:bg-purple-700"
             >
               {saveResourceMutation.isPending ? "저장 중..." : (resource ? "수정 완료" : "자료 추가")}
             </Button>
