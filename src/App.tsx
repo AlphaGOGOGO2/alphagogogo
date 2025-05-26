@@ -58,7 +58,6 @@ const App = () => (
             <Route path="/gpts" element={<GPTSPage />} />
             <Route path="/services" element={<ServicesPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
-            <Route path="/resources/category/:category" element={<ResourcesPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
             <Route path="/business-inquiry" element={<BusinessInquiryPage />} />

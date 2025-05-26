@@ -2,19 +2,19 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
-import { Search, Filter, Star } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ResourceCard } from "@/components/resources/ResourceCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { resourceService } from "@/services/resourceService";
 import { Resource } from "@/types/resources";
 
 export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
 
   const { data: resources = [], isLoading } = useQuery({
@@ -35,7 +35,7 @@ export default function ResourcesPage() {
   useEffect(() => {
     let filtered = resources;
 
-    if (selectedCategory) {
+    if (selectedCategory !== "all") {
       filtered = filtered.filter(resource => resource.category === selectedCategory);
     }
 
@@ -49,7 +49,7 @@ export default function ResourcesPage() {
     setFilteredResources(filtered);
   }, [resources, selectedCategory, searchQuery]);
 
-  const handleCategoryFilter = (category: string | null) => {
+  const handleCategoryChange = (category: string) => {
     setSelectedCategory(category);
   };
 
@@ -101,68 +101,56 @@ export default function ResourcesPage() {
               </section>
             )}
 
-            {/* 검색 및 필터 */}
+            {/* 검색 */}
             <div className="mb-8">
-              <div className="flex flex-col md:flex-row gap-4 mb-6">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    type="text"
-                    placeholder="자료 검색..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-
-              {/* 카테고리 필터 */}
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant={selectedCategory === null ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleCategoryFilter(null)}
-                  className="mb-2"
-                >
-                  전체
-                </Button>
-                {categories.map((category) => (
-                  <Button
-                    key={category.id}
-                    variant={selectedCategory === category.name ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => handleCategoryFilter(category.name)}
-                    className="mb-2"
-                  >
-                    {category.name}
-                  </Button>
-                ))}
+              <div className="relative max-w-md mx-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
+                  type="text"
+                  placeholder="자료 검색..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
 
-            {/* 자료 그리드 */}
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  {selectedCategory ? `${selectedCategory} 자료` : '모든 자료'}
-                </h2>
-                <span className="text-gray-600">
-                  {filteredResources.length}개의 자료
-                </span>
-              </div>
+            {/* 카테고리 탭과 자료 목록 */}
+            <Tabs value={selectedCategory} onValueChange={handleCategoryChange} className="w-full">
+              <TabsList className="grid w-full max-w-2xl mx-auto mb-8" style={{ gridTemplateColumns: `repeat(${categories.length + 1}, 1fr)` }}>
+                <TabsTrigger value="all">전체</TabsTrigger>
+                {categories.map((category) => (
+                  <TabsTrigger key={category.id} value={category.name}>
+                    {category.name}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
 
-              {filteredResources.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-gray-500 text-lg">검색 결과가 없습니다.</p>
+              <TabsContent value={selectedCategory} className="mt-0">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-2xl font-bold text-gray-900">
+                    {selectedCategory === "all" ? "모든 자료" : `${selectedCategory} 자료`}
+                  </h2>
+                  <span className="text-gray-600">
+                    {filteredResources.length}개의 자료
+                  </span>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredResources.map((resource) => (
-                    <ResourceCard key={resource.id} resource={resource} />
-                  ))}
-                </div>
-              )}
-            </section>
+
+                {filteredResources.length === 0 ? (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500 text-lg">
+                      {searchQuery ? "검색 결과가 없습니다." : "등록된 자료가 없습니다."}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {filteredResources.map((resource) => (
+                      <ResourceCard key={resource.id} resource={resource} />
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
           </div>
         </main>
         

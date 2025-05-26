@@ -19,6 +19,7 @@ export const mainNavItems: NavItem[] = [
   { name: "블로그", path: "/blog" },
   { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "GPTS 이용하기", path: "/gpts" },
+  { name: "자료실", path: "/resources" },
   { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
   { name: "커뮤니티", path: "/community" }
 ];
@@ -74,39 +75,5 @@ export const servicesCategories: ServicesCategory[] = [
     name: "블로그 버튼 생성기",
     path: "/blog-button-creator",
     description: "블로그용 커스텀 HTML 버튼을 쉽게 디자인하고 생성할 수 있습니다."
-  }
-];
-
-export interface ResourcesCategory {
-  name: string;
-  path: string;
-  description: string;
-}
-
-export const resourcesCategories: ResourcesCategory[] = [
-  { 
-    name: "전체자료", 
-    path: "/resources",
-    description: "모든 자료를 확인하고 다운로드하세요."
-  },
-  {
-    name: "이미지",
-    path: "/resources/category/이미지",
-    description: "AI 관련 이미지 자료"
-  },
-  {
-    name: "문서",
-    path: "/resources/category/문서",
-    description: "PDF, 워드 등 문서 자료"
-  },
-  {
-    name: "템플릿",
-    path: "/resources/category/템플릿",
-    description: "활용 가능한 템플릿"
-  },
-  {
-    name: "가이드",
-    path: "/resources/category/가이드",
-    description: "사용 가이드 및 매뉴얼"
   }
 ];
