@@ -81,21 +81,27 @@ export function SEO({
       <meta name="classification" content="AI, Technology, Blog" />
       <meta name="subject" content="AI News and Insights" />
       <meta name="copyright" content="© 2025 알파고고고" />
+      <meta name="revisit-after" content="1 day" />
       
-      {/* 로봇 제어 */}
+      {/* 로봇 제어 - 색인 속도 향상 */}
       {noIndex ? (
         <meta name="robots" content="noindex, nofollow" />
       ) : (
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1, max-snippet:160" />
       )}
       
-      {/* 추가 로봇 지시어 */}
+      {/* 추가 로봇 지시어 - 크롤링 최적화 */}
       <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
       <meta name="bingbot" content="index, follow" />
+      <meta name="yandex" content="index, follow" />
+      <meta name="slurp" content="index, follow" />
       
       {/* RSS 피드 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/rss`} />
       <link rel="alternate" type="application/rss+xml" title="알파고고고 정적 RSS" href={`${SITE_DOMAIN}/rss.xml`} />
+      
+      {/* 사이트맵 링크 */}
+      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
@@ -113,6 +119,7 @@ export function SEO({
       {ogType === "article" && (
         <>
           <meta property="article:author" content={author} />
+          <meta property="article:publisher" content="https://alphagogogo.com" />
           {publishedTime && <meta property="article:published_time" content={publishedTime} />}
           {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
           {section && <meta property="article:section" content={section} />}
@@ -141,7 +148,6 @@ export function SEO({
       <meta name="language" content="Korean" />
       <meta name="geo.region" content="KR" />
       <meta name="geo.country" content="KR" />
-      <meta name="revisit-after" content="3 days" />
       <meta name="theme-color" content="#8B5CF6" />
       <meta name="msapplication-TileColor" content="#8B5CF6" />
       <meta name="msapplication-config" content="/browserconfig.xml" />
@@ -173,7 +179,7 @@ export function SEO({
         </script>
       )}
 
-      {/* Google Search Console 사이트 확인 태그 - 준비됨 (실제 코드로 교체 필요) */}
+      {/* Google Search Console 사이트 확인 태그 - 실제 확인 코드로 교체 필요 */}
       <meta name="google-site-verification" content="REPLACE_WITH_ACTUAL_VERIFICATION_CODE" />
       
       {/* Naver 웹마스터 도구 (한국 시장용) */}

@@ -2,7 +2,7 @@
 User-agent: *
 Allow: /
 
-# Block access to admin and sensitive areas
+# 검색엔진이 크롤링하지 않았으면 하는 영역
 Disallow: /blog/write
 Disallow: /blog/edit/
 Disallow: /admin/
@@ -20,16 +20,31 @@ Disallow: /*?*ref=
 Disallow: /*?*fbclid=
 Disallow: /*?*gclid=
 
-# 크롤링 속도 제한 (서버 부하 방지)
-Crawl-delay: 1
+# 크롤링 속도 제한 완화 (색인 속도 향상)
+Crawl-delay: 0.5
 
-# 다이나믹 sitemap과 RSS 위치
+# 주요 사이트맵 위치 명시
 Sitemap: https://alphagogogo.com/sitemap.xml
 Sitemap: https://alphagogogo.com/api/sitemap
 
-# RSS 피드
+# RSS 피드 위치
 Sitemap: https://alphagogogo.com/api/rss
 Sitemap: https://alphagogogo.com/rss.xml
 
-# 추가 검색엔진 친화적 설정
+# 호스트 지정
 Host: https://alphagogogo.com
+
+# 구글봇에게 우선순위 지시
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0.2
+
+# 네이버봇 설정 (한국 시장)
+User-agent: Yeti
+Allow: /
+Crawl-delay: 0.5
+
+# 빙봇 설정
+User-agent: bingbot
+Allow: /
+Crawl-delay: 0.3

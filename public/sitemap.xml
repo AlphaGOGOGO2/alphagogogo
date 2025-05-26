@@ -1,6 +1,10 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  
   <!-- 메인 페이지들 -->
   <url>
     <loc>https://alphagogogo.com/</loc>
@@ -8,92 +12,64 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
+  
+  <!-- 블로그 카테고리 페이지들 -->
   <url>
     <loc>https://alphagogogo.com/blog/latest-updates</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/trending</loc>
     <lastmod>2025-05-26</lastmod>
-    <changefreq>weekly</changefreq>
+    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/lifestyle</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://alphagogogo.com/gpts</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://alphagogogo.com/services</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://alphagogogo.com/community</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://alphagogogo.com/blog-button-creator</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://alphagogogo.com/business-inquiry</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
   
-  <!-- 동적 콘텐츠를 위한 추가 URL들 -->
   <url>
     <loc>https://alphagogogo.com/blog/ai-news</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/tech-reviews</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/tutorials</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
-  <url>
-    <loc>https://alphagogogo.com/blog/industry-insights</loc>
-    <lastmod>2025-05-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/chatgpt-guides</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/blog/lovable-dev</loc>
     <lastmod>2025-05-26</lastmod>
@@ -101,17 +77,63 @@
     <priority>0.7</priority>
   </url>
   
+  <!-- 주요 서비스 페이지들 -->
+  <url>
+    <loc>https://alphagogogo.com/gpts</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://alphagogogo.com/services</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <url>
+    <loc>https://alphagogogo.com/community</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://alphagogogo.com/blog-button-creator</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://alphagogogo.com/business-inquiry</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
   <!-- API 엔드포인트들 -->
   <url>
     <loc>https://alphagogogo.com/api/sitemap</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
   </url>
+  
   <url>
     <loc>https://alphagogogo.com/api/rss</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
   </url>
+  
+  <!-- 추가 중요 페이지들 -->
+  <url>
+    <loc>https://alphagogogo.com/blog/industry-insights</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
 </urlset>
