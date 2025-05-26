@@ -1,7 +1,7 @@
 
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- 정적 sitemap.xml 파일입니다. 최신 데이터를 위해 /api/sitemap 엔드포인트를 사용하세요 -->
+  <!-- 메인 페이지들 -->
   <url>
     <loc>https://alphagogogo.com/</loc>
     <lastmod>2025-05-26</lastmod>
@@ -60,6 +60,52 @@
     <loc>https://alphagogogo.com/business-inquiry</loc>
     <lastmod>2025-05-26</lastmod>
     <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <!-- 동적 콘텐츠를 위한 추가 URL들 -->
+  <url>
+    <loc>https://alphagogogo.com/blog/ai-news</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://alphagogogo.com/blog/tech-reviews</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://alphagogogo.com/blog/tutorials</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://alphagogogo.com/blog/industry-insights</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://alphagogogo.com/blog/chatgpt-guides</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://alphagogogo.com/blog/lovable-dev</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+  <!-- API 엔드포인트들 -->
+  <url>
+    <loc>https://alphagogogo.com/api/sitemap</loc>
+    <lastmod>2025-05-26</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.5</priority>
   </url>
   <url>

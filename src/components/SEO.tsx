@@ -1,3 +1,4 @@
+
 import { Helmet } from "react-helmet-async";
 
 // 기본 사이트 도메인 - 모든 SEO 관련 URL에 일관되게 사용
@@ -12,6 +13,11 @@ interface SEOProps {
   structuredData?: Record<string, any>;
   keywords?: string;
   noIndex?: boolean;
+  author?: string;
+  publishedTime?: string;
+  modifiedTime?: string;
+  section?: string;
+  tags?: string[];
 }
 
 export function SEO({
@@ -23,6 +29,11 @@ export function SEO({
   structuredData,
   keywords = "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼",
   noIndex = false,
+  author = "알파고고고",
+  publishedTime,
+  modifiedTime,
+  section,
+  tags = [],
 }: SEOProps) {
   // 브랜딩이 포함된 전체 제목 생성
   const fullTitle = title.includes("알파고고고") ? title : `${title} | 알파고고고`;
@@ -54,8 +65,22 @@ export function SEO({
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
+      <meta name="author" content={author} />
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
       <link rel="canonical" href={normalizedCanonical} />
+      
+      {/* 추가 SEO 메타 태그 */}
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="color-scheme" content="light dark" />
+      <meta name="supported-color-schemes" content="light dark" />
+      <meta name="rating" content="general" />
+      <meta name="distribution" content="global" />
+      <meta name="target" content="all" />
+      <meta name="audience" content="all" />
+      <meta name="coverage" content="worldwide" />
+      <meta name="classification" content="AI, Technology, Blog" />
+      <meta name="subject" content="AI News and Insights" />
+      <meta name="copyright" content="© 2025 알파고고고" />
       
       {/* 로봇 제어 */}
       {noIndex ? (
@@ -64,41 +89,76 @@ export function SEO({
         <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       )}
       
+      {/* 추가 로봇 지시어 */}
+      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      <meta name="bingbot" content="index, follow" />
+      
       {/* RSS 피드 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/rss`} />
+      <link rel="alternate" type="application/rss+xml" title="알파고고고 정적 RSS" href={`${SITE_DOMAIN}/rss.xml`} />
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={normalizedOgImage} />
+      <meta property="og:image:alt" content={`${title} - 알파고고고`} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
       <meta property="og:url" content={normalizedCanonical} />
       <meta property="og:type" content={ogType} />
       <meta property="og:site_name" content="알파고고고" />
       <meta property="og:locale" content="ko_KR" />
+      
+      {/* 블로그 포스트용 추가 OG 태그 */}
+      {ogType === "article" && (
+        <>
+          <meta property="article:author" content={author} />
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+          {section && <meta property="article:section" content={section} />}
+          {tags.map((tag, index) => (
+            <meta key={index} property="article:tag" content={tag} />
+          ))}
+        </>
+      )}
       
       {/* 트위터 카드 메타 태그 */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={normalizedOgImage} />
+      <meta name="twitter:image:alt" content={`${title} - 알파고고고`} />
       <meta name="twitter:site" content="@alphagogogo" />
+      <meta name="twitter:creator" content="@alphagogogo" />
       
       {/* 파비콘 태그 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
       <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
       
       {/* 추가 메타 태그 */}
-      <meta name="author" content="알파고고고" />
       <meta name="language" content="Korean" />
-      <meta name="revisit-after" content="7 days" />
+      <meta name="geo.region" content="KR" />
+      <meta name="geo.country" content="KR" />
+      <meta name="revisit-after" content="3 days" />
       <meta name="theme-color" content="#8B5CF6" />
       <meta name="msapplication-TileColor" content="#8B5CF6" />
+      <meta name="msapplication-config" content="/browserconfig.xml" />
+      
+      {/* 모바일 최적화 */}
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="알파고고고" />
       
       {/* DNS Prefetch 최적화 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
       <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
+      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
       
       {/* Preconnect 최적화 */}
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
@@ -115,6 +175,12 @@ export function SEO({
 
       {/* Google Search Console 사이트 확인 태그 - 준비됨 (실제 코드로 교체 필요) */}
       <meta name="google-site-verification" content="REPLACE_WITH_ACTUAL_VERIFICATION_CODE" />
+      
+      {/* Naver 웹마스터 도구 (한국 시장용) */}
+      <meta name="naver-site-verification" content="REPLACE_WITH_NAVER_VERIFICATION_CODE" />
+      
+      {/* Microsoft Bing 웹마스터 도구 */}
+      <meta name="msvalidate.01" content="REPLACE_WITH_BING_VERIFICATION_CODE" />
     </Helmet>
   );
 }

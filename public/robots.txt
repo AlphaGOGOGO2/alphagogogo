@@ -7,6 +7,8 @@ Disallow: /blog/write
 Disallow: /blog/edit/
 Disallow: /admin/
 Disallow: /private/
+Disallow: /_next/
+Disallow: /api/auth/
 
 # 검색엔진이 유용하지 않은 파라미터 페이지를 크롤링하지 않도록 설정
 Disallow: /*?*utm_source=
@@ -14,6 +16,12 @@ Disallow: /*?*utm_medium=
 Disallow: /*?*utm_campaign=
 Disallow: /*?*utm_term=
 Disallow: /*?*utm_content=
+Disallow: /*?*ref=
+Disallow: /*?*fbclid=
+Disallow: /*?*gclid=
+
+# 크롤링 속도 제한 (서버 부하 방지)
+Crawl-delay: 1
 
 # 다이나믹 sitemap과 RSS 위치
 Sitemap: https://alphagogogo.com/sitemap.xml
@@ -21,3 +29,7 @@ Sitemap: https://alphagogogo.com/api/sitemap
 
 # RSS 피드
 Sitemap: https://alphagogogo.com/api/rss
+Sitemap: https://alphagogogo.com/rss.xml
+
+# 추가 검색엔진 친화적 설정
+Host: https://alphagogogo.com

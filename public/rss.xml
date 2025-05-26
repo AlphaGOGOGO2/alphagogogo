@@ -1,20 +1,79 @@
+
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
     <link>https://alphagogogo.com</link>
     <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>
     <language>ko-kr</language>
-    <lastBuildDate>Wed, 08 May 2024 00:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 26 May 2025 00:00:00 GMT</lastBuildDate>
+    <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+    <ttl>60</ttl>
     <atom:link href="https://alphagogogo.com/rss.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png</url>
+      <title>알파고고고</title>
+      <link>https://alphagogogo.com</link>
+      <width>112</width>
+      <height>112</height>
+    </image>
     
-    <!-- 최신 데이터를 위해 /api/rss 엔드포인트를 사용하세요 -->
+    <!-- 최신 블로그 포스트들 -->
     <item>
-      <title>정적 RSS 파일 안내</title>
-      <link>https://alphagogogo.com/blog</link>
-      <pubDate>Wed, 08 May 2024 00:00:00 GMT</pubDate>
-      <description>이 RSS 피드는 정적 파일입니다. 최신 블로그 업데이트를 보려면 /api/rss 엔드포인트를 사용하세요.</description>
-      <guid isPermaLink="true">https://alphagogogo.com/api/rss</guid>
+      <title>AI 뉴스 및 업데이트</title>
+      <link>https://alphagogogo.com/blog/latest-updates</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>AI News</category>
+      <description>최신 AI 기술 동향과 업계 소식을 전해드립니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/latest-updates</guid>
     </item>
+    <item>
+      <title>트렌딩 AI 토픽</title>
+      <link>https://alphagogogo.com/blog/trending</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>Trending</category>
+      <description>지금 가장 핫한 AI 관련 주제들을 다룹니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/trending</guid>
+    </item>
+    <item>
+      <title>ChatGPT 및 GPT 가이드</title>
+      <link>https://alphagogogo.com/gpts</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>GPT Guides</category>
+      <description>ChatGPT와 다양한 GPT 모델 활용법을 상세히 안내합니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/gpts</guid>
+    </item>
+    <item>
+      <title>Lovable DEV 개발 가이드</title>
+      <link>https://alphagogogo.com/blog/lovable-dev</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>Development</category>
+      <description>Lovable DEV를 활용한 AI 앱 개발 방법과 노하우를 공유합니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/lovable-dev</guid>
+    </item>
+    <item>
+      <title>블로그 자동화 및 AI 글쓰기</title>
+      <link>https://alphagogogo.com/blog/ai-writing</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>AI Writing</category>
+      <description>AI를 활용한 블로그 글쓰기와 자동화 도구들을 소개합니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/ai-writing</guid>
+    </item>
+    <item>
+      <title>라이프스타일 & AI</title>
+      <link>https://alphagogogo.com/blog/lifestyle</link>
+      <pubDate>Mon, 26 May 2025 00:00:00 GMT</pubDate>
+      <dc:creator>알파고고고</dc:creator>
+      <category>Lifestyle</category>
+      <description>일상생활에서 AI를 활용하는 다양한 방법들을 제안합니다.</description>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/lifestyle</guid>
+    </item>
+    
+    <!-- 최신 데이터를 위해 /api/rss 엔드포인트도 확인하세요 -->
   </channel>
 </rss>
