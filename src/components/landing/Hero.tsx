@@ -48,7 +48,7 @@ export function Hero() {
         </video>
         {/* Fallback gradient background - only shown when video fails */}
         <div className="fallback-bg absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900" style={{ display: 'none' }}></div>
-        <div className="absolute inset-0 bg-[#1E293B]/30 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 bg-[#1E293B]/50 backdrop-blur-[1px]"></div>
       </div>
       
       {/* Subtle animated shapes with lighter colors */}
