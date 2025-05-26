@@ -19,6 +19,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
 }) => {
   const [isAdInitialized, setIsAdInitialized] = useState(false);
   const [adError, setAdError] = useState<string | null>(null);
+  const [adStatus, setAdStatus] = useState<string>('loading');
   const adRef = useRef<HTMLDivElement>(null);
   const isDevelopment = process.env.NODE_ENV === 'development';
   
@@ -29,51 +30,91 @@ export const AdSense: React.FC<AdSenseProps> = ({
     // 개발 환경에서는 광고 초기화 건너뛰기
     if (isDevelopment) {
       console.log('개발 환경: AdSense 광고 표시 건너뛰기');
+      setAdStatus('dev-mode');
       return;
     }
 
-    // 이미 이 슬롯이 초기화되었는지 확인
-    if (initializedSlots.has(slotId)) {
-      console.log(`AdSense slot ${slotId} already initialized, skipping`);
-      return;
-    }
+    const initializeAd = async () => {
+      try {
+        console.log(`[AdSense] 광고 초기화 시작: ${slotId}`);
+        
+        // AdSense 스크립트 로드 확인
+        if (typeof window.adsbygoogle === 'undefined') {
+          console.error('[AdSense] adsbygoogle 스크립트가 로드되지 않았습니다.');
+          setAdError('AdSense 스크립트 로드 실패');
+          setAdStatus('script-error');
+          return;
+        }
 
-    // 이미 컴포넌트 인스턴스가 초기화되었는지 확인
-    if (isAdInitialized) return;
+        // DOM 요소 확인
+        if (!adRef.current) {
+          console.error('[AdSense] DOM 요소를 찾을 수 없습니다.');
+          setAdError('DOM 요소 없음');
+          setAdStatus('dom-error');
+          return;
+        }
 
-    // DOM에 요소가 있는지 확인
-    if (!adRef.current) return;
+        // 이미 초기화된 슬롯인지 확인
+        if (initializedSlots.has(slotId)) {
+          console.log(`[AdSense] 슬롯 ${slotId}은 이미 초기화됨`);
+          setAdStatus('already-initialized');
+          return;
+        }
 
-    try {
-      // AdSense 스크립트가 로드되었는지 확인
-      if (typeof window.adsbygoogle === 'undefined') {
-        console.error('AdSense 스크립트가 로드되지 않았습니다.');
-        setAdError('AdSense 스크립트 로드 실패');
-        return;
+        // 광고 요소 찾기
+        const adElement = adRef.current.querySelector('.adsbygoogle') as HTMLElement;
+        if (!adElement) {
+          console.error('[AdSense] .adsbygoogle 요소를 찾을 수 없습니다.');
+          setAdError('광고 요소 없음');
+          setAdStatus('element-error');
+          return;
+        }
+
+        // 이미 처리된 광고인지 확인
+        if (adElement.getAttribute('data-adsbygoogle-status')) {
+          console.log(`[AdSense] 광고가 이미 처리됨: ${slotId}`);
+          setAdStatus('already-processed');
+          return;
+        }
+
+        console.log(`[AdSense] 광고 푸시 시도: ${slotId}`);
+        
+        // 광고 푸시
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+        
+        // 초기화 상태 업데이트
+        initializedSlots.add(slotId);
+        setIsAdInitialized(true);
+        setAdStatus('initialized');
+        
+        console.log(`[AdSense] 광고 초기화 완료: ${slotId}`);
+
+        // 광고 로드 상태 확인을 위한 타이머
+        setTimeout(() => {
+          const status = adElement.getAttribute('data-adsbygoogle-status');
+          if (status === 'done') {
+            setAdStatus('loaded');
+            console.log(`[AdSense] 광고 로드 완료: ${slotId}`);
+          } else if (status === 'filled') {
+            setAdStatus('filled');
+            console.log(`[AdSense] 광고 채움 완료: ${slotId}`);
+          } else {
+            console.log(`[AdSense] 광고 상태: ${status || 'unknown'}`);
+          }
+        }, 3000);
+        
+      } catch (error) {
+        console.error('[AdSense] 광고 초기화 오류:', error);
+        setAdError(error instanceof Error ? error.message : '알 수 없는 오류');
+        setAdStatus('error');
       }
+    };
 
-      // 광고 푸시 시도
-      console.log(`AdSense 광고 초기화 시도: ${slotId}`);
-      
-      // 광고가 이미 처리되었는지 확인
-      const adElement = adRef.current.querySelector('.adsbygoogle') as HTMLElement;
-      if (adElement && adElement.getAttribute('data-adsbygoogle-status')) {
-        console.log(`광고가 이미 처리됨: ${slotId}`);
-        return;
-      }
-
-      // 광고 푸시
-      (window.adsbygoogle = window.adsbygoogle || []).push({});
-      
-      initializedSlots.add(slotId);
-      setIsAdInitialized(true);
-      console.log(`AdSense 광고 초기화 완료: ${slotId}`);
-      
-    } catch (error) {
-      console.error('AdSense 광고 초기화 오류:', error);
-      setAdError(error instanceof Error ? error.message : '알 수 없는 오류');
-    }
-  }, [isDevelopment, isAdInitialized, slotId]);
+    // 컴포넌트가 마운트된 후 약간의 지연을 두고 초기화
+    const timer = setTimeout(initializeAd, 100);
+    
+    return () => clearTimeout(timer);
+  }, [isDevelopment, slotId]);
 
   if (isDevelopment) {
     return (
@@ -85,6 +126,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
           borderRadius: '4px',
           padding: '1rem',
           display: 'flex',
+          flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
           minHeight: adFormat === 'horizontal' ? '90px' : '280px',
@@ -98,14 +140,11 @@ export const AdSense: React.FC<AdSenseProps> = ({
           {adFormat === 'horizontal' ? '광고 배너 (728x90)' : '광고 배너 (336x280)'}
           <br />
           <span className="text-sm text-purple-400">개발 환경에서만 보이는 플레이스홀더입니다</span>
+          <br />
+          <span className="text-xs text-purple-300">상태: {adStatus}</span>
         </p>
       </div>
     );
-  }
-
-  // 에러가 있는 경우 에러 표시 (프로덕션에서는 숨김)
-  if (adError) {
-    console.error('AdSense 오류:', adError);
   }
 
   return (
@@ -121,6 +160,12 @@ export const AdSense: React.FC<AdSenseProps> = ({
         data-ad-format={adFormat}
         data-full-width-responsive="true"
       />
+      {/* 디버깅을 위한 상태 표시 (프로덕션에서는 숨김) */}
+      {adError && (
+        <div style={{ fontSize: '10px', color: '#999', marginTop: '4px' }}>
+          Debug: {adStatus} - {adError}
+        </div>
+      )}
     </div>
   );
 };
