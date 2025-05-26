@@ -18,6 +18,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
   className = '',
 }) => {
   const [isAdInitialized, setIsAdInitialized] = useState(false);
+  const [adError, setAdError] = useState<string | null>(null);
   const adRef = useRef<HTMLDivElement>(null);
   const isDevelopment = process.env.NODE_ENV === 'development';
   
@@ -26,7 +27,10 @@ export const AdSense: React.FC<AdSenseProps> = ({
 
   useEffect(() => {
     // 개발 환경에서는 광고 초기화 건너뛰기
-    if (isDevelopment) return;
+    if (isDevelopment) {
+      console.log('개발 환경: AdSense 광고 표시 건너뛰기');
+      return;
+    }
 
     // 이미 이 슬롯이 초기화되었는지 확인
     if (initializedSlots.has(slotId)) {
@@ -41,12 +45,33 @@ export const AdSense: React.FC<AdSenseProps> = ({
     if (!adRef.current) return;
 
     try {
-      // 자동 광고 설정이므로 추가 초기화 없이 슬롯만 추적
+      // AdSense 스크립트가 로드되었는지 확인
+      if (typeof window.adsbygoogle === 'undefined') {
+        console.error('AdSense 스크립트가 로드되지 않았습니다.');
+        setAdError('AdSense 스크립트 로드 실패');
+        return;
+      }
+
+      // 광고 푸시 시도
+      console.log(`AdSense 광고 초기화 시도: ${slotId}`);
+      
+      // 광고가 이미 처리되었는지 확인
+      const adElement = adRef.current.querySelector('.adsbygoogle') as HTMLElement;
+      if (adElement && adElement.getAttribute('data-adsbygoogle-status')) {
+        console.log(`광고가 이미 처리됨: ${slotId}`);
+        return;
+      }
+
+      // 광고 푸시
+      (window.adsbygoogle = window.adsbygoogle || []).push({});
+      
       initializedSlots.add(slotId);
       setIsAdInitialized(true);
-      console.log(`AdSense slot ${slotId} marked as initialized`);
+      console.log(`AdSense 광고 초기화 완료: ${slotId}`);
+      
     } catch (error) {
-      console.error('Error with AdSense slot:', error);
+      console.error('AdSense 광고 초기화 오류:', error);
+      setAdError(error instanceof Error ? error.message : '알 수 없는 오류');
     }
   }, [isDevelopment, isAdInitialized, slotId]);
 
@@ -78,13 +103,13 @@ export const AdSense: React.FC<AdSenseProps> = ({
     );
   }
 
+  // 에러가 있는 경우 에러 표시 (프로덕션에서는 숨김)
+  if (adError) {
+    console.error('AdSense 오류:', adError);
+  }
+
   return (
     <div className={`adsense-container ${className}`} ref={adRef}>
-      {/* 
-        자동 광고를 사용하는 경우, 개별 광고 태그를 삽입하지 않아도 됩니다.
-        그러나 특정 위치에 광고를 추가하려면 아래 태그를 유지하되,
-        초기화는 전역에서 한 번만 수행합니다.
-      */}
       <ins
         className="adsbygoogle"
         style={{
