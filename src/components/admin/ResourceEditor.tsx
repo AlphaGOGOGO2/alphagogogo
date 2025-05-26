@@ -1,9 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/react";
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/mantine/style.css";
 import { Label } from "@/components/ui/label";
 
 interface ResourceEditorProps {
@@ -13,38 +12,36 @@ interface ResourceEditorProps {
 }
 
 export function ResourceEditor({ value, onChange, placeholder }: ResourceEditorProps) {
-  const [initialContent, setInitialContent] = useState<any[]>([]);
+  const [initialContent, setInitialContent] = useState<any>(undefined);
 
   // BlockNote 에디터 초기화
   const editor = useCreateBlockNote({
-    initialContent: initialContent.length > 0 ? initialContent : undefined,
+    initialContent: initialContent,
   });
 
   // 값이 변경될 때 에디터 내용 업데이트
   useEffect(() => {
-    if (value) {
+    if (value && value.trim()) {
       try {
         const parsed = JSON.parse(value);
-        if (Array.isArray(parsed)) {
+        if (Array.isArray(parsed) && parsed.length > 0) {
           setInitialContent(parsed);
-          editor.replaceBlocks(editor.document, parsed);
         }
       } catch (error) {
         // 기존 텍스트인 경우 단순 텍스트 블록으로 변환
-        if (value.trim()) {
-          const textBlock = [{
-            id: "initial",
-            type: "paragraph",
-            props: {},
-            content: [{ type: "text", text: value, styles: {} }],
-            children: []
-          }];
-          setInitialContent(textBlock);
-          editor.replaceBlocks(editor.document, textBlock);
-        }
+        const textContent = [{
+          id: "initial",
+          type: "paragraph",
+          content: [{
+            type: "text",
+            text: value,
+            styles: {}
+          }]
+        }];
+        setInitialContent(textContent);
       }
     }
-  }, [value, editor]);
+  }, [value]);
 
   // 에디터 내용 변경 시 호출
   const handleChange = () => {
@@ -60,7 +57,6 @@ export function ResourceEditor({ value, onChange, placeholder }: ResourceEditorP
           editor={editor}
           onChange={handleChange}
           theme="light"
-          className="min-h-[200px] p-4"
         />
       </div>
       <p className="text-sm text-gray-500 mt-2">

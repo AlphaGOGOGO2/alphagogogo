@@ -1,8 +1,7 @@
 
 import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/react";
-import "@blocknote/core/fonts/inter.css";
-import "@blocknote/react/style.css";
+import { BlockNoteView } from "@blocknote/mantine";
+import "@blocknote/mantine/style.css";
 
 interface ResourceContentDisplayProps {
   content: string;
@@ -13,8 +12,10 @@ export function ResourceContentDisplay({ content, className = "" }: ResourceCont
   // 읽기 전용 에디터 생성
   const editor = useCreateBlockNote({
     initialContent: parseContent(content),
-    editable: false,
   });
+
+  // 에디터를 읽기 전용으로 설정
+  editor.isEditable = false;
 
   return (
     <div className={className}>
@@ -29,11 +30,11 @@ export function ResourceContentDisplay({ content, className = "" }: ResourceCont
 
 // 콘텐츠 파싱 헬퍼 함수
 function parseContent(content: string) {
-  if (!content) return undefined;
+  if (!content || !content.trim()) return undefined;
   
   try {
     const parsed = JSON.parse(content);
-    if (Array.isArray(parsed)) {
+    if (Array.isArray(parsed) && parsed.length > 0) {
       return parsed;
     }
   } catch (error) {
@@ -41,9 +42,7 @@ function parseContent(content: string) {
     return [{
       id: "text-content",
       type: "paragraph",
-      props: {},
-      content: [{ type: "text", text: content, styles: {} }],
-      children: []
+      content: [{ type: "text", text: content, styles: {} }]
     }];
   }
   
