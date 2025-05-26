@@ -2,6 +2,15 @@
 import { supabase } from "@/integrations/supabase/client";
 import { Resource, ResourceCategory } from "@/types/resources";
 
+// 데이터베이스 결과를 Resource 타입으로 변환하는 헬퍼 함수
+const transformDatabaseResource = (dbResource: any): Resource => {
+  return {
+    ...dbResource,
+    tags: Array.isArray(dbResource.tags) ? dbResource.tags : 
+          (dbResource.tags ? JSON.parse(dbResource.tags) : [])
+  };
+};
+
 export const resourceService = {
   // 모든 자료 조회
   async getAllResources(): Promise<Resource[]> {
@@ -15,7 +24,7 @@ export const resourceService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformDatabaseResource);
   },
 
   // 카테고리별 자료 조회
@@ -31,7 +40,7 @@ export const resourceService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformDatabaseResource);
   },
 
   // 추천 자료 조회
@@ -48,7 +57,7 @@ export const resourceService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformDatabaseResource);
   },
 
   // 자료 검색
@@ -64,7 +73,7 @@ export const resourceService = {
       throw error;
     }
 
-    return data || [];
+    return (data || []).map(transformDatabaseResource);
   },
 
   // 다운로드 수 증가
