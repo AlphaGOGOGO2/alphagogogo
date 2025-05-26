@@ -30,8 +30,12 @@ export function Hero() {
           preload="auto"
           onError={(e) => {
             console.error('Video loading error:', e);
-            // Fallback gradient background if video fails
+            // Show fallback background if video fails
             e.currentTarget.style.display = 'none';
+            const fallbackBg = e.currentTarget.parentElement?.querySelector('.fallback-bg');
+            if (fallbackBg) {
+              (fallbackBg as HTMLElement).style.display = 'block';
+            }
           }}
         >
           <source 
@@ -40,8 +44,8 @@ export function Hero() {
           />
           Your browser does not support the video tag.
         </video>
-        {/* Fallback gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900"></div>
+        {/* Fallback gradient background - only shown when video fails */}
+        <div className="fallback-bg absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900" style={{ display: 'none' }}></div>
         <div className="absolute inset-0 bg-[#1E293B]/90 backdrop-blur-[3px]"></div>
       </div>
       
