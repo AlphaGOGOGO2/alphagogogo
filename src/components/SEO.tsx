@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet-async";
 
 // 기본 사이트 도메인 - 모든 SEO 관련 URL에 일관되게 사용
@@ -24,7 +23,7 @@ export function SEO({
   structuredData,
   keywords = "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼",
   noIndex = false,
-}: SEOProps) => {
+}: SEOProps) {
   // 브랜딩이 포함된 전체 제목 생성
   const fullTitle = title.includes("알파고고고") ? title : `${title} | 알파고고고`;
   
@@ -116,8 +115,6 @@ export function SEO({
 
       {/* Google Search Console 사이트 확인 태그 - 준비됨 (실제 코드로 교체 필요) */}
       <meta name="google-site-verification" content="REPLACE_WITH_ACTUAL_VERIFICATION_CODE" />
-
-      {/* CSP는 index.html에서 통합 관리되므로 여기서는 제거 */}
     </Helmet>
   );
 }
