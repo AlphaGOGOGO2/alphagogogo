@@ -76,6 +76,60 @@ export const resourceService = {
     return (data || []).map(transformDatabaseResource);
   },
 
+  // 자료 생성
+  async createResource(resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at' | 'download_count'>): Promise<Resource> {
+    const { data, error } = await supabase
+      .from('resources')
+      .insert({
+        ...resourceData,
+        tags: JSON.stringify(resourceData.tags)
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating resource:', error);
+      throw error;
+    }
+
+    return transformDatabaseResource(data);
+  },
+
+  // 자료 수정
+  async updateResource(id: string, resourceData: Partial<Omit<Resource, 'id' | 'created_at' | 'updated_at'>>): Promise<Resource> {
+    const updateData = { ...resourceData };
+    if (updateData.tags) {
+      updateData.tags = JSON.stringify(updateData.tags) as any;
+    }
+
+    const { data, error } = await supabase
+      .from('resources')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating resource:', error);
+      throw error;
+    }
+
+    return transformDatabaseResource(data);
+  },
+
+  // 자료 삭제
+  async deleteResource(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('resources')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting resource:', error);
+      throw error;
+    }
+  },
+
   // 다운로드 수 증가
   async incrementDownloadCount(resourceId: string, ipAddress?: string) {
     // 다운로드 로그 추가
@@ -111,5 +165,51 @@ export const resourceService = {
     }
 
     return data || [];
+  },
+
+  // 카테고리 생성
+  async createCategory(categoryData: Omit<ResourceCategory, 'id' | 'created_at' | 'updated_at'>): Promise<ResourceCategory> {
+    const { data, error } = await supabase
+      .from('resource_categories')
+      .insert(categoryData)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error creating category:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  // 카테고리 수정
+  async updateCategory(id: string, categoryData: Partial<Omit<ResourceCategory, 'id' | 'created_at' | 'updated_at'>>): Promise<ResourceCategory> {
+    const { data, error } = await supabase
+      .from('resource_categories')
+      .update(categoryData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating category:', error);
+      throw error;
+    }
+
+    return data;
+  },
+
+  // 카테고리 삭제
+  async deleteCategory(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('resource_categories')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting category:', error);
+      throw error;
+    }
   }
 };
