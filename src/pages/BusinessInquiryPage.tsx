@@ -1,11 +1,7 @@
-
-import { useState } from "react";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
-import { Mail, Handshake, Megaphone, Code, ExternalLink, FileText, Users, Globe, PenTool, Youtube, Video, BookOpen } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Mail, Handshake, Megaphone, Code, Users, Globe, PenTool, FileText } from "lucide-react";
 import { SEO } from "@/components/SEO";
-import { cn } from "@/lib/utils";
 
 export default function BusinessInquiryPage() {
   return (
@@ -18,7 +14,7 @@ export default function BusinessInquiryPage() {
       <Navbar />
       
       <main className="min-h-screen bg-gradient-to-b from-white via-purple-50/20 to-purple-50/30">
-        {/* 헤더 섹션 - 그라데이션 백그라운드와 현대적 디자인 */}
+        {/* 헤더 섹션 */}
         <section className="pt-24 pb-12 md:pt-32 md:pb-16 px-6">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-700 via-purple-600 to-purple-500 bg-clip-text text-transparent mb-4">
@@ -31,7 +27,7 @@ export default function BusinessInquiryPage() {
           </div>
         </section>
         
-        {/* 연락처 정보 - 현대적인 유리모피즘 효과 적용 */}
+        {/* 연락처 정보 */}
         <section className="pb-12 px-6">
           <div className="max-w-5xl mx-auto">
             <div className="glass-card backdrop-blur-lg bg-white/70 rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-center gap-6 mb-16 hover:shadow-xl transition-all duration-300 border border-purple-100/50">
@@ -47,7 +43,7 @@ export default function BusinessInquiryPage() {
           </div>
         </section>
         
-        {/* 비즈니스 제안 섹션 - 가로형 레이아웃 */}
+        {/* 비즈니스 제안 섹션 */}
         <section className="pb-20 px-6">
           <div className="max-w-6xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
@@ -56,7 +52,7 @@ export default function BusinessInquiryPage() {
               </span>
             </h2>
             
-            {/* 콘텐츠 제휴 - 현대적 디자인과 그라데이션 배경 */}
+            {/* 콘텐츠 제휴 */}
             <div className="mb-10 overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-purple-100/50">
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-1/3 bg-gradient-to-br from-purple-100/80 via-purple-200/50 to-purple-100/70 p-8 flex flex-col justify-center">
@@ -70,6 +66,7 @@ export default function BusinessInquiryPage() {
                 </div>
                 <div className="lg:w-2/3 p-8 bg-white">
                   <div className="grid md:grid-cols-2 gap-6">
+                    
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-700 to-purple-500 mt-2.5"></div>
                       <div>
@@ -116,6 +113,7 @@ export default function BusinessInquiryPage() {
                   <p className="text-gray-700 mb-4">타겟 오디언스에게 효과적으로 도달하여 브랜드 인지도와 관심을 높입니다.</p>
                 </div>
                 <div className="lg:w-2/3 p-8 bg-white">
+                  
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 mt-2.5"></div>
@@ -163,6 +161,7 @@ export default function BusinessInquiryPage() {
                   <p className="text-gray-700 mb-4">검색엔진 최적화된 웹사이트로 온라인 가시성을 높이고 비즈니스 성장을 돕습니다.</p>
                 </div>
                 <div className="lg:w-2/3 p-8 bg-white">
+                  
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 mt-2.5"></div>
@@ -210,6 +209,7 @@ export default function BusinessInquiryPage() {
                   <p className="text-gray-700 mb-4">새로운 아이디어와 창의적인 파트너십으로 함께 성장하는 기회를 만들어보세요.</p>
                 </div>
                 <div className="lg:w-2/3 p-8 bg-white">
+                  
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="flex items-start space-x-3">
                       <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-400 mt-2.5"></div>
@@ -244,7 +244,7 @@ export default function BusinessInquiryPage() {
               </div>
             </div>
             
-            {/* 협업 프로세스 섹션 추가 - 현대적인 디자인 */}
+            {/* 협업 프로세스 섹션 */}
             <div className="mb-16">
               <h3 className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-purple-800 to-purple-600 bg-clip-text text-transparent mb-10 text-center">
                 협업 프로세스
@@ -256,7 +256,6 @@ export default function BusinessInquiryPage() {
                   </div>
                   <h4 className="text-lg font-medium mb-2 bg-gradient-to-r from-purple-800 to-purple-600 bg-clip-text text-transparent">01. 문의</h4>
                   <p className="text-gray-600 text-sm">이메일을 통해 비즈니스 제안 내용과 목표를 공유해 주세요.</p>
-                  {/* 연결선 (모바일에서는 숨김) */}
                   <div className="hidden md:block absolute top-12 left-full w-full h-0.5 bg-gradient-to-r from-purple-300 to-purple-100 -z-10"></div>
                 </div>
                 
@@ -288,7 +287,7 @@ export default function BusinessInquiryPage() {
               </div>
             </div>
             
-            {/* CTA 섹션 - 현대적인 그라데이션 배경 */}
+            {/* CTA 섹션 */}
             <div className="text-center bg-gradient-to-r from-purple-50 via-purple-100/50 to-purple-50 p-10 md:p-14 rounded-2xl shadow-md">
               <h3 className="text-xl md:text-2xl font-semibold bg-gradient-to-r from-purple-800 to-purple-600 bg-clip-text text-transparent mb-4">
                 성공적인 협업을 기대합니다

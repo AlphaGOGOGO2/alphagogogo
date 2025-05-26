@@ -11,10 +11,9 @@ declare global {
   }
 }
 
-// 단 한번만 초기화되도록 조건 추가
+// Google AdSense 배열 초기화 - 단 한번만
 if (!window.adsbygoogle) {
   window.adsbygoogle = [];
-  console.log("Google AdSense 배열 초기화됨");
 }
 
 // 서비스 워커 등록

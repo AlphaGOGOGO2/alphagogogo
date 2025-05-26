@@ -95,29 +95,15 @@ export function SEO({
       <meta name="theme-color" content="#8B5CF6" />
       <meta name="msapplication-TileColor" content="#8B5CF6" />
       
-      {/* DNS Prefetch */}
+      {/* DNS Prefetch 최적화 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
-      <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-      <link rel="dns-prefetch" href="https://adservice.google.com" />
-      <link rel="dns-prefetch" href="https://www.googletagservices.com" />
-      <link rel="dns-prefetch" href="https://ep2.adtrafficquality.google" />
-      <link rel="dns-prefetch" href="https://ep1.adtrafficquality.google" />
-      <link rel="dns-prefetch" href="https://googleads.g.doubleclick.net" />
-      <link rel="dns-prefetch" href="https://tpc.googlesyndication.com" />
-      <link rel="dns-prefetch" href="https://api.ipify.org" />
       
-      {/* Preconnect */}
+      {/* Preconnect 최적화 */}
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://googleads.g.doubleclick.net" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://tpc.googlesyndication.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://ep1.adtrafficquality.google" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://ep2.adtrafficquality.google" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://api.ipify.org" crossOrigin="anonymous" />
       
       {/* 구조화 데이터 - 유효한 경우에만 포함 */}
       {structuredData && structuredDataString && (
@@ -126,15 +112,11 @@ export function SEO({
         </script>
       )}
 
-      {/* Google Search Console 사이트 확인 태그 */}
-      <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE" />
+      {/* Google Search Console 사이트 확인 태그 - 실제 값으로 교체 필요 */}
+      <meta name="google-site-verification" content="your-google-search-console-verification-code" />
 
-      {/* 업데이트된 Feature Policy 및 Permissions Policy - Google AdSense 허용 */}
-      <meta httpEquiv="Feature-Policy" content="camera 'none'; microphone 'none'; geolocation 'none'" />
-      <meta httpEquiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), interest-cohort=()" />
-      
-      {/* 업데이트된 Content Security Policy - AdSense, ipify API 및 Supabase Websocket */}
-      <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://pagead2.googlesyndication.com https://adservice.google.com https://www.googletagservices.com https://ep2.adtrafficquality.google https://ep1.adtrafficquality.google https://tpc.googlesyndication.com https://*.adtrafficquality.google; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://*.adtrafficquality.google; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://ep1.adtrafficquality.google https://ep2.adtrafficquality.google https://*.adtrafficquality.google https://api.ipify.org; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
+      {/* 최적화된 Content Security Policy */}
+      <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co; frame-src 'self' https://www.youtube.com; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
     </Helmet>
   );
 }

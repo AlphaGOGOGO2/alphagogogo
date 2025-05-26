@@ -9,7 +9,6 @@ import { Services } from "@/components/landing/Services";
 import { Community } from "@/components/landing/Community";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
-import { useRecordVisit } from "@/hooks/useRecordVisit";
 
 // 사이트 기본 도메인
 const SITE_DOMAIN = 'https://alphagogogo.com';
@@ -32,9 +31,6 @@ const Index = () => {
       document.body.classList.remove("page-transition");
     };
   }, []);
-  
-  // 방문 기록 (최상단에서 실행)
-  useRecordVisit();
 
   // 더 자세한 홈페이지 구조화 데이터
   const homePageSchema = {

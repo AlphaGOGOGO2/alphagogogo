@@ -15,14 +15,11 @@ export default function SitemapPage() {
       try {
         // 모든 블로그 포스트 가져오기
         const allPosts = await getAllBlogPosts();
-        const aiPosts = await getBlogPostsByCategory("최신 AI소식");
-        const trendingPosts = await getBlogPostsByCategory("화제의 이슈");
-        const lifestylePosts = await getBlogPostsByCategory("라이프스타일");
         
         // 현재 날짜 포맷팅
         const today = new Date().toISOString().split('T')[0];
         
-        // 기본 URL들에 대한 sitemap 항목 생성
+        // 실제 존재하는 기본 URL들에 대한 sitemap 항목 생성
         const staticUrls = [
           { loc: `${SITE_DOMAIN}/`, lastmod: today, priority: '1.0', changefreq: 'daily' },
           { loc: `${SITE_DOMAIN}/blog`, lastmod: today, priority: '0.9', changefreq: 'daily' },
@@ -32,10 +29,9 @@ export default function SitemapPage() {
           { loc: `${SITE_DOMAIN}/gpts`, lastmod: today, priority: '0.7', changefreq: 'weekly' },
           { loc: `${SITE_DOMAIN}/services`, lastmod: today, priority: '0.7', changefreq: 'monthly' },
           { loc: `${SITE_DOMAIN}/community`, lastmod: today, priority: '0.6', changefreq: 'daily' },
-          { loc: `${SITE_DOMAIN}/services/url-shortener`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/services/youtube-transcript`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/services/blog-button-creator`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/rss.xml`, lastmod: today, priority: '0.5', changefreq: 'daily' }
+          { loc: `${SITE_DOMAIN}/blog-button-creator`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/business-inquiry`, lastmod: today, priority: '0.5', changefreq: 'monthly' },
+          { loc: `${SITE_DOMAIN}/api/rss`, lastmod: today, priority: '0.5', changefreq: 'daily' }
         ];
         
         // 모든 블로그 포스트에 대한 sitemap 항목 생성
