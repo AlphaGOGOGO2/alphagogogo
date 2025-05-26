@@ -26,6 +26,7 @@ import ResourcesPage from "./pages/ResourcesPage";
 
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
+import AdminResourcesPage from "./pages/admin/AdminResourcesPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 
@@ -77,6 +78,7 @@ const App = () => (
             
             <Route path="/admin" element={<AdminDashboardPage />} />
             <Route path="/admin/posts" element={<AdminPostsPage />} />
+            <Route path="/admin/resources" element={<AdminResourcesPage />} />
             <Route path="/admin/categories" element={<AdminCategoriesPage />} />
             <Route path="/admin/settings" element={<AdminSettingsPage />} />
             

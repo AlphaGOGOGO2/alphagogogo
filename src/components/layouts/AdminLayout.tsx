@@ -9,7 +9,8 @@ import {
   Tags, 
   Newspaper,
   Home,
-  User
+  User,
+  FolderOpen
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
@@ -57,6 +58,7 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   const navItems: NavItem[] = [
     { name: "대시보드", path: "/admin", icon: BarChart3 },
     { name: "블로그 관리", path: "/admin/posts", icon: FileText },
+    { name: "자료실 관리", path: "/admin/resources", icon: FolderOpen },
     { name: "카테고리 관리", path: "/admin/categories", icon: Tags },
     { name: "시스템 설정", path: "/admin/settings", icon: Settings },
   ];
@@ -117,9 +119,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           {children}
         </main>
       </div>
-
-      {/* 필요시 모달 (어드민 진입 후엔 표시 안 함) */}
-      {/* BlogPasswordModal은 어드민 진입 후 불필요하므로 제거 */}
     </div>
   );
 }
