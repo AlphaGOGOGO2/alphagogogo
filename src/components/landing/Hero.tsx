@@ -27,14 +27,21 @@ export function Hero() {
           muted
           loop
           playsInline
-          src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos//background%20video.mp4"
+          preload="auto"
+          onError={(e) => {
+            console.error('Video loading error:', e);
+            // Fallback gradient background if video fails
+            e.currentTarget.style.display = 'none';
+          }}
         >
           <source 
-            src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos//background%20video.mp4" 
+            src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos/background%20video.mp4" 
             type="video/mp4"
           />
           Your browser does not support the video tag.
         </video>
+        {/* Fallback gradient background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900"></div>
         <div className="absolute inset-0 bg-[#1E293B]/90 backdrop-blur-[3px]"></div>
       </div>
       
