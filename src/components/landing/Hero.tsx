@@ -1,4 +1,3 @@
-
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -28,6 +27,9 @@ export function Hero() {
           loop
           playsInline
           preload="auto"
+          onLoad={() => {
+            console.log('Video loaded successfully');
+          }}
           onError={(e) => {
             console.error('Video loading error:', e);
             // Show fallback background if video fails
@@ -46,7 +48,7 @@ export function Hero() {
         </video>
         {/* Fallback gradient background - only shown when video fails */}
         <div className="fallback-bg absolute inset-0 bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900" style={{ display: 'none' }}></div>
-        <div className="absolute inset-0 bg-[#1E293B]/90 backdrop-blur-[3px]"></div>
+        <div className="absolute inset-0 bg-[#1E293B]/30 backdrop-blur-[1px]"></div>
       </div>
       
       {/* Subtle animated shapes with lighter colors */}
