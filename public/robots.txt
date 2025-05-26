@@ -18,4 +18,6 @@ Disallow: /*?*utm_content=
 # 다이나믹 sitemap과 RSS 위치
 Sitemap: https://alphagogogo.com/sitemap.xml
 Sitemap: https://alphagogogo.com/api/sitemap
+
+# RSS 피드
 Sitemap: https://alphagogogo.com/api/rss

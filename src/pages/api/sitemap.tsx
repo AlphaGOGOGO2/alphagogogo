@@ -1,10 +1,9 @@
 
 import { useEffect, useState } from 'react';
-import { getAllBlogPosts, getBlogPostsByCategory } from '@/services/blogPostService';
-import { formatDate } from '@/lib/utils';
+import { getAllBlogPosts } from '@/services/blogPostService';
 import { BlogPost } from '@/types/blog';
 
-// 도메인 설정 - 프로덕션에서는 이 도메인을 사용합니다
+// 도메인 설정 - 일관된 도메인 사용
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function SitemapPage() {
@@ -31,7 +30,6 @@ export default function SitemapPage() {
           { loc: `${SITE_DOMAIN}/community`, lastmod: today, priority: '0.6', changefreq: 'daily' },
           { loc: `${SITE_DOMAIN}/blog-button-creator`, lastmod: today, priority: '0.6', changefreq: 'monthly' },
           { loc: `${SITE_DOMAIN}/business-inquiry`, lastmod: today, priority: '0.5', changefreq: 'monthly' },
-          { loc: `${SITE_DOMAIN}/api/rss`, lastmod: today, priority: '0.5', changefreq: 'daily' }
         ];
         
         // 모든 블로그 포스트에 대한 sitemap 항목 생성
@@ -63,6 +61,7 @@ ${urlItems.map(item => `  <url>
 </urlset>`;
         
         setXml(sitemapXml);
+        console.log(`사이트맵 생성 완료: 총 ${urlItems.length}개 URL (정적: ${staticUrls.length}, 블로그: ${postUrls.length})`);
       } catch (error) {
         console.error("Sitemap 생성 중 오류 발생:", error);
         setXml(`<?xml version="1.0" encoding="UTF-8"?>

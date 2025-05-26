@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -14,6 +13,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+
+// 일관된 도메인 사용
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function BlogPostPage() {
   const { slug, id } = useParams<{ slug?: string; id?: string }>();
@@ -109,17 +111,20 @@ export default function BlogPostPage() {
     ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
     : "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,인공지능,AI";
   
+  // 올바른 도메인으로 canonical URL 생성
+  const canonicalUrl = `${SITE_DOMAIN}/blog/${post.slug || `post/${post.id}`}`;
+  
   return (
     <BlogLayout title={post.title}>
       <SEO 
         title={post.title}
         description={post.excerpt || generateExcerpt(post.content)}
-        canonicalUrl={`https://alphablog.app/blog/${post.slug || `post/${post.id}`}`}
+        canonicalUrl={canonicalUrl}
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"}
         ogType="article"
         keywords={postKeywords}
       />
-      <BlogPostSchema post={post} url={`https://alphablog.app/blog/${post.slug || `post/${post.id}`}`} />
+      <BlogPostSchema post={post} url={canonicalUrl} />
       
       <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
         {post.coverImage && (

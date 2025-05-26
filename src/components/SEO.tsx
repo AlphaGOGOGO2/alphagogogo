@@ -112,11 +112,11 @@ export function SEO({
         </script>
       )}
 
-      {/* Google Search Console 사이트 확인 태그 - 실제 값으로 교체 필요 */}
-      <meta name="google-site-verification" content="your-google-search-console-verification-code" />
+      {/* Google Search Console 사이트 확인 태그 - 준비됨 (실제 코드로 교체 필요) */}
+      <meta name="google-site-verification" content="REPLACE_WITH_ACTUAL_VERIFICATION_CODE" />
 
       {/* 최적화된 Content Security Policy */}
-      <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co; frame-src 'self' https://www.youtube.com; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
+      <meta httpEquiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.gpteng.co https://googletagmanager.com https://www.google-analytics.com; frame-src 'self' https://www.youtube.com; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co https://www.google-analytics.com; font-src 'self' https://fonts.gstatic.com https://plimzlmmftdbpipbnhsy.supabase.co;" />
     </Helmet>
   );
 }
