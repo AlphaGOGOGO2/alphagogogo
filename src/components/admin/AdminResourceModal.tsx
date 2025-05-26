@@ -1,16 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Resource, ResourceCategory } from "@/types/resources";
 import { resourceService } from "@/services/resourceService";
 import { toast } from "sonner";
 import { Upload, X, FileText, Image, Video, Music, Archive, File, Plus } from "lucide-react";
+import { ResourceEditor } from "./ResourceEditor";
 
 interface AdminResourceModalProps {
   isOpen: boolean;
@@ -147,7 +146,7 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-hidden flex flex-col">
+      <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
         <DialogHeader className="flex-shrink-0 border-b pb-4">
           <DialogTitle className="flex items-center gap-2 text-xl">
             <FileTypeIcon className="w-6 h-6 text-purple-600" />
@@ -220,19 +219,12 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
               />
             </div>
 
-            {/* 설명 */}
-            <div>
-              <Label htmlFor="description" className="text-lg font-semibold text-gray-800 mb-3 block">설명</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) => handleInputChange("description", e.target.value)}
-                placeholder="자료에 대한 상세한 설명을 입력하세요..."
-                rows={6}
-                className="resize-none px-4 py-4 text-base leading-relaxed border-gray-200 focus:ring-purple-500 focus:border-transparent transition-all"
-              />
-              <p className="text-sm text-gray-500 mt-2">사용자가 자료를 이해할 수 있도록 상세히 작성해주세요.</p>
-            </div>
+            {/* BlockNote 에디터로 교체된 설명 부분 */}
+            <ResourceEditor
+              value={formData.description}
+              onChange={(value) => handleInputChange("description", value)}
+              placeholder="자료에 대한 상세한 설명을 입력하세요..."
+            />
 
             {/* 파일 정보 */}
             <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
