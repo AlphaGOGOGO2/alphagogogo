@@ -159,6 +159,107 @@ export type Database = {
         }
         Relationships: []
       }
+      resource_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      resource_downloads: {
+        Row: {
+          downloaded_at: string
+          id: string
+          ip_address: string | null
+          resource_id: string
+        }
+        Insert: {
+          downloaded_at?: string
+          id?: string
+          ip_address?: string | null
+          resource_id: string
+        }
+        Update: {
+          downloaded_at?: string
+          id?: string
+          ip_address?: string | null
+          resource_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_downloads_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          author_name: string
+          category: string
+          created_at: string
+          description: string | null
+          download_count: number
+          file_size: number | null
+          file_type: string
+          file_url: string | null
+          id: string
+          is_featured: boolean
+          tags: Json | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_name?: string
+          category: string
+          created_at?: string
+          description?: string | null
+          download_count?: number
+          file_size?: number | null
+          file_type?: string
+          file_url?: string | null
+          id?: string
+          is_featured?: boolean
+          tags?: Json | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          download_count?: number
+          file_size?: number | null
+          file_type?: string
+          file_url?: string | null
+          id?: string
+          is_featured?: boolean
+          tags?: Json | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       visit_logs: {
         Row: {
           client_id: string | null

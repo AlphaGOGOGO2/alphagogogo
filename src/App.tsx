@@ -22,6 +22,7 @@ import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import ServicesPage from "./pages/ServicesPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
+import ResourcesPage from "./pages/ResourcesPage";
 
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
@@ -56,6 +57,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/gpts" element={<GPTSPage />} />
             <Route path="/services" element={<ServicesPage />} />
+            <Route path="/resources" element={<ResourcesPage />} />
+            <Route path="/resources/category/:category" element={<ResourcesPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
             <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
