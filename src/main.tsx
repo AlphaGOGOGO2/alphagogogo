@@ -7,7 +7,10 @@ import { registerServiceWorker } from './registerSW';
 // Declare adsbygoogle for Google AdSense
 declare global {
   interface Window {
-    adsbygoogle: any[];
+    adsbygoogle: any[] & {
+      loaded?: boolean;
+      push: (ad: any) => void;
+    };
   }
 }
 
@@ -18,7 +21,7 @@ const initializeAdSense = () => {
     
     // AdSense 배열 초기화 - 단 한번만
     if (!window.adsbygoogle) {
-      window.adsbygoogle = [];
+      window.adsbygoogle = [] as any;
       console.log('[AdSense] 전역 배열 초기화 완료');
     }
 
@@ -60,9 +63,11 @@ const initializeAdSense = () => {
       console.warn('[AdSense] CSP 메타 태그를 찾을 수 없습니다');
     }
 
-    // 광고 차단 소프트웨어 감지
+    // 광고 차단 소프트웨어 감지 - 올바른 방식으로 수정
     setTimeout(() => {
-      if (window.adsbygoogle && window.adsbygoogle.loaded) {
+      // AdSense 스크립트가 로드되었는지 확인하는 더 안전한 방법
+      const adSenseLoaded = window.adsbygoogle && typeof window.adsbygoogle.push === 'function';
+      if (adSenseLoaded) {
         console.log('[AdSense] ✅ AdSense가 정상적으로 로드됨');
       } else {
         console.warn('[AdSense] ⚠️ AdSense 로드가 지연되거나 차단되었을 수 있습니다');

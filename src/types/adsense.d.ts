@@ -1,5 +1,8 @@
 
 // Type declarations for Google AdSense
 interface Window {
-  adsbygoogle: any[];
+  adsbygoogle: any[] & {
+    loaded?: boolean;
+    push: (ad: any) => void;
+  };
 }
