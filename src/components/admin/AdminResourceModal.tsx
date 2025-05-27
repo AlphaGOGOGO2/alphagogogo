@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -9,7 +10,8 @@ import { Resource, ResourceCategory } from "@/types/resources";
 import { resourceService } from "@/services/resourceService";
 import { toast } from "sonner";
 import { Upload, X, FileText, Image, Video, Music, Archive, File, Plus } from "lucide-react";
-import { ResourceEditor } from "./ResourceEditor";
+import { ResourceCKEditor } from "./ResourceCKEditor";
+import { uploadResourceFile } from "@/services/resourceMediaService";
 
 interface AdminResourceModalProps {
   isOpen: boolean;
@@ -41,6 +43,7 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
   });
 
   const [tagsInput, setTagsInput] = useState("");
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -127,6 +130,26 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
       ...prev,
       [field]: value
     }));
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadingFile(true);
+    try {
+      const result = await uploadResourceFile(file);
+      if (result) {
+        handleInputChange("file_url", result.url);
+        handleInputChange("file_size", result.size);
+        toast.success("파일이 업로드되었습니다.");
+      }
+    } catch (error) {
+      console.error("File upload error:", error);
+      toast.error("파일 업로드에 실패했습니다.");
+    } finally {
+      setUploadingFile(false);
+    }
   };
 
   const handleTagAdd = (tag: string) => {
@@ -219,23 +242,37 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
               />
             </div>
 
-            {/* BlockNote 에디터로 교체된 설명 부분 */}
-            <ResourceEditor
+            {/* CKEditor로 교체된 설명 부분 */}
+            <ResourceCKEditor
               value={formData.description}
               onChange={(value) => handleInputChange("description", value)}
               placeholder="자료에 대한 상세한 설명을 입력하세요..."
             />
 
-            {/* 파일 정보 */}
+            {/* 파일 업로드 */}
             <div className="bg-blue-50 p-6 rounded-lg border border-blue-100">
               <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
                 <Upload className="w-5 h-5 text-blue-600" />
-                파일 정보
+                파일 업로드
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Label htmlFor="file_url" className="text-sm font-semibold text-gray-700">파일 URL</Label>
+                  <Label htmlFor="file_upload" className="text-sm font-semibold text-gray-700">파일 선택</Label>
+                  <input
+                    id="file_upload"
+                    type="file"
+                    onChange={handleFileUpload}
+                    className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    disabled={uploadingFile}
+                  />
+                  {uploadingFile && (
+                    <p className="text-sm text-blue-600 mt-1">업로드 중...</p>
+                  )}
+                </div>
+
+                <div>
+                  <Label htmlFor="file_url" className="text-sm font-semibold text-gray-700">파일 URL (직접 입력)</Label>
                   <Input
                     id="file_url"
                     value={formData.file_url}
@@ -245,25 +282,13 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
                     className="mt-2 px-4 py-3 border-gray-200 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
-
-                <div>
-                  <Label htmlFor="file_size" className="text-sm font-semibold text-gray-700">파일 크기 (bytes)</Label>
-                  <Input
-                    id="file_size"
-                    value={formData.file_size}
-                    onChange={(e) => handleInputChange("file_size", parseInt(e.target.value) || 0)}
-                    placeholder="예: 1048576"
-                    type="number"
-                    min="0"
-                    className="mt-2 px-4 py-3 border-gray-200 focus:ring-blue-500 focus:border-transparent"
-                  />
-                  {formData.file_size > 0 && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      약 {(formData.file_size / 1024 / 1024).toFixed(2)}MB
-                    </p>
-                  )}
-                </div>
               </div>
+
+              {formData.file_size > 0 && (
+                <p className="text-sm text-gray-600 mt-4">
+                  파일 크기: 약 {(formData.file_size / 1024 / 1024).toFixed(2)}MB
+                </p>
+              )}
             </div>
 
             {/* 태그 */}

@@ -1,50 +1,67 @@
 
-import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView } from "@blocknote/mantine";
-import "@blocknote/mantine/style.css";
-
 interface ResourceContentDisplayProps {
   content: string;
   className?: string;
 }
 
 export function ResourceContentDisplay({ content, className = "" }: ResourceContentDisplayProps) {
-  // 읽기 전용 에디터 생성
-  const editor = useCreateBlockNote({
-    initialContent: parseContent(content),
-  });
+  // 콘텐츠가 없는 경우 처리
+  if (!content || !content.trim()) {
+    return (
+      <div className={`${className} text-gray-500 italic`}>
+        설명이 없습니다.
+      </div>
+    );
+  }
 
-  // 에디터를 읽기 전용으로 설정
-  editor.isEditable = false;
-
-  return (
-    <div className={className}>
-      <BlockNoteView
-        editor={editor}
-        theme="light"
-        className="prose prose-sm max-w-none"
-      />
-    </div>
-  );
-}
-
-// 콘텐츠 파싱 헬퍼 함수
-function parseContent(content: string) {
-  if (!content || !content.trim()) return undefined;
+  // HTML 콘텐츠인지 확인하고 렌더링
+  const isHtmlContent = content.includes('<') && content.includes('>');
   
+  if (isHtmlContent) {
+    return (
+      <div 
+        className={`${className} prose prose-sm max-w-none`}
+        dangerouslySetInnerHTML={{ __html: content }}
+      />
+    );
+  }
+
+  // 기존 JSON 형식이거나 일반 텍스트인 경우 처리
   try {
     const parsed = JSON.parse(content);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
+    if (Array.isArray(parsed)) {
+      // BlockNote 형식의 데이터를 간단한 텍스트로 변환
+      const textContent = parsed
+        .map(block => {
+          if (block.content && Array.isArray(block.content)) {
+            return block.content
+              .filter((item: any) => item.type === 'text')
+              .map((item: any) => item.text)
+              .join('');
+          }
+          return '';
+        })
+        .filter(text => text.trim())
+        .join('\n\n');
+      
+      return (
+        <div className={`${className} whitespace-pre-wrap`}>
+          {textContent || '내용이 없습니다.'}
+        </div>
+      );
     }
   } catch (error) {
-    // 기존 텍스트인 경우 단순 텍스트 블록으로 변환
-    return [{
-      id: "text-content",
-      type: "paragraph",
-      content: [{ type: "text", text: content, styles: {} }]
-    }];
+    // JSON이 아닌 일반 텍스트인 경우
+    return (
+      <div className={`${className} whitespace-pre-wrap`}>
+        {content}
+      </div>
+    );
   }
-  
-  return undefined;
+
+  return (
+    <div className={`${className} text-gray-500 italic`}>
+      내용을 표시할 수 없습니다.
+    </div>
+  );
 }
