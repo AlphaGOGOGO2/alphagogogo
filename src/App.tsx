@@ -1,97 +1,69 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
-import { ScrollToTop } from "./components/ScrollToTop";
-import { useRecordVisit } from "./hooks/useRecordVisit";
-
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import AllBlogPage from "./pages/blog/AllBlogPage";
-import LatestAIUpdates from "./pages/blog/LatestAIUpdates";
-import BlogWritePage from "./pages/blog/BlogWritePage";
-import TrendingPage from "./pages/blog/TrendingPage";
-import LifestylePage from "./pages/blog/LifestylePage";
+import ServicesPage from "./pages/ServicesPage";
 import BlogPostPage from "./pages/blog/BlogPostPage";
+import BlogWritePage from "./pages/blog/BlogWritePage";
+import AllBlogPage from "./pages/blog/AllBlogPage";
+import TrendingPage from "./pages/blog/TrendingPage";
+import LatestAIUpdates from "./pages/blog/LatestAIUpdates";
+import LifestylePage from "./pages/blog/LifestylePage";
 import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
-import ServicesPage from "./pages/ServicesPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
 import ResourcesPage from "./pages/ResourcesPage";
-
+import ResourceDetailPage from "./pages/ResourceDetailPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminResourcesPage from "./pages/admin/AdminResourcesPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import NotFound from "./pages/NotFound";
+import "./App.css";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 1,
-      refetchOnWindowFocus: false,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
-// 방문 기록 컴포넌트 - 전역 레벨에서 한번만 실행
-const VisitRecorder = () => {
-  useRecordVisit();
-  return null;
-};
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <HelmetProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ScrollToTop />
-          <VisitRecorder />
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/gpts" element={<GPTSPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/resources" element={<ResourcesPage />} />
-            <Route path="/community" element={<CommunityPage />} />
-            <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
-            <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
-            
-            <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
-            
-            <Route path="/services/blog-button-creator" element={<Navigate to="/blog-button-creator" replace />} />
-            
-            <Route path="/blog" element={<AllBlogPage />} />
-            <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
-            <Route path="/blog/trending" element={<TrendingPage />} />
-            <Route path="/blog/lifestyle" element={<LifestylePage />} />
-            <Route path="/blog/write" element={<BlogWritePage />} />
-            <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
-            <Route path="/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/blog/post/:id" element={<BlogPostPage />} />
-            
-            <Route path="/admin" element={<AdminDashboardPage />} />
-            <Route path="/admin/posts" element={<AdminPostsPage />} />
-            <Route path="/admin/resources" element={<AdminResourcesPage />} />
-            <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-            <Route path="/admin/settings" element={<AdminSettingsPage />} />
-            
-            <Route path="/latest-ai-updates" element={<Navigate to="/blog/latest-updates" replace />} />
-            <Route path="/trending" element={<Navigate to="/blog/trending" replace />} />
-            <Route path="/lifestyle" element={<Navigate to="/blog/lifestyle" replace />} />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </HelmetProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <HelmetProvider>
+        <TooltipProvider>
+          <Toaster />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/blog-write" element={<BlogWritePage />} />
+              <Route path="/all-blog" element={<AllBlogPage />} />
+              <Route path="/trending" element={<TrendingPage />} />
+              <Route path="/latest-ai-updates" element={<LatestAIUpdates />} />
+              <Route path="/lifestyle" element={<LifestylePage />} />
+              <Route path="/gpts" element={<GPTSPage />} />
+              <Route path="/community" element={<CommunityPage />} />
+              <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
+              <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
+              <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
+              <Route path="/resources" element={<ResourcesPage />} />
+              <Route path="/resources/:id" element={<ResourceDetailPage />} />
+              <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/posts" element={<AdminPostsPage />} />
+              <Route path="/admin/resources" element={<AdminResourcesPage />} />
+              <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+              <Route path="/admin/settings" element={<AdminSettingsPage />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </HelmetProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

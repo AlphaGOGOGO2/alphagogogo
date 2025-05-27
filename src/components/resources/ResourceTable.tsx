@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -43,14 +44,11 @@ export function ResourceTable({ resources }: ResourceTableProps) {
     if (!resource.file_url) return;
 
     try {
-      // IP 주소 가져오기
       const ipResponse = await fetch('https://api.ipify.org?format=json');
       const ipData = await ipResponse.json();
       
-      // 다운로드 수 증가
       await resourceService.incrementDownloadCount(resource.id, ipData.ip);
       
-      // 파일 다운로드
       window.open(resource.file_url, '_blank');
     } catch (error) {
       console.error('Download error:', error);
@@ -100,15 +98,12 @@ export function ResourceTable({ resources }: ResourceTableProps) {
               
               <TableCell>
                 <div className="space-y-1">
-                  <div className="font-medium text-gray-900 hover:text-purple-600 transition-colors">
+                  <Link 
+                    to={`/resources/${resource.id}`}
+                    className="font-medium text-gray-900 hover:text-purple-600 transition-colors cursor-pointer block"
+                  >
                     {resource.title}
-                  </div>
-                  {resource.description && (
-                    <div className="text-sm text-gray-500 line-clamp-1">
-                      {resource.description.replace(/<[^>]*>/g, '').substring(0, 100)}
-                      {resource.description.length > 100 ? '...' : ''}
-                    </div>
-                  )}
+                  </Link>
                   {resource.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {resource.tags.slice(0, 3).map((tag, index) => (
