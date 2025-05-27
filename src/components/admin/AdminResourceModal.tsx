@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -47,7 +46,6 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
 
   const queryClient = useQueryClient();
 
-  // 폼 데이터 초기화
   useEffect(() => {
     if (resource) {
       setFormData({
