@@ -1,12 +1,9 @@
 
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Download, FileText, Image, File, Star, Calendar, User, Eye } from "lucide-react";
+import { FileText, Image, File, Star, Calendar, User, Eye } from "lucide-react";
 import { Resource } from "@/types/resources";
-import { resourceService } from "@/services/resourceService";
 
 interface ResourceTableProps {
   resources: Resource[];
@@ -40,24 +37,6 @@ export function ResourceTable({ resources }: ResourceTableProps) {
     });
   };
 
-  const handleDownload = async (resource: Resource) => {
-    if (!resource.file_url) return;
-
-    try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
-      const ipData = await ipResponse.json();
-      
-      await resourceService.incrementDownloadCount(resource.id, ipData.ip);
-      
-      window.open(resource.file_url, '_blank');
-    } catch (error) {
-      console.error('Download error:', error);
-      if (resource.file_url) {
-        window.open(resource.file_url, '_blank');
-      }
-    }
-  };
-
   if (resources.length === 0) {
     return (
       <div className="text-center py-12">
@@ -73,12 +52,10 @@ export function ResourceTable({ resources }: ResourceTableProps) {
           <TableRow className="bg-gray-50">
             <TableHead className="w-12"></TableHead>
             <TableHead className="font-semibold">제목</TableHead>
-            <TableHead className="w-24 text-center font-semibold">카테고리</TableHead>
             <TableHead className="w-20 text-center font-semibold">크기</TableHead>
             <TableHead className="w-24 text-center font-semibold">다운로드</TableHead>
             <TableHead className="w-20 text-center font-semibold">작성자</TableHead>
             <TableHead className="w-24 text-center font-semibold">등록일</TableHead>
-            <TableHead className="w-20 text-center font-semibold">다운로드</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -121,12 +98,6 @@ export function ResourceTable({ resources }: ResourceTableProps) {
                 </div>
               </TableCell>
               
-              <TableCell className="text-center">
-                <Badge variant="secondary" className="text-xs">
-                  {resource.category}
-                </Badge>
-              </TableCell>
-              
               <TableCell className="text-center text-sm text-gray-600">
                 {formatFileSize(resource.file_size)}
               </TableCell>
@@ -152,16 +123,6 @@ export function ResourceTable({ resources }: ResourceTableProps) {
                   <Calendar className="w-3 h-3" />
                   <span>{formatDate(resource.created_at)}</span>
                 </div>
-              </TableCell>
-              
-              <TableCell className="text-center">
-                <Button
-                  onClick={() => handleDownload(resource)}
-                  size="sm"
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
-                >
-                  <Download className="w-3 h-3" />
-                </Button>
               </TableCell>
             </TableRow>
           ))}

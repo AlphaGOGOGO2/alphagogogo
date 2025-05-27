@@ -104,42 +104,41 @@ export default function ResourceDetailPage() {
             </div>
 
             {/* 자료 정보 */}
-            <div className="bg-white rounded-lg shadow-sm border p-8">
+            <div className="bg-white rounded-lg shadow-sm border p-8 overflow-hidden">
               {/* 헤더 */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h1 className="text-3xl font-bold text-gray-900">{resource.title}</h1>
+              <div className="flex items-start justify-between mb-6 flex-wrap gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <h1 className="text-3xl font-bold text-gray-900 break-words">{resource.title}</h1>
                     {resource.is_featured && (
-                      <Star className="w-6 h-6 text-yellow-500 fill-current" />
+                      <Star className="w-6 h-6 text-yellow-500 fill-current flex-shrink-0" />
                     )}
                   </div>
                   
-                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4">
+                  <div className="flex items-center gap-4 text-sm text-gray-600 mb-4 flex-wrap">
                     <div className="flex items-center gap-1">
-                      <User className="w-4 h-4" />
-                      <span>{resource.author_name}</span>
+                      <User className="w-4 h-4 flex-shrink-0" />
+                      <span className="break-words">{resource.author_name}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Calendar className="w-4 h-4" />
+                      <Calendar className="w-4 h-4 flex-shrink-0" />
                       <span>{formatDate(resource.created_at)}</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-4 h-4 flex-shrink-0" />
                       <span>{resource.download_count.toLocaleString()} 다운로드</span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 mb-4">
-                    <Badge variant="secondary">{resource.category}</Badge>
-                    {resource.file_size && (
+                  {resource.file_size && (
+                    <div className="mb-4">
                       <Badge variant="outline">{formatFileSize(resource.file_size)}</Badge>
-                    )}
-                  </div>
+                    </div>
+                  )}
 
                   {resource.tags.length > 0 && (
-                    <div className="flex items-center gap-2 mb-4">
-                      <Tag className="w-4 h-4 text-gray-500" />
+                    <div className="flex items-start gap-2 mb-4">
+                      <Tag className="w-4 h-4 text-gray-500 flex-shrink-0 mt-1" />
                       <div className="flex flex-wrap gap-1">
                         {resource.tags.map((tag, index) => (
                           <Badge key={index} variant="outline" className="text-xs">
@@ -153,7 +152,7 @@ export default function ResourceDetailPage() {
 
                 <Button 
                   onClick={handleDownload}
-                  className="bg-purple-600 hover:bg-purple-700 text-white"
+                  className="bg-purple-600 hover:bg-purple-700 text-white flex-shrink-0"
                   size="lg"
                 >
                   <Download className="w-4 h-4 mr-2" />
@@ -166,7 +165,7 @@ export default function ResourceDetailPage() {
                 <div className="border-t pt-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">자료 설명</h2>
                   <div 
-                    className="prose max-w-none text-gray-700"
+                    className="prose max-w-none text-gray-700 break-words overflow-hidden"
                     dangerouslySetInnerHTML={{ __html: resource.description }}
                   />
                 </div>

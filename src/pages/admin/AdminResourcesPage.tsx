@@ -15,7 +15,6 @@ import { AdminResourceModal } from "@/components/admin/AdminResourceModal";
 
 export default function AdminResourcesPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingResource, setEditingResource] = useState<Resource | null>(null);
 
@@ -24,11 +23,6 @@ export default function AdminResourcesPage() {
   const { data: resources = [], isLoading } = useQuery({
     queryKey: ['admin-resources'],
     queryFn: resourceService.getAllResources
-  });
-
-  const { data: categories = [] } = useQuery({
-    queryKey: ['resource-categories'],
-    queryFn: resourceService.getCategories
   });
 
   const deleteResourceMutation = useMutation({
@@ -51,9 +45,7 @@ export default function AdminResourcesPage() {
       resource.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesCategory = selectedCategory === "all" || resource.category === selectedCategory;
-    
-    return matchesSearch && matchesCategory;
+    return matchesSearch;
   });
 
   const handleEditResource = (resource: Resource) => {
@@ -114,7 +106,7 @@ export default function AdminResourcesPage() {
     <AdminLayout title="자료실 관리">
       <div className="space-y-6">
         {/* 상단 통계 카드 */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">전체 자료</CardTitle>
@@ -155,17 +147,6 @@ export default function AdminResourcesPage() {
               </p>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">카테고리 수</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{categories.length}</div>
-              <p className="text-xs text-muted-foreground">
-                등록된 카테고리
-              </p>
-            </CardContent>
-          </Card>
         </div>
 
         {/* 필터 및 검색 */}
@@ -196,18 +177,6 @@ export default function AdminResourcesPage() {
                   />
                 </div>
               </div>
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 min-w-[150px]"
-              >
-                <option value="all">모든 카테고리</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.name}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
             </div>
 
             {/* 자료 테이블 */}
@@ -216,7 +185,6 @@ export default function AdminResourcesPage() {
                 <TableHeader>
                   <TableRow>
                     <TableHead>제목</TableHead>
-                    <TableHead>카테고리</TableHead>
                     <TableHead>유형</TableHead>
                     <TableHead>크기</TableHead>
                     <TableHead>다운로드</TableHead>
@@ -246,9 +214,6 @@ export default function AdminResourcesPage() {
                             )}
                           </div>
                         )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">{resource.category}</Badge>
                       </TableCell>
                       <TableCell>
                         <span className="text-sm">{getFileTypeDisplay(resource.file_type)}</span>
@@ -307,12 +272,12 @@ export default function AdminResourcesPage() {
               {filteredResources.length === 0 && (
                 <div className="text-center py-12">
                   <div className="text-gray-500">
-                    {searchQuery || selectedCategory !== "all" ? 
+                    {searchQuery ? 
                       "검색 조건에 맞는 자료가 없습니다." : 
                       "등록된 자료가 없습니다."
                     }
                   </div>
-                  {(!searchQuery && selectedCategory === "all") && (
+                  {!searchQuery && (
                     <Button 
                       onClick={handleAddNew}
                       variant="outline" 
@@ -334,7 +299,7 @@ export default function AdminResourcesPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         resource={editingResource}
-        categories={categories}
+        categories={[]}
       />
     </AdminLayout>
   );

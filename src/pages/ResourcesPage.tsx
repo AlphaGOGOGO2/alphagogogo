@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
@@ -8,13 +9,11 @@ import { ResourceCard } from "@/components/resources/ResourceCard";
 import { ResourceTable } from "@/components/resources/ResourceTable";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { resourceService } from "@/services/resourceService";
 import { Resource } from "@/types/resources";
 
 export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [filteredResources, setFilteredResources] = useState<Resource[]>([]);
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
@@ -28,17 +27,8 @@ export default function ResourcesPage() {
     queryFn: resourceService.getFeaturedResources
   });
 
-  const { data: categories = [] } = useQuery({
-    queryKey: ['resource-categories'],
-    queryFn: resourceService.getCategories
-  });
-
   useEffect(() => {
     let filtered = resources;
-
-    if (selectedCategory !== "all") {
-      filtered = filtered.filter(resource => resource.category === selectedCategory);
-    }
 
     if (searchQuery) {
       filtered = filtered.filter(resource =>
@@ -48,11 +38,7 @@ export default function ResourcesPage() {
     }
 
     setFilteredResources(filtered);
-  }, [resources, selectedCategory, searchQuery]);
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-  };
+  }, [resources, searchQuery]);
 
   if (isLoading) {
     return (
@@ -138,46 +124,31 @@ export default function ResourcesPage() {
               </div>
             </div>
 
-            {/* 카테고리 탭과 자료 목록 */}
-            <Tabs value={selectedCategory} onValueChange={handleCategoryChange} className="w-full">
-              <TabsList className="grid w-full max-w-2xl mx-auto mb-8" style={{ gridTemplateColumns: `repeat(${categories.length + 1}, 1fr)` }}>
-                <TabsTrigger value="all">전체</TabsTrigger>
-                {categories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.name}>
-                    {category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+            {/* 자료 목록 */}
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-gray-900">모든 자료</h2>
+              <span className="text-gray-600">
+                {filteredResources.length}개의 자료
+              </span>
+            </div>
 
-              <TabsContent value={selectedCategory} className="mt-0">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-gray-900">
-                    {selectedCategory === "all" ? "모든 자료" : `${selectedCategory} 자료`}
-                  </h2>
-                  <span className="text-gray-600">
-                    {filteredResources.length}개의 자료
-                  </span>
+            {filteredResources.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">
+                  {searchQuery ? "검색 결과가 없습니다." : "등록된 자료가 없습니다."}
+                </p>
+              </div>
+            ) : (
+              viewMode === 'table' ? (
+                <ResourceTable resources={filteredResources} />
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredResources.map((resource) => (
+                    <ResourceCard key={resource.id} resource={resource} />
+                  ))}
                 </div>
-
-                {filteredResources.length === 0 ? (
-                  <div className="text-center py-12">
-                    <p className="text-gray-500 text-lg">
-                      {searchQuery ? "검색 결과가 없습니다." : "등록된 자료가 없습니다."}
-                    </p>
-                  </div>
-                ) : (
-                  viewMode === 'table' ? (
-                    <ResourceTable resources={filteredResources} />
-                  ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {filteredResources.map((resource) => (
-                        <ResourceCard key={resource.id} resource={resource} />
-                      ))}
-                    </div>
-                  )
-                )}
-              </TabsContent>
-            </Tabs>
+              )
+            )}
           </div>
         </main>
         
