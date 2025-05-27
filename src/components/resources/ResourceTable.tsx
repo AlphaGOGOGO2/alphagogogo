@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Image, File, Star, Calendar, User, Eye } from "lucide-react";
+import { FileText, Image, File, Star, Calendar, User } from "lucide-react";
 import { Resource } from "@/types/resources";
 
 interface ResourceTableProps {
@@ -19,14 +19,6 @@ export function ResourceTable({ resources }: ResourceTableProps) {
       default:
         return <File className="w-4 h-4 text-gray-500" />;
     }
-  };
-
-  const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return '';
-    const kb = bytes / 1024;
-    const mb = kb / 1024;
-    if (mb >= 1) return `${mb.toFixed(1)}MB`;
-    return `${kb.toFixed(1)}KB`;
   };
 
   const formatDate = (dateString: string) => {
@@ -52,10 +44,8 @@ export function ResourceTable({ resources }: ResourceTableProps) {
           <TableRow className="bg-gray-50">
             <TableHead className="w-12"></TableHead>
             <TableHead className="font-semibold">제목</TableHead>
-            <TableHead className="w-20 text-center font-semibold">크기</TableHead>
-            <TableHead className="w-24 text-center font-semibold">다운로드</TableHead>
-            <TableHead className="w-20 text-center font-semibold">작성자</TableHead>
-            <TableHead className="w-24 text-center font-semibold">등록일</TableHead>
+            <TableHead className="w-32 text-center font-semibold">작성자</TableHead>
+            <TableHead className="w-36 text-center font-semibold">등록일</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -99,20 +89,9 @@ export function ResourceTable({ resources }: ResourceTableProps) {
               </TableCell>
               
               <TableCell className="text-center text-sm text-gray-600">
-                {formatFileSize(resource.file_size)}
-              </TableCell>
-              
-              <TableCell className="text-center">
-                <div className="flex items-center justify-center gap-1 text-sm text-gray-600">
-                  <Eye className="w-3 h-3" />
-                  <span>{resource.download_count.toLocaleString()}</span>
-                </div>
-              </TableCell>
-              
-              <TableCell className="text-center text-sm text-gray-600">
                 <div className="flex items-center justify-center gap-1">
                   <User className="w-3 h-3" />
-                  <span className="truncate max-w-[60px]" title={resource.author_name}>
+                  <span className="truncate max-w-[100px]" title={resource.author_name}>
                     {resource.author_name}
                   </span>
                 </div>
