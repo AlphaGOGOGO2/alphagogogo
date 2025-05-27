@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { CKEditor } from "@ckeditor/ckeditor5-react";
 import {
@@ -57,6 +58,8 @@ export function ResourceCKEditor({ value, onChange, placeholder }: ResourceCKEdi
 
   // CKEditor 설정
   const editorConfig = {
+    // GPL 라이센스로 오픈소스 사용 설정
+    licenseKey: 'GPL',
     toolbar: {
       items: [
         'undo',
@@ -200,17 +203,30 @@ export function ResourceCKEditor({ value, onChange, placeholder }: ResourceCKEdi
 
   // 업로드 어댑터 플러그인
   function uploaderPlugin(editor: any) {
-    editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
-      return new SupabaseUploadAdapter(loader);
-    };
+    try {
+      // 에디터가 준비되었는지 확인
+      if (editor && editor.plugins) {
+        const fileRepository = editor.plugins.get('FileRepository');
+        if (fileRepository) {
+          fileRepository.createUploadAdapter = (loader: any) => {
+            return new SupabaseUploadAdapter(loader);
+          };
+        }
+      }
+    } catch (error) {
+      console.error('Upload adapter setup error:', error);
+    }
   }
 
   const handleReady = (editor: any) => {
+    console.log('CKEditor ready:', editor);
     editorRef.current = editor;
     setIsReady(true);
     
-    // 업로드 어댑터 설정
-    uploaderPlugin(editor);
+    // 에디터가 완전히 준비된 후 업로드 어댑터 설정
+    setTimeout(() => {
+      uploaderPlugin(editor);
+    }, 100);
   };
 
   const handleChange = (event: any, editor: any) => {
@@ -220,7 +236,10 @@ export function ResourceCKEditor({ value, onChange, placeholder }: ResourceCKEdi
 
   const handleError = (error: any) => {
     console.error('CKEditor error:', error);
-    toast.error('에디터 로딩 중 오류가 발생했습니다.');
+    // 라이센스 키 오류는 무시 (GPL 라이센스 사용)
+    if (!error.message?.includes('license-key-missing')) {
+      toast.error('에디터 로딩 중 오류가 발생했습니다.');
+    }
   };
 
   return (
