@@ -39,12 +39,13 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<ServicesPage />} />
+              <Route path="/blog" element={<AllBlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/blog/post/:id" element={<BlogPostPage />} />
               <Route path="/blog-write" element={<BlogWritePage />} />
-              <Route path="/all-blog" element={<AllBlogPage />} />
-              <Route path="/trending" element={<TrendingPage />} />
-              <Route path="/latest-ai-updates" element={<LatestAIUpdates />} />
-              <Route path="/lifestyle" element={<LifestylePage />} />
+              <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
+              <Route path="/blog/trending" element={<TrendingPage />} />
+              <Route path="/blog/lifestyle" element={<LifestylePage />} />
               <Route path="/gpts" element={<GPTSPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
