@@ -96,11 +96,10 @@ export function SEO({
       <meta name="yandex" content="index, follow" />
       <meta name="slurp" content="index, follow" />
       
-      {/* RSS 피드 링크 */}
-      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/rss`} />
-      <link rel="alternate" type="application/rss+xml" title="알파고고고 정적 RSS" href={`${SITE_DOMAIN}/rss.xml`} />
+      {/* RSS 피드 링크 - 정적 파일 사용 */}
+      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
       
-      {/* 사이트맵 링크 */}
+      {/* 사이트맵 링크 - 정적 파일 사용 */}
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
       
       {/* 오픈 그래프 태그 */}
