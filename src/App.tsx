@@ -42,6 +42,8 @@ function App() {
               <Route path="/blog" element={<AllBlogPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/blog/post/:id" element={<BlogPostPage />} />
+              <Route path="/blog/write" element={<BlogWritePage />} />
+              <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
               <Route path="/blog-write" element={<BlogWritePage />} />
               <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
               <Route path="/blog/trending" element={<TrendingPage />} />

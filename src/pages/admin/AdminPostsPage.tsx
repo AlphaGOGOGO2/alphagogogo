@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
@@ -72,7 +71,7 @@ export default function AdminPostsPage() {
         </div>
         
         <Button asChild>
-          <Link to="/blog/write">
+          <Link to="/blog-write">
             <Plus className="h-4 w-4 mr-2" />
             새 포스트 작성
           </Link>
