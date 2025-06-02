@@ -1,3 +1,4 @@
+
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -123,6 +124,11 @@ export default function BlogPostPage() {
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"}
         ogType="article"
         keywords={postKeywords}
+        author={post.author.name}
+        publishedTime={new Date(post.publishedAt).toISOString()}
+        modifiedTime={post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined}
+        section={post.category}
+        tags={post.tags || []}
       />
       <BlogPostSchema post={post} url={canonicalUrl} />
       

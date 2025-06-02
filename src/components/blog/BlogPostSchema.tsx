@@ -31,36 +31,62 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     ? new Date(post.updatedAt).toISOString() 
     : publishDate;
   
-  // 구조화 데이터 객체 생성
+  // 구조화 데이터 객체 생성 - headline과 name 우선순위 명확화
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
+    "name": post.title,
+    "alternateName": post.title,
     "description": post.excerpt,
+    "about": {
+      "@type": "Thing",
+      "name": post.category,
+      "description": `${post.category} 카테고리의 블로그 포스트`
+    },
+    "articleSection": post.category,
     "author": {
       "@type": "Person",
       "name": post.author.name,
-      "url": `${SITE_DOMAIN}/author/${encodeURIComponent(post.author.name.toLowerCase().replace(/\s+/g, '-'))}`
+      "url": `${SITE_DOMAIN}/author/${encodeURIComponent(post.author.name.toLowerCase().replace(/\s+/g, '-'))}`,
+      "sameAs": ["https://alphagogogo.com"]
     },
     "publisher": {
       "@type": "Organization",
       "name": "알파고고고",
+      "alternateName": "알파고고고",
+      "url": SITE_DOMAIN,
       "logo": {
         "@type": "ImageObject",
         "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
         "width": 112,
         "height": 112
-      }
+      },
+      "sameAs": [
+        "https://alphagogogo.com",
+        "https://www.youtube.com/@alphagogogo"
+      ]
     },
     "datePublished": publishDate,
     "dateModified": modifiedDate,
+    "dateCreated": publishDate,
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": canonicalUrl
+      "@id": canonicalUrl,
+      "url": canonicalUrl,
+      "name": post.title
     },
     "keywords": keywordsArray.join(","),
+    "articleBody": post.content,
+    "wordCount": post.content.length,
+    "timeRequired": `PT${post.readTime}M`,
     "inLanguage": "ko-KR",
-    "url": canonicalUrl
+    "url": canonicalUrl,
+    "isPartOf": {
+      "@type": "Blog",
+      "name": "알파고고고 블로그",
+      "url": `${SITE_DOMAIN}/blog`
+    }
   };
 
   // 이미지 추가 - 포스트 커버 이미지 또는 기본 OG 이미지 사용
@@ -69,14 +95,16 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "@type": "ImageObject",
       "url": post.coverImage,
       "width": 1200,
-      "height": 630
+      "height": 630,
+      "caption": post.title
     };
   } else {
     structuredData["image"] = {
       "@type": "ImageObject",
       "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
       "width": 1200,
-      "height": 630
+      "height": 630,
+      "caption": "알파고고고 - 최신 AI 소식 & 인사이트"
     };
   }
 

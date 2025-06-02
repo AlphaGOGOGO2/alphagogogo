@@ -61,9 +61,46 @@ export function SEO({
   
   return (
     <Helmet>
-      {/* 기본 메타 태그 */}
+      {/* 가장 중요한 메타 태그들을 먼저 배치 */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      
+      {/* 오픈 그래프 태그 - 소셜 미디어 우선순위 */}
+      <meta property="og:title" content={fullTitle} />
+      <meta property="og:description" content={description} />
+      <meta property="og:type" content={ogType} />
+      <meta property="og:url" content={normalizedCanonical} />
+      <meta property="og:image" content={normalizedOgImage} />
+      <meta property="og:image:alt" content={`${title} - 알파고고고`} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content="알파고고고" />
+      <meta property="og:locale" content="ko_KR" />
+
+      {/* 트위터 카드 메타 태그 */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta name="twitter:title" content={fullTitle} />
+      <meta name="twitter:description" content={description} />
+      <meta name="twitter:image" content={normalizedOgImage} />
+      <meta name="twitter:image:alt" content={`${title} - 알파고고고`} />
+      <meta name="twitter:site" content="@alphagogogo" />
+      <meta name="twitter:creator" content="@alphagogogo" />
+      
+      {/* 블로그 포스트용 추가 메타 태그 */}
+      {ogType === "article" && (
+        <>
+          <meta property="article:author" content={author} />
+          <meta property="article:publisher" content="https://alphagogogo.com" />
+          {section && <meta property="article:section" content={section} />}
+          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
+          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
+          {tags.map((tag, index) => (
+            <meta key={index} property="article:tag" content={tag} />
+          ))}
+        </>
+      )}
+      
+      {/* 기본 메타 태그 */}
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
@@ -101,41 +138,6 @@ export function SEO({
       
       {/* 사이트맵 링크 - 정적 파일 사용 */}
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
-      
-      {/* 오픈 그래프 태그 */}
-      <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
-      <meta property="og:image" content={normalizedOgImage} />
-      <meta property="og:image:alt" content={`${title} - 알파고고고`} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:url" content={normalizedCanonical} />
-      <meta property="og:type" content={ogType} />
-      <meta property="og:site_name" content="알파고고고" />
-      <meta property="og:locale" content="ko_KR" />
-      
-      {/* 블로그 포스트용 추가 OG 태그 */}
-      {ogType === "article" && (
-        <>
-          <meta property="article:author" content={author} />
-          <meta property="article:publisher" content="https://alphagogogo.com" />
-          {publishedTime && <meta property="article:published_time" content={publishedTime} />}
-          {modifiedTime && <meta property="article:modified_time" content={modifiedTime} />}
-          {section && <meta property="article:section" content={section} />}
-          {tags.map((tag, index) => (
-            <meta key={index} property="article:tag" content={tag} />
-          ))}
-        </>
-      )}
-      
-      {/* 트위터 카드 메타 태그 */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
-      <meta name="twitter:image" content={normalizedOgImage} />
-      <meta name="twitter:image:alt" content={`${title} - 알파고고고`} />
-      <meta name="twitter:site" content="@alphagogogo" />
-      <meta name="twitter:creator" content="@alphagogogo" />
       
       {/* 파비콘 태그 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
