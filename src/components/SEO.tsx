@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet-async";
 
 // 기본 사이트 도메인 - 모든 SEO 관련 URL에 일관되게 사용
@@ -180,14 +179,14 @@ export function SEO({
         </script>
       )}
 
-      {/* Google Search Console 사이트 확인 태그 - 실제 확인 코드로 교체 필요 */}
-      <meta name="google-site-verification" content="REPLACE_WITH_ACTUAL_VERIFICATION_CODE" />
+      {/* 웹마스터 도구 확인 태그들 - 플레이스홀더 제거 */}
+      {/* 
+      실제 웹마스터 도구 확인 코드가 있다면 아래 주석을 해제하고 실제 코드로 교체하세요:
       
-      {/* Naver 웹마스터 도구 (한국 시장용) */}
-      <meta name="naver-site-verification" content="REPLACE_WITH_NAVER_VERIFICATION_CODE" />
-      
-      {/* Microsoft Bing 웹마스터 도구 */}
-      <meta name="msvalidate.01" content="REPLACE_WITH_BING_VERIFICATION_CODE" />
+      <meta name="google-site-verification" content="실제_구글_확인_코드" />
+      <meta name="naver-site-verification" content="실제_네이버_확인_코드" />
+      <meta name="msvalidate.01" content="실제_빙_확인_코드" />
+      */}
     </Helmet>
   );
 }
