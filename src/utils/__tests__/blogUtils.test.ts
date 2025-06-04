@@ -105,7 +105,7 @@ describe('blogUtils', () => {
       const content = '이것은 매우 긴 내용입니다. '.repeat(20);
       const excerpt = generateExcerpt(content, 50);
       expect(excerpt).toHaveLength(53); // 50 + '...'
-      expect(excerpt).toEndWith('...');
+      expect(excerpt.endsWith('...')).toBe(true);
     });
 
     test('마크다운을 제거한 후 발췌문을 생성한다', () => {
