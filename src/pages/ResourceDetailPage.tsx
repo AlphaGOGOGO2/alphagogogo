@@ -28,7 +28,9 @@ export default function ResourceDetailPage() {
   };
 
   const formatFileSize = (bytes: number | null) => {
-    if (!bytes) return '';
+    if (bytes === null || bytes === undefined) return '';
+    if (bytes === 0) return '0.0KB';
+    
     const kb = bytes / 1024;
     const mb = kb / 1024;
     if (mb >= 1) return `${mb.toFixed(1)}MB`;
