@@ -30,10 +30,11 @@ const RedirectToEdgeFunction = ({ endpoint }: { endpoint: string }) => {
   const edgeUrl = `https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/${endpoint}`;
   
   React.useEffect(() => {
-    window.location.href = edgeUrl;
+    // 즉시 리다이렉트
+    window.location.replace(edgeUrl);
   }, [edgeUrl]);
 
-  return <div>Redirecting...</div>;
+  return null; // 아무것도 렌더링하지 않음
 };
 
 function App() {

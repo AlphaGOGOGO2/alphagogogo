@@ -10,7 +10,6 @@ const corsHeaders = {
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,7 +22,7 @@ serve(async (req) => {
 
     console.log('사이트맵 생성 시작...');
 
-    // 모든 게시글 조회
+    // 모든 게시글 조회 - 올바른 컬럼명 사용
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -57,41 +56,59 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // XML 생성
-    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+    // XML 헤더
+    let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${staticUrls.map(({ url, priority, changefreq }) => `
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
+
+    // 정적 페이지들 추가
+    for (const { url, priority, changefreq } of staticUrls) {
+      sitemapContent += `
   <url>
     <loc>${SITE_DOMAIN}${url}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>`).join('')}${posts && posts.length > 0 ? posts.map(post => {
-      const postUrl = post.slug ? `/blog/${post.slug}` : `/blog/post/${post.id}`;
-      const lastmod = post.updated_at ? 
-        new Date(post.updated_at).toISOString().split('T')[0] : 
-        new Date(post.published_at).toISOString().split('T')[0];
+  </url>`;
+    }
 
-      return `
+    // 블로그 포스트들 추가
+    if (posts && posts.length > 0) {
+      for (const post of posts) {
+        const postUrl = post.slug ? `/blog/${post.slug}` : `/blog/post/${post.id}`;
+        const lastmod = post.updated_at ? 
+          new Date(post.updated_at).toISOString().split('T')[0] : 
+          new Date(post.published_at).toISOString().split('T')[0];
+
+        sitemapContent += `
   <url>
     <loc>${SITE_DOMAIN}${postUrl}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>${post.cover_image ? `
+    <priority>0.6</priority>`;
+
+        if (post.cover_image) {
+          sitemapContent += `
     <image:image>
       <image:loc>${post.cover_image}</image:loc>
       <image:title>${post.title}</image:title>
       <image:caption>${post.excerpt || post.title}</image:caption>
-    </image:image>` : ''}
+    </image:image>`;
+        }
+
+        sitemapContent += `
   </url>`;
-    }).join('') : ''}
+      }
+    }
+
+    sitemapContent += `
 </urlset>`;
 
     console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개`);
 
-    return new Response(sitemapXml, {
+    return new Response(sitemapContent, {
       headers: {
         'Content-Type': 'application/xml; charset=utf-8',
         'Cache-Control': 'public, max-age=3600',

@@ -1,6 +1,6 @@
+
 import { Helmet } from "react-helmet-async";
 
-// 기본 사이트 도메인 - 모든 SEO 관련 URL에 일관되게 사용
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 interface SEOProps {
@@ -45,26 +45,14 @@ export function SEO({
   // 정규화된 OG 이미지 URL 생성
   const normalizedOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_DOMAIN}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
   
-  // 구조화 데이터 안전하게 문자열화
-  let structuredDataString = "";
-  if (structuredData) {
-    try {
-      structuredDataString = JSON.stringify(structuredData, null, 2);
-      // 유효성 검사를 위해 다시 파싱
-      JSON.parse(structuredDataString);
-    } catch (error) {
-      console.error("구조화 데이터 오류:", error);
-      structuredDataString = ""; // 유효하지 않은 JSON은 사용하지 않음
-    }
-  }
-  
   return (
     <Helmet>
-      {/* 가장 중요한 메타 태그들을 먼저 배치 */}
+      {/* 핵심 SEO 메타 태그 */}
       <title>{fullTitle}</title>
       <meta name="description" content={description} />
+      <link rel="canonical" href={normalizedCanonical} />
       
-      {/* 오픈 그래프 태그 - 소셜 미디어 우선순위 */}
+      {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:type" content={ogType} />
@@ -103,54 +91,36 @@ export function SEO({
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
-      <link rel="canonical" href={normalizedCanonical} />
       
-      {/* 추가 SEO 메타 태그 */}
-      <meta name="format-detection" content="telephone=no" />
-      <meta name="color-scheme" content="light dark" />
-      <meta name="supported-color-schemes" content="light dark" />
-      <meta name="rating" content="general" />
-      <meta name="distribution" content="global" />
-      <meta name="target" content="all" />
-      <meta name="audience" content="all" />
-      <meta name="coverage" content="worldwide" />
-      <meta name="classification" content="AI, Technology, Blog" />
-      <meta name="subject" content="AI News and Insights" />
-      <meta name="copyright" content="© 2025 알파고고고" />
-      <meta name="revisit-after" content="1 day" />
-      
-      {/* 로봇 제어 - 색인 속도 향상 */}
+      {/* 로봇 제어 */}
       {noIndex ? (
         <meta name="robots" content="noindex, nofollow" />
       ) : (
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1, max-snippet:160" />
+        <>
+          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+          <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+          <meta name="bingbot" content="index, follow" />
+        </>
       )}
       
-      {/* 추가 로봇 지시어 - 크롤링 최적화 */}
-      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-      <meta name="bingbot" content="index, follow" />
-      <meta name="yandex" content="index, follow" />
-      <meta name="slurp" content="index, follow" />
-      
-      {/* RSS 피드 링크 - 정적 파일 사용 */}
+      {/* RSS 피드 및 사이트맵 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
-      
-      {/* 사이트맵 링크 - 정적 파일 사용 */}
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
       
-      {/* 파비콘 태그 */}
+      {/* 파비콘 및 아이콘 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
       <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
       
       {/* 추가 메타 태그 */}
       <meta name="language" content="Korean" />
       <meta name="geo.region" content="KR" />
       <meta name="geo.country" content="KR" />
       <meta name="theme-color" content="#8B5CF6" />
-      <meta name="msapplication-TileColor" content="#8B5CF6" />
-      <meta name="msapplication-config" content="/browserconfig.xml" />
+      <meta name="format-detection" content="telephone=no" />
+      <meta name="rating" content="general" />
+      <meta name="distribution" content="global" />
+      <meta name="coverage" content="worldwide" />
+      <meta name="revisit-after" content="1 day" />
       
       {/* 모바일 최적화 */}
       <meta name="mobile-web-app-capable" content="yes" />
@@ -158,35 +128,20 @@ export function SEO({
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="알파고고고" />
       
-      {/* DNS Prefetch 최적화 */}
+      {/* DNS Prefetch 및 Preconnect 최적화 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
-      <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
-      <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-      
-      {/* Preconnect 최적화 */}
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://pagead2.googlesyndication.com" crossOrigin="anonymous" />
       
-      {/* 구조화 데이터 - 유효한 경우에만 포함 */}
-      {structuredData && structuredDataString && (
+      {/* 구조화 데이터 */}
+      {structuredData && (
         <script type="application/ld+json">
-          {structuredDataString}
+          {JSON.stringify(structuredData, null, 0)}
         </script>
       )}
-
-      {/* 웹마스터 도구 확인 태그들 - 플레이스홀더 제거 */}
-      {/* 
-      실제 웹마스터 도구 확인 코드가 있다면 아래 주석을 해제하고 실제 코드로 교체하세요:
-      
-      <meta name="google-site-verification" content="실제_구글_확인_코드" />
-      <meta name="naver-site-verification" content="실제_네이버_확인_코드" />
-      <meta name="msvalidate.01" content="실제_빙_확인_코드" />
-      */}
     </Helmet>
   );
 }

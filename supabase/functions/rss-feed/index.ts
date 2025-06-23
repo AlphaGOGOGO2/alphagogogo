@@ -10,7 +10,6 @@ const corsHeaders = {
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -23,7 +22,7 @@ serve(async (req) => {
 
     console.log('RSS 피드 생성 시작...');
 
-    // 최신 20개 포스트 조회
+    // 최신 20개 포스트 조회 - 올바른 컬럼명 사용
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -41,8 +40,8 @@ serve(async (req) => {
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    // XML 생성
-    const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+    // XML 헤더와 채널 정보
+    let rssContent = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
@@ -65,16 +64,20 @@ serve(async (req) => {
       <link>${SITE_DOMAIN}</link>
       <width>112</width>
       <height>112</height>
-    </image>${posts && posts.length > 0 ? posts.map(post => {
-      const postUrl = post.slug ? 
-        `${SITE_DOMAIN}/blog/${post.slug}` : 
-        `${SITE_DOMAIN}/blog/post/${post.id}`;
-      
-      const pubDate = new Date(post.published_at).toUTCString();
-      const description = post.excerpt || post.content.substring(0, 300).replace(/[<>]/g, '') + '...';
-      const cleanContent = post.content.replace(/[<>]/g, '');
+    </image>`;
 
-      return `
+    // 포스트 아이템들 추가
+    if (posts && posts.length > 0) {
+      for (const post of posts) {
+        const postUrl = post.slug ? 
+          `${SITE_DOMAIN}/blog/${post.slug}` : 
+          `${SITE_DOMAIN}/blog/post/${post.id}`;
+        
+        const pubDate = new Date(post.published_at).toUTCString();
+        const description = post.excerpt || (post.content ? post.content.substring(0, 300).replace(/[<>]/g, '') + '...' : '설명이 없습니다.');
+        const cleanContent = post.content ? post.content.replace(/[<>]/g, '') : '';
+
+        rssContent += `
     <item>
       <title><![CDATA[${post.title}]]></title>
       <link>${postUrl}</link>
@@ -83,16 +86,25 @@ serve(async (req) => {
       <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
       <pubDate>${pubDate}</pubDate>
       <author>support@alphagogogo.com (${post.author_name || '알파고고고'})</author>
-      <category><![CDATA[${post.category}]]></category>${post.cover_image ? `
-      <enclosure url="${post.cover_image}" type="image/jpeg"/>` : ''}
+      <category><![CDATA[${post.category}]]></category>`;
+
+        if (post.cover_image) {
+          rssContent += `
+      <enclosure url="${post.cover_image}" type="image/jpeg"/>`;
+        }
+
+        rssContent += `
     </item>`;
-    }).join('') : ''}
+      }
+    }
+
+    rssContent += `
   </channel>
 </rss>`;
 
     console.log('RSS XML 생성 완료');
 
-    return new Response(rssXml, {
+    return new Response(rssContent, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
         'Cache-Control': 'public, max-age=3600',
