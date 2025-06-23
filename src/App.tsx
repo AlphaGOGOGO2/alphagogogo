@@ -6,12 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 import Index from "./pages/Index";
 import ServicesPage from "./pages/ServicesPage";
-import BlogPostPage from "./pages/blog/BlogPostPage";
-import BlogWritePage from "./pages/blog/BlogWritePage";
-import AllBlogPage from "./pages/blog/AllBlogPage";
-import TrendingPage from "./pages/blog/TrendingPage";
-import LatestAIUpdates from "./pages/blog/LatestAIUpdates";
-import LifestylePage from "./pages/blog/LifestylePage";
+import { BlogRoutes } from "./routes/BlogRoutes";
 import GPTSPage from "./pages/GPTSPage";
 import CommunityPage from "./pages/CommunityPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
@@ -39,15 +34,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<ServicesPage />} />
-              <Route path="/blog" element={<AllBlogPage />} />
-              <Route path="/blog/:slug" element={<BlogPostPage />} />
-              <Route path="/blog/post/:id" element={<BlogPostPage />} />
-              <Route path="/blog/write" element={<BlogWritePage />} />
-              <Route path="/blog/edit/:slug" element={<BlogWritePage />} />
-              <Route path="/blog-write" element={<BlogWritePage />} />
-              <Route path="/blog/latest-updates" element={<LatestAIUpdates />} />
-              <Route path="/blog/trending" element={<TrendingPage />} />
-              <Route path="/blog/lifestyle" element={<LifestylePage />} />
+              
+              {/* 모든 블로그 관련 라우팅을 BlogRoutes로 위임 */}
+              <Route path="/blog/*" element={<BlogRoutes />} />
+              
               <Route path="/gpts" element={<GPTSPage />} />
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
