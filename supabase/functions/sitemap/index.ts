@@ -53,54 +53,37 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    let sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
+    // XML 생성 시 앞에 공백이나 줄바꿈이 없도록 주의
+    const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-`;
-
-    // 정적 페이지들 추가
-    staticUrls.forEach(({ url, priority, changefreq }) => {
-      sitemapXml += `  <url>
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${staticUrls.map(({ url, priority, changefreq }) => `
+  <url>
     <loc>${SITE_DOMAIN}${url}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
-  </url>
-`;
-    });
+  </url>`).join('')}${posts && posts.length > 0 ? posts.map(post => {
+      const postUrl = post.slug ? `/blog/${post.slug}` : `/blog/post/${post.id}`;
+      const lastmod = post.updated_at ? 
+        new Date(post.updated_at).toISOString().split('T')[0] : 
+        new Date(post.published_at).toISOString().split('T')[0];
 
-    // 블로그 포스트들 추가
-    if (posts && posts.length > 0) {
-      posts.forEach(post => {
-        const postUrl = post.slug ? `/blog/${post.slug}` : `/blog/post/${post.id}`;
-        const lastmod = post.updated_at ? 
-          new Date(post.updated_at).toISOString().split('T')[0] : 
-          new Date(post.published_at).toISOString().split('T')[0];
-
-        sitemapXml += `  <url>
+      return `
+  <url>
     <loc>${SITE_DOMAIN}${postUrl}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>`;
-
-        if (post.cover_image) {
-          sitemapXml += `
+    <priority>0.6</priority>${post.cover_image ? `
     <image:image>
       <image:loc>${post.cover_image}</image:loc>
       <image:title>${post.title}</image:title>
       <image:caption>${post.excerpt || post.title}</image:caption>
-    </image:image>`;
-        }
-
-        sitemapXml += `
-  </url>
-`;
-      });
-    }
-
-    sitemapXml += `</urlset>`;
+    </image:image>` : ''}
+  </url>`;
+    }).join('') : ''}
+</urlset>`;
 
     return new Response(sitemapXml, {
       headers: {

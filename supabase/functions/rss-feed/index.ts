@@ -37,7 +37,8 @@ serve(async (req) => {
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    let rssXml = `<?xml version="1.0" encoding="UTF-8"?>
+    // XML 생성 시 앞에 공백이나 줄바꿈이 없도록 주의
+    const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
@@ -60,20 +61,16 @@ serve(async (req) => {
       <link>${SITE_DOMAIN}</link>
       <width>112</width>
       <height>112</height>
-    </image>
-`;
+    </image>${posts && posts.length > 0 ? posts.map(post => {
+      const postUrl = post.slug ? 
+        `${SITE_DOMAIN}/blog/${post.slug}` : 
+        `${SITE_DOMAIN}/blog/post/${post.id}`;
+      
+      const pubDate = new Date(post.published_at).toUTCString();
+      const description = post.excerpt || post.content.substring(0, 300).replace(/[<>]/g, '') + '...';
+      const cleanContent = post.content.replace(/[<>]/g, '');
 
-    if (posts && posts.length > 0) {
-      posts.forEach(post => {
-        const postUrl = post.slug ? 
-          `${SITE_DOMAIN}/blog/${post.slug}` : 
-          `${SITE_DOMAIN}/blog/post/${post.id}`;
-        
-        const pubDate = new Date(post.published_at).toUTCString();
-        const description = post.excerpt || post.content.substring(0, 300).replace(/[<>]/g, '') + '...';
-        const cleanContent = post.content.replace(/[<>]/g, '');
-
-        rssXml += `
+      return `
     <item>
       <title><![CDATA[${post.title}]]></title>
       <link>${postUrl}</link>
@@ -82,19 +79,10 @@ serve(async (req) => {
       <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
       <pubDate>${pubDate}</pubDate>
       <author>support@alphagogogo.com (${post.author_name || '알파고고고'})</author>
-      <category><![CDATA[${post.category}]]></category>`;
-
-        if (post.cover_image) {
-          rssXml += `
-      <enclosure url="${post.cover_image}" type="image/jpeg"/>`;
-        }
-
-        rssXml += `
+      <category><![CDATA[${post.category}]]></category>${post.cover_image ? `
+      <enclosure url="${post.cover_image}" type="image/jpeg"/>` : ''}
     </item>`;
-      });
-    }
-
-    rssXml += `
+    }).join('') : ''}
   </channel>
 </rss>`;
 
