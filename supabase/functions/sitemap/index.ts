@@ -21,6 +21,8 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
+    console.log('사이트맵 생성 시작...');
+
     // 모든 게시글 조회
     const { data: posts, error } = await supabase
       .from('blog_posts')
@@ -32,6 +34,8 @@ serve(async (req) => {
       console.error('Sitemap 포스트 조회 에러:', error);
       throw error;
     }
+
+    console.log(`사이트맵: ${posts?.length || 0}개 포스트 조회됨`);
 
     const staticUrls = [
       { url: '', priority: '1.0', changefreq: 'daily' },
@@ -53,7 +57,7 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // XML 생성 시 앞에 공백이나 줄바꿈이 없도록 주의
+    // XML 생성
     const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9"
@@ -84,6 +88,8 @@ serve(async (req) => {
   </url>`;
     }).join('') : ''}
 </urlset>`;
+
+    console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개`);
 
     return new Response(sitemapXml, {
       headers: {

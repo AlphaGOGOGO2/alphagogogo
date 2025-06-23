@@ -21,6 +21,8 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
+    console.log('RSS 피드 생성 시작...');
+
     // 최신 20개 포스트 조회
     const { data: posts, error } = await supabase
       .from('blog_posts')
@@ -34,10 +36,12 @@ serve(async (req) => {
       throw error;
     }
 
+    console.log(`RSS: ${posts?.length || 0}개 포스트 조회됨`);
+
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    // XML 생성 시 앞에 공백이나 줄바꿈이 없도록 주의
+    // XML 생성
     const rssXml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
@@ -85,6 +89,8 @@ serve(async (req) => {
     }).join('') : ''}
   </channel>
 </rss>`;
+
+    console.log('RSS XML 생성 완료');
 
     return new Response(rssXml, {
       headers: {
