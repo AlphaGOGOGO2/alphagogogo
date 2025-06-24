@@ -97,8 +97,9 @@ RewriteRule ^services/youtube-transcript/?$ /youtube-transcript [R=301,L]
 RewriteRule ^services/url-shortener/?$ /url-shortener [R=301,L]
 RewriteRule ^services/blog-button-creator/?$ /blog-button-creator [R=301,L]
 
-# 네이버 사이트 확인 파일을 정적으로 서빙 (SPA 라우팅보다 우선)
-RewriteRule ^naver0ac7b876b3d4a6ceff93227b0828d50a\.html$ - [L]
+# 네이버 사이트 확인 파일을 정적으로 서빙 (최우선 처리)
+RewriteCond %{REQUEST_URI} ^/naver0ac7b876b3d4a6ceff93227b0828d50a\.html$
+RewriteRule .* - [L]
 
 # 404 Error redirect
 ErrorDocument 404 /
@@ -125,6 +126,12 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   Header set Content-Type application/xml
 </FilesMatch>
 
+# 네이버 확인 파일에 대한 Content-Type 설정
+<FilesMatch "naver.*\.html$">
+  ForceType text/html
+  Header set Content-Type "text/html; charset=utf-8"
+</FilesMatch>
+
 # SPA 라우팅을 위한 설정
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -133,6 +140,7 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI} !^/api
+  RewriteCond %{REQUEST_URI} !^/naver.*\.html$
   RewriteRule . /index.html [L]
 </IfModule>
 
