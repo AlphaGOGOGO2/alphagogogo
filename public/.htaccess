@@ -84,12 +84,18 @@
 # primaryDomain=alphagogogo.com
 RewriteEngine On
 
-# alphablog.app에서 alphagogogo.com으로 리다이렉트
+# 네이버 사이트 확인 파일을 위한 최우선 처리 (모든 리다이렉트보다 먼저)
+RewriteCond %{REQUEST_URI} ^/naver0ac7b876b3d4a6ceff93227b0828d50a\.html$
+RewriteRule .* - [L]
+
+# alphablog.app에서 alphagogogo.com으로 리다이렉트 (네이버 파일은 제외)
 RewriteCond %{HTTP_HOST} ^(www\.)?alphablog\.app$ [NC]
+RewriteCond %{REQUEST_URI} !^/naver.*\.html$
 RewriteRule ^(.*)$ https://alphagogogo.com/$1 [L,R=301]
 
-# non-www에서 www로 리다이렉트
+# non-www에서 www로 리다이렉트 (네이버 파일은 제외)
 RewriteCond %{HTTP_HOST} ^alphagogogo.com [NC]
+RewriteCond %{REQUEST_URI} !^/naver.*\.html$
 RewriteRule ^(.*)$ https://www.alphagogogo.com/$1 [L,R=301]
 
 # Service specific redirects
@@ -97,15 +103,12 @@ RewriteRule ^services/youtube-transcript/?$ /youtube-transcript [R=301,L]
 RewriteRule ^services/url-shortener/?$ /url-shortener [R=301,L]
 RewriteRule ^services/blog-button-creator/?$ /blog-button-creator [R=301,L]
 
-# 네이버 사이트 확인 파일을 정적으로 서빙 (최우선 처리)
-RewriteCond %{REQUEST_URI} ^/naver0ac7b876b3d4a6ceff93227b0828d50a\.html$
-RewriteRule .* - [L]
-
 # 404 Error redirect
 ErrorDocument 404 /
 
 # Force HTTPS
 RewriteCond %{HTTPS} off
+RewriteCond %{REQUEST_URI} !^/naver.*\.html$
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # XML 파일에 대한 Content-Type 설정
@@ -126,10 +129,12 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
   Header set Content-Type application/xml
 </FilesMatch>
 
-# 네이버 확인 파일에 대한 Content-Type 설정
+# 네이버 확인 파일에 대한 Content-Type 및 캐시 설정
 <FilesMatch "naver.*\.html$">
   ForceType text/html
   Header set Content-Type "text/html; charset=utf-8"
+  Header set Cache-Control "public, max-age=86400"
+  Header set Access-Control-Allow-Origin "*"
 </FilesMatch>
 
 # SPA 라우팅을 위한 설정
