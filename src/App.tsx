@@ -37,6 +37,18 @@ const RedirectToEdgeFunction = ({ endpoint }: { endpoint: string }) => {
   return null; // 아무것도 렌더링하지 않음
 };
 
+// 네이버 HTML 확인 파일로 리다이렉트하는 컴포넌트
+const NaverVerificationRedirect = () => {
+  const naverFileUrl = 'https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/naver/naver0ac7b876b3d4a6ceff93227b0828d50a.html';
+  
+  React.useEffect(() => {
+    // 즉시 리다이렉트
+    window.location.replace(naverFileUrl);
+  }, []);
+
+  return null; // 아무것도 렌더링하지 않음
+};
+
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -59,6 +71,12 @@ function App() {
               <Route 
                 path="/sitemap.xml" 
                 element={<RedirectToEdgeFunction endpoint="sitemap" />} 
+              />
+              
+              {/* 네이버 사이트 소유권 확인 HTML 파일 */}
+              <Route 
+                path="/naver0ac7b876b3d4a6ceff93227b0828d50a.html" 
+                element={<NaverVerificationRedirect />} 
               />
               
               <Route path="/gpts" element={<GPTSPage />} />
