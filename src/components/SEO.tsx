@@ -52,6 +52,10 @@ export function SEO({
       <meta name="description" content={description} />
       <link rel="canonical" href={normalizedCanonical} />
       
+      {/* 검색엔진 사이트 인증 메타 태그 */}
+      <meta name="google-site-verification" content="your-google-verification-code" />
+      <meta name="naver-site-verification" content="d181058ce6b8b7b3c86efe4a48bb678f2b735694" />
+      
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
