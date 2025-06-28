@@ -46,6 +46,7 @@ function App() {
               <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
               <Route path="/resources" element={<ResourcesPage />} />
               <Route path="/resources/:id" element={<ResourceDetailPage />} />
+              <Route path="/ai-partnership" element={<AIPartnershipPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/admin/posts" element={<AdminPostsPage />} />
               <Route path="/admin/resources" element={<AdminResourcesPage />} />

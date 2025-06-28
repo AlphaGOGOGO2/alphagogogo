@@ -98,11 +98,19 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           isActive={isServicePage}
           onClick={onClose}
         />
+
+        <MobileNavLink 
+          name="AI품앗이" 
+          path="/ai-partnership" 
+          isActive={location.pathname === "/ai-partnership"}
+          onClick={onClose}
+        />
         
         {mainNavItems.filter(item => 
           item.name !== "홈" && 
           item.name !== "커뮤니티" && 
-          item.name !== "서비스"
+          item.name !== "서비스" &&
+          item.name !== "AI품앗이"
         ).map((item) => (
           <MobileNavLink 
             key={item.path}

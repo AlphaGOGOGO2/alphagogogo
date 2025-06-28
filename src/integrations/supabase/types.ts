@@ -159,6 +159,68 @@ export type Database = {
         }
         Relationships: []
       }
+      invite_clicks: {
+        Row: {
+          clicked_at: string
+          id: string
+          invite_link_id: string
+          ip_address: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          id?: string
+          invite_link_id: string
+          ip_address?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          id?: string
+          invite_link_id?: string
+          ip_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invite_clicks_invite_link_id_fkey"
+            columns: ["invite_link_id"]
+            isOneToOne: false
+            referencedRelation: "invite_links"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invite_links: {
+        Row: {
+          click_count: number
+          created_at: string
+          description: string | null
+          id: string
+          invite_url: string
+          service_name: string
+          updated_at: string
+          user_nickname: string
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          invite_url: string
+          service_name: string
+          updated_at?: string
+          user_nickname: string
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          invite_url?: string
+          service_name?: string
+          updated_at?: string
+          user_nickname?: string
+        }
+        Relationships: []
+      }
       resource_categories: {
         Row: {
           created_at: string
@@ -291,6 +353,10 @@ export type Database = {
     Functions: {
       increment_download_count: {
         Args: { resource_id: string }
+        Returns: undefined
+      }
+      increment_invite_click_count: {
+        Args: { link_id: string; client_ip?: string }
         Returns: undefined
       }
     }

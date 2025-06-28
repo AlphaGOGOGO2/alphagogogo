@@ -106,6 +106,13 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         isActive={location.pathname.startsWith("/resources")}
       />
 
+      <NavLink 
+        name="AI품앗이" 
+        path="/ai-partnership" 
+        isScrolled={isScrolled} 
+        isActive={location.pathname === "/ai-partnership"}
+      />
+
       <ServicesDropdown 
         isScrolled={isScrolled}
         isActive={isServicePage}
