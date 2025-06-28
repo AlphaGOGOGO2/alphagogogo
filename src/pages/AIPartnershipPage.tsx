@@ -19,9 +19,9 @@ export default function AIPartnershipPage() {
         <title>AI품앗이 - 초대링크 공유 플랫폼 | 알파블로그</title>
         <meta 
           name="description" 
-          content="AI 서비스 초대링크를 공유하고 서로 혜택을 받는 품앗이 플랫폼입니다. 러버블, 젠스파크 등 다양한 AI 서비스의 초대 혜택을 함께 나누세요." 
+          content="AI 서비스 초대링크를 공유하고 서로 혜택을 받는 품앗이 플랫폼입니다. 러버블, 마누스 등 다양한 AI 서비스의 초대 혜택을 함께 나누세요." 
         />
-        <meta name="keywords" content="AI, 초대링크, 품앗이, 러버블, 젠스파크, 크레딧" />
+        <meta name="keywords" content="AI, 초대링크, 품앗이, 러버블, 마누스, 크레딧" />
       </Helmet>
       
       <Navbar />

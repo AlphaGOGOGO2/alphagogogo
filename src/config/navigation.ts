@@ -100,10 +100,10 @@ export const aiPartnershipServices: AIPartnershipService[] = [
     ]
   },
   {
-    name: "젠스파크",
-    value: "genspark",
-    description: "AI 검색 엔진",
-    urlPattern: "https://genspark.ai/invite/",
+    name: "마누스",
+    value: "manus",
+    description: "AI 글쓰기 도구",
+    urlPattern: "https://manus.ai/invite/",
     benefits: [
       "서로 크레딧 혜택 제공",
       "프리미엄 기능 체험 기회"

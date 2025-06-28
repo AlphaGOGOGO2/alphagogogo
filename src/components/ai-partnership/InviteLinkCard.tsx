@@ -28,24 +28,26 @@ export function InviteLinkCard({ link, onLinkClick }: InviteLinkCardProps) {
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2">
-              <User size={16} className="text-gray-500 flex-shrink-0" />
-              <span className="font-medium text-gray-900 truncate">
+    <Card className="hover:shadow-md transition-shadow w-full">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between gap-6">
+          <div className="flex items-center gap-4 flex-1 min-w-0">
+            <div className="flex items-center gap-2 min-w-0 flex-shrink-0">
+              <User size={18} className="text-gray-500" />
+              <span className="font-semibold text-gray-900 truncate">
                 {link.user_nickname}
               </span>
             </div>
             
             {link.description && (
-              <p className="text-sm text-gray-600 mb-2 break-words">
-                {link.description}
-              </p>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-gray-600 truncate">
+                  {link.description}
+                </p>
+              </div>
             )}
             
-            <div className="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+            <div className="flex items-center gap-4 text-xs text-gray-500 flex-shrink-0">
               <div className="flex items-center gap-1">
                 <Clock size={12} />
                 <span>
@@ -66,7 +68,7 @@ export function InviteLinkCard({ link, onLinkClick }: InviteLinkCardProps) {
           <div className="flex-shrink-0">
             <Button
               onClick={handleClick}
-              className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+              className="bg-purple-600 hover:bg-purple-700 px-6"
               size="sm"
             >
               <ExternalLink size={16} className="mr-1" />

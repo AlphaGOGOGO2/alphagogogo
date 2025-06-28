@@ -4,7 +4,7 @@
 -- 초대링크 정보를 저장하는 메인 테이블
 CREATE TABLE public.invite_links (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  service_name TEXT NOT NULL CHECK (service_name IN ('lovable', 'genspark')),
+  service_name TEXT NOT NULL CHECK (service_name IN ('lovable', 'manus')),
   invite_url TEXT NOT NULL UNIQUE,
   user_nickname TEXT NOT NULL,
   description TEXT,
