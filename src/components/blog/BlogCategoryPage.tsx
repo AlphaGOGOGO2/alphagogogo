@@ -20,37 +20,37 @@ interface CategoryInfo {
 
 const categoryInfo: Record<string, CategoryInfo> = {
   "ai-news": {
-    title: "AI 뉴스 - 최신 인공지능 소식",
-    description: "인공지능 업계의 최신 뉴스와 동향을 실시간으로 업데이트합니다. AI 기술 발전, 기업 동향, 정책 변화 등을 다룹니다.",
-    keywords: "AI 뉴스, 인공지능 뉴스, AI 업계 동향, 인공지능 기술, AI 정책, 머신러닝 뉴스, ChatGPT 뉴스, Claude 뉴스, Gemini 뉴스",
+    title: "AI 뉴스",
+    description: "인공지능 업계의 최신 뉴스와 동향을 실시간으로 업데이트합니다. AI 기술 발전, 기업 동향, 정책 변화 등 최신 AI 소식을 확인하세요.",
+    keywords: "AI 뉴스, 인공지능 뉴스, AI 업계 동향, 인공지능 기술, AI 정책, 머신러닝 뉴스, ChatGPT 뉴스, Claude 뉴스, Gemini 뉴스, AI 기업 동향",
     icon: "📰",
     color: "from-blue-500 to-blue-600"
   },
   "tech-reviews": {
-    title: "기술 리뷰 - AI 도구 및 서비스 분석",
-    description: "최신 AI 도구, 서비스, 플랫폼에 대한 상세한 리뷰와 분석을 제공합니다. 실제 사용 후기와 비교 분석으로 최적의 선택을 도와드립니다.",
-    keywords: "AI 도구 리뷰, AI 서비스 분석, 기술 리뷰, AI 플랫폼 비교, 인공지능 도구, ChatGPT 리뷰, Claude 리뷰, Midjourney 리뷰",
+    title: "기술 리뷰",
+    description: "최신 AI 도구, 서비스, 플랫폼에 대한 상세한 리뷰와 분석을 제공합니다. 실제 사용 후기와 비교 분석으로 최적의 AI 도구 선택을 도와드립니다.",
+    keywords: "AI 도구 리뷰, AI 서비스 분석, 기술 리뷰, AI 플랫폼 비교, 인공지능 도구, ChatGPT 리뷰, Claude 리뷰, Midjourney 리뷰, AI 도구 추천",
     icon: "⭐",
     color: "from-green-500 to-green-600"
   },
   "tutorials": {
-    title: "AI 튜토리얼 - 단계별 가이드",
-    description: "AI 기술 활용을 위한 실용적인 튜토리얼과 가이드를 제공합니다. 초보자부터 전문가까지 단계별로 학습할 수 있습니다.",
-    keywords: "AI 튜토리얼, 인공지능 가이드, AI 사용법, 머신러닝 튜토리얼, AI 개발 가이드, ChatGPT 사용법, 프롬프트 엔지니어링",
+    title: "AI 튜토리얼",
+    description: "AI 기술 활용을 위한 실용적인 튜토리얼과 가이드를 제공합니다. 초보자부터 전문가까지 단계별로 AI를 학습하고 활용할 수 있습니다.",
+    keywords: "AI 튜토리얼, 인공지능 가이드, AI 사용법, 머신러닝 튜토리얼, AI 개발 가이드, ChatGPT 사용법, 프롬프트 엔지니어링, AI 학습",
     icon: "📚",
     color: "from-purple-500 to-purple-600"
   },
   "chatgpt-guides": {
-    title: "ChatGPT 가이드 - 효과적인 활용법",
-    description: "ChatGPT와 GPT 모델을 효과적으로 활용하는 방법과 팁을 공유합니다. 프롬프트 엔지니어링부터 실무 활용까지 완벽 가이드입니다.",
-    keywords: "ChatGPT 가이드, GPT 활용법, ChatGPT 팁, AI 챗봇 사용법, OpenAI GPT, 프롬프트 작성법, GPT-4 사용법, Custom GPT",
+    title: "ChatGPT 가이드",
+    description: "ChatGPT와 GPT 모델을 효과적으로 활용하는 방법과 팁을 공유합니다. 프롬프트 엔지니어링부터 실무 활용까지 완벽한 ChatGPT 활용 가이드입니다.",
+    keywords: "ChatGPT 가이드, GPT 활용법, ChatGPT 팁, AI 챗봇 사용법, OpenAI GPT, 프롬프트 작성법, GPT-4 사용법, Custom GPT, ChatGPT 실무 활용",
     icon: "🤖",
     color: "from-orange-500 to-orange-600"
   },
   "lovable-dev": {
-    title: "Lovable DEV - AI 앱 개발 가이드",
-    description: "Lovable DEV 플랫폼을 활용한 AI 앱 개발 방법과 노하우를 제공합니다. 노코드로 전문적인 웹앱을 만드는 모든 과정을 안내합니다.",
-    keywords: "Lovable DEV, AI 앱 개발, 노코드 개발, 웹앱 개발, AI 개발 도구, 러버블 개발, 앱 제작, 웹 개발",
+    title: "Lovable DEV",
+    description: "Lovable DEV 플랫폼을 활용한 AI 앱 개발 방법과 노하우를 제공합니다. 노코드로 전문적인 웹앱을 만드는 모든 과정을 상세히 안내합니다.",
+    keywords: "Lovable DEV, AI 앱 개발, 노코드 개발, 웹앱 개발, AI 개발 도구, 러버블 개발, 앱 제작, 웹 개발, 노코드 플랫폼",
     icon: "💻",
     color: "from-pink-500 to-pink-600"
   }
@@ -89,7 +89,7 @@ export function BlogCategoryPage() {
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": categoryData.title,
+    "name": `${categoryData.title} - 알파고고고`,
     "description": categoryData.description,
     "url": `${SITE_DOMAIN}/blog/${category}`,
     "inLanguage": "ko-KR",
@@ -132,7 +132,7 @@ export function BlogCategoryPage() {
       "name": "알파고고고",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"
+        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png"
       }
     }
   };
@@ -140,7 +140,7 @@ export function BlogCategoryPage() {
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
-        title={categoryData.title}
+        title={`${categoryData.title} - 알파고고고`}
         description={categoryData.description}
         canonicalUrl={`/blog/${category}`}
         keywords={categoryData.keywords}

@@ -116,7 +116,7 @@ export function SEO({
         </>
       )}
       
-      {/* RSS 피드 및 사이트맵 링크 */}
+      {/* RSS 피드 및 사이트맵 링크 (통일된 경로) */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/functions/rss-feed`} />
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/api/functions/sitemap`} />
       

@@ -23,7 +23,7 @@ Disallow: /*?*gclid=
 # 크롤링 속도 제한 완화
 Crawl-delay: 0.5
 
-# 사이트맵 위치 명시 (수정된 부분)
+# 사이트맵 위치 명시 (Edge Function으로 통일)
 Sitemap: https://alphagogogo.com/api/functions/sitemap
 Sitemap: https://alphagogogo.com/api/functions/rss-feed
 

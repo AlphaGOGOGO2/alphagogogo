@@ -11,7 +11,7 @@ const SITE_DOMAIN = 'https://alphagogogo.com';
 
 // XML 특수문자 이스케이프 함수
 function escapeXml(unsafe: string): string {
-  return unsafe.replace(/[<>&'"]/g, function (c) {
+  return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
     switch (c) {
       case '<': return '&lt;';
       case '>': return '&gt;';
@@ -20,12 +20,27 @@ function escapeXml(unsafe: string): string {
       case '"': return '&quot;';
       default: return c;
     }
-  });
+  }) : '';
 }
 
 // HTML 태그를 제거하고 텍스트만 추출
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, '').trim();
+  return html ? html.replace(/<[^>]*>/g, '').trim() : '';
+}
+
+// 마크다운 제거 함수 개선
+function stripMarkdown(md: string): string {
+  if (!md) return '';
+  
+  return md
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '') // 이미지 제거
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1') // 링크 텍스트만 남김
+    .replace(/`([^`]+)`/g, '$1') // 인라인 코드
+    .replace(/```[\s\S]*?```/g, '') // 코드 블록
+    .replace(/[*_~>#\-\+]/g, '') // 마크다운 기호
+    .replace(/\n+/g, ' ') // 줄바꿈을 공백으로
+    .replace(/\s+/g, ' ') // 여러 공백을 하나로
+    .trim();
 }
 
 serve(async (req) => {
@@ -41,13 +56,13 @@ serve(async (req) => {
 
     console.log('RSS 피드 생성 시작...');
 
-    // 최신 20개 포스트 조회
+    // 최신 50개 포스트 조회 (더 많은 포스트 포함)
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false })
-      .limit(20);
+      .limit(50);
 
     if (error) {
       console.error('RSS 포스트 조회 에러:', error);
@@ -61,7 +76,7 @@ serve(async (req) => {
 
     // XML 헤더와 채널 정보
     let rssContent = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
     <link>${SITE_DOMAIN}</link>
@@ -70,13 +85,14 @@ serve(async (req) => {
     <lastBuildDate>${buildDate}</lastBuildDate>
     <pubDate>${buildDate}</pubDate>
     <ttl>60</ttl>
-    <atom:link href="${SITE_DOMAIN}/rss.xml" rel="self" type="application/rss+xml"/>
+    <atom:link href="${SITE_DOMAIN}/api/functions/rss-feed" rel="self" type="application/rss+xml"/>
     <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
     <webMaster>support@alphagogogo.com (알파고고고)</webMaster>
     <copyright>Copyright ${now.getFullYear()} 알파고고고. All rights reserved.</copyright>
     <category>Technology</category>
     <category>Artificial Intelligence</category>
     <category>AI News</category>
+    <category>Korean AI Blog</category>
     <image>
       <url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png</url>
       <title>알파고고고</title>
@@ -95,19 +111,19 @@ serve(async (req) => {
         const pubDate = new Date(post.published_at).toUTCString();
         const cleanTitle = escapeXml(post.title || '제목 없음');
         
-        // description 생성 (HTML 태그 제거 후 길이 제한)
+        // description 생성 (마크다운과 HTML 태그 제거 후 길이 제한)
         let description = '';
         if (post.excerpt) {
-          description = stripHtml(post.excerpt).substring(0, 300);
+          description = stripHtml(stripMarkdown(post.excerpt)).substring(0, 300);
         } else if (post.content) {
-          description = stripHtml(post.content).substring(0, 300);
+          description = stripHtml(stripMarkdown(post.content)).substring(0, 300);
         } else {
           description = '설명이 없습니다.';
         }
         description = escapeXml(description + (description.length >= 300 ? '...' : ''));
         
-        // content 생성 (HTML 태그 제거)
-        const cleanContent = post.content ? escapeXml(stripHtml(post.content)) : '';
+        // content 생성 (마크다운과 HTML 태그 제거)
+        const cleanContent = post.content ? escapeXml(stripHtml(stripMarkdown(post.content))) : '';
 
         rssContent += `
     <item>
@@ -117,8 +133,8 @@ serve(async (req) => {
       <description>${description}</description>
       <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
       <pubDate>${pubDate}</pubDate>
-      <author>support@alphagogogo.com (${escapeXml(post.author_name || '알파고고고')})</author>
-      <category>${escapeXml(post.category || '일반')}</category>`;
+      <dc:creator><![CDATA[${escapeXml(post.author_name || '알파고고고')}]]></dc:creator>
+      <category><![CDATA[${escapeXml(post.category || '일반')}]]></category>`;
 
         if (post.cover_image) {
           rssContent += `
@@ -139,7 +155,7 @@ serve(async (req) => {
     return new Response(rssContent, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=3600',
+        'Cache-Control': 'public, max-age=1800', // 30분 캐시
         ...corsHeaders,
       },
     });
@@ -151,6 +167,11 @@ serve(async (req) => {
   <channel>
     <title>알파고고고 - RSS Feed Error</title>
     <description>RSS 피드 생성 중 오류가 발생했습니다.</description>
+    <item>
+      <title>서비스 일시 중단</title>
+      <description>RSS 피드를 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</description>
+      <pubDate>${new Date().toUTCString()}</pubDate>
+    </item>
   </channel>
 </rss>`,
       {

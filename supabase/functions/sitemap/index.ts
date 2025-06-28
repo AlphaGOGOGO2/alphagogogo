@@ -11,7 +11,7 @@ const SITE_DOMAIN = 'https://alphagogogo.com';
 
 // XML 특수문자 이스케이프 함수
 function escapeXml(unsafe: string): string {
-  return unsafe.replace(/[<>&'"]/g, function (c) {
+  return unsafe ? unsafe.replace(/[<>&'"]/g, function (c) {
     switch (c) {
       case '<': return '&lt;';
       case '>': return '&gt;';
@@ -20,7 +20,7 @@ function escapeXml(unsafe: string): string {
       case '"': return '&quot;';
       default: return c;
     }
-  });
+  }) : '';
 }
 
 serve(async (req) => {
@@ -37,18 +37,27 @@ serve(async (req) => {
     console.log('사이트맵 생성 시작...');
 
     // 모든 게시글 조회
-    const { data: posts, error } = await supabase
+    const { data: posts, error: postsError } = await supabase
       .from('blog_posts')
       .select('*')
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false });
 
-    if (error) {
-      console.error('Sitemap 포스트 조회 에러:', error);
-      throw error;
+    if (postsError) {
+      console.error('Sitemap 포스트 조회 에러:', postsError);
     }
 
-    console.log(`사이트맵: ${posts?.length || 0}개 포스트 조회됨`);
+    // 모든 리소스 조회
+    const { data: resources, error: resourcesError } = await supabase
+      .from('resources')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (resourcesError) {
+      console.error('Sitemap 리소스 조회 에러:', resourcesError);
+    }
+
+    console.log(`사이트맵: ${posts?.length || 0}개 포스트, ${resources?.length || 0}개 리소스 조회됨`);
 
     const staticUrls = [
       { url: '', priority: '1.0', changefreq: 'daily' },
@@ -63,6 +72,7 @@ serve(async (req) => {
       { url: '/blog/lifestyle', priority: '0.7', changefreq: 'weekly' },
       { url: '/gpts', priority: '0.7', changefreq: 'weekly' },
       { url: '/services', priority: '0.7', changefreq: 'monthly' },
+      { url: '/resources', priority: '0.8', changefreq: 'daily' },
       { url: '/community', priority: '0.6', changefreq: 'daily' },
       { url: '/blog-button-creator', priority: '0.6', changefreq: 'monthly' },
       { url: '/business-inquiry', priority: '0.5', changefreq: 'monthly' }
@@ -117,10 +127,28 @@ serve(async (req) => {
       }
     }
 
+    // 리소스들 추가
+    if (resources && resources.length > 0) {
+      for (const resource of resources) {
+        const resourceUrl = `/resources/${resource.id}`;
+        const lastmod = resource.updated_at ? 
+          new Date(resource.updated_at).toISOString().split('T')[0] : 
+          new Date(resource.created_at).toISOString().split('T')[0];
+
+        sitemapContent += `
+  <url>
+    <loc>${escapeXml(SITE_DOMAIN + resourceUrl)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+      }
+    }
+
     sitemapContent += `
 </urlset>`;
 
-    console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개`);
+    console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개, 리소스: ${resources?.length || 0}개`);
 
     return new Response(sitemapContent, {
       headers: {
