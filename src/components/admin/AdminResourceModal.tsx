@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Upload, X, FileText, Image, Video, Music, Archive, File, Plus } from "lucide-react";
 import { ResourceCKEditor } from "./ResourceCKEditor";
 import { uploadResourceFile } from "@/services/resourceMediaService";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface AdminResourceModalProps {
   isOpen: boolean;
@@ -61,10 +62,12 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
       });
       setTagsInput(resource.tags.join(", "));
     } else {
+      // 기본 카테고리 설정 개선
+      const defaultCategory = categories.length > 0 ? categories[0].name : "기타";
       setFormData({
         title: "",
         description: "",
-        category: categories.length > 0 ? categories[0].name : "기타",
+        category: defaultCategory,
         file_url: "",
         file_type: "document",
         file_size: 0,
@@ -113,6 +116,11 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
     
     if (!formData.title.trim()) {
       toast.error("제목을 입력해주세요.");
+      return;
+    }
+
+    if (!formData.category.trim()) {
+      toast.error("카테고리를 선택해주세요.");
       return;
     }
 
@@ -177,37 +185,48 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
             {/* 상단 메타 정보 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border">
               <div>
-                <Label htmlFor="category" className="text-sm font-semibold text-gray-700">카테고리</Label>
-                <select
-                  id="category"
+                <Label htmlFor="category" className="text-sm font-semibold text-gray-700">카테고리 *</Label>
+                <Select
                   value={formData.category}
-                  onChange={(e) => handleInputChange("category", e.target.value)}
-                  className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onValueChange={(value) => handleInputChange("category", value)}
                 >
-                  <option value="기타">기타</option>
-                  {categories.map((category) => (
-                    <option key={category.id} value={category.name}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="w-full mt-2">
+                    <SelectValue placeholder="카테고리를 선택하세요" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border shadow-lg z-50">
+                    <SelectItem value="기타">기타</SelectItem>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.name}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {categories.length === 0 && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    카테고리가 없습니다. 기본값으로 "기타"가 사용됩니다.
+                  </p>
+                )}
               </div>
 
               <div>
                 <Label htmlFor="file_type" className="text-sm font-semibold text-gray-700">파일 유형</Label>
-                <select
-                  id="file_type"
+                <Select
                   value={formData.file_type}
-                  onChange={(e) => handleInputChange("file_type", e.target.value)}
-                  className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                  onValueChange={(value) => handleInputChange("file_type", value)}
                 >
-                  <option value="document">📄 문서</option>
-                  <option value="image">🖼️ 이미지</option>
-                  <option value="video">🎥 비디오</option>
-                  <option value="audio">🎵 오디오</option>
-                  <option value="archive">📦 압축파일</option>
-                  <option value="other">📎 기타</option>
-                </select>
+                  <SelectTrigger className="w-full mt-2">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border shadow-lg z-50">
+                    <SelectItem value="document">📄 문서</SelectItem>
+                    <SelectItem value="image">🖼️ 이미지</SelectItem>
+                    <SelectItem value="video">🎥 비디오</SelectItem>
+                    <SelectItem value="audio">🎵 오디오</SelectItem>
+                    <SelectItem value="archive">📦 압축파일</SelectItem>
+                    <SelectItem value="other">📎 기타</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div>

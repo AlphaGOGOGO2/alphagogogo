@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
@@ -23,6 +22,11 @@ export default function AdminResourcesPage() {
   const { data: resources = [], isLoading } = useQuery({
     queryKey: ['admin-resources'],
     queryFn: resourceService.getAllResources
+  });
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['resource-categories'],
+    queryFn: resourceService.getCategories
   });
 
   const deleteResourceMutation = useMutation({
@@ -89,13 +93,15 @@ export default function AdminResourcesPage() {
     return types[fileType as keyof typeof types] || fileType;
   };
 
-  if (isLoading) {
+  if (isLoading || categoriesLoading) {
     return (
       <AdminLayout title="자료실 관리">
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
-            <p className="mt-2 text-gray-600">로딩 중...</p>
+            <p className="mt-2 text-gray-600">
+              {isLoading ? "자료 로딩 중..." : "카테고리 로딩 중..."}
+            </p>
           </div>
         </div>
       </AdminLayout>
@@ -299,7 +305,7 @@ export default function AdminResourcesPage() {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         resource={editingResource}
-        categories={[]}
+        categories={categories}
       />
     </AdminLayout>
   );
