@@ -24,7 +24,7 @@ export function BlogDropdown({
   onOpenChange
 }: BlogDropdownProps) {
   const { dropdownRef, handlers } = useDropdown({
-    closeDelay: 300,
+    closeDelay: 500, // 더 긴 지연시간으로 안정성 향상
     openOnHover: true,
     closeOnClick: true
   });
@@ -74,15 +74,18 @@ export function BlogDropdown({
       {isOpen && (
         <div 
           className={cn(
-            "absolute z-50 left-0 mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden",
+            "absolute z-50 left-0 -mt-1 min-w-48 w-max rounded-md shadow-lg overflow-hidden",
+            "before:content-[''] before:absolute before:-top-2 before:left-0 before:right-0 before:h-2 before:bg-transparent",
             isScrolled 
               ? "bg-white border border-gray-200" 
-              : "bg-black/80 backdrop-blur-lg border border-white/20"
+              : "bg-black/90 backdrop-blur-lg border border-white/20"
           )}
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="blog-menu"
           onClick={(e) => e.stopPropagation()}
+          onMouseEnter={() => onOpenChange(true)}
+          onMouseLeave={() => onOpenChange(false)}
         >
           <div className="py-2">
             {categories.map((category) => (
