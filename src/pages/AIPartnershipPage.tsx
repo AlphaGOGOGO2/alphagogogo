@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "@/components/Navbar";
@@ -41,14 +40,42 @@ export default function AIPartnershipPage() {
           return;
         }
 
-        // Json 타입을 string[]로 안전하게 변환
-        const transformedData = data?.map(service => ({
-          ...service,
-          benefits: Array.isArray(service.benefits) 
-            ? service.benefits.map(benefit => String(benefit))
-            : []
-        })) || [];
+        console.log('AI품앗이 페이지 - 원본 데이터:', data);
 
+        // JSONB 타입 데이터를 안전하게 변환
+        const transformedData = data?.map(service => {
+          let benefitsArray: string[] = [];
+          
+          // benefits가 이미 배열인지 확인
+          if (Array.isArray(service.benefits)) {
+            benefitsArray = service.benefits.map(benefit => String(benefit));
+          } 
+          // benefits가 문자열인 경우 JSON 파싱 시도
+          else if (typeof service.benefits === 'string') {
+            try {
+              const parsed = JSON.parse(service.benefits);
+              benefitsArray = Array.isArray(parsed) ? parsed.map(benefit => String(benefit)) : [];
+            } catch {
+              benefitsArray = [];
+            }
+          }
+          // benefits가 null 또는 undefined인 경우
+          else {
+            benefitsArray = [];
+          }
+          
+          console.log(`AI품앗이 페이지 - 서비스 ${service.name}의 benefits:`, {
+            original: service.benefits,
+            transformed: benefitsArray
+          });
+          
+          return {
+            ...service,
+            benefits: benefitsArray
+          };
+        }) || [];
+
+        console.log('AI품앗이 페이지 - 변환된 데이터:', transformedData);
         setServices(transformedData);
         
         // 첫 번째 활성 서비스를 기본 선택으로 설정
@@ -234,14 +261,20 @@ export default function AIPartnershipPage() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">
                     🎉 {currentService.display_name} 초대 혜택 상세
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {currentService.benefits.map((benefit, index) => (
-                      <div key={index} className="flex items-start bg-gray-50 p-4 rounded-lg">
-                        <span className="text-purple-600 mr-3 text-lg">✓</span>
-                        <span className="text-gray-800">{benefit}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {currentService.benefits.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {currentService.benefits.map((benefit, index) => (
+                        <div key={index} className="flex items-start bg-gray-50 p-4 rounded-lg">
+                          <span className="text-purple-600 mr-3 text-lg">✓</span>
+                          <span className="text-gray-800">{benefit}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center text-gray-500 py-4">
+                      혜택 정보를 준비 중입니다.
+                    </div>
+                  )}
                 </div>
               </div>
             )}

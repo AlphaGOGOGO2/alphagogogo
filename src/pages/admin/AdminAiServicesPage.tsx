@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -61,14 +62,42 @@ export default function AdminAiServicesPage() {
 
       if (error) throw error;
       
-      // Json 타입을 string[]로 안전하게 변환
-      const transformedData = data?.map(service => ({
-        ...service,
-        benefits: Array.isArray(service.benefits) 
-          ? service.benefits.map(benefit => String(benefit))
-          : []
-      })) || [];
+      console.log('원본 데이터:', data);
       
+      // JSONB 타입 데이터를 안전하게 변환
+      const transformedData = data?.map(service => {
+        let benefitsArray: string[] = [];
+        
+        // benefits가 이미 배열인지 확인
+        if (Array.isArray(service.benefits)) {
+          benefitsArray = service.benefits.map(benefit => String(benefit));
+        } 
+        // benefits가 문자열인 경우 JSON 파싱 시도
+        else if (typeof service.benefits === 'string') {
+          try {
+            const parsed = JSON.parse(service.benefits);
+            benefitsArray = Array.isArray(parsed) ? parsed.map(benefit => String(benefit)) : [];
+          } catch {
+            benefitsArray = [];
+          }
+        }
+        // benefits가 null 또는 undefined인 경우
+        else {
+          benefitsArray = [];
+        }
+        
+        console.log(`서비스 ${service.name}의 benefits:`, {
+          original: service.benefits,
+          transformed: benefitsArray
+        });
+        
+        return {
+          ...service,
+          benefits: benefitsArray
+        };
+      }) || [];
+      
+      console.log('변환된 데이터:', transformedData);
       setServices(transformedData);
     } catch (error) {
       console.error('서비스 조회 오류:', error);
@@ -124,16 +153,24 @@ export default function AdminAiServicesPage() {
     e.preventDefault();
     
     try {
-      const benefits = formData.benefits.split('\n').filter(b => b.trim());
+      // benefits를 배열로 변환 (빈 줄과 공백 제거)
+      const benefits = formData.benefits
+        .split('\n')
+        .map(b => b.trim())
+        .filter(b => b.length > 0);
+      
+      console.log('저장할 benefits:', benefits);
       
       const serviceData = {
         name: formData.name.trim(),
         display_name: formData.display_name.trim(),
         url_pattern: formData.url_pattern.trim(),
         description: formData.description.trim(),
-        benefits: JSON.stringify(benefits),
+        benefits: benefits, // JSON.stringify 제거 - JSONB에 직접 배열 저장
         is_active: formData.is_active
       };
+
+      console.log('전체 저장 데이터:', serviceData);
 
       if (editingService) {
         const { error } = await supabase
@@ -166,13 +203,14 @@ export default function AdminAiServicesPage() {
   };
 
   const handleEdit = (service: AIService) => {
+    console.log('편집할 서비스:', service);
     setEditingService(service);
     setFormData({
       name: service.name,
       display_name: service.display_name,
       url_pattern: service.url_pattern,
       description: service.description,
-      benefits: service.benefits.join('\n'),
+      benefits: service.benefits.join('\n'), // 배열을 줄바꿈으로 구분된 문자열로 변환
       is_active: service.is_active
     });
     setIsDialogOpen(true);
@@ -403,6 +441,9 @@ export default function AdminAiServicesPage() {
                           </li>
                         ))}
                       </ul>
+                      {service.benefits.length === 0 && (
+                        <p className="text-sm text-gray-500 italic">혜택 정보가 없습니다.</p>
+                      )}
                     </div>
 
                     <div className="flex gap-4 pt-2 border-t">
