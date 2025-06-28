@@ -15,6 +15,7 @@ import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ResourceDetailPage from "./pages/ResourceDetailPage";
+import AIPartnershipPage from "./pages/AIPartnershipPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminResourcesPage from "./pages/admin/AdminResourcesPage";
