@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "@/components/Navbar";
@@ -40,11 +39,17 @@ export default function AIPartnershipPage() {
           return;
         }
 
-        setServices(data || []);
+        // Json 타입을 string[]로 변환
+        const transformedData = data?.map(service => ({
+          ...service,
+          benefits: Array.isArray(service.benefits) ? service.benefits : []
+        })) || [];
+
+        setServices(transformedData);
         
         // 첫 번째 활성 서비스를 기본 선택으로 설정
-        if (data && data.length > 0) {
-          setSelectedService(data[0].name);
+        if (transformedData && transformedData.length > 0) {
+          setSelectedService(transformedData[0].name);
         }
       } catch (error) {
         console.error('서비스 조회 오류:', error);

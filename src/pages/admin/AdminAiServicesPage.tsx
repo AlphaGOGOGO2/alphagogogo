@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -61,7 +60,14 @@ export default function AdminAiServicesPage() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setServices(data || []);
+      
+      // Json 타입을 string[]로 변환
+      const transformedData = data?.map(service => ({
+        ...service,
+        benefits: Array.isArray(service.benefits) ? service.benefits : []
+      })) || [];
+      
+      setServices(transformedData);
     } catch (error) {
       console.error('서비스 조회 오류:', error);
       toast.error("서비스 조회 중 오류가 발생했습니다.");
