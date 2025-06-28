@@ -33,7 +33,7 @@ export function SEO({
   modifiedTime,
   section,
   tags = [],
-}: SEOProps) {
+}: SEOProps) => {
   // 브랜딩이 포함된 전체 제목 생성 - 개선된 로직
   const fullTitle = title === "알파고고고 - 최신 AI 소식 & 인사이트" 
     ? title 
@@ -61,8 +61,8 @@ export function SEO({
       <meta name="description" content={optimizedDescription} />
       <link rel="canonical" href={normalizedCanonical} />
       
-      {/* 검색엔진 사이트 인증 메타 태그 */}
-      <meta name="google-site-verification" content="your-google-verification-code" />
+      {/* 검색엔진 사이트 인증 메타 태그 - 실제 값으로 교체 필요 */}
+      <meta name="google-site-verification" content="CJ9ZtF3aqgbLnIQqZF-mZ2rF7E6XkLhP8VzSaQqJpxs" />
       <meta name="naver-site-verification" content="d181058ce6b8b7b3c86efe4a48bb678f2b735694" />
       
       {/* 오픈 그래프 태그 */}
@@ -116,9 +116,9 @@ export function SEO({
         </>
       )}
       
-      {/* RSS 피드 및 사이트맵 링크 (통일된 경로) */}
-      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/functions/rss-feed`} />
-      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/api/functions/sitemap`} />
+      {/* RSS 피드 및 사이트맵 링크 (표준 경로로 수정) */}
+      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
+      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
       
       {/* 파비콘 및 아이콘 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
@@ -164,4 +164,4 @@ export function SEO({
       )}
     </Helmet>
   );
-}
+};

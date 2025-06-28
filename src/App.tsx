@@ -25,18 +25,6 @@ import "./App.css";
 
 const queryClient = new QueryClient();
 
-// Edge Function으로 리다이렉트하는 컴포넌트
-const RedirectToEdgeFunction = ({ endpoint }: { endpoint: string }) => {
-  const edgeUrl = `https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/${endpoint}`;
-  
-  React.useEffect(() => {
-    // 즉시 리다이렉트
-    window.location.replace(edgeUrl);
-  }, [edgeUrl]);
-
-  return null; // 아무것도 렌더링하지 않음
-};
-
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -50,16 +38,6 @@ function App() {
               
               {/* 모든 블로그 관련 라우팅을 BlogRoutes로 위임 */}
               <Route path="/blog/*" element={<BlogRoutes />} />
-              
-              {/* RSS와 Sitemap 엔드포인트 - Edge Functions로 리다이렉트 */}
-              <Route 
-                path="/rss.xml" 
-                element={<RedirectToEdgeFunction endpoint="rss-feed" />} 
-              />
-              <Route 
-                path="/sitemap.xml" 
-                element={<RedirectToEdgeFunction endpoint="sitemap" />} 
-              />
               
               <Route path="/gpts" element={<GPTSPage />} />
               <Route path="/community" element={<CommunityPage />} />

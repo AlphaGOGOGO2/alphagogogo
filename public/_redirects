@@ -1,2 +1,11 @@
 
+# Edge Function으로 리다이렉트 (서버 사이드)
+/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
+/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
+
+# 레거시 API 경로들도 리다이렉트
+/api/functions/sitemap https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
+/api/functions/rss-feed https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
+
+# SPA fallback
 /* /index.html 200

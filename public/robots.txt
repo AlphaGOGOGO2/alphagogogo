@@ -23,9 +23,9 @@ Disallow: /*?*gclid=
 # 크롤링 속도 제한 완화
 Crawl-delay: 0.5
 
-# 사이트맵 위치 명시 (Edge Function으로 통일)
-Sitemap: https://alphagogogo.com/api/functions/sitemap
-Sitemap: https://alphagogogo.com/api/functions/rss-feed
+# 사이트맵 위치 명시 (올바른 경로로 수정)
+Sitemap: https://alphagogogo.com/sitemap.xml
+Sitemap: https://alphagogogo.com/rss.xml
 
 # 호스트 지정
 Host: https://alphagogogo.com
