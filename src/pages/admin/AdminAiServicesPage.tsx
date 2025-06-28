@@ -61,10 +61,12 @@ export default function AdminAiServicesPage() {
 
       if (error) throw error;
       
-      // Json 타입을 string[]로 변환
+      // Json 타입을 string[]로 안전하게 변환
       const transformedData = data?.map(service => ({
         ...service,
-        benefits: Array.isArray(service.benefits) ? service.benefits : []
+        benefits: Array.isArray(service.benefits) 
+          ? service.benefits.map(benefit => String(benefit))
+          : []
       })) || [];
       
       setServices(transformedData);
