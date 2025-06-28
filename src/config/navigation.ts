@@ -103,10 +103,9 @@ export const aiPartnershipServices: AIPartnershipService[] = [
     name: "마누스",
     value: "manus",
     description: "AI 글쓰기 도구",
-    urlPattern: "https://manus.ai/invite/",
+    urlPattern: "https://manus.im/invitation/",
     benefits: [
-      "서로 크레딧 혜택 제공",
-      "프리미엄 기능 체험 기회"
+      "친구들과 초대 링크를 공유하고, 각자 500 크레딧을 받으세요"
     ]
   }
 ];
