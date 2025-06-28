@@ -29,22 +29,17 @@ export function BlogDropdown({
     closeOnClick: true
   });
 
-  // 외부에서 제어되는 isOpen 상태와 동기화
-  const handleOpenChange = (newIsOpen: boolean) => {
-    onOpenChange(newIsOpen);
-  };
-
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
       onMouseEnter={() => {
         handlers.onMouseEnter();
-        handleOpenChange(true);
+        onOpenChange(true);
       }}
       onMouseLeave={() => {
         handlers.onMouseLeave();
-        handleOpenChange(false);
+        onOpenChange(false);
       }}
     >
       <button
@@ -53,7 +48,7 @@ export function BlogDropdown({
         aria-haspopup="true"
         onClick={(e) => {
           handlers.onClick(e);
-          handleOpenChange(!isOpen);
+          onOpenChange(!isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >
@@ -88,8 +83,6 @@ export function BlogDropdown({
           aria-orientation="vertical"
           aria-labelledby="blog-menu"
           onClick={(e) => e.stopPropagation()}
-          onMouseEnter={() => handleOpenChange(true)}
-          onMouseLeave={() => handleOpenChange(false)}
         >
           <div className="py-2">
             {categories.map((category) => (
@@ -106,7 +99,7 @@ export function BlogDropdown({
                   e.stopPropagation();
                   onCategoryClick?.();
                   handlers.onItemClick();
-                  handleOpenChange(false);
+                  onOpenChange(false);
                 }}
                 role="menuitem"
               >
