@@ -19,6 +19,7 @@ import AIPartnershipPage from "./pages/AIPartnershipPage";
 import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
 import AdminPostsPage from "./pages/admin/AdminPostsPage";
 import AdminResourcesPage from "./pages/admin/AdminResourcesPage";
+import AdminAiServicesPage from "./pages/admin/AdminAiServicesPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import NotFound from "./pages/NotFound";
@@ -51,6 +52,7 @@ function App() {
               <Route path="/admin" element={<AdminDashboardPage />} />
               <Route path="/admin/posts" element={<AdminPostsPage />} />
               <Route path="/admin/resources" element={<AdminResourcesPage />} />
+              <Route path="/admin/ai-services" element={<AdminAiServicesPage />} />
               <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
               <Route path="*" element={<NotFound />} />

@@ -9,6 +9,42 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      ai_services: {
+        Row: {
+          benefits: Json
+          created_at: string
+          description: string
+          display_name: string
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          url_pattern: string
+        }
+        Insert: {
+          benefits?: Json
+          created_at?: string
+          description: string
+          display_name: string
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          url_pattern: string
+        }
+        Update: {
+          benefits?: Json
+          created_at?: string
+          description?: string
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          url_pattern?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           created_at: string
@@ -195,6 +231,7 @@ export type Database = {
           description: string | null
           id: string
           invite_url: string
+          service_id: string | null
           service_name: string
           updated_at: string
           user_nickname: string
@@ -205,6 +242,7 @@ export type Database = {
           description?: string | null
           id?: string
           invite_url: string
+          service_id?: string | null
           service_name: string
           updated_at?: string
           user_nickname: string
@@ -215,11 +253,20 @@ export type Database = {
           description?: string | null
           id?: string
           invite_url?: string
+          service_id?: string | null
           service_name?: string
           updated_at?: string
           user_nickname?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_invite_links_service"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "ai_services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       resource_categories: {
         Row: {
