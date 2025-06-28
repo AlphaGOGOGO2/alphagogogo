@@ -12,13 +12,11 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
   
-  // Force an initial check of scroll position on mount
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
     
-    // Run initial check immediately
     handleScroll();
     setIsInitialized(true);
     
@@ -76,10 +74,9 @@ export function Navbar() {
         />
       </header>
       
-      {/* Add Mobile Bottom Navigation */}
       <MobileBottomNav />
       
-      {/* Add padding to the bottom of the page on mobile to account for fixed bottom nav */}
+      {/* 모바일 하단 네비게이션을 위한 패딩 - UX 변경 없이 성능만 최적화 */}
       <div className="md:hidden h-16"></div>
     </>
   );

@@ -6,7 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
-import { AdSense } from "@/components/AdSense";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 interface BlogLayoutProps {
   children: ReactNode;
@@ -72,16 +72,16 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
             </div>
           </header>
           
-          {/* 여기서 AdSense 컴포넌트를 제거합니다 - 이것이 중복의 원인입니다 */}
-          
-          <section 
-            id="blog-content" 
-            className="opacity-0" 
-            style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
-            aria-live="polite"
-          >
-            {children}
-          </section>
+          <ErrorBoundary>
+            <section 
+              id="blog-content" 
+              className="opacity-0" 
+              style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+              aria-live="polite"
+            >
+              {children}
+            </section>
+          </ErrorBoundary>
         </div>
       </main>
       

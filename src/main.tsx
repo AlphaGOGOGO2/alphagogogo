@@ -4,7 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker } from './registerSW';
 
-// Declare adsbygoogle for Google AdSense
+// AdSense 전역 타입 선언
 declare global {
   interface Window {
     adsbygoogle: any[] & {
@@ -14,23 +14,21 @@ declare global {
   }
 }
 
-// Google AdSense 초기화 및 진단
+// 최적화된 AdSense 초기화
 const initializeAdSense = () => {
   try {
     console.log('[AdSense] 초기화 시작');
     
-    // AdSense 배열 초기화 - 단 한번만
     if (!window.adsbygoogle) {
       window.adsbygoogle = [] as any;
       console.log('[AdSense] 전역 배열 초기화 완료');
     }
 
-    // AdSense 스크립트 로드 상태 확인
+    // AdSense 스크립트 상태 확인
     const adSenseScript = document.querySelector('script[src*="adsbygoogle.js"]');
     if (adSenseScript) {
       console.log('[AdSense] 스크립트 감지됨');
       
-      // 스크립트 로드 완료 확인
       adSenseScript.addEventListener('load', () => {
         console.log('[AdSense] 스크립트 로드 완료');
       });
@@ -39,50 +37,61 @@ const initializeAdSense = () => {
         console.error('[AdSense] 스크립트 로드 오류:', error);
       });
     } else {
-      console.error('[AdSense] 스크립트가 감지되지 않음 - HTML에서 스크립트 태그를 확인하세요');
+      console.warn('[AdSense] 스크립트를 찾을 수 없습니다');
     }
 
-    // CSP 정책 확인
-    const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+    // CSP 정책 검증
+    const cspMeta = document.querySelector('meta[http-equiv="Content-Security-Policy"]') as HTMLMetaElement;
     if (cspMeta) {
-      const cspContent = cspMeta.getAttribute('content') || '';
-      console.log('[AdSense] CSP 정책:', cspContent);
+      const cspContent = cspMeta.content || '';
+      console.log('[AdSense] CSP 정책 확인됨');
       
-      if (cspContent.includes('pagead2.googlesyndication.com')) {
+      const requiredDomains = ['pagead2.googlesyndication.com', 'googletagservices.com'];
+      const hasRequiredDomains = requiredDomains.every(domain => cspContent.includes(domain));
+      
+      if (hasRequiredDomains) {
         console.log('[AdSense] ✅ CSP에서 AdSense 도메인 허용됨');
       } else {
-        console.error('[AdSense] ❌ CSP에서 AdSense 도메인이 차단됨');
+        console.warn('[AdSense] ⚠️ CSP에서 AdSense 도메인 일부가 차단될 수 있습니다');
       }
-      
-      if (cspContent.includes('unsafe-eval')) {
-        console.log('[AdSense] ✅ CSP에서 unsafe-eval 허용됨');
-      } else {
-        console.error('[AdSense] ❌ CSP에서 unsafe-eval이 차단됨 - AdSense에 필요합니다');
-      }
-    } else {
-      console.warn('[AdSense] CSP 메타 태그를 찾을 수 없습니다');
     }
 
-    // 광고 차단 소프트웨어 감지 - 올바른 방식으로 수정
+    // 지연된 AdSense 로드 상태 확인
     setTimeout(() => {
-      // AdSense 스크립트가 로드되었는지 확인하는 더 안전한 방법
       const adSenseLoaded = window.adsbygoogle && typeof window.adsbygoogle.push === 'function';
       if (adSenseLoaded) {
-        console.log('[AdSense] ✅ AdSense가 정상적으로 로드됨');
+        console.log('[AdSense] ✅ 정상 로드됨');
       } else {
-        console.warn('[AdSense] ⚠️ AdSense 로드가 지연되거나 차단되었을 수 있습니다');
+        console.warn('[AdSense] ⚠️ 로드 지연 또는 차단됨');
       }
-    }, 3000);
+    }, 2000); // 2초로 단축
 
   } catch (error) {
-    console.error('[AdSense] 초기화 중 오류:', error);
+    console.error('[AdSense] 초기화 오류:', error);
   }
 };
 
-// 서비스 워커 등록
-registerServiceWorker();
+// 성능 모니터링
+const monitorPerformance = () => {
+  if ('performance' in window) {
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+        if (perfData) {
+          console.log('[Performance] 페이지 로딩 시간:', {
+            DOMContentLoaded: perfData.domContentLoadedEventEnd - perfData.navigationStart,
+            FullLoad: perfData.loadEventEnd - perfData.navigationStart,
+            FirstByte: perfData.responseStart - perfData.navigationStart
+          });
+        }
+      }, 0);
+    });
+  }
+};
 
-// AdSense 초기화
+// 초기화 실행
+registerServiceWorker();
 initializeAdSense();
+monitorPerformance();
 
 createRoot(document.getElementById("root")!).render(<App />);
