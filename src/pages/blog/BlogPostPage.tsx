@@ -108,6 +108,11 @@ export default function BlogPostPage() {
     );
   }
   
+  // SEO 메타데이터 개선
+  const postDescription = post.excerpt && post.excerpt.trim() !== '' 
+    ? post.excerpt 
+    : generateExcerpt(post.content, 160);
+  
   const postKeywords = post.tags && post.tags.length > 0
     ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
     : "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,인공지능,AI";
@@ -119,7 +124,7 @@ export default function BlogPostPage() {
     <BlogLayout title={post.title}>
       <SEO 
         title={post.title}
-        description={post.excerpt || generateExcerpt(post.content)}
+        description={postDescription}
         canonicalUrl={canonicalUrl}
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png"}
         ogType="article"
@@ -139,6 +144,8 @@ export default function BlogPostPage() {
               src={post.coverImage} 
               alt={post.title} 
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         )}
@@ -153,6 +160,7 @@ export default function BlogPostPage() {
               onClick={handleEdit} 
               variant="outline" 
               className="flex items-center gap-2 text-purple-600 border-purple-600 hover:bg-purple-50"
+              aria-label="블로그 포스트 수정하기"
             >
               <Pencil size={16} />
               수정하기
@@ -210,7 +218,14 @@ export default function BlogPostPage() {
                 table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
                 th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
                 td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
-                img: ({node, ...props}) => <img className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" {...props} />,
+                img: ({node, ...props}) => (
+                  <img 
+                    className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" 
+                    loading="lazy"
+                    decoding="async"
+                    {...props} 
+                  />
+                ),
               }}
             >
               {post.content}

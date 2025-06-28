@@ -6,6 +6,7 @@ interface AdSenseProps {
   adFormat?: 'auto' | 'rectangle' | 'horizontal' | 'vertical';
   style?: React.CSSProperties;
   className?: string;
+  priority?: 'high' | 'low';
 }
 
 // 전역 변수로 이미 초기화된 슬롯을 추적
@@ -16,6 +17,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
   adFormat = 'auto',
   style = {},
   className = '',
+  priority = 'low',
 }) => {
   const [isAdInitialized, setIsAdInitialized] = useState(false);
   const [adError, setAdError] = useState<string | null>(null);
@@ -110,11 +112,12 @@ export const AdSense: React.FC<AdSenseProps> = ({
       }
     };
 
-    // 컴포넌트가 마운트된 후 약간의 지연을 두고 초기화
-    const timer = setTimeout(initializeAd, 100);
+    // 우선순위가 높은 광고는 즉시 로드, 그렇지 않으면 지연 로드
+    const delay = priority === 'high' ? 100 : 1000;
+    const timer = setTimeout(initializeAd, delay);
     
     return () => clearTimeout(timer);
-  }, [isDevelopment, slotId]);
+  }, [isDevelopment, slotId, priority]);
 
   if (isDevelopment) {
     return (
@@ -135,6 +138,7 @@ export const AdSense: React.FC<AdSenseProps> = ({
           margin: '0 auto',
           ...style,
         }}
+        aria-label="광고 배너 자리표시자"
       >
         <p className="text-purple-600 font-medium text-center">
           {adFormat === 'horizontal' ? '광고 배너 (728x90)' : '광고 배너 (336x280)'}
@@ -159,9 +163,10 @@ export const AdSense: React.FC<AdSenseProps> = ({
         data-ad-slot={adSlot || ''}
         data-ad-format={adFormat}
         data-full-width-responsive="true"
+        aria-label="Google 광고"
       />
       {/* 디버깅을 위한 상태 표시 (프로덕션에서는 숨김) */}
-      {adError && (
+      {adError && process.env.NODE_ENV === 'development' && (
         <div style={{ fontSize: '10px', color: '#999', marginTop: '4px' }}>
           Debug: {adStatus} - {adError}
         </div>

@@ -49,11 +49,16 @@ export function SEO({
   // 정규화된 OG 이미지 URL 생성
   const normalizedOgImage = ogImage.startsWith('http') ? ogImage : `${SITE_DOMAIN}${ogImage.startsWith('/') ? '' : '/'}${ogImage}`;
   
+  // description 길이 최적화 (160자 이내)
+  const optimizedDescription = description.length > 160 
+    ? description.substring(0, 157) + '...' 
+    : description;
+
   return (
     <Helmet>
       {/* 핵심 SEO 메타 태그 */}
       <title>{fullTitle}</title>
-      <meta name="description" content={description} />
+      <meta name="description" content={optimizedDescription} />
       <link rel="canonical" href={normalizedCanonical} />
       
       {/* 검색엔진 사이트 인증 메타 태그 */}
@@ -62,7 +67,7 @@ export function SEO({
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
-      <meta property="og:description" content={description} />
+      <meta property="og:description" content={optimizedDescription} />
       <meta property="og:type" content={ogType} />
       <meta property="og:url" content={normalizedCanonical} />
       <meta property="og:image" content={normalizedOgImage} />
@@ -75,7 +80,7 @@ export function SEO({
       {/* 트위터 카드 메타 태그 */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:description" content={optimizedDescription} />
       <meta name="twitter:image" content={normalizedOgImage} />
       <meta name="twitter:image:alt" content={`${title} - 알파고고고`} />
       <meta name="twitter:site" content="@alphagogogo" />
@@ -111,7 +116,7 @@ export function SEO({
         </>
       )}
       
-      {/* RSS 피드 및 사이트맵 링크 - 수정된 경로 */}
+      {/* RSS 피드 및 사이트맵 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/functions/rss-feed`} />
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/api/functions/sitemap`} />
       
@@ -136,10 +141,17 @@ export function SEO({
       <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       <meta name="apple-mobile-web-app-title" content="알파고고고" />
       
+      {/* 보안 헤더 */}
+      <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+      <meta httpEquiv="X-Frame-Options" content="SAMEORIGIN" />
+      <meta httpEquiv="X-XSS-Protection" content="1; mode=block" />
+      <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+      
       {/* DNS Prefetch 및 Preconnect 최적화 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
+      <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
