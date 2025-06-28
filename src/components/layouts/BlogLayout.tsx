@@ -1,5 +1,5 @@
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link, useLocation } from "react-router-dom";
@@ -7,17 +7,31 @@ import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { BlogLayoutSkeleton } from "./BlogLayoutSkeleton";
 
 interface BlogLayoutProps {
   children: ReactNode;
   title: string;
+  isLoading?: boolean;
 }
 
-export function BlogLayout({ children, title }: BlogLayoutProps) {
+export function BlogLayout({ children, title, isLoading = false }: BlogLayoutProps) {
   const location = useLocation();
+  const [showContent, setShowContent] = useState(false);
   const isWritePage = location.pathname === "/blog/write";
 
   useEffect(() => {
+    // 컴포넌트가 마운트된 후 조금의 지연을 두고 콘텐츠 표시
+    const timer = setTimeout(() => {
+      setShowContent(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (!showContent) return;
+
     const mainContent = document.getElementById('blog-content');
     if (mainContent) {
       mainContent.classList.add('animate-fade-in');
@@ -29,7 +43,12 @@ export function BlogLayout({ children, title }: BlogLayoutProps) {
         tab.classList.add('animate-fade-in');
       }, 100 + (index * 50));
     });
-  }, [location.pathname]);
+  }, [location.pathname, showContent]);
+
+  // 로딩 상태이거나 콘텐츠가 아직 준비되지 않았을 때 스켈레톤 표시
+  if (isLoading || !showContent) {
+    return <BlogLayoutSkeleton />;
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

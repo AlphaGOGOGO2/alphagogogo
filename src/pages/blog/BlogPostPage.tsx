@@ -1,4 +1,3 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
@@ -76,7 +75,7 @@ export default function BlogPostPage() {
   
   if (isLoading) {
     return (
-      <BlogLayout title="블로그 글 로딩중...">
+      <BlogLayout title="블로그 글 로딩중..." isLoading={true}>
         <SEO title="블로그 글 로딩중..." />
         <div className="flex justify-center items-center py-20">
           <div className="text-center">

@@ -1,10 +1,10 @@
 
-import { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavLink } from "./NavLink";
 import { type BlogCategory } from "@/config/navigation";
+import { useDropdown } from "@/hooks/useDropdown";
 
 interface BlogDropdownProps {
   isScrolled: boolean;
@@ -23,50 +23,37 @@ export function BlogDropdown({
   isOpen,
   onOpenChange
 }: BlogDropdownProps) {
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [closeTimeout, setCloseTimeout] = useState<number | null>(null);
+  const { dropdownRef, handlers } = useDropdown({
+    closeDelay: 300,
+    openOnHover: true,
+    closeOnClick: true
+  });
 
-  // 마우스 이벤트 핸들러 개선
-  const handleMouseEnter = () => {
-    if (closeTimeout) {
-      clearTimeout(closeTimeout);
-      setCloseTimeout(null);
-    }
-    onOpenChange(true);
+  // 외부에서 제어되는 isOpen 상태와 동기화
+  const handleOpenChange = (newIsOpen: boolean) => {
+    onOpenChange(newIsOpen);
   };
-
-  const handleMouseLeave = () => {
-    const timeout = window.setTimeout(() => {
-      onOpenChange(false);
-    }, 300); // 300ms 지연시간 추가
-    
-    setCloseTimeout(timeout as unknown as number);
-  };
-
-  // 컴포넌트 언마운트 시 타임아웃 정리
-  useEffect(() => {
-    return () => {
-      if (closeTimeout) {
-        clearTimeout(closeTimeout);
-      }
-    };
-  }, [closeTimeout]);
 
   return (
     <div 
       className="relative inline-block"
       ref={dropdownRef}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
+      onMouseEnter={() => {
+        handlers.onMouseEnter();
+        handleOpenChange(true);
+      }}
+      onMouseLeave={() => {
+        handlers.onMouseLeave();
+        handleOpenChange(false);
+      }}
     >
       <button
         type="button"
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onOpenChange(!isOpen);
+          handlers.onClick(e);
+          handleOpenChange(!isOpen);
         }}
         className="inline-flex items-center focus:outline-none"
       >
@@ -101,8 +88,8 @@ export function BlogDropdown({
           aria-orientation="vertical"
           aria-labelledby="blog-menu"
           onClick={(e) => e.stopPropagation()}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
+          onMouseEnter={() => handleOpenChange(true)}
+          onMouseLeave={() => handleOpenChange(false)}
         >
           <div className="py-2">
             {categories.map((category) => (
@@ -118,7 +105,8 @@ export function BlogDropdown({
                 onClick={(e) => {
                   e.stopPropagation();
                   onCategoryClick?.();
-                  onOpenChange(false);
+                  handlers.onItemClick();
+                  handleOpenChange(false);
                 }}
                 role="menuitem"
               >
