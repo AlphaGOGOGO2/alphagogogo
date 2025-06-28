@@ -300,20 +300,20 @@ export default function AIPartnershipPage() {
               </h2>
               <div className="space-y-6">
                 <div className="border-b pb-4">
-                  <h3 className="font-semibold text-lg mb-2">Q. AI품앗이는 무료인가요?</h3>
-                  <p className="text-gray-600">네, 완전 무료입니다. 초대링크 공유와 이용 모두 무료로 제공됩니다.</p>
+                  <h3 className="font-semibold text-lg mb-2">Q. AI품앗이가 뭔가요?</h3>
+                  <p className="text-gray-600">AI품앗이는 다양한 AI 서비스의 초대링크를 공유하고, 서로 추천인 혜택을 받을 수 있는 플랫폼입니다. 각 AI 서비스에서 제공하는 신규 가입자 프로모션을 활용하여 함께 혜택을 나누는 서비스입니다.</p>
+                </div>
+                <div className="border-b pb-4">
+                  <h3 className="font-semibold text-lg mb-2">Q. AI품앗이 이용료가 있나요?</h3>
+                  <p className="text-gray-600">AI품앗이 플랫폼 자체는 무료로 이용할 수 있습니다. 다만, 각 AI 서비스에서 제공하는 프로모션 혜택의 양과 조건은 해당 서비스의 정책에 따라 결정됩니다.</p>
                 </div>
                 <div className="border-b pb-4">
                   <h3 className="font-semibold text-lg mb-2">Q. 어떤 AI 서비스를 지원하나요?</h3>
                   <p className="text-gray-600">현재 러버블(Lovable), 마누스(Manus) 등 다양한 AI 서비스를 지원하며, 지속적으로 추가하고 있습니다.</p>
                 </div>
-                <div className="border-b pb-4">
-                  <h3 className="font-semibbold text-lg mb-2">Q. 크레딧은 언제 지급되나요?</h3>
-                  <p className="text-gray-600">각 AI 서비스의 정책에 따라 다르며, 일반적으로 가입 완료 후 즉시 또는 24시간 이내에 지급됩니다.</p>
-                </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Q. 초대링크는 몇 번까지 사용할 수 있나요?</h3>
-                  <p className="text-gray-600">각 AI 서비스마다 다르지만, 일반적으로 제한 없이 사용 가능합니다. 단, 중복 가입은 불가능합니다.</p>
+                  <p className="text-gray-600">각 AI 서비스의 정책에 따라 다릅니다. 일반적으로 한 사람당 한 번의 가입만 가능하며, 초대링크 자체의 사용 횟수는 제한이 없는 경우가 많습니다.</p>
                 </div>
               </div>
             </div>
