@@ -79,9 +79,9 @@ const monitorPerformance = () => {
         const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
         if (perfData) {
           console.log('[Performance] 페이지 로딩 시간:', {
-            DOMContentLoaded: perfData.domContentLoadedEventEnd - perfData.navigationStart,
-            FullLoad: perfData.loadEventEnd - perfData.navigationStart,
-            FirstByte: perfData.responseStart - perfData.navigationStart
+            DOMContentLoaded: perfData.domContentLoadedEventEnd - perfData.startTime,
+            FullLoad: perfData.loadEventEnd - perfData.startTime,
+            FirstByte: perfData.responseStart - perfData.startTime
           });
         }
       }, 0);
