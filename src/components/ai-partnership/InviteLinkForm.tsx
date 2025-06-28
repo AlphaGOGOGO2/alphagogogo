@@ -72,57 +72,62 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
   };
 
   return (
-    <Card>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="text-lg">초대링크 등록</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="nickname">닉네임 *</Label>
-            <Input
-              id="nickname"
-              value={formData.nickname}
-              onChange={(e) => setFormData(prev => ({ ...prev, nickname: e.target.value }))}
-              placeholder="본인을 나타낼 닉네임"
-              maxLength={50}
-            />
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="md:col-span-1 lg:col-span-1">
+              <Label htmlFor="nickname">닉네임 *</Label>
+              <Input
+                id="nickname"
+                value={formData.nickname}
+                onChange={(e) => setFormData(prev => ({ ...prev, nickname: e.target.value }))}
+                placeholder="닉네임"
+                maxLength={50}
+              />
+            </div>
+
+            <div className="md:col-span-1 lg:col-span-2">
+              <Label htmlFor="inviteUrl">초대링크 *</Label>
+              <Input
+                id="inviteUrl"
+                value={formData.inviteUrl}
+                onChange={(e) => setFormData(prev => ({ ...prev, inviteUrl: e.target.value }))}
+                placeholder={serviceConfig?.urlPattern + "여기에-초대코드"}
+                type="url"
+              />
+            </div>
+
+            <div className="md:col-span-1 lg:col-span-1">
+              <Label htmlFor="description">설명 (선택)</Label>
+              <Input
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                placeholder="추가 설명"
+                maxLength={200}
+              />
+            </div>
+
+            <div className="md:col-span-3 lg:col-span-1 flex items-end">
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="w-full h-10"
+              >
+                {isSubmitting ? "등록 중..." : "등록"}
+              </Button>
+            </div>
           </div>
 
-          <div>
-            <Label htmlFor="inviteUrl">초대링크 *</Label>
-            <Input
-              id="inviteUrl"
-              value={formData.inviteUrl}
-              onChange={(e) => setFormData(prev => ({ ...prev, inviteUrl: e.target.value }))}
-              placeholder={serviceConfig?.urlPattern + "여기에-초대코드"}
-              type="url"
-            />
-            {serviceConfig && (
-              <p className="text-xs text-gray-500 mt-1">
-                {serviceConfig.urlPattern}로 시작하는 링크만 등록 가능합니다.
-              </p>
-            )}
-          </div>
-
-          <div>
-            <Label htmlFor="description">설명 (선택)</Label>
-            <Input
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="추가 설명이나 메모"
-              maxLength={200}
-            />
-          </div>
-
-          <Button 
-            type="submit" 
-            disabled={isSubmitting}
-            className="w-full"
-          >
-            {isSubmitting ? "등록 중..." : "초대링크 등록"}
-          </Button>
+          {serviceConfig && (
+            <p className="text-xs text-gray-500">
+              {serviceConfig.urlPattern}로 시작하는 링크만 등록 가능합니다.
+            </p>
+          )}
         </form>
       </CardContent>
     </Card>

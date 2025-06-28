@@ -94,13 +94,15 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
     return (
       <div className="space-y-4">
         <h2 className="text-xl font-semibold mb-4">등록된 초대링크</h2>
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="p-4 border rounded-lg">
-            <Skeleton className="h-4 w-32 mb-2" />
-            <Skeleton className="h-3 w-full mb-2" />
-            <Skeleton className="h-3 w-24" />
-          </div>
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="p-4 border rounded-lg">
+              <Skeleton className="h-4 w-32 mb-2" />
+              <Skeleton className="h-3 w-full mb-2" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -117,7 +119,7 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
           <p className="text-sm mt-1">첫 번째 초대링크를 등록해보세요!</p>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {links.map((link) => (
             <InviteLinkCard
               key={link.id}
