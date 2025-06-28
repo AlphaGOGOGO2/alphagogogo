@@ -9,6 +9,25 @@ const corsHeaders = {
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
+// XML 특수문자 이스케이프 함수
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, function (c) {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+}
+
+// HTML 태그를 제거하고 텍스트만 추출
+function stripHtml(html: string): string {
+  return html.replace(/<[^>]*>/g, '').trim();
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -22,7 +41,7 @@ serve(async (req) => {
 
     console.log('RSS 피드 생성 시작...');
 
-    // 최신 20개 포스트 조회 - 올바른 컬럼명 사용
+    // 최신 20개 포스트 조회
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -74,23 +93,36 @@ serve(async (req) => {
           `${SITE_DOMAIN}/blog/post/${post.id}`;
         
         const pubDate = new Date(post.published_at).toUTCString();
-        const description = post.excerpt || (post.content ? post.content.substring(0, 300).replace(/[<>]/g, '') + '...' : '설명이 없습니다.');
-        const cleanContent = post.content ? post.content.replace(/[<>]/g, '') : '';
+        const cleanTitle = escapeXml(post.title || '제목 없음');
+        
+        // description 생성 (HTML 태그 제거 후 길이 제한)
+        let description = '';
+        if (post.excerpt) {
+          description = stripHtml(post.excerpt).substring(0, 300);
+        } else if (post.content) {
+          description = stripHtml(post.content).substring(0, 300);
+        } else {
+          description = '설명이 없습니다.';
+        }
+        description = escapeXml(description + (description.length >= 300 ? '...' : ''));
+        
+        // content 생성 (HTML 태그 제거)
+        const cleanContent = post.content ? escapeXml(stripHtml(post.content)) : '';
 
         rssContent += `
     <item>
-      <title><![CDATA[${post.title}]]></title>
+      <title>${cleanTitle}</title>
       <link>${postUrl}</link>
       <guid isPermaLink="true">${postUrl}</guid>
-      <description><![CDATA[${description}]]></description>
+      <description>${description}</description>
       <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
       <pubDate>${pubDate}</pubDate>
-      <author>support@alphagogogo.com (${post.author_name || '알파고고고'})</author>
-      <category><![CDATA[${post.category}]]></category>`;
+      <author>support@alphagogogo.com (${escapeXml(post.author_name || '알파고고고')})</author>
+      <category>${escapeXml(post.category || '일반')}</category>`;
 
         if (post.cover_image) {
           rssContent += `
-      <enclosure url="${post.cover_image}" type="image/jpeg"/>`;
+      <enclosure url="${escapeXml(post.cover_image)}" type="image/jpeg"/>`;
         }
 
         rssContent += `

@@ -21,7 +21,7 @@ interface SEOProps {
 
 export function SEO({
   title = "알파고고고 - 최신 AI 소식 & 인사이트",
-  description = "최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.",
+  description = "AI를 이해하는 새로운 관점, 비개발자와 비전문인이 시선으로 바라보는 AI 트렌드와 인사이트를 제공합니다.",
   canonicalUrl,
   ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
   ogType = "website",
@@ -34,8 +34,12 @@ export function SEO({
   section,
   tags = [],
 }: SEOProps) {
-  // 브랜딩이 포함된 전체 제목 생성
-  const fullTitle = title.includes("알파고고고") ? title : `${title} | 알파고고고`;
+  // 브랜딩이 포함된 전체 제목 생성 - 개선된 로직
+  const fullTitle = title === "알파고고고 - 최신 AI 소식 & 인사이트" 
+    ? title 
+    : title.includes("알파고고고") 
+      ? title 
+      : `${title} | 알파고고고`;
   
   // 정규화된 URL 생성
   const normalizedCanonical = canonicalUrl 
@@ -107,9 +111,9 @@ export function SEO({
         </>
       )}
       
-      {/* RSS 피드 및 사이트맵 링크 */}
-      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
-      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
+      {/* RSS 피드 및 사이트맵 링크 - 수정된 경로 */}
+      <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/api/functions/rss-feed`} />
+      <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/api/functions/sitemap`} />
       
       {/* 파비콘 및 아이콘 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />

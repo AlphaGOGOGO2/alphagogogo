@@ -9,6 +9,20 @@ const corsHeaders = {
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
+// XML 특수문자 이스케이프 함수
+function escapeXml(unsafe: string): string {
+  return unsafe.replace(/[<>&'"]/g, function (c) {
+    switch (c) {
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '&': return '&amp;';
+      case '\'': return '&apos;';
+      case '"': return '&quot;';
+      default: return c;
+    }
+  });
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -22,7 +36,7 @@ serve(async (req) => {
 
     console.log('사이트맵 생성 시작...');
 
-    // 모든 게시글 조회 - 올바른 컬럼명 사용
+    // 모든 게시글 조회
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
@@ -67,7 +81,7 @@ serve(async (req) => {
     for (const { url, priority, changefreq } of staticUrls) {
       sitemapContent += `
   <url>
-    <loc>${SITE_DOMAIN}${url}</loc>
+    <loc>${escapeXml(SITE_DOMAIN + url)}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>${changefreq}</changefreq>
     <priority>${priority}</priority>
@@ -84,17 +98,17 @@ serve(async (req) => {
 
         sitemapContent += `
   <url>
-    <loc>${SITE_DOMAIN}${postUrl}</loc>
+    <loc>${escapeXml(SITE_DOMAIN + postUrl)}</loc>
     <lastmod>${lastmod}</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>`;
+    <priority>0.8</priority>`;
 
         if (post.cover_image) {
           sitemapContent += `
     <image:image>
-      <image:loc>${post.cover_image}</image:loc>
-      <image:title>${post.title}</image:title>
-      <image:caption>${post.excerpt || post.title}</image:caption>
+      <image:loc>${escapeXml(post.cover_image)}</image:loc>
+      <image:title>${escapeXml(post.title || '')}</image:title>
+      <image:caption>${escapeXml(post.excerpt || post.title || '')}</image:caption>
     </image:image>`;
         }
 
