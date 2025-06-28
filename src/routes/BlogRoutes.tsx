@@ -12,8 +12,6 @@ import TechReviewsPage from "@/pages/blog/TechReviewsPage";
 import TutorialsPage from "@/pages/blog/TutorialsPage";
 import ChatGPTGuidesPage from "@/pages/blog/ChatGPTGuidesPage";
 import LovableDevPage from "@/pages/blog/LovableDevPage";
-import SitemapPage from "@/pages/api/SitemapPage";
-import RSSPage from "@/pages/api/RSSPage";
 
 export function BlogRoutes() {
   return (
@@ -36,10 +34,6 @@ export function BlogRoutes() {
       <Route path="/tutorials" element={<TutorialsPage />} />
       <Route path="/chatgpt-guides" element={<ChatGPTGuidesPage />} />
       <Route path="/lovable-dev" element={<LovableDevPage />} />
-      
-      {/* API 엔드포인트들 */}
-      <Route path="/api/sitemap" element={<SitemapPage />} />
-      <Route path="/api/rss" element={<RSSPage />} />
       
       {/* 개별 블로그 포스트 */}
       <Route path="/post/:id" element={<BlogPostPage />} />
