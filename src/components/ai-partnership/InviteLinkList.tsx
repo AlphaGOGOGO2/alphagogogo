@@ -1,8 +1,8 @@
-
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { InviteLinkCard } from "./InviteLinkCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getClientId } from "@/utils/clientIdUtils";
 
 interface InviteLink {
   id: string;
@@ -48,9 +48,13 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
 
   const handleLinkClick = async (linkId: string) => {
     try {
-      // 클릭 수 증가 (IP 기반 중복 방지는 함수에서 처리)
+      // 클라이언트 ID를 가져와서 중복 클릭 방지
+      const clientId = getClientId();
+      console.log('클라이언트 ID로 클릭 추적:', clientId);
+      
       await supabase.rpc('increment_invite_click_count', { 
-        link_id: linkId 
+        link_id: linkId,
+        client_id: clientId
       });
       
       // 로컬 상태 업데이트 (클릭수가 100에 도달하면 서버에서 삭제되므로 refetch)
@@ -124,8 +128,8 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
         <>
           <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
             <p className="text-sm text-blue-800">
-              💡 <strong>자동 정리 시스템:</strong> 클릭수가 100회에 도달한 초대링크는 자동으로 삭제됩니다. 
-              클릭수가 높은 링크부터 우선 표시됩니다.
+              💡 <strong>중복 클릭 방지:</strong> 같은 브라우저에서 24시간 내 중복 클릭은 카운트되지 않습니다. 
+              클릭수가 100회에 도달한 초대링크는 자동으로 삭제됩니다.
             </p>
           </div>
           

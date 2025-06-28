@@ -403,7 +403,7 @@ export type Database = {
         Returns: undefined
       }
       increment_invite_click_count: {
-        Args: { link_id: string; client_ip?: string }
+        Args: { link_id: string; client_id?: string }
         Returns: undefined
       }
     }
