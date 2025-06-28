@@ -344,9 +344,13 @@ export default function AIPartnershipPage() {
                   <h3 className="font-semibold text-lg mb-2">Q. 어떤 AI 서비스를 지원하나요?</h3>
                   <p className="text-gray-600">현재 러버블(Lovable), 마누스(Manus) 등 다양한 AI 서비스를 지원하며, 지속적으로 추가하고 있습니다.</p>
                 </div>
-                <div>
+                <div className="border-b pb-4">
                   <h3 className="font-semibold text-lg mb-2">Q. 초대링크는 몇 번까지 사용할 수 있나요?</h3>
                   <p className="text-gray-600">각 AI 서비스의 정책에 따라 다릅니다. 일반적으로 한 사람당 한 번의 가입만 가능하며, 초대링크 자체의 사용 횟수는 제한이 없는 경우가 많습니다.</p>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-2">Q. 초대링크가 자동으로 삭제되나요?</h3>
+                  <p className="text-gray-600">네, 클릭수가 100회에 도달한 초대링크는 자동으로 삭제됩니다. 이는 활발히 사용되는 링크들의 효과가 충분히 달성되었다고 판단되기 때문입니다. 새로운 링크를 등록하실 수 있습니다.</p>
                 </div>
               </div>
             </div>

@@ -30,6 +30,7 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
         .from('invite_links')
         .select('*')
         .eq('service_name', selectedService)
+        .order('click_count', { ascending: false })
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -52,12 +53,8 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
         link_id: linkId 
       });
       
-      // 로컬 상태 업데이트
-      setLinks(prev => prev.map(link => 
-        link.id === linkId 
-          ? { ...link, click_count: link.click_count + 1 }
-          : link
-      ));
+      // 로컬 상태 업데이트 (클릭수가 100에 도달하면 서버에서 삭제되므로 refetch)
+      fetchLinks();
     } catch (error) {
       console.error('Click tracking error:', error);
     }
@@ -109,9 +106,14 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold mb-4">
-        등록된 초대링크 ({links.length}개)
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-xl font-semibold">
+          등록된 초대링크 ({links.length}개)
+        </h2>
+        <div className="text-sm text-gray-500">
+          클릭수 높은 순 정렬
+        </div>
+      </div>
       
       {links.length === 0 ? (
         <div className="text-center py-12 text-gray-500">
@@ -119,15 +121,24 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
           <p className="text-sm mt-1">첫 번째 초대링크를 등록해보세요!</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {links.map((link) => (
-            <InviteLinkCard
-              key={link.id}
-              link={link}
-              onLinkClick={handleLinkClick}
-            />
-          ))}
-        </div>
+        <>
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+            <p className="text-sm text-blue-800">
+              💡 <strong>자동 정리 시스템:</strong> 클릭수가 100회에 도달한 초대링크는 자동으로 삭제됩니다. 
+              클릭수가 높은 링크부터 우선 표시됩니다.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {links.map((link) => (
+              <InviteLinkCard
+                key={link.id}
+                link={link}
+                onLinkClick={handleLinkClick}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
