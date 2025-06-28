@@ -64,7 +64,7 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
       setFormData({
         title: "",
         description: "",
-        category: categories[0]?.name || "",
+        category: categories.length > 0 ? categories[0].name : "기타",
         file_url: "",
         file_type: "document",
         file_size: 0,
@@ -85,6 +85,7 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
 
       const resourceData = {
         ...data,
+        category: data.category || "기타",
         tags
       };
 
@@ -112,11 +113,6 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
     
     if (!formData.title.trim()) {
       toast.error("제목을 입력해주세요.");
-      return;
-    }
-
-    if (!formData.category) {
-      toast.error("카테고리를 선택해주세요.");
       return;
     }
 
@@ -181,15 +177,14 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
             {/* 상단 메타 정보 */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg border">
               <div>
-                <Label htmlFor="category" className="text-sm font-semibold text-gray-700">카테고리 *</Label>
+                <Label htmlFor="category" className="text-sm font-semibold text-gray-700">카테고리</Label>
                 <select
                   id="category"
                   value={formData.category}
                   onChange={(e) => handleInputChange("category", e.target.value)}
                   className="w-full mt-2 px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-                  required
                 >
-                  <option value="">카테고리 선택</option>
+                  <option value="기타">기타</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.name}>
                       {category.name}
