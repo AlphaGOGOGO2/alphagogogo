@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { InviteLinkCard } from "./InviteLinkCard";
@@ -125,24 +126,15 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
           <p className="text-sm mt-1">첫 번째 초대링크를 등록해보세요!</p>
         </div>
       ) : (
-        <>
-          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
-            <p className="text-sm text-blue-800">
-              💡 <strong>중복 클릭 방지:</strong> 같은 브라우저에서 24시간 내 중복 클릭은 카운트되지 않습니다. 
-              클릭수가 100회에 도달한 초대링크는 자동으로 삭제됩니다.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {links.map((link) => (
-              <InviteLinkCard
-                key={link.id}
-                link={link}
-                onLinkClick={handleLinkClick}
-              />
-            ))}
-          </div>
-        </>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {links.map((link) => (
+            <InviteLinkCard
+              key={link.id}
+              link={link}
+              onLinkClick={handleLinkClick}
+            />
+          ))}
+        </div>
       )}
     </div>
   );
