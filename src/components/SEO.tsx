@@ -1,4 +1,3 @@
-
 import { Helmet } from "react-helmet-async";
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
@@ -33,7 +32,7 @@ export function SEO({
   modifiedTime,
   section,
   tags = [],
-}: SEOProps) => {
+}: SEOProps) {
   // 브랜딩이 포함된 전체 제목 생성 - 개선된 로직
   const fullTitle = title === "알파고고고 - 최신 AI 소식 & 인사이트" 
     ? title 
@@ -164,4 +163,4 @@ export function SEO({
       )}
     </Helmet>
   );
-};
+}
