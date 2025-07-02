@@ -21,12 +21,8 @@ export function BlogLayout({ children, title, isLoading = false }: BlogLayoutPro
   const isWritePage = location.pathname === "/blog/write";
 
   useEffect(() => {
-    // 컴포넌트가 마운트된 후 조금의 지연을 두고 콘텐츠 표시
-    const timer = setTimeout(() => {
-      setShowContent(true);
-    }, 100);
-
-    return () => clearTimeout(timer);
+    // 즉시 콘텐츠 표시
+    setShowContent(true);
   }, []);
 
   useEffect(() => {
@@ -95,7 +91,7 @@ export function BlogLayout({ children, title, isLoading = false }: BlogLayoutPro
             <section 
               id="blog-content" 
               className="opacity-0" 
-              style={{ animationDelay: '400ms', animationFillMode: 'forwards' }}
+              style={{ animationDelay: '50ms', animationFillMode: 'forwards' }}
               aria-live="polite"
             >
               {children}
