@@ -72,32 +72,8 @@ serve(async (req) => {
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    // XML 시작 (공백 없이)
-    let rssContent = `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <channel>
-    <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
-    <link>${SITE_DOMAIN}</link>
-    <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>
-    <language>ko-KR</language>
-    <lastBuildDate>${buildDate}</lastBuildDate>
-    <pubDate>${buildDate}</pubDate>
-    <ttl>60</ttl>
-    <atom:link href="${SITE_DOMAIN}/rss.xml" rel="self" type="application/rss+xml"/>
-    <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
-    <webMaster>support@alphagogogo.com (알파고고고)</webMaster>
-    <copyright>Copyright ${now.getFullYear()} 알파고고고. All rights reserved.</copyright>
-    <category>Technology</category>
-    <category>Artificial Intelligence</category>
-    <category>AI News</category>
-    <category>Korean AI Blog</category>
-    <image>
-      <url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png</url>
-      <title>알파고고고</title>
-      <link>${SITE_DOMAIN}</link>
-      <width>112</width>
-      <height>112</height>
-    </image>`;
+    // XML 시작 (완전히 첫 문자부터)
+    let rssContent = '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">\n  <channel>\n    <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>\n    <link>' + SITE_DOMAIN + '</link>\n    <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>\n    <language>ko-KR</language>\n    <lastBuildDate>' + buildDate + '</lastBuildDate>\n    <pubDate>' + buildDate + '</pubDate>\n    <ttl>60</ttl>\n    <atom:link href="' + SITE_DOMAIN + '/rss.xml" rel="self" type="application/rss+xml"/>\n    <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>\n    <webMaster>support@alphagogogo.com (알파고고고)</webMaster>\n    <copyright>Copyright ' + now.getFullYear() + ' 알파고고고. All rights reserved.</copyright>\n    <category>Technology</category>\n    <category>Artificial Intelligence</category>\n    <category>AI News</category>\n    <category>Korean AI Blog</category>\n    <image>\n      <url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png</url>\n      <title>알파고고고</title>\n      <link>' + SITE_DOMAIN + '</link>\n      <width>112</width>\n      <height>112</height>\n    </image>';
 
     // 포스트 아이템들 추가
     if (posts && posts.length > 0) {
@@ -161,18 +137,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('RSS 피드 생성 에러:', error);
     return new Response(
-      `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0">
-  <channel>
-    <title>알파고고고 - RSS Feed Error</title>
-    <description>RSS 피드 생성 중 오류가 발생했습니다.</description>
-    <item>
-      <title>서비스 일시 중단</title>
-      <description>RSS 피드를 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</description>
-      <pubDate>${new Date().toUTCString()}</pubDate>
-    </item>
-  </channel>
-</rss>`,
+      '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>알파고고고 - RSS Feed Error</title>\n    <description>RSS 피드 생성 중 오류가 발생했습니다.</description>\n    <item>\n      <title>서비스 일시 중단</title>\n      <description>RSS 피드를 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</description>\n      <pubDate>' + new Date().toUTCString() + '</pubDate>\n    </item>\n  </channel>\n</rss>',
       {
         status: 500,
         headers: {
