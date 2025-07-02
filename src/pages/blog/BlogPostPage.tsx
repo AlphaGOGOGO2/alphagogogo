@@ -54,6 +54,11 @@ export default function BlogPostPage() {
     refetchOnWindowFocus: false,
     retry: 2
   });
+
+  // 디버깅을 위한 로깅
+  useEffect(() => {
+    console.log("[BlogPostPage] 쿼리 상태 변화:", { post, isLoading, error });
+  }, [post, isLoading, error]);
   
   // 에러 처리
   useEffect(() => {
@@ -87,7 +92,8 @@ export default function BlogPostPage() {
     );
   }
   
-  if (!post) {
+  if (!post && !isLoading) {
+    console.log("[BlogPostPage] 포스트를 찾을 수 없음. slug:", slug, "id:", id);
     return (
       <BlogLayout title="글을 찾을 수 없습니다">
         <SEO title="글을 찾을 수 없습니다" />
