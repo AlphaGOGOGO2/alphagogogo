@@ -20,25 +20,31 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  // 소스 맵 생성 설정 추가 (개발 모드에서는 항상 활성화, 프로덕션 모드에서도 활성화)
   build: {
-    sourcemap: true,
+    sourcemap: mode === 'development', // 개발 모드에서만 소스맵 생성
     rollupOptions: {
       output: {
         manualChunks: {
-          // 공통 라이브러리 청크 분리
+          // 공통 라이브러리 청크 분리 (향상된 분할)
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-slot'],
-          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority']
+          'vendor-ui': ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu', '@radix-ui/react-slot', '@radix-ui/react-tabs'],
+          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge', 'class-variance-authority'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-markdown': ['react-markdown', 'remark-gfm'],
+          'vendor-icons': ['lucide-react']
         }
       }
     },
-    // 최적화 설정
+    // 최적화 설정 강화
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: mode === 'production', // 프로덕션 모드에서 콘솔 로그 제거
+        drop_debugger: mode === 'production', // 프로덕션 모드에서 debugger 제거
+        pure_funcs: mode === 'production' ? ['console.log', 'console.debug'] : []
       }
-    }
+    },
+    chunkSizeWarningLimit: 1000, // 청크 크기 경고 한계 설정
   },
 }));

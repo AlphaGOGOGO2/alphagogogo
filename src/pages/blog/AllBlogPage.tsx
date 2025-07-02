@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
-import { BlogGridAnimation } from "@/components/blog/BlogGridAnimation";
+import { LazyBlogGrid } from "@/components/blog/LazyBlogGrid";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBlogPosts } from "@/services/blogPostService";
 import { Loader2 } from "lucide-react";
@@ -10,31 +10,25 @@ import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
-const POSTS_PER_PAGE = 9;
 
 export default function AllBlogPage() {
-  const [visiblePosts, setVisiblePosts] = useState(POSTS_PER_PAGE);
+  
   
   // 최적화된 캐시 설정과 에러 처리
   const { data: posts = [], isLoading, error, isError } = useQuery({
     queryKey: ["blog-posts", "all", "optimized"],
     queryFn: getAllBlogPosts,
-    staleTime: 5 * 60 * 1000, // 5분 캐시
+    staleTime: 10 * 60 * 1000, // 10분 캐시 (5분에서 증가)
     retry: (failureCount, error) => {
       console.error(`[AllBlogPage] API 호출 실패 (${failureCount}회):`, error);
       return failureCount < 2; // 최대 2회 재시도
     },
     refetchOnWindowFocus: false, // 불필요한 재요청 방지
+    gcTime: 15 * 60 * 1000, // 15분 가비지 컬렉션 시간
   });
   
+  
   console.log("[AllBlogPage] 로딩 상태:", isLoading, "포스트 수:", posts?.length, "에러:", isError);
-  
-  const displayedPosts = posts.slice(0, visiblePosts);
-  const hasMorePosts = visiblePosts < posts.length;
-  
-  const handleLoadMore = () => {
-    setVisiblePosts(prev => prev + POSTS_PER_PAGE);
-  };
   
   // 페이지에 대한 구조화 데이터 준비
   const structuredData = {
@@ -107,21 +101,7 @@ export default function AllBlogPage() {
             <p className="text-gray-500 mt-2">첫 번째 글을 작성해보세요!</p>
           </div>
         ) : (
-          <>
-            <BlogGridAnimation posts={displayedPosts} />
-            
-            {hasMorePosts && (
-              <div className="flex justify-center mt-10">
-                <Button 
-                  onClick={handleLoadMore} 
-                  className="bg-purple-600 hover:bg-purple-700 transition-all"
-                  aria-label="더 많은 포스트 불러오기"
-                >
-                  더보기 ({posts.length - visiblePosts}개 남음)
-                </Button>
-              </div>
-            )}
-          </>
+          <LazyBlogGrid posts={posts} />
         )}
       </ErrorBoundary>
     </BlogLayout>

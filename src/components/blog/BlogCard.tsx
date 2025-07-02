@@ -67,7 +67,9 @@ export function BlogCard({ post }: BlogCardProps) {
           <div className="block overflow-hidden h-48">
             <img 
               src={cardImage} 
-              alt={displayTitle} 
+              alt={displayTitle}
+              loading="lazy"
+              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             />
           </div>
@@ -106,7 +108,9 @@ export function BlogCard({ post }: BlogCardProps) {
             <div className="flex items-center">
               <img 
                 src={authorAvatarUrl} 
-                alt={post.author.name} 
+                alt={post.author.name}
+                loading="lazy"
+                decoding="async"
                 className="w-6 h-6 rounded-full mr-2 object-cover" 
               />
               <span>{post.author.name}</span>
