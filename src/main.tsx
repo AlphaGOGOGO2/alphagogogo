@@ -115,4 +115,37 @@ if (typeof window !== 'undefined') {
   });
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+// 앱 렌더링을 DOM이 완전히 로드된 후에 실행
+function renderApp() {
+  const rootElement = document.getElementById("root");
+  if (!rootElement) {
+    console.error("Root element not found");
+    return;
+  }
+  
+  try {
+    createRoot(rootElement).render(<App />);
+    console.log("App successfully rendered");
+  } catch (error) {
+    console.error("Failed to render app:", error);
+    // 폴백 UI 표시
+    rootElement.innerHTML = `
+      <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; font-family: system-ui;">
+        <div style="text-align: center; padding: 2rem; background: #f3f4f6; border-radius: 0.5rem; border: 1px solid #d1d5db;">
+          <h2 style="color: #ef4444; margin-bottom: 1rem;">사이트 로딩 중 문제가 발생했습니다</h2>
+          <p style="color: #6b7280; margin-bottom: 1rem;">잠시 후 다시 시도해주세요.</p>
+          <button onclick="window.location.reload()" style="background: #7c3aed; color: white; padding: 0.5rem 1rem; border: none; border-radius: 0.25rem; cursor: pointer;">
+            새로고침
+          </button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// DOM이 준비되면 앱 렌더링
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', renderApp);
+} else {
+  renderApp();
+}

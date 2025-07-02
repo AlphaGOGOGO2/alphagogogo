@@ -1,10 +1,22 @@
 import { Helmet } from "react-helmet-async";
+import { useEffect } from "react";
 
 interface PerformanceOptimizationProps {
   children: React.ReactNode;
 }
 
 export function PerformanceOptimization({ children }: PerformanceOptimizationProps) {
+  // 컴포넌트가 마운트될 때까지 Helmet 렌더링을 지연
+  useEffect(() => {
+    // DOM이 완전히 준비되었는지 확인
+    if (document.readyState !== 'complete') {
+      const handleLoad = () => {
+        document.removeEventListener('load', handleLoad);
+      };
+      document.addEventListener('load', handleLoad);
+    }
+  }, []);
+
   return (
     <>
       <Helmet>

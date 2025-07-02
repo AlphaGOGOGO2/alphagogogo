@@ -32,12 +32,12 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <ErrorBoundary>
-      <PerformanceOptimization>
-        <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <TooltipProvider>
-          <Toaster />
-          <BrowserRouter>
+        <PerformanceOptimization>
+          <QueryClientProvider client={queryClient}>
+            <TooltipProvider>
+              <Toaster />
+              <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/services" element={<ServicesPage />} />
@@ -60,12 +60,12 @@ function App() {
               <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </HelmetProvider>
-        </QueryClientProvider>
-      </PerformanceOptimization>
+              </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </QueryClientProvider>
+        </PerformanceOptimization>
+      </HelmetProvider>
     </ErrorBoundary>
   );
 }
