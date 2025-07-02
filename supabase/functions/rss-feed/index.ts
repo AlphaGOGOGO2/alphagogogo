@@ -1,11 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 // XML 특수문자 이스케이프 함수
@@ -43,9 +38,6 @@ function stripMarkdown(md: string): string {
 }
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
 
   try {
     const supabase = createClient(
@@ -118,7 +110,6 @@ serve(async (req) => {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
         'Cache-Control': 'public, max-age=1800', // 30분 캐시
-        ...corsHeaders,
       },
     });
   } catch (error) {
@@ -129,7 +120,6 @@ serve(async (req) => {
         status: 500,
         headers: {
           'Content-Type': 'application/rss+xml; charset=utf-8',
-          ...corsHeaders,
         },
       }
     );
