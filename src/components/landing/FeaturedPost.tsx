@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { getAllBlogPosts } from "@/services/blogPostService";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
-import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
+import { stripMarkdown, extractFirstImageUrl, getCategoryThumbnail } from "@/utils/blogUtils";
 import { LazyImage } from "@/components/optimization/LazyImage";
 
 export function FeaturedPosts() {
@@ -71,9 +71,10 @@ export function FeaturedPosts() {
         ) : featuredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPosts.map((post) => {
-              // 포스트 이미지 설정 - content에서 이미지 추출하거나 기본 이미지 사용
+              // 포스트 이미지 설정 - 개선된 폴백 로직
               const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
-              const postImage = post.coverImage || extractedImage || "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60";
+              const categoryThumbnail = getCategoryThumbnail(post.category);
+              const postImage = post.coverImage || extractedImage || categoryThumbnail;
               
               return (
                 <div 

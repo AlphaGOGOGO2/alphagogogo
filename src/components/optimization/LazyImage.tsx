@@ -68,18 +68,39 @@ export function LazyImage({
     onError?.();
   };
 
+  // 이미지 URL 유효성 검사
+  const isValidImageUrl = (url: string): boolean => {
+    if (!url || url.trim() === '') return false;
+    
+    // Base64 이미지
+    if (url.startsWith('data:image/')) return true;
+    
+    // HTTP/HTTPS URL
+    if (url.startsWith('http://') || url.startsWith('https://')) return true;
+    
+    // 상대 경로
+    if (url.startsWith('/')) return true;
+    
+    return false;
+  };
+
   // WebP 지원 확인 및 최적화된 이미지 URL 생성
   const getOptimizedImageSrc = (originalSrc: string) => {
-    if (!originalSrc) return '';
+    if (!originalSrc || !isValidImageUrl(originalSrc)) return '';
     
     // Supabase Storage 이미지인 경우 최적화 파라미터 추가
     if (originalSrc.includes('supabase.co/storage')) {
-      const url = new URL(originalSrc);
-      url.searchParams.set('width', width?.toString() || '800');
-      url.searchParams.set('height', height?.toString() || '600');
-      url.searchParams.set('format', 'webp');
-      url.searchParams.set('quality', '85');
-      return url.toString();
+      try {
+        const url = new URL(originalSrc);
+        url.searchParams.set('width', width?.toString() || '800');
+        url.searchParams.set('height', height?.toString() || '600');
+        url.searchParams.set('format', 'webp');
+        url.searchParams.set('quality', '85');
+        return url.toString();
+      } catch (error) {
+        console.warn('Invalid Supabase URL:', originalSrc);
+        return originalSrc;
+      }
     }
     
     return originalSrc;
@@ -100,8 +121,8 @@ export function LazyImage({
 
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ width, height }}>
-      {/* src가 없으면 플레이스홀더만 표시 */}
-      {!src || src.trim() === '' ? (
+      {/* src가 없거나 유효하지 않으면 플레이스홀더만 표시 */}
+      {!src || src.trim() === '' || !isValidImageUrl(src) ? (
         <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
           <div className="text-purple-500 opacity-60">
             <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">

@@ -2,7 +2,7 @@
 import { BlogPost } from "@/types/blog";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
+import { stripMarkdown, extractFirstImageUrl, getCategoryThumbnail } from "@/utils/blogUtils";
 import { useNavigate } from "react-router-dom";
 import { LazyImage } from "@/components/optimization/LazyImage";
 
@@ -26,9 +26,19 @@ export function BlogCard({ post }: BlogCardProps) {
   // 마크다운 제거된 excerpt
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
   
-  // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출, 없으면 기본 이미지)
+  // 카드 이미지 설정 - 개선된 우선순위와 폴백 로직
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
-  const cardImage = post.coverImage || extractedImage || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80";
+  const categoryThumbnail = getCategoryThumbnail(post.category);
+  
+  // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본 → 일반 기본
+  let cardImage = "";
+  if (post.coverImage && post.coverImage.trim() !== '') {
+    cardImage = post.coverImage;
+  } else if (extractedImage) {
+    cardImage = extractedImage;
+  } else {
+    cardImage = categoryThumbnail;
+  }
   
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
