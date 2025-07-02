@@ -39,9 +39,12 @@ export function BlogCard({ post }: BlogCardProps) {
   
   // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본
   let cardImage = "";
-  if (post.coverImage && post.coverImage.trim() !== '') {
-    cardImage = post.coverImage;
-    console.log(`[BlogCard] Cover image 사용: ${post.coverImage}`);
+  // 데이터베이스에서는 cover_image로 저장되므로 이를 확인
+  const coverImage = (post as any).cover_image || post.coverImage;
+  
+  if (coverImage && coverImage.trim() !== '') {
+    cardImage = coverImage;
+    console.log(`[BlogCard] Cover image 사용: ${coverImage}`);
   } else if (extractedImage) {
     cardImage = extractedImage;
     console.log(`[BlogCard] 추출된 이미지 사용: ${extractedImage}`);
