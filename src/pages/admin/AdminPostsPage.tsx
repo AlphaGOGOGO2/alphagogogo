@@ -71,10 +71,10 @@ export default function AdminPostsPage() {
         </div>
         
         <Button asChild>
-          <Link to="/blog/write">
+          <a href="/blog/write" target="_blank" rel="noopener noreferrer">
             <Plus className="h-4 w-4 mr-2" />
             새 포스트 작성
-          </Link>
+          </a>
         </Button>
       </div>
       
