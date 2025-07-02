@@ -4,6 +4,9 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CommunityChat } from "@/components/community/CommunityChat";
 import { AlertTriangle } from "lucide-react";
+import { SEO } from "@/components/SEO";
+
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function CommunityPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -16,8 +19,40 @@ export default function CommunityPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "커뮤니티 채팅 - 알파고고고",
+    "description": "AI에 관심 있는 사람들과 실시간으로 대화하고 정보를 공유하세요.",
+    "url": `${SITE_DOMAIN}/community`,
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": SITE_DOMAIN
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "커뮤니티",
+          "item": `${SITE_DOMAIN}/community`
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="커뮤니티 채팅 - 알파고고고"
+        description="AI에 관심 있는 사람들과 실시간으로 대화하고 정보를 공유하세요."
+        canonicalUrl={`${SITE_DOMAIN}/community`}
+        keywords="커뮤니티, 채팅, AI 커뮤니티, 실시간 채팅, 알파고고고"
+        structuredData={structuredData}
+      />
       <Navbar />
       <main className="flex-grow pt-32 pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">

@@ -8,6 +8,9 @@ import { Link2, MousePointerClick } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Banner } from "@/components/Banner";
+import { SEO } from "@/components/SEO";
+
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function ServicesPage() {
   const [isVisible, setIsVisible] = useState(false);
@@ -20,8 +23,40 @@ export default function ServicesPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "서비스 - 알파고고고",
+    "description": "알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요. 블로그 버튼 생성기 등 유용한 도구들을 제공합니다.",
+    "url": `${SITE_DOMAIN}/services`,
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": SITE_DOMAIN
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "서비스",
+          "item": `${SITE_DOMAIN}/services`
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="서비스 - 알파고고고"
+        description="알파블로그에서 제공하는 다양한 실용적인 서비스를 이용해보세요. 블로그 버튼 생성기 등 유용한 도구들을 제공합니다."
+        canonicalUrl={`${SITE_DOMAIN}/services`}
+        keywords="서비스, 블로그 도구, 버튼 생성기, 알파고고고, 알파블로그"
+        structuredData={structuredData}
+      />
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">

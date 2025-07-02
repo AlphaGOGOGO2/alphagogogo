@@ -23,7 +23,10 @@ export function BlogRoutes() {
       <Route path="/write" element={<BlogWritePage />} />
       <Route path="/edit/:slug" element={<BlogWritePage />} />
       
-      {/* 기존 카테고리 페이지들 */}
+      {/* ID 기반 포스트 라우트 (우선순위 높음) */}
+      <Route path="/post/:id" element={<BlogPostPage />} />
+      
+      {/* 기존 카테고리 페이지들 (구체적인 경로 먼저) */}
       <Route path="/latest-updates" element={<LatestAIUpdates />} />
       <Route path="/trending" element={<TrendingPage />} />
       <Route path="/lifestyle" element={<LifestylePage />} />
@@ -35,11 +38,10 @@ export function BlogRoutes() {
       <Route path="/chatgpt-guides" element={<ChatGPTGuidesPage />} />
       <Route path="/lovable-dev" element={<LovableDevPage />} />
       
-      {/* 개별 블로그 포스트 */}
-      <Route path="/post/:id" element={<BlogPostPage />} />
+      {/* Slug 기반 포스트 라우트 (카테고리보다 우선) */}
       <Route path="/:slug" element={<BlogPostPage />} />
       
-      {/* 동적 카테고리 페이지 (fallback) */}
+      {/* 동적 카테고리 페이지 (최후 fallback) */}
       <Route path="/:category" element={<BlogCategoryPage />} />
     </Routes>
   );

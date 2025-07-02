@@ -5,10 +5,51 @@ import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { BlogButtonCreator } from "@/components/services/blog-button-creator/BlogButtonCreator";
 import { Banner } from "@/components/Banner";
+import { SEO } from "@/components/SEO";
+
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function BlogButtonCreatorPage() {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "블로그 버튼 생성기 - 알파고고고",
+    "description": "블로그에 사용할 커스텀 HTML 버튼을 쉽게 디자인하고 생성해보세요. 원하는 디자인으로 만들고 HTML 코드를 복사해 블로그에 바로 붙여넣기 할 수 있습니다.",
+    "url": `${SITE_DOMAIN}/blog-button-creator`,
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": SITE_DOMAIN
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "서비스",
+          "item": `${SITE_DOMAIN}/services`
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "블로그 버튼 생성기",
+          "item": `${SITE_DOMAIN}/blog-button-creator`
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="블로그 버튼 생성기 - 알파고고고"
+        description="블로그에 사용할 커스텀 HTML 버튼을 쉽게 디자인하고 생성해보세요. 원하는 디자인으로 만들고 HTML 코드를 복사해 블로그에 바로 붙여넣기 할 수 있습니다."
+        canonicalUrl={`${SITE_DOMAIN}/blog-button-creator`}
+        keywords="블로그 버튼 생성기, HTML 버튼, 버튼 생성, 블로그 도구, 알파고고고"
+        structuredData={structuredData}
+      />
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">

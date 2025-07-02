@@ -1,8 +1,8 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Helmet } from "react-helmet-async";
 import { Search, Star, LayoutGrid, LayoutList } from "lucide-react";
+import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ResourceCard } from "@/components/resources/ResourceCard";
@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { resourceService } from "@/services/resourceService";
 import { Resource } from "@/types/resources";
+
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function ResourcesPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,12 +53,40 @@ export default function ResourcesPage() {
     );
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "자료실 - 알파고고고",
+    "description": "AI 관련 자료를 다운로드하고 활용하세요. 이미지, 문서, 템플릿 등 다양한 자료를 제공합니다.",
+    "url": `${SITE_DOMAIN}/resources`,
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": SITE_DOMAIN
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "자료실",
+          "item": `${SITE_DOMAIN}/resources`
+        }
+      ]
+    }
+  };
+
   return (
     <>
-      <Helmet>
-        <title>자료실 - 알파고고고</title>
-        <meta name="description" content="AI 관련 자료를 다운로드하고 활용하세요. 이미지, 문서, 템플릿 등 다양한 자료를 제공합니다." />
-      </Helmet>
+      <SEO 
+        title="자료실 - 알파고고고"
+        description="AI 관련 자료를 다운로드하고 활용하세요. 이미지, 문서, 템플릿 등 다양한 자료를 제공합니다."
+        canonicalUrl={`${SITE_DOMAIN}/resources`}
+        keywords="자료실, AI 자료, 다운로드, 이미지, 문서, 템플릿, 알파고고고"
+        structuredData={structuredData}
+      />
       
       <div className="min-h-screen bg-gray-50">
         <Navbar />

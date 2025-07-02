@@ -8,6 +8,9 @@ import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Banner } from "@/components/Banner";
+import { SEO } from "@/components/SEO";
+
+const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function GPTSPage() {
   const location = useLocation();
@@ -38,8 +41,40 @@ export default function GPTSPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "GPTS 이용하기 - 알파고고고",
+    "description": "알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.",
+    "url": `${SITE_DOMAIN}/gpts`,
+    "breadcrumb": {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "홈",
+          "item": SITE_DOMAIN
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "GPTS",
+          "item": `${SITE_DOMAIN}/gpts`
+        }
+      ]
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      <SEO 
+        title="GPTS 이용하기 - 알파고고고"
+        description="알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요."
+        canonicalUrl={`${SITE_DOMAIN}/gpts`}
+        keywords="GPTS, GPT, ChatGPT, AI 도구, 블로그 작성, SEO 최적화, 알파고고고, 알파블로그"
+        structuredData={structuredData}
+      />
       <Navbar />
       
       <main className="flex-grow pt-24 pb-16">

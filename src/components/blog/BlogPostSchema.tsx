@@ -9,12 +9,7 @@ interface BlogPostSchemaProps {
 export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
   const SITE_DOMAIN = 'https://alphagogogo.com';
   
-  // 전체 URL 생성
-  const fullUrl = url.startsWith('http') 
-    ? url 
-    : `${SITE_DOMAIN}${url.startsWith('/') ? '' : '/'}${url}`;
-  
-  // 포스트 URL 정규화
+  // 포스트 URL 정규화 (더 정확한 로직)
   const canonicalUrl = post.slug 
     ? `${SITE_DOMAIN}/blog/${post.slug}` 
     : `${SITE_DOMAIN}/blog/post/${post.id}`;
