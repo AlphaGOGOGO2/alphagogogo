@@ -7,6 +7,7 @@ import { getAllBlogPosts } from "@/services/blogPostService";
 import { BlogPost } from "@/types/blog";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
+import { LazyImage } from "@/components/optimization/LazyImage";
 
 export function FeaturedPosts() {
   const [hoveredPost, setHoveredPost] = useState<string | null>(null);
@@ -70,8 +71,8 @@ export function FeaturedPosts() {
         ) : featuredPosts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {featuredPosts.map((post) => {
-              // Get the best image for this post - prioritize coverImage, then try to extract from content
-              const postImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
+              // 포스트 이미지 설정 - 없으면 기본 이미지 사용
+              const postImage = post.coverImage || (post.content && extractFirstImageUrl(post.content)) || "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60";
               
               return (
                 <div 
@@ -90,14 +91,12 @@ export function FeaturedPosts() {
                     )}
                   >
                     <div className="relative overflow-hidden h-56">
-                      <img 
-                        src={
-                          postImage
-                            ? postImage
-                            : "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8YWklMjBhcnR8ZW58MHx8MHx8&auto=format&fit=crop&w=800&q=60"
-                        } 
-                        alt={post.title}
+                      <LazyImage
+                        src={postImage}
+                        alt={post.title || "블로그 포스트 이미지"}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                        width={800}
+                        height={224}
                       />
                       <div className="absolute top-4 left-4 px-3 py-1 bg-purple-600 text-white text-xs font-medium rounded-full shadow-md">
                         {post.category}
