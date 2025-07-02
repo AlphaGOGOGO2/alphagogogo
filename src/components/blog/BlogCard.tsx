@@ -97,6 +97,10 @@ export function BlogCard({ post }: BlogCardProps) {
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             width={400}
             height={192}
+            onError={() => {
+              // 이미지 로딩 실패 시 카테고리 기본 이미지로 대체
+              console.log(`[BlogCard] 이미지 로딩 실패, 카테고리 기본 이미지로 대체: ${cardImage} → ${categoryThumbnail}`);
+            }}
           />
         </div>
         <div className="p-5 flex-grow flex flex-col">

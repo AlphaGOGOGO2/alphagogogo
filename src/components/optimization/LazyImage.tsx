@@ -110,7 +110,7 @@ export function LazyImage({
   if (hasError && src && src.trim() !== '') {
     console.warn('LazyImage 로드 실패:', src);
     return (
-      <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+      <div className={`w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center ${className}`}>
         <div className="text-purple-500 opacity-60">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
             <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
