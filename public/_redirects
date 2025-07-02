@@ -1,3 +1,7 @@
+# RSS 및 사이트맵 정적 파일 강제 서빙
+/rss.xml /rss.xml 200
+/sitemap.xml /sitemap.xml 200
+
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200
 
