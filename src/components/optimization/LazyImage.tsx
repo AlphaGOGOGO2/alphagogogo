@@ -30,7 +30,7 @@ export function LazyImage({
     const img = imgRef.current;
     if (!img) return;
     
-    // src가 없거나 비어있으면 에러 상태로 설정하지 않고 그냥 리턴
+    // src가 null, undefined 또는 빈 문자열이면 에러 처리하지 않고 그냥 리턴
     if (!src || src.trim() === '') {
       setHasError(false);
       setIsLoaded(false);
@@ -99,29 +99,42 @@ export function LazyImage({
 
   return (
     <div className={`relative overflow-hidden ${className}`} style={{ width, height }}>
-      {!isLoaded && (
-        <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+      {/* src가 없으면 플레이스홀더만 표시 */}
+      {!src || src.trim() === '' ? (
+        <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+          <div className="text-purple-500 opacity-60">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+            </svg>
+          </div>
         </div>
+      ) : (
+        <>
+          {!isLoaded && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+              <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+            </div>
+          )}
+          
+          <img
+            ref={imgRef}
+            src={imageSrc ? getOptimizedImageSrc(imageSrc) : ''}
+            alt={alt}
+            loading={loading}
+            decoding="async"
+            width={width}
+            height={height}
+            className={`${className} ${!isLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            onLoad={handleLoad}
+            onError={handleError}
+            style={{ 
+              maxWidth: '100%', 
+              height: 'auto',
+              aspectRatio: width && height ? `${width} / ${height}` : undefined
+            }}
+          />
+        </>
       )}
-      
-      <img
-        ref={imgRef}
-        src={imageSrc ? getOptimizedImageSrc(imageSrc) : ''}
-        alt={alt}
-        loading={loading}
-        decoding="async"
-        width={width}
-        height={height}
-        className={`${className} ${!isLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
-        onLoad={handleLoad}
-        onError={handleError}
-        style={{ 
-          maxWidth: '100%', 
-          height: 'auto',
-          aspectRatio: width && height ? `${width} / ${height}` : undefined
-        }}
-      />
     </div>
   );
 }
