@@ -90,7 +90,7 @@ serve(async (req) => {
         rssContent += '<item><title>' + cleanTitle + '</title><link>' + postUrl + '</link><guid isPermaLink="true">' + postUrl + '</guid><description>' + description + '</description><content:encoded><![CDATA[' + cleanContent + ']]></content:encoded><pubDate>' + pubDate + '</pubDate><dc:creator><![CDATA[' + escapeXml(post.author_name || '알파고고고') + ']]></dc:creator><category><![CDATA[' + escapeXml(post.category || '일반') + ']]></category>';
 
         if (post.cover_image) {
-          rssContent += '<enclosure url="' + escapeXml(post.cover_image) + '" type="image/jpeg"/>';
+          rssContent += '<enclosure url="' + escapeXml(post.cover_image) + '" type="image/jpeg" length="0"/>';
         }
 
         rssContent += '</item>';
