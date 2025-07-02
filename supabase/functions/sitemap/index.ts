@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -80,8 +79,9 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // XML 헤더 (앞에 공백 없이 시작)
-    let sitemapContent = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+    // XML 시작 (공백 없이)
+    let sitemapContent = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">`;
 
     // 정적 페이지들 추가
     for (const { url, priority, changefreq } of staticUrls) {
@@ -165,7 +165,8 @@ serve(async (req) => {
   } catch (error) {
     console.error('Sitemap 생성 에러:', error);
     return new Response(
-      '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' + SITE_DOMAIN + '</loc><lastmod>' + new Date().toISOString().split('T')[0] + '</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>',
+      `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${SITE_DOMAIN}</loc><lastmod>${new Date().toISOString().split('T')[0]}</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>`,
       {
         status: 500,
         headers: {

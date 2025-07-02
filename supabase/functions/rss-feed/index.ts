@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
@@ -73,9 +72,9 @@ serve(async (req) => {
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    // XML 헤더와 채널 정보 (앞에 공백 없이 시작)
-    let rssContent = '<?xml version="1.0" encoding="UTF-8"?>' + 
-`<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    // XML 시작 (공백 없이)
+    let rssContent = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>
     <link>${SITE_DOMAIN}</link>
@@ -162,8 +161,8 @@ serve(async (req) => {
   } catch (error) {
     console.error('RSS 피드 생성 에러:', error);
     return new Response(
-      '<?xml version="1.0" encoding="UTF-8"?>' +
-`<rss version="2.0">
+      `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
   <channel>
     <title>알파고고고 - RSS Feed Error</title>
     <description>RSS 피드 생성 중 오류가 발생했습니다.</description>
