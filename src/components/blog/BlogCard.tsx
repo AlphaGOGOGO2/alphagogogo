@@ -26,18 +26,21 @@ export function BlogCard({ post }: BlogCardProps) {
   // 마크다운 제거된 excerpt
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
   
-  // 카드 이미지 설정 - 개선된 우선순위와 폴백 로직
+  // 카드 이미지 설정 - 강화된 우선순위와 폴백 로직
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
   const categoryThumbnail = getCategoryThumbnail(post.category);
   
-  // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본 → 일반 기본
+  // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본
   let cardImage = "";
   if (post.coverImage && post.coverImage.trim() !== '') {
     cardImage = post.coverImage;
+    console.log(`[BlogCard] Cover image 사용: ${post.coverImage}`);
   } else if (extractedImage) {
     cardImage = extractedImage;
+    console.log(`[BlogCard] 추출된 이미지 사용: ${extractedImage}`);
   } else {
     cardImage = categoryThumbnail;
+    console.log(`[BlogCard] 카테고리 기본 이미지 사용: ${categoryThumbnail}`);
   }
   
 

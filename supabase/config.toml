@@ -1,6 +1,9 @@
 
 project_id = "plimzlmmftdbpipbnhsy"
 
+[functions.fix-blog-thumbnails]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321

@@ -98,40 +98,60 @@ export const generateExcerpt = (content: string, maxLength: number = 150): strin
   return finalText.trim() + '...';
 };
 
-// Extract the first image URL from markdown content or HTML content - 개선된 버전
+// Extract the first image URL from markdown content or HTML content - 강화된 버전
 export const extractFirstImageUrl = (content: string): string | null => {
   if (!content) return null;
   
-  // 1. 마크다운 이미지 문법: ![alt](url)
-  const markdownImgRegex = /!\[.*?\]\((.*?)\)/i;
-  const markdownMatch = content.match(markdownImgRegex);
-  
-  if (markdownMatch && markdownMatch[1] && isValidImageUrl(markdownMatch[1])) {
-    return markdownMatch[1];
-  }
-  
-  // 2. HTML img 태그 (CKEditor 포함) - 다양한 형태 지원
-  const imgTagRegexes = [
-    /<img[^>]+src=['"]([^'"]+)['"]/i,  // 기본 img 태그
-    /<figure[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/figure>/i, // CKEditor figure 태그
-    /<p[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/p>/i // p 태그 안의 img
+  // 1. CKEditor figure 태그 우선 처리 (가장 구체적인 패턴부터)
+  const figureRegexes = [
+    /<figure[^>]*class=[^>]*image[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/figure>/is,
+    /<figure[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/figure>/is
   ];
   
-  for (const regex of imgTagRegexes) {
+  for (const regex of figureRegexes) {
     const match = content.match(regex);
     if (match && match[1] && isValidImageUrl(match[1])) {
+      console.log('이미지 추출 성공 (figure):', match[1]);
       return match[1];
     }
   }
   
-  // 3. Base64 이미지 찾기
+  // 2. 마크다운 이미지 문법: ![alt](url)
+  const markdownImgRegex = /!\[([^\]]*)\]\(([^)]+)\)/i;
+  const markdownMatch = content.match(markdownImgRegex);
+  
+  if (markdownMatch && markdownMatch[2] && isValidImageUrl(markdownMatch[2])) {
+    console.log('이미지 추출 성공 (markdown):', markdownMatch[2]);
+    return markdownMatch[2];
+  }
+  
+  // 3. 일반 HTML img 태그들
+  const imgTagRegexes = [
+    /<img[^>]+src=['"]([^'"]+)['"][^>]*alt=['"]([^'"]*image[^'"]*)['"][^>]*>/i, // alt에 image 포함
+    /<img[^>]+alt=['"]([^'"]*image[^'"]*)['"][^>]*src=['"]([^'"]+)['"][^>]*>/i, // alt에 image 포함 (순서 바뀜)
+    /<img[^>]+src=['"]([^'"]+)['"]/i,  // 기본 img 태그
+    /<p[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/p>/is // p 태그 안의 img
+  ];
+  
+  for (const regex of imgTagRegexes) {
+    const match = content.match(regex);
+    const url = match && match.length > 1 ? (match[2] || match[1]) : null;
+    if (url && isValidImageUrl(url)) {
+      console.log('이미지 추출 성공 (HTML):', url);
+      return url;
+    }
+  }
+  
+  // 4. Base64 이미지 찾기
   const base64Regex = /data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/i;
   const base64Match = content.match(base64Regex);
   
   if (base64Match && base64Match[0]) {
+    console.log('이미지 추출 성공 (Base64)');
     return base64Match[0];
   }
   
+  console.log('이미지 추출 실패:', content.substring(0, 200) + '...');
   return null;
 };
 
