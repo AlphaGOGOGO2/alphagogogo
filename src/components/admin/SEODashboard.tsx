@@ -3,129 +3,54 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CheckCircle, AlertCircle, XCircle, RefreshCw } from "lucide-react";
-import { BlogPost } from "@/types/blog";
-
-interface SEOScore {
-  postId: string;
-  title: string;
-  score: number;
-  issues: string[];
-  coverImage: string | null;
-  hasMetaDescription: boolean;
-  hasTags: boolean;
-  titleLength: number;
-  contentLength: number;
-}
+import { Loader2, CheckCircle, AlertCircle, XCircle, RefreshCw, Image, Settings, Clock } from "lucide-react";
 
 export function SEODashboard() {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [seoScores, setSeoScores] = useState<SEOScore[]>([]);
+  const [blogPosts, setBlogPosts] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isFixingThumbnails, setIsFixingThumbnails] = useState(false);
+  const [seoStats, setSeoStats] = useState({
+    totalPosts: 0,
+    postsWithImages: 0,
+    postsWithoutImages: 0,
+    averageSeoScore: 0
+  });
 
-  // SEO 점수 계산 함수
-  const calculateSEOScore = (post: BlogPost): SEOScore => {
-    let score = 0;
-    const issues: string[] = [];
+  useEffect(() => {
+    fetchBlogPosts();
+  }, []);
 
-    // 제목 길이 체크 (30-60자 권장)
-    const titleLength = post.title?.length || 0;
-    if (titleLength >= 30 && titleLength <= 60) {
-      score += 20;
-    } else {
-      issues.push(`제목 길이 최적화 필요 (현재: ${titleLength}자, 권장: 30-60자)`);
-    }
-
-    // 메타 설명 체크
-    const hasMetaDescription = !!(post.excerpt && post.excerpt.length > 0);
-    if (hasMetaDescription && post.excerpt!.length >= 120 && post.excerpt!.length <= 160) {
-      score += 20;
-    } else if (hasMetaDescription) {
-      score += 10;
-      issues.push(`메타 설명 길이 최적화 필요 (현재: ${post.excerpt!.length}자, 권장: 120-160자)`);
-    } else {
-      issues.push("메타 설명 누락");
-    }
-
-    // 커버 이미지 체크
-    if (post.coverImage && post.coverImage.trim() !== '') {
-      score += 20;
-    } else {
-      issues.push("커버 이미지 누락");
-    }
-
-    // 태그 체크
-    const hasTags = !!(post.tags && post.tags.length > 0);
-    if (hasTags && post.tags!.length >= 3) {
-      score += 20;
-    } else if (hasTags) {
-      score += 10;
-      issues.push("태그 개수 부족 (권장: 3개 이상)");
-    } else {
-      issues.push("태그 누락");
-    }
-
-    // 컨텐츠 길이 체크 (최소 300자 권장)
-    const contentLength = post.content?.length || 0;
-    if (contentLength >= 1000) {
-      score += 20;
-    } else if (contentLength >= 300) {
-      score += 10;
-      issues.push("컨텐츠 길이 부족 (권장: 1000자 이상)");
-    } else {
-      issues.push("컨텐츠 길이 심각하게 부족");
-    }
-
-    return {
-      postId: post.id,
-      title: post.title,
-      score,
-      issues,
-      coverImage: post.coverImage,
-      hasMetaDescription,
-      hasTags,
-      titleLength,
-      contentLength
-    };
-  };
-
-  // 블로그 포스트 데이터 로드
-  const loadPosts = async () => {
+  const fetchBlogPosts = async () => {
     try {
       setIsLoading(true);
       const { data, error } = await supabase
         .from('blog_posts')
-        .select(`
-          id, title, excerpt, content, cover_image, category,
-          blog_post_tags(blog_tags(name))
-        `)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
+      setBlogPosts(data || []);
+      
       if (data) {
-        const adaptedPosts: BlogPost[] = data.map(post => ({
-          id: post.id,
-          title: post.title,
-          excerpt: post.excerpt,
-          content: post.content,
-          coverImage: post.cover_image,
-          category: post.category,
-          tags: post.blog_post_tags?.map((pt: any) => pt.blog_tags?.name).filter(Boolean) || [],
-          author: { name: 'Default', avatar: '' },
-          publishedAt: new Date().toISOString(),
-          readTime: 5,
-          slug: ''
-        }));
-
-        setPosts(adaptedPosts);
+        const totalPosts = data.length;
+        const postsWithImages = data.filter(post => post.cover_image && post.cover_image.trim() !== '').length;
+        const postsWithoutImages = totalPosts - postsWithImages;
         
-        // SEO 점수 계산
-        const scores = adaptedPosts.map(calculateSEOScore);
-        setSeoScores(scores);
+        const scores = data.map(post => calculateSEOScore(post));
+        const averageSeoScore = scores.length > 0 
+          ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
+          : 0;
+
+        setSeoStats({
+          totalPosts,
+          postsWithImages,
+          postsWithoutImages,
+          averageSeoScore
+        });
       }
     } catch (error) {
       console.error('포스트 로드 실패:', error);
@@ -135,49 +60,63 @@ export function SEODashboard() {
     }
   };
 
-  // 썸네일 자동 수정 함수
-  const fixThumbnails = async () => {
+  const calculateSEOScore = (post: any): number => {
+    let score = 0;
+    
+    // 제목 길이 체크 (30-60자 권장)
+    if (post.title && post.title.length >= 30 && post.title.length <= 60) {
+      score += 20;
+    }
+    
+    // 메타 설명 체크
+    if (post.excerpt && post.excerpt.length >= 120 && post.excerpt.length <= 160) {
+      score += 20;
+    } else if (post.excerpt) {
+      score += 10;
+    }
+    
+    // 커버 이미지 체크
+    if (post.cover_image && post.cover_image.trim() !== '') {
+      score += 20;
+    }
+    
+    // 컨텐츠 길이 체크
+    if (post.content && post.content.length >= 300) {
+      score += 20;
+    }
+    
+    // 카테고리 체크
+    if (post.category) {
+      score += 20;
+    }
+    
+    return score;
+  };
+
+  const handleFixThumbnails = async () => {
+    setIsFixingThumbnails(true);
+    toast.info("썸네일 수정 작업을 시작합니다...");
+    
     try {
-      setIsFixingThumbnails(true);
+      const { data, error } = await supabase.functions.invoke('fix-blog-thumbnails');
       
-      const { data, error } = await supabase.functions.invoke('fix-blog-thumbnails', {
-        method: 'POST'
-      });
-
-      if (error) throw error;
-
-      toast.success(`썸네일 수정 완료: ${data.updated}개 포스트 업데이트됨`);
+      if (error) {
+        console.error('썸네일 수정 함수 에러:', error);
+        throw error;
+      }
       
-      // 데이터 새로고침
-      await loadPosts();
+      if (data?.success) {
+        toast.success(`썸네일 수정 완료! ${data.updated}개 포스트가 업데이트되었습니다.`);
+        fetchBlogPosts(); // 데이터 새로고침
+      } else {
+        toast.error(data?.message || "썸네일 수정 중 오류가 발생했습니다.");
+      }
     } catch (error) {
-      console.error('썸네일 수정 실패:', error);
-      toast.error('썸네일 수정에 실패했습니다.');
+      console.error('썸네일 수정 에러:', error);
+      toast.error("썸네일 수정 중 오류가 발생했습니다.");
     } finally {
       setIsFixingThumbnails(false);
     }
-  };
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  // 전체 평균 SEO 점수 계산
-  const averageScore = seoScores.length > 0 
-    ? Math.round(seoScores.reduce((sum, score) => sum + score.score, 0) / seoScores.length)
-    : 0;
-
-  // SEO 점수별 색상
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-green-600";
-    if (score >= 60) return "text-yellow-600";
-    return "text-red-600";
-  };
-
-  const getScoreBadgeVariant = (score: number) => {
-    if (score >= 80) return "default";
-    if (score >= 60) return "secondary";
-    return "destructive";
   };
 
   if (isLoading) {
@@ -191,121 +130,164 @@ export function SEODashboard() {
 
   return (
     <div className="space-y-6">
-      {/* SEO 요약 카드 */}
+      {/* 전체 통계 */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">전체 평균 점수</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <div className={`text-2xl font-bold ${getScoreColor(averageScore)}`}>
-                {averageScore}점
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <RefreshCw className="h-8 w-8 text-blue-500" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">총 포스트</p>
+                <p className="text-2xl font-bold">{seoStats.totalPosts}</p>
               </div>
-              <Progress value={averageScore} className="flex-1" />
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">우수 포스트</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="text-2xl font-bold text-green-600">
-                {seoScores.filter(s => s.score >= 80).length}
-              </span>
-              <span className="text-sm text-gray-500">개</span>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <CheckCircle className="h-8 w-8 text-green-500" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">썸네일 있음</p>
+                <p className="text-2xl font-bold">{seoStats.postsWithImages}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">개선 필요</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-yellow-600" />
-              <span className="text-2xl font-bold text-yellow-600">
-                {seoScores.filter(s => s.score >= 60 && s.score < 80).length}
-              </span>
-              <span className="text-sm text-gray-500">개</span>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <AlertCircle className="h-8 w-8 text-orange-500" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">썸네일 없음</p>
+                <p className="text-2xl font-bold">{seoStats.postsWithoutImages}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
-
+        
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium">심각한 문제</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center space-x-2">
-              <XCircle className="h-5 w-5 text-red-600" />
-              <span className="text-2xl font-bold text-red-600">
-                {seoScores.filter(s => s.score < 60).length}
-              </span>
-              <span className="text-sm text-gray-500">개</span>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <XCircle className="h-8 w-8 text-purple-500" />
+              <div className="ml-2">
+                <p className="text-sm font-medium leading-none">평균 SEO 점수</p>
+                <p className="text-2xl font-bold">{seoStats.averageSeoScore}</p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      {/* 액션 버튼들 */}
-      <div className="flex flex-wrap gap-3">
-        <Button onClick={loadPosts} variant="outline" size="sm">
-          <RefreshCw className="h-4 w-4 mr-2" />
-          새로고침
-        </Button>
-        <Button 
-          onClick={fixThumbnails} 
-          variant="default" 
-          size="sm"
-          disabled={isFixingThumbnails}
-        >
-          {isFixingThumbnails ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <CheckCircle className="h-4 w-4 mr-2" />
-          )}
-          썸네일 자동 수정
-        </Button>
-      </div>
+      {/* 썸네일 관리 섹션 */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Image className="h-5 w-5" />
+            썸네일 관리
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div>
+                <h3 className="font-medium">썸네일 자동 수정</h3>
+                <p className="text-sm text-gray-500">
+                  cover_image가 누락된 포스트의 썸네일을 content에서 자동 추출하거나 카테고리별 기본 이미지로 설정합니다.
+                </p>
+              </div>
+              <Button 
+                onClick={handleFixThumbnails}
+                disabled={isFixingThumbnails}
+                className="ml-4"
+              >
+                {isFixingThumbnails ? (
+                  <>
+                    <Clock className="mr-2 h-4 w-4 animate-spin" />
+                    수정 중...
+                  </>
+                ) : (
+                  <>
+                    <Settings className="mr-2 h-4 w-4" />
+                    썸네일 자동 수정
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* 포스트별 SEO 점수 목록 */}
+      <Separator />
+
+      {/* 포스트별 SEO 분석 */}
       <Card>
         <CardHeader>
           <CardTitle>포스트별 SEO 분석</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {seoScores.map((scoreData) => (
-              <div key={scoreData.postId} className="flex items-start justify-between p-4 border rounded-lg">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="font-medium">{scoreData.title}</h3>
-                    <Badge variant={getScoreBadgeVariant(scoreData.score)}>
-                      {scoreData.score}점
-                    </Badge>
-                  </div>
-                  
-                  {scoreData.issues.length > 0 && (
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-700">개선 필요 사항:</p>
-                      {scoreData.issues.map((issue, index) => (
-                        <p key={index} className="text-sm text-red-600">• {issue}</p>
-                      ))}
+            {blogPosts.length === 0 ? (
+              <p className="text-center text-gray-500 py-8">분석할 포스트가 없습니다.</p>
+            ) : (
+              blogPosts.map((post) => {
+                const seoScore = calculateSEOScore(post);
+                return (
+                  <div key={post.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="font-medium truncate flex-1">{post.title}</h3>
+                      <Badge 
+                        variant={seoScore >= 80 ? "default" : seoScore >= 60 ? "secondary" : "destructive"}
+                      >
+                        SEO 점수: {seoScore}%
+                      </Badge>
                     </div>
-                  )}
-                </div>
-                
-                <div className="ml-4">
-                  <Progress value={scoreData.score} className="w-20" />
-                </div>
-              </div>
-            ))}
+                    
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                      <div className="flex items-center">
+                        {post.cover_image ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 mr-1" />
+                        )}
+                        <span>썸네일</span>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        {post.excerpt ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 mr-1" />
+                        )}
+                        <span>메타 설명</span>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        {post.title && post.title.length >= 30 && post.title.length <= 60 ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                        ) : (
+                          <AlertCircle className="h-4 w-4 text-orange-500 mr-1" />
+                        )}
+                        <span>제목 길이 ({post.title?.length || 0}자)</span>
+                      </div>
+                      
+                      <div className="flex items-center">
+                        {post.content && post.content.length >= 300 ? (
+                          <CheckCircle className="h-4 w-4 text-green-500 mr-1" />
+                        ) : (
+                          <XCircle className="h-4 w-4 text-red-500 mr-1" />
+                        )}
+                        <span>콘텐츠 길이</span>
+                      </div>
+                    </div>
+                    
+                    <Progress value={seoScore} className="mt-2" />
+                  </div>
+                );
+              })
+            )}
           </div>
         </CardContent>
       </Card>
