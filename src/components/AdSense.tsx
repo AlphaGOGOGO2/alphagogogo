@@ -31,15 +31,12 @@ export const AdSense: React.FC<AdSenseProps> = ({
   useEffect(() => {
     // 개발 환경에서는 광고 초기화 건너뛰기
     if (isDevelopment) {
-      console.log('개발 환경: AdSense 광고 표시 건너뛰기');
       setAdStatus('dev-mode');
       return;
     }
 
     const initializeAd = async () => {
       try {
-        console.log(`[AdSense] 광고 초기화 시작: ${slotId}`);
-        
         // AdSense 스크립트 로드 확인
         if (typeof window.adsbygoogle === 'undefined') {
           console.error('[AdSense] adsbygoogle 스크립트가 로드되지 않았습니다.');
@@ -58,7 +55,6 @@ export const AdSense: React.FC<AdSenseProps> = ({
 
         // 이미 초기화된 슬롯인지 확인
         if (initializedSlots.has(slotId)) {
-          console.log(`[AdSense] 슬롯 ${slotId}은 이미 초기화됨`);
           setAdStatus('already-initialized');
           return;
         }
@@ -74,12 +70,9 @@ export const AdSense: React.FC<AdSenseProps> = ({
 
         // 이미 처리된 광고인지 확인
         if (adElement.getAttribute('data-adsbygoogle-status')) {
-          console.log(`[AdSense] 광고가 이미 처리됨: ${slotId}`);
           setAdStatus('already-processed');
           return;
         }
-
-        console.log(`[AdSense] 광고 푸시 시도: ${slotId}`);
         
         // 광고 푸시
         (window.adsbygoogle = window.adsbygoogle || []).push({});
@@ -88,21 +81,11 @@ export const AdSense: React.FC<AdSenseProps> = ({
         initializedSlots.add(slotId);
         setIsAdInitialized(true);
         setAdStatus('initialized');
-        
-        console.log(`[AdSense] 광고 초기화 완료: ${slotId}`);
 
         // 광고 로드 상태 확인을 위한 타이머
         setTimeout(() => {
           const status = adElement.getAttribute('data-adsbygoogle-status');
-          if (status === 'done') {
-            setAdStatus('loaded');
-            console.log(`[AdSense] 광고 로드 완료: ${slotId}`);
-          } else if (status === 'filled') {
-            setAdStatus('filled');
-            console.log(`[AdSense] 광고 채움 완료: ${slotId}`);
-          } else {
-            console.log(`[AdSense] 광고 상태: ${status || 'unknown'}`);
-          }
+          setAdStatus(status === 'done' ? 'loaded' : status === 'filled' ? 'filled' : 'unknown');
         }, 3000);
         
       } catch (error) {

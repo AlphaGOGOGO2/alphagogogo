@@ -165,7 +165,29 @@ export function SEO({
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
       
-      {/* 구조화 데이터 */}
+      {/* 기본 Organization 스키마 - 메인 페이지에서만 */}
+      {(!canonicalUrl || canonicalUrl === 'https://alphagogogo.com' || canonicalUrl === '/') && (
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "알파고고고",
+            "url": "https://alphagogogo.com",
+            "logo": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+            "sameAs": [
+              "https://www.youtube.com/@alphagogogo",
+              "https://twitter.com/alphagogogo"
+            ],
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer support",
+              "url": "https://alphagogogo.com/business-inquiry"
+            }
+          }, null, 0)}
+        </script>
+      )}
+      
+      {/* 사용자 지정 구조화 데이터 */}
       {structuredData && (
         <script type="application/ld+json">
           {JSON.stringify(structuredData, null, 0)}

@@ -134,11 +134,13 @@ export function startHealthMonitoring(intervalMs: number = 30000) {
 
   const checkHealth = () => {
     const result = performHealthCheck();
+    const isDevelopment = process.env.NODE_ENV === 'development';
+    
     if (result.status === 'error') {
       console.error('[Health Check] Critical issues detected:', result);
     } else if (result.status === 'warning') {
       console.warn('[Health Check] Warning level issues detected:', result);
-    } else {
+    } else if (isDevelopment) {
       console.log('[Health Check] All systems healthy');
     }
   };

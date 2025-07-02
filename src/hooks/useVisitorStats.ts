@@ -59,8 +59,9 @@ export function useVisitorStats(): VisitorStatsResult {
       // 내일 자정 (종료 시간)
       const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       
-      console.log("[오늘 방문자 조회] 조회 시작 시간:", todayStart.toISOString());
-      console.log("[오늘 방문자 조회] 조회 종료 시간:", tomorrowStart.toISOString());
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[오늘 방문자 조회] 시작:", todayStart.toISOString());
+      }
       
       // 오늘 방문자 데이터 쿼리 - 오늘 하루 데이터만 조회
       const { data: todayVisits, error: todayError } = await supabase
@@ -79,7 +80,9 @@ export function useVisitorStats(): VisitorStatsResult {
       const uniqueTodayVisitors = new Set<string>();
       
       if (todayVisits) {
-        console.log("[오늘 방문자 조회] 방문 기록 데이터 수:", todayVisits.length);
+        if (process.env.NODE_ENV === 'development') {
+          console.log("[오늘 방문자 조회] 데이터 수:", todayVisits.length);
+        }
         
         todayVisits.forEach(visit => {
           if (visit.client_id && 
@@ -92,7 +95,9 @@ export function useVisitorStats(): VisitorStatsResult {
       }
       
       const todayCount = uniqueTodayVisitors.size;
-      console.log("[오늘 방문자 조회] 계산된 방문자 수:", todayCount);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("[오늘 방문자 조회] 계산된 방문자 수:", todayCount);
+      }
       setTodayVisitCount(todayCount);
     } catch (error) {
       console.error("[오늘 방문자 조회] 처리 오류:", error);

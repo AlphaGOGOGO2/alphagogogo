@@ -85,25 +85,6 @@ export function PerformanceOptimization({ children }: PerformanceOptimizationPro
         <meta name="apple-mobile-web-app-title" content="알파고고고" />
         <meta name="application-name" content="알파고고고" />
         
-        {/* Rich Snippets를 위한 Organization 정보 */}
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "알파고고고",
-            "url": "https://alphagogogo.com",
-            "logo": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
-            "sameAs": [
-              "https://www.youtube.com/@alphagogogo",
-              "https://twitter.com/alphagogogo"
-            ],
-            "contactPoint": {
-              "@type": "ContactPoint",
-              "contactType": "customer support",
-              "url": "https://alphagogogo.com/business-inquiry"
-            }
-          })}
-        </script>
       </Helmet>
       {children}
     </>

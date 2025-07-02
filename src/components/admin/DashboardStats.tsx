@@ -35,9 +35,11 @@ export function DashboardStats({
   
   const today = new Date();
   
-  // 디버깅을 위한 명확한 로그 추가
-  console.log("[DashboardStats 컴포넌트] 오늘 방문자:", todayVisitCount, "로딩 상태:", isLoadingTodayVisits);
-  console.log("[DashboardStats 컴포넌트] 이달 방문자:", monthlyVisitCount, "로딩 상태:", isLoadingMonthlyVisits);
+  // 개발환경에서만 디버깅 로그 출력
+  if (process.env.NODE_ENV === 'development') {
+    console.log("[DashboardStats] 오늘 방문자:", todayVisitCount, "로딩:", isLoadingTodayVisits);
+    console.log("[DashboardStats] 이달 방문자:", monthlyVisitCount, "로딩:", isLoadingMonthlyVisits);
+  }
   
   return (
     <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
