@@ -23,13 +23,15 @@ import AdminAiServicesPage from "./pages/admin/AdminAiServicesPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import NotFound from "./pages/NotFound";
+import { PerformanceOptimization } from "./components/optimization/PerformanceOptimization";
 import "./App.css";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <PerformanceOptimization>
+      <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <TooltipProvider>
           <Toaster />
@@ -57,10 +59,11 @@ function App() {
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </HelmetProvider>
-    </QueryClientProvider>
+            </BrowserRouter>
+          </TooltipProvider>
+        </HelmetProvider>
+      </QueryClientProvider>
+    </PerformanceOptimization>
   );
 }
 

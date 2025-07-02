@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker } from './registerSW';
+import { initWebVitals, PerformanceMonitor } from './utils/webVitals.ts';
 
 // AdSense 전역 타입 선언
 declare global {
@@ -93,5 +94,17 @@ const monitorPerformance = () => {
 registerServiceWorker();
 initializeAdSense();
 monitorPerformance();
+
+// Web Vitals 및 성능 모니터링 초기화
+if (typeof window !== 'undefined') {
+  initWebVitals();
+  const performanceMonitor = PerformanceMonitor.getInstance();
+  performanceMonitor.init();
+  
+  // 페이지 언로드 시 정리
+  window.addEventListener('beforeunload', () => {
+    performanceMonitor.cleanup();
+  });
+}
 
 createRoot(document.getElementById("root")!).render(<App />);

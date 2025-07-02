@@ -4,6 +4,7 @@ import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { stripMarkdown, extractFirstImageUrl } from "@/utils/blogUtils";
 import { useNavigate } from "react-router-dom";
+import { LazyImage } from "@/components/optimization/LazyImage";
 
 // 마크다운 #, ## 같은 제목 앞 기호 제거 함수
 function extractPlainTitle(markdownTitle: string): string {
@@ -65,12 +66,12 @@ export function BlogCard({ post }: BlogCardProps) {
       <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
         {cardImage && (
           <div className="block overflow-hidden h-48">
-            <img 
-              src={cardImage} 
+            <LazyImage
+              src={cardImage}
               alt={displayTitle}
-              loading="lazy"
-              decoding="async"
               className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+              width={400}
+              height={192}
             />
           </div>
         )}
@@ -106,12 +107,13 @@ export function BlogCard({ post }: BlogCardProps) {
           )}
           <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
             <div className="flex items-center">
-              <img 
-                src={authorAvatarUrl} 
+              <LazyImage
+                src={authorAvatarUrl}
                 alt={post.author.name}
+                className="w-6 h-6 rounded-full mr-2 object-cover"
+                width={24}
+                height={24}
                 loading="lazy"
-                decoding="async"
-                className="w-6 h-6 rounded-full mr-2 object-cover" 
               />
               <span>{post.author.name}</span>
             </div>
