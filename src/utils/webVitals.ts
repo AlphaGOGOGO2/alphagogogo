@@ -100,13 +100,18 @@ async function processAnalyticsQueue() {
 export function initWebVitals() {
   if (typeof window === 'undefined') return;
   
-  // Dynamic import to avoid SSR issues
+  // Dynamic import to avoid SSR issues with error handling
   import('web-vitals').then((webVitals) => {
-    webVitals.onCLS(sendToAnalytics);
-    webVitals.onFCP(sendToAnalytics);
-    webVitals.onINP(sendToAnalytics); // FID 대신 INP 사용
-    webVitals.onLCP(sendToAnalytics);
-    webVitals.onTTFB(sendToAnalytics);
+    try {
+      webVitals.onCLS(sendToAnalytics);
+      webVitals.onFCP(sendToAnalytics);
+      webVitals.onINP(sendToAnalytics); // FID 대신 INP 사용
+      webVitals.onLCP(sendToAnalytics);
+      webVitals.onTTFB(sendToAnalytics);
+      console.log('[Web Vitals] Successfully initialized monitoring');
+    } catch (error) {
+      console.warn('[Web Vitals] Error setting up metrics:', error);
+    }
   }).catch((error) => {
     console.warn('[Web Vitals] Failed to load web-vitals library:', error);
   });

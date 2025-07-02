@@ -4,6 +4,7 @@ import App from './App.tsx'
 import './index.css'
 import { registerServiceWorker } from './registerSW';
 import { initWebVitals, PerformanceMonitor } from './utils/webVitals.ts';
+import { initErrorTracking, startHealthMonitoring } from './utils/healthCheck.ts';
 
 // AdSense 전역 타입 선언
 declare global {
@@ -94,6 +95,7 @@ const monitorPerformance = () => {
 registerServiceWorker();
 initializeAdSense();
 monitorPerformance();
+initErrorTracking();
 
 // Web Vitals 및 성능 모니터링 초기화
 if (typeof window !== 'undefined') {
@@ -101,9 +103,15 @@ if (typeof window !== 'undefined') {
   const performanceMonitor = PerformanceMonitor.getInstance();
   performanceMonitor.init();
   
+  // 헬스 모니터링 시작 (30초마다)
+  const healthCheckInterval = startHealthMonitoring(30000);
+  
   // 페이지 언로드 시 정리
   window.addEventListener('beforeunload', () => {
     performanceMonitor.cleanup();
+    if (healthCheckInterval) {
+      clearInterval(healthCheckInterval);
+    }
   });
 }
 

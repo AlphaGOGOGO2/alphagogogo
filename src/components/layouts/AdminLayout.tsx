@@ -1,5 +1,5 @@
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { 
@@ -11,10 +11,16 @@ import {
   Home,
   User,
   FolderOpen,
-  HandHeart
+  HandHeart,
+  LogOut,
+  Moon,
+  Sun,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -30,6 +36,44 @@ interface NavItem {
 export function AdminLayout({ children, title }: AdminLayoutProps) {
   const location = useLocation();
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // 로컬 스토리지에서 사이드바 상태 불러오기
+  useEffect(() => {
+    const savedSidebarState = localStorage.getItem('adminSidebarCollapsed');
+    const savedTheme = localStorage.getItem('adminTheme');
+    
+    if (savedSidebarState) {
+      setIsSidebarCollapsed(JSON.parse(savedSidebarState));
+    }
+    
+    if (savedTheme) {
+      setIsDarkMode(savedTheme === 'dark');
+      document.documentElement.classList.toggle('dark', savedTheme === 'dark');
+    }
+  }, []);
+
+  // 사이드바 토글
+  const toggleSidebar = () => {
+    const newState = !isSidebarCollapsed;
+    setIsSidebarCollapsed(newState);
+    localStorage.setItem('adminSidebarCollapsed', JSON.stringify(newState));
+  };
+
+  // 다크모드 토글
+  const toggleTheme = () => {
+    const newTheme = !isDarkMode;
+    setIsDarkMode(newTheme);
+    localStorage.setItem('adminTheme', newTheme ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', newTheme);
+  };
+
+  // 로그아웃
+  const handleLogout = () => {
+    sessionStorage.removeItem("blogAuthToken");
+    window.location.href = "/admin";
+  };
 
   // 관리자 세션 확인
   const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
@@ -66,61 +110,181 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* 사이드바 */}
-      <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-        <div className="p-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-purple-600">알파GOGOGO 관리자</h1>
-        </div>
+    <TooltipProvider>
+      <div className={cn("min-h-screen flex transition-colors", isDarkMode ? "bg-gray-900" : "bg-gray-50")}>
+        {/* 사이드바 */}
+        <div className={cn(
+          "flex flex-col border-r transition-all duration-300",
+          isSidebarCollapsed ? "w-16" : "w-64",
+          isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+        )}>
+          <div className={cn("p-4 border-b flex items-center justify-between", isDarkMode ? "border-gray-700" : "border-gray-200")}>
+            {!isSidebarCollapsed && (
+              <h1 className={cn("text-xl font-bold text-purple-600 truncate", isDarkMode ? "text-purple-400" : "")}>
+                알파GOGOGO 관리자
+              </h1>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={toggleSidebar}
+              className={cn("hover:bg-purple-50", isDarkMode ? "hover:bg-gray-700" : "")}
+            >
+              {isSidebarCollapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+            </Button>
+          </div>
         
         <nav className="flex-1 overflow-y-auto py-4">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.path}>
+          <ul className="space-y-1 px-2">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              const NavContent = (
                 <Link
                   to={item.path}
                   className={cn(
-                    "flex items-center px-4 py-3 text-gray-700 hover:bg-purple-50",
-                    location.pathname === item.path && "bg-purple-100 text-purple-700 font-medium"
+                    "flex items-center px-3 py-3 rounded-lg transition-all duration-200",
+                    isActive 
+                      ? isDarkMode 
+                        ? "bg-purple-600 text-white shadow-lg" 
+                        : "bg-purple-100 text-purple-700 shadow-md"
+                      : isDarkMode
+                        ? "text-gray-300 hover:bg-gray-700 hover:text-white"
+                        : "text-gray-700 hover:bg-purple-50 hover:text-purple-600",
+                    isSidebarCollapsed ? "justify-center" : ""
                   )}
                 >
-                  <item.icon className="h-5 w-5 mr-3" />
-                  {item.name}
+                  <item.icon className={cn("h-5 w-5", !isSidebarCollapsed && "mr-3")} />
+                  {!isSidebarCollapsed && (
+                    <span className="font-medium">{item.name}</span>
+                  )}
                 </Link>
-              </li>
-            ))}
+              );
+
+              return (
+                <li key={item.path}>
+                  {isSidebarCollapsed ? (
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        {NavContent}
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{item.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    NavContent
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
         
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex items-center space-x-2">
-            <User className="h-6 w-6 text-gray-500" />
-            <div>
-              <p className="font-medium">알파GOGOGO</p>
-              <p className="text-xs text-gray-500">관리자</p>
+        <div className={cn("p-4 border-t space-y-3", isDarkMode ? "border-gray-700" : "border-gray-200")}>
+          {!isSidebarCollapsed && (
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <User className={cn("h-4 w-4", isDarkMode ? "text-purple-400" : "text-purple-600")} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className={cn("font-medium truncate", isDarkMode ? "text-white" : "text-gray-900")}>알파GOGOGO</p>
+                <p className={cn("text-xs", isDarkMode ? "text-gray-400" : "text-gray-500")}>관리자</p>
+              </div>
             </div>
-          </div>
-          <div className="mt-4 flex space-x-2">
-            <Link to="/" className="flex items-center text-sm text-gray-600 hover:text-purple-600">
-              <Home className="h-4 w-4 mr-1" />
-              사이트로 돌아가기
-            </Link>
+          )}
+          
+          <div className="flex flex-col space-y-2">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className={cn(
+                    "justify-start",
+                    isSidebarCollapsed ? "px-3" : "w-full",
+                    isDarkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"
+                  )}
+                >
+                  {isDarkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                  {!isSidebarCollapsed && (
+                    <span className="ml-2">{isDarkMode ? "라이트 모드" : "다크 모드"}</span>
+                  )}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>{isDarkMode ? "라이트 모드로 전환" : "다크 모드로 전환"}</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link 
+                  to="/" 
+                  className={cn(
+                    "flex items-center text-sm rounded-lg px-3 py-2 transition-colors",
+                    isSidebarCollapsed ? "justify-center" : "",
+                    isDarkMode 
+                      ? "text-gray-300 hover:bg-gray-700 hover:text-white" 
+                      : "text-gray-600 hover:bg-gray-100 hover:text-purple-600"
+                  )}
+                >
+                  <Home className="h-4 w-4" />
+                  {!isSidebarCollapsed && <span className="ml-2">사이트로 돌아가기</span>}
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>사이트로 돌아가기</p>
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className={cn(
+                    "justify-start text-red-600 hover:text-red-700",
+                    isSidebarCollapsed ? "px-3" : "w-full",
+                    isDarkMode ? "hover:bg-red-900/20" : "hover:bg-red-50"
+                  )}
+                >
+                  <LogOut className="h-4 w-4" />
+                  {!isSidebarCollapsed && <span className="ml-2">로그아웃</span>}
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="right">
+                <p>로그아웃</p>
+              </TooltipContent>
+            </Tooltip>
           </div>
         </div>
       </div>
       
-      {/* 메인 컨텐츠 */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="bg-white shadow-sm z-10">
-          <div className="px-6 py-4">
-            <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-          </div>
-        </header>
-        
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
-        </main>
+        {/* 메인 컨텐츠 */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          <header className={cn(
+            "shadow-sm z-10 border-b",
+            isDarkMode ? "bg-gray-800 border-gray-700" : "bg-white border-gray-200"
+          )}>
+            <div className="px-6 py-4 flex items-center justify-between">
+              <h1 className={cn("text-2xl font-bold", isDarkMode ? "text-white" : "text-gray-900")}>
+                {title}
+              </h1>
+              <div className="flex items-center space-x-4">
+                <div className={cn("text-sm", isDarkMode ? "text-gray-400" : "text-gray-600")}>
+                  {new Date().toLocaleDateString('ko-KR')}
+                </div>
+              </div>
+            </div>
+          </header>
+          
+          <main className={cn("flex-1 overflow-y-auto p-6", isDarkMode ? "bg-gray-900" : "bg-gray-50")}>
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </TooltipProvider>
   );
 }

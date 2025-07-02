@@ -24,14 +24,16 @@ import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import NotFound from "./pages/NotFound";
 import { PerformanceOptimization } from "./components/optimization/PerformanceOptimization";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import "./App.css";
 
 const queryClient = new QueryClient();
 
 function App() {
   return (
-    <PerformanceOptimization>
-      <QueryClientProvider client={queryClient}>
+    <ErrorBoundary>
+      <PerformanceOptimization>
+        <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <TooltipProvider>
           <Toaster />
@@ -62,8 +64,9 @@ function App() {
             </BrowserRouter>
           </TooltipProvider>
         </HelmetProvider>
-      </QueryClientProvider>
-    </PerformanceOptimization>
+        </QueryClientProvider>
+      </PerformanceOptimization>
+    </ErrorBoundary>
   );
 }
 
