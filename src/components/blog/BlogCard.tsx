@@ -32,7 +32,8 @@ export function BlogCard({ post }: BlogCardProps) {
   
   // 디버깅을 위한 로그 추가
   console.log(`[BlogCard Debug] 포스트: ${post.title}`);
-  console.log(`[BlogCard Debug] coverImage: "${post.coverImage}"`);
+  console.log(`[BlogCard Debug] post.coverImage: "${post.coverImage}"`);
+  console.log(`[BlogCard Debug] (post as any).cover_image: "${(post as any).cover_image}"`);
   console.log(`[BlogCard Debug] extractedImage: "${extractedImage}"`);
   console.log(`[BlogCard Debug] categoryThumbnail: "${categoryThumbnail}"`);
   console.log(`[BlogCard Debug] post 전체:`, post);
