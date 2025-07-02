@@ -13,6 +13,9 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { RelatedPosts } from "@/components/blog/RelatedPosts";
+import { Breadcrumbs, createBlogPostBreadcrumbs } from "@/components/ui/breadcrumbs";
+import { getAllBlogPosts } from "@/services/blogPostService";
 
 // 일관된 도메인 사용
 const SITE_DOMAIN = 'https://alphagogogo.com';
@@ -53,6 +56,14 @@ export default function BlogPostPage() {
     staleTime: 10000, // 10초 캐시
     refetchOnWindowFocus: false,
     retry: 2
+  });
+
+  // 관련 포스트를 위한 전체 포스트 데이터
+  const { data: allPosts = [] } = useQuery({
+    queryKey: ["blog-posts", "all", "related"],
+    queryFn: getAllBlogPosts,
+    staleTime: 10 * 60 * 1000,
+    enabled: !!post, // 현재 포스트가 로드된 후에만 실행
   });
 
   // 디버깅을 위한 로깅
@@ -125,6 +136,9 @@ export default function BlogPostPage() {
   // 올바른 도메인으로 canonical URL 생성
   const canonicalUrl = `${SITE_DOMAIN}/blog/${post.slug || `post/${post.id}`}`;
   
+  // 브레드크럼 생성
+  const breadcrumbItems = createBlogPostBreadcrumbs(post.category, post.title);
+  
   return (
     <BlogLayout title={post.title}>
       <SEO 
@@ -142,7 +156,13 @@ export default function BlogPostPage() {
       />
       <BlogPostSchema post={post} url={canonicalUrl} />
       
-      <article className="max-w-4xl mx-auto bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="max-w-4xl mx-auto">
+        {/* 브레드크럼 네비게이션 */}
+        <div className="mb-6">
+          <Breadcrumbs items={breadcrumbItems} />
+        </div>
+        
+        <article className="bg-white rounded-lg shadow-sm overflow-hidden">
         {post.coverImage && (
           <div className="w-full h-80 overflow-hidden">
             <img 
@@ -251,9 +271,17 @@ export default function BlogPostPage() {
                 ))}
               </div>
             </div>
-          )}
-        </div>
-      </article>
+            )}
+          </div>
+        </article>
+        
+        {/* 관련 포스트 섹션 */}
+        <RelatedPosts 
+          currentPost={post} 
+          allPosts={allPosts}
+          maxCount={3}
+        />
+      </div>
       
       <BlogPasswordModal 
         isOpen={showAuthModal} 

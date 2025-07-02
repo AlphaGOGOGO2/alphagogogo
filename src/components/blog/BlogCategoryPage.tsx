@@ -7,6 +7,7 @@ import { BlogPost } from "@/types/blog";
 import { BlogGrid } from "@/components/blog/BlogGrid";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Breadcrumbs, createCategoryBreadcrumbs } from "@/components/ui/breadcrumbs";
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
@@ -137,6 +138,9 @@ export function BlogCategoryPage() {
     }
   };
   
+  // 브레드크럼 생성
+  const breadcrumbItems = createCategoryBreadcrumbs(categoryData.title);
+  
   return (
     <div className="min-h-screen flex flex-col">
       <SEO
@@ -152,6 +156,11 @@ export function BlogCategoryPage() {
       
       <main className="flex-1 py-12 px-6 md:px-8">
         <div className="max-w-7xl mx-auto">
+          {/* 브레드크럼 네비게이션 */}
+          <div className="mb-6">
+            <Breadcrumbs items={breadcrumbItems} />
+          </div>
+          
           <div className="mb-8">
             <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r ${categoryData.color} text-white mb-4`}>
               <span className="text-lg">{categoryData.icon}</span>
