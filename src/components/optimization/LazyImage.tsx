@@ -132,7 +132,7 @@ export function LazyImage({
         </div>
       ) : (
         <>
-          {!isLoaded && (
+          {!isLoaded && imageSrc && (
             <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
               <div className="w-8 h-8 border-2 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
             </div>
@@ -140,13 +140,13 @@ export function LazyImage({
           
           <img
             ref={imgRef}
-            src={imageSrc ? getOptimizedImageSrc(imageSrc) : ''}
+            src={imageSrc || src}
             alt={alt}
             loading={loading}
             decoding="async"
             width={width}
             height={height}
-            className={`${className} ${!isLoaded ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+            className={`${className} ${!isLoaded && imageSrc ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
             onLoad={handleLoad}
             onError={handleError}
             style={{ 
