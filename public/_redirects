@@ -8,7 +8,6 @@
 /api/functions/rss-feed https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
 
 # 추가 SEO 관련 리다이렉트
-/robots.txt /robots.txt 200
 /favicon.ico /favicon.ico 200
 
 # SPA fallback
