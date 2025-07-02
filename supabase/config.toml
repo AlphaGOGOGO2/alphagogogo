@@ -9,6 +9,9 @@ verify_jwt = false
 [functions.rss-feed]
 verify_jwt = false
 
+[functions.robots]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321
