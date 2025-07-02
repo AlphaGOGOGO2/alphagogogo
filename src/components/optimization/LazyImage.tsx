@@ -28,8 +28,13 @@ export function LazyImage({
 
   useEffect(() => {
     const img = imgRef.current;
-    if (!img || !src || src.trim() === '') {
-      setHasError(true);
+    if (!img) return;
+    
+    // src가 없거나 비어있으면 에러 상태로 설정하지 않고 그냥 리턴
+    if (!src || src.trim() === '') {
+      setHasError(false);
+      setIsLoaded(false);
+      setImageSrc('');
       return;
     }
 
@@ -80,7 +85,8 @@ export function LazyImage({
     return originalSrc;
   };
 
-  if (hasError) {
+  // src가 없으면 에러 메시지 대신 기본 이미지 표시
+  if (hasError && src && src.trim() !== '') {
     return (
       <div 
         className={`bg-gray-200 flex items-center justify-center ${className}`}
