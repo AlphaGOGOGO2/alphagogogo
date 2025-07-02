@@ -35,15 +35,18 @@ serve(async (req) => {
 
     console.log('사이트맵 생성 시작...');
 
-    // 모든 게시글 조회
+    // 모든 게시글 조회 - 더 상세한 로깅 추가
     const { data: posts, error: postsError } = await supabase
       .from('blog_posts')
       .select('*')
       .lte('published_at', new Date().toISOString())
       .order('published_at', { ascending: false });
 
+    console.log(`사이트맵: 포스트 쿼리 결과 - 성공: ${!postsError}, 포스트 수: ${posts?.length || 0}`);
+
     if (postsError) {
       console.error('Sitemap 포스트 조회 에러:', postsError);
+      console.error('포스트 에러 상세:', JSON.stringify(postsError));
     }
 
     // 모든 리소스 조회
@@ -54,6 +57,7 @@ serve(async (req) => {
 
     if (resourcesError) {
       console.error('Sitemap 리소스 조회 에러:', resourcesError);
+      console.error('리소스 에러 상세:', JSON.stringify(resourcesError));
     }
 
     console.log(`사이트맵: ${posts?.length || 0}개 포스트, ${resources?.length || 0}개 리소스 조회됨`);
@@ -89,11 +93,14 @@ serve(async (req) => {
 
     // 블로그 포스트들 추가
     if (posts && posts.length > 0) {
+      console.log(`사이트맵: ${posts.length}개 포스트 처리 시작`);
       for (const post of posts) {
         // slug가 있으면 slug 기반 URL, 없으면 ID 기반 URL
         const postUrl = (post.slug && post.slug.trim() !== '') ? 
           `/blog/${post.slug}` : 
           `/blog/post/${post.id}`;
+        
+        console.log(`포스트 URL 생성: ${post.title} -> ${postUrl}`);
         const lastmod = post.updated_at ? 
           new Date(post.updated_at).toISOString().split('T')[0] : 
           new Date(post.published_at).toISOString().split('T')[0];
@@ -129,6 +136,8 @@ serve(async (req) => {
     sitemapContent += '</urlset>';
 
     console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개, 리소스: ${resources?.length || 0}개`);
+    console.log(`총 예상 페이지 수: ${staticUrls.length + (posts?.length || 0) + (resources?.length || 0)}개`);
+    console.log(`생성된 사이트맵 크기: ${sitemapContent.length} 바이트`);
 
     return new Response(sitemapContent, {
       headers: {

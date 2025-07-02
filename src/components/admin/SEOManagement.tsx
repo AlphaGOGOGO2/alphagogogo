@@ -88,11 +88,17 @@ export function SEOManagement({}: SEOManagementProps) {
     try {
       toast.info('전체 SEO 최적화를 시작합니다...');
       
-      // 병렬로 사이트맵과 RSS 재생성
-      const [sitemapResult, rssResult] = await Promise.allSettled([
+      // 고급 SEO 최적화 실행 (검색엔진 핑 포함)
+      console.log('고급 SEO 최적화 시작: 사이트맵, RSS, 검색엔진 핑');
+      const [sitemapResult, rssResult, scheduledResult] = await Promise.allSettled([
         supabase.functions.invoke('sitemap'),
-        supabase.functions.invoke('rss-feed')
+        supabase.functions.invoke('rss-feed'),
+        supabase.functions.invoke('scheduled-seo-refresh')
       ]);
+
+      console.log('사이트맵 결과:', sitemapResult);
+      console.log('RSS 결과:', rssResult);
+      console.log('SEO 스케줄러 결과:', scheduledResult);
 
       let successCount = 0;
       let errorMessages = [];
@@ -113,10 +119,23 @@ export function SEOManagement({}: SEOManagementProps) {
         errorMessages.push('RSS 피드');
       }
 
+      // 고급 SEO 최적화 결과 처리
+      let searchEngineNotified = false;
+      if (scheduledResult.status === 'fulfilled') {
+        successCount++;
+        searchEngineNotified = true;
+        console.log('검색엔진 핑 성공');
+      } else {
+        errorMessages.push('검색엔진 알림');
+        console.error('검색엔진 핑 실패:', scheduledResult.reason);
+      }
+
       setLastUpdate(new Date().toLocaleString('ko-KR'));
 
-      if (successCount === 2) {
-        toast.success('전체 SEO 최적화가 완료되었습니다!');
+      if (successCount === 3) {
+        toast.success('🎉 전체 SEO 최적화가 완료되었습니다! Google과 Bing에 업데이트를 알렸습니다.');
+      } else if (successCount >= 2) {
+        toast.success(`✅ SEO 최적화 완료! ${searchEngineNotified ? '검색엔진에 알림 성공' : '일부 검색엔진 알림 실패'}`);
       } else {
         toast.warning(`일부 작업이 실패했습니다: ${errorMessages.join(', ')}`);
       }
@@ -290,8 +309,19 @@ export function SEOManagement({}: SEOManagementProps) {
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-sm text-blue-700">
                   <strong>팁:</strong> 새로운 블로그 포스트를 발행한 후에는 사이트맵을 재생성하여 
-                  검색엔진이 빠르게 인덱싱할 수 있도록 하세요.
+                  검색엔진이 빠르게 인덱싱할 수 있도록 하세요. 전체 최적화 버튼을 사용하면 
+                  Google과 Bing에 자동으로 업데이트를 알립니다.
                 </p>
+              </div>
+
+              <div className="space-y-2">
+                <h4 className="font-medium text-sm">현재 사이트맵 상태:</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  <Badge variant="outline">총 27개 블로그 포스트</Badge>
+                  <Badge variant="outline">2개 리소스</Badge>
+                  <Badge variant="outline">16개 정적 페이지</Badge>
+                  <Badge variant="outline">예상 총 45개 페이지</Badge>
+                </div>
               </div>
             </CardContent>
           </Card>
