@@ -30,8 +30,8 @@ export function LazyImage({
     const img = imgRef.current;
     if (!img) return;
     
-    // src가 null, undefined 또는 빈 문자열이면 에러 처리하지 않고 그냥 리턴
-    if (!src || src.trim() === '') {
+    // src가 유효하지 않으면 즉시 리턴
+    if (!src || src.trim() === '' || !isValidImageUrl(src)) {
       setHasError(false);
       setIsLoaded(false);
       setImageSrc('');

@@ -75,7 +75,7 @@ serve(async (req) => {
         title: postData.title,
         content: postData.content,
         category: postData.category,
-        cover_image: coverImageUrl,
+        cover_image: coverImageUrl || getCategoryThumbnail(postData.category),
         slug,
         read_time: readTime,
         excerpt,
@@ -121,7 +121,7 @@ serve(async (req) => {
         title: postData.title,
         content: postData.content,
         category: postData.category,
-        cover_image: coverImageUrl,
+        cover_image: coverImageUrl || getCategoryThumbnail(postData.category),
         read_time: readTime,
         excerpt,
         updated_at: new Date().toISOString()
@@ -249,12 +249,75 @@ function generateExcerpt(content) {
   return plainText.length > 300 ? plainText.substring(0, 297) + '...' : plainText;
 }
 
-// 첫 번째 이미지 URL 추출 함수
+// 첫 번째 이미지 URL 추출 함수 - 개선된 버전
 function extractFirstImageUrl(content) {
   if (!content) return null;
-  const imgTagRegex = /<img[^>]+src="([^">]+)"/;
-  const match = content.match(imgTagRegex);
-  return match ? match[1] : null;
+  
+  // 1. CKEditor figure 태그 우선 처리
+  const figureRegexes = [
+    /<figure[^>]*class=[^>]*image[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/figure>/is,
+    /<figure[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/figure>/is
+  ];
+  
+  for (const regex of figureRegexes) {
+    const match = content.match(regex);
+    if (match && match[1] && isValidImageUrl(match[1])) {
+      return match[1];
+    }
+  }
+  
+  // 2. 마크다운 이미지 문법: ![alt](url)
+  const markdownImgRegex = /!\[.*?\]\((.*?)\)/i;
+  const markdownMatch = content.match(markdownImgRegex);
+  
+  if (markdownMatch && markdownMatch[1] && isValidImageUrl(markdownMatch[1])) {
+    return markdownMatch[1];
+  }
+  
+  // 3. 일반 HTML img 태그들
+  const imgTagRegexes = [
+    /<img[^>]+src=['"]([^'"]+)['"]/i,
+    /<p[^>]*>.*?<img[^>]+src=['"]([^'"]+)['"][^>]*>.*?<\/p>/is
+  ];
+  
+  for (const regex of imgTagRegexes) {
+    const match = content.match(regex);
+    if (match && match[1] && isValidImageUrl(match[1])) {
+      return match[1];
+    }
+  }
+  
+  // 4. Base64 이미지 찾기
+  const base64Regex = /data:image\/[^;]+;base64,([A-Za-z0-9+/=]+)/i;
+  const base64Match = content.match(base64Regex);
+  
+  if (base64Match && base64Match[0]) {
+    return base64Match[0];
+  }
+  
+  return null;
+}
+
+// 이미지 URL 유효성 검사 함수
+function isValidImageUrl(url) {
+  if (!url || url.trim() === '') return false;
+  
+  // Base64 이미지인 경우
+  if (url.startsWith('data:image/')) return true;
+  
+  // HTTP/HTTPS URL인 경우
+  if (url.startsWith('http://') || url.startsWith('https://')) return true;
+  
+  // 상대 경로인 경우 (Supabase Storage 등)
+  if (url.startsWith('/') || url.startsWith('./')) return true;
+  
+  // 이미지 확장자 확인
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'];
+  const hasImageExtension = imageExtensions.some(ext => 
+    url.toLowerCase().includes(ext)
+  );
+  
+  return hasImageExtension;
 }
 
 // 슬러그 생성 함수 개선 - 비어있는 슬러그 방지
@@ -276,4 +339,20 @@ function generateSlug(title) {
   
   // 고유성 보장을 위한 타임스탬프와 랜덤값 추가
   return `${base}-${Date.now().toString().slice(-6)}-${Math.random().toString(36).substring(2, 6)}`;
+}
+
+// 카테고리별 기본 썸네일 이미지 제공 함수
+function getCategoryThumbnail(category) {
+  const thumbnails = {
+    'AI 뉴스': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '테크 리뷰': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '튜토리얼': 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    'ChatGPT 가이드': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '러브블 개발': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '최신 업데이트': 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '트렌딩': 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80',
+    '라이프스타일': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80'
+  };
+  
+  return thumbnails[category] || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80';
 }
