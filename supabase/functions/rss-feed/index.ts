@@ -84,7 +84,7 @@ serve(async (req) => {
     <lastBuildDate>${buildDate}</lastBuildDate>
     <pubDate>${buildDate}</pubDate>
     <ttl>60</ttl>
-    <atom:link href="${SITE_DOMAIN}/api/functions/rss-feed" rel="self" type="application/rss+xml"/>
+    <atom:link href="${SITE_DOMAIN}/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
     <webMaster>support@alphagogogo.com (알파고고고)</webMaster>
     <copyright>Copyright ${now.getFullYear()} 알파고고고. All rights reserved.</copyright>

@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { SEODashboard } from "@/components/admin/SEODashboard";
+import { SEOManagement } from "@/components/admin/SEOManagement";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -53,6 +54,7 @@ export default function AdminSettingsPage() {
       <Tabs defaultValue="seo-dashboard">
         <TabsList className="mb-6">
           <TabsTrigger value="seo-dashboard">SEO 대시보드</TabsTrigger>
+          <TabsTrigger value="seo-management">SEO 관리</TabsTrigger>
           <TabsTrigger value="general">일반 설정</TabsTrigger>
           <TabsTrigger value="seo">SEO 설정</TabsTrigger>
           <TabsTrigger value="advanced">고급 설정</TabsTrigger>
@@ -60,6 +62,10 @@ export default function AdminSettingsPage() {
         
         <TabsContent value="seo-dashboard">
           <SEODashboard />
+        </TabsContent>
+        
+        <TabsContent value="seo-management">
+          <SEOManagement />
         </TabsContent>
         
         <TabsContent value="general">

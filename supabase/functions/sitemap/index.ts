@@ -105,17 +105,23 @@ serve(async (req) => {
           new Date(post.updated_at).toISOString().split('T')[0] : 
           new Date(post.published_at).toISOString().split('T')[0];
 
+        // 카테고리별 변경 빈도 설정
+        const categoryChangefreq = getCategoryChangefreq(post.category);
+        const categoryPriority = getCategoryPriority(post.category);
+
         sitemapContent += `
   <url>
     <loc>${escapeXml(SITE_DOMAIN + postUrl)}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>`;
+    <changefreq>${categoryChangefreq}</changefreq>
+    <priority>${categoryPriority}</priority>`;
 
-        if (post.cover_image) {
+        // 이미지 처리 개선 - cover_image가 없어도 기본 이미지 포함
+        const imageUrl = post.cover_image || getCategoryThumbnail(post.category);
+        if (imageUrl && imageUrl.trim() !== '') {
           sitemapContent += `
     <image:image>
-      <image:loc>${escapeXml(post.cover_image)}</image:loc>
+      <image:loc>${escapeXml(imageUrl)}</image:loc>
       <image:title>${escapeXml(post.title || '')}</image:title>
       <image:caption>${escapeXml(post.excerpt || post.title || '')}</image:caption>
     </image:image>`;
@@ -170,3 +176,49 @@ serve(async (req) => {
     );
   }
 });
+
+// 카테고리별 변경 빈도 설정 함수
+function getCategoryChangefreq(category: string): string {
+  const changefreqMap: { [key: string]: string } = {
+    'AI 뉴스': 'daily',
+    '최신 업데이트': 'daily', 
+    '트렌딩': 'daily',
+    '테크 리뷰': 'weekly',
+    '튜토리얼': 'weekly',
+    'ChatGPT 가이드': 'weekly',
+    '러브블 개발': 'weekly',
+    '라이프스타일': 'weekly'
+  };
+  return changefreqMap[category] || 'monthly';
+}
+
+// 카테고리별 우선순위 설정 함수
+function getCategoryPriority(category: string): string {
+  const priorityMap: { [key: string]: string } = {
+    'AI 뉴스': '0.9',
+    '최신 업데이트': '0.9',
+    '트렌딩': '0.8',
+    '테크 리뷰': '0.7',
+    '튜토리얼': '0.8',
+    'ChatGPT 가이드': '0.7',
+    '러브블 개발': '0.6',
+    '라이프스타일': '0.5'
+  };
+  return priorityMap[category] || '0.6';
+}
+
+// 카테고리별 기본 썸네일 이미지 제공 함수
+function getCategoryThumbnail(category: string): string {
+  const thumbnails: { [key: string]: string } = {
+    'AI 뉴스': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '테크 리뷰': 'https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '튜토리얼': 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    'ChatGPT 가이드': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '러브블 개발': 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '최신 업데이트': 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '트렌딩': 'https://images.unsplash.com/photo-1611224923853-80b023f02d71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80',
+    '라이프스타일': 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80'
+  };
+  
+  return thumbnails[category] || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&h=630&q=80';
+}
