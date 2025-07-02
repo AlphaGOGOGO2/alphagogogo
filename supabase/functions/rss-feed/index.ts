@@ -45,8 +45,6 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_ANON_KEY') ?? ''
     );
 
-    console.log('RSS 피드 생성 시작...');
-
     // 모든 발행된 포스트 조회 (제한 없음)
     const { data: posts, error } = await supabase
       .from('blog_posts')
@@ -55,11 +53,8 @@ serve(async (req) => {
       .order('published_at', { ascending: false });
 
     if (error) {
-      console.error('RSS 포스트 조회 에러:', error);
       throw error;
     }
-
-    console.log(`RSS: ${posts?.length || 0}개 포스트 조회됨`);
 
     const now = new Date();
     const buildDate = now.toUTCString();
@@ -103,8 +98,6 @@ serve(async (req) => {
     }
 
     rssContent += '</channel></rss>';
-
-    console.log('RSS XML 생성 완료');
 
     return new Response(rssContent, {
       headers: {
