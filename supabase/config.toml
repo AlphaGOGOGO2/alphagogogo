@@ -4,6 +4,12 @@ project_id = "plimzlmmftdbpipbnhsy"
 [functions.fix-blog-thumbnails]
 verify_jwt = false
 
+[functions.sitemap]
+verify_jwt = false
+
+[functions.rss-feed]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321
