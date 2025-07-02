@@ -69,7 +69,9 @@ export function useChat() {
         .subscribe((status) => {
           setIsConnected(status === "SUBSCRIBED");
           isSubscribedRef.current = status === "SUBSCRIBED";
-          console.log("채팅 채널 상태:", status);
+          if (process.env.NODE_ENV === 'development') {
+            console.log("채팅 채널 상태:", status);
+          }
         });
 
       // 채널 참조 저장
@@ -78,7 +80,9 @@ export function useChat() {
       return () => {
         // 컴포넌트 언마운트 시 구독 해제
         if (channelRef.current) {
-          console.log("채팅 채널 구독 해제");
+          if (process.env.NODE_ENV === 'development') {
+            console.log("채팅 채널 구독 해제");
+          }
           channelRef.current.unsubscribe();
           isSubscribedRef.current = false;
         }

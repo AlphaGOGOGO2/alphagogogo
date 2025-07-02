@@ -38,10 +38,14 @@ export function usePresence(nickname: string, color: string) {
           setActiveUsersCount(count);
         })
         .on("presence", { event: "join" }, ({ key, newPresences }) => {
-          console.log(`사용자 참가: ${key}`, newPresences);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`사용자 참가: ${key}`, newPresences);
+          }
         })
         .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
-          console.log(`사용자 퇴장: ${key}`, leftPresences);
+          if (process.env.NODE_ENV === 'development') {
+            console.log(`사용자 퇴장: ${key}`, leftPresences);
+          }
         })
         .subscribe(async (status) => {
           if (status === "SUBSCRIBED") {
@@ -50,7 +54,9 @@ export function usePresence(nickname: string, color: string) {
             setIsConnected(true);
             isSubscribedRef.current = true;
           }
-          console.log("프레즌스 채널 상태:", status);
+          if (process.env.NODE_ENV === 'development') {
+            console.log("프레즌스 채널 상태:", status);
+          }
         });
 
       // 채널 참조 저장
@@ -59,7 +65,9 @@ export function usePresence(nickname: string, color: string) {
       return () => {
         // 컴포넌트 언마운트 시 구독 해제
         if (presenceChannelRef.current) {
-          console.log("프레즌스 채널 구독 해제");
+          if (process.env.NODE_ENV === 'development') {
+            console.log("프레즌스 채널 구독 해제");
+          }
           presenceChannelRef.current.unsubscribe();
           isSubscribedRef.current = false;
         }

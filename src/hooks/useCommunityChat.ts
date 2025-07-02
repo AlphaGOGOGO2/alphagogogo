@@ -161,16 +161,22 @@ export function useCommunityChat() {
     setIsLoading(true);
     setConnectionState('connecting');
     try {
-      console.log("Loading recent messages from Supabase");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("Loading recent messages from Supabase");
+      }
       const data = await fetchRecentMessages();
       
       if (data && data.length > 0) {
-        console.log(`Successfully loaded ${data.length} messages`);
+        if (process.env.NODE_ENV === 'development') {
+          console.log(`Successfully loaded ${data.length} messages`);
+        }
         setInitialMessages(data);
         setConnectionState('connected');
         messagesLoadedRef.current = true;
       } else {
-        console.log("No messages found or empty response");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("No messages found or empty response");
+        }
         setConnectionState('connected'); // 메시지가 없어도 연결은 성공한 것으로 간주
         messagesLoadedRef.current = true;
       }
@@ -277,7 +283,9 @@ export function useCommunityChat() {
     }
 
     const messageId = uuidv4();
-    console.log("Sending message:", { messageId, nickname, messageContent });
+    if (process.env.NODE_ENV === 'development') {
+      console.log("Sending message:", { messageId, nickname, messageContent });
+    }
     
     try {
       // 낙관적 UI 업데이트는 제거하고 실제 전송 성공 후 서버에서 받은 메시지만 표시

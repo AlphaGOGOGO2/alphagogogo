@@ -37,17 +37,18 @@ export function BlogCard({ post }: BlogCardProps) {
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
-    // 디버깅을 위한 로깅
-    console.log(`블로그 카드 클릭됨: 제목='${post.title}', ID=${post.id}, slug='${post.slug}'`);
-    
     // slug가 있으면 slug로, 없으면 id로 네비게이션
     if (post.slug && post.slug.trim() !== '') {
       navigate(`/blog/${post.slug}`);
-      console.log(`slug 기반 URL로 이동: /blog/${post.slug}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`slug 기반 URL로 이동: /blog/${post.slug}`);
+      }
     } else if (post.id) {
       // slug가 없는 경우 id를 사용
       navigate(`/blog/post/${post.id}`);
-      console.log(`포스트 ID로 이동: /blog/post/${post.id} (slug 누락)`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`포스트 ID로 이동: /blog/post/${post.id} (slug 누락)`);
+      }
     } else {
       console.error("블로그 포스트에 slug와 id가 모두 없습니다", post);
       // 기본 블로그 페이지로 리디렉션

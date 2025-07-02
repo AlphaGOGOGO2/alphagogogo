@@ -87,7 +87,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
         return prev; // 새 메시지가 없으면 상태 변경 안함
       }
       
-      console.log(`${newMessages.length}개의 새 메시지 추가`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`${newMessages.length}개의 새 메시지 추가`);
+      }
       
       // 타임스탬프 기준으로 정렬하여 추가
       const allMessages = [...prev, ...newMessages].sort((a, b) => 
@@ -113,7 +115,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   // 초기 메시지 업데이트
   useEffect(() => {
     if (initialMessages && initialMessages.length > 0) {
-      console.log("업데이트된 초기 메시지 수신:", initialMessages.length);
+      if (process.env.NODE_ENV === 'development') {
+        console.log("업데이트된 초기 메시지 수신:", initialMessages.length);
+      }
       
       // 초기화 시 메시지 ID 추적 세트 업데이트
       const newMessageIds = new Set<string>();
@@ -132,7 +136,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
   const cleanupChannel = useCallback(() => {
     if (channelRef.current) {
       try {
-        console.log("메시지 구독 채널 정리 중");
+        if (process.env.NODE_ENV === 'development') {
+          console.log("메시지 구독 채널 정리 중");
+        }
         setSubscriptionStatus('disconnected');
         supabase.removeChannel(channelRef.current);
       } catch (error) {
@@ -152,7 +158,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
 
   // 채널 상태 로깅 함수
   const logChannelStatus = useCallback((status: string) => {
-    console.log(`실시간 구독 상태: ${status} (시도: ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES})`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`실시간 구독 상태: ${status} (시도: ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES})`);
+    }
   }, []);
   
   // 채널 상태 확인 함수 추가
@@ -193,7 +201,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     const now = Date.now();
     // 재연결 쿨다운 검사
     if (now - lastReconnectTimeRef.current < CONNECTION_CONFIG.RECONNECT_COOLDOWN && connectionAttemptsRef.current > 0) {
-      console.log(`재연결 쿨다운 대기 중... (${CONNECTION_CONFIG.RECONNECT_COOLDOWN - (now - lastReconnectTimeRef.current)}ms 남음)`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`재연결 쿨다운 대기 중... (${CONNECTION_CONFIG.RECONNECT_COOLDOWN - (now - lastReconnectTimeRef.current)}ms 남음)`);
+      }
       setTimeout(setupMessageSubscription, CONNECTION_CONFIG.RECONNECT_COOLDOWN - (now - lastReconnectTimeRef.current));
       return;
     }
@@ -202,7 +212,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
     
     try {
       setSubscriptionStatus('connecting');
-      console.log("실시간 메시지 구독 설정 중");
+      if (process.env.NODE_ENV === 'development') {
+        console.log("실시간 메시지 구독 설정 중");
+      }
       connectionAttemptsRef.current += 1;
       
       // 채널 구독시 독립된 이름 사용 (타임스탬프로 고유화)
@@ -223,7 +235,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
             
             // 이벤트 타입에 따른 처리
             if (payload.eventType === 'INSERT') {
-              console.log("새 메시지 수신:", payload.new);
+              if (process.env.NODE_ENV === 'development') {
+                console.log("새 메시지 수신:", payload.new);
+              }
               const newMsg = payload.new as ChatMessage;
               addMessageIfNotExists(newMsg);
             }
@@ -257,7 +271,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
             
             if (status !== 'CLOSED' && connectionAttemptsRef.current < CONNECTION_CONFIG.MAX_RETRIES) {
               const delay = getBackoffDelay();
-              console.log(`재연결 시도 ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES}, ${delay}ms 후...`);
+              if (process.env.NODE_ENV === 'development') {
+                console.log(`재연결 시도 ${connectionAttemptsRef.current}/${CONNECTION_CONFIG.MAX_RETRIES}, ${delay}ms 후...`);
+              }
               
               // 재연결 지연
               setTimeout(() => {
@@ -329,7 +345,9 @@ export function useMessageSubscription(initialMessages: ChatMessage[] = []) {
       const endTime = Date.now();
       const pingTime = endTime - startTime;
       
-      console.log(`Ping 테스트 결과: ${pingTime}ms`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`Ping 테스트 결과: ${pingTime}ms`);
+      }
       return pingTime;
     } catch (error) {
       console.error("Ping 테스트 중 오류:", error);
