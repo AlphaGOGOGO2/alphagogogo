@@ -100,30 +100,17 @@ serve(async (req) => {
         // content 생성 (마크다운과 HTML 태그 제거)
         const cleanContent = post.content ? escapeXml(stripHtml(stripMarkdown(post.content))) : '';
 
-        rssContent += `
-    <item>
-      <title>${cleanTitle}</title>
-      <link>${postUrl}</link>
-      <guid isPermaLink="true">${postUrl}</guid>
-      <description>${description}</description>
-      <content:encoded><![CDATA[${cleanContent}]]></content:encoded>
-      <pubDate>${pubDate}</pubDate>
-      <dc:creator><![CDATA[${escapeXml(post.author_name || '알파고고고')}]]></dc:creator>
-      <category><![CDATA[${escapeXml(post.category || '일반')}]]></category>`;
+        rssContent += '<item><title>' + cleanTitle + '</title><link>' + postUrl + '</link><guid isPermaLink="true">' + postUrl + '</guid><description>' + description + '</description><content:encoded><![CDATA[' + cleanContent + ']]></content:encoded><pubDate>' + pubDate + '</pubDate><dc:creator><![CDATA[' + escapeXml(post.author_name || '알파고고고') + ']]></dc:creator><category><![CDATA[' + escapeXml(post.category || '일반') + ']]></category>';
 
         if (post.cover_image) {
-          rssContent += `
-      <enclosure url="${escapeXml(post.cover_image)}" type="image/jpeg"/>`;
+          rssContent += '<enclosure url="' + escapeXml(post.cover_image) + '" type="image/jpeg"/>';
         }
 
-        rssContent += `
-    </item>`;
+        rssContent += '</item>';
       }
     }
 
-    rssContent += `
-  </channel>
-</rss>`;
+    rssContent += '</channel></rss>';
 
     console.log('RSS XML 생성 완료');
 
@@ -137,7 +124,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('RSS 피드 생성 에러:', error);
     return new Response(
-      '<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0">\n  <channel>\n    <title>알파고고고 - RSS Feed Error</title>\n    <description>RSS 피드 생성 중 오류가 발생했습니다.</description>\n    <item>\n      <title>서비스 일시 중단</title>\n      <description>RSS 피드를 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</description>\n      <pubDate>' + new Date().toUTCString() + '</pubDate>\n    </item>\n  </channel>\n</rss>',
+      '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>알파고고고 - RSS Feed Error</title><description>RSS 피드 생성 중 오류가 발생했습니다.</description><item><title>서비스 일시 중단</title><description>RSS 피드를 생성하는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.</description><pubDate>' + new Date().toUTCString() + '</pubDate></item></channel></rss>',
       {
         status: 500,
         headers: {

@@ -84,13 +84,7 @@ serve(async (req) => {
 
     // 정적 페이지들 추가
     for (const { url, priority, changefreq } of staticUrls) {
-      sitemapContent += `
-  <url>
-    <loc>${escapeXml(SITE_DOMAIN + url)}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
-  </url>`;
+      sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + url) + '</loc><lastmod>' + today + '</lastmod><changefreq>' + changefreq + '</changefreq><priority>' + priority + '</priority></url>';
     }
 
     // 블로그 포스트들 추가
@@ -108,26 +102,15 @@ serve(async (req) => {
         const categoryChangefreq = getCategoryChangefreq(post.category);
         const categoryPriority = getCategoryPriority(post.category);
 
-        sitemapContent += `
-  <url>
-    <loc>${escapeXml(SITE_DOMAIN + postUrl)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>${categoryChangefreq}</changefreq>
-    <priority>${categoryPriority}</priority>`;
+        sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + postUrl) + '</loc><lastmod>' + lastmod + '</lastmod><changefreq>' + categoryChangefreq + '</changefreq><priority>' + categoryPriority + '</priority>';
 
         // 이미지 처리 개선 - cover_image가 없어도 기본 이미지 포함
         const imageUrl = post.cover_image || getCategoryThumbnail(post.category);
         if (imageUrl && imageUrl.trim() !== '') {
-          sitemapContent += `
-    <image:image>
-      <image:loc>${escapeXml(imageUrl)}</image:loc>
-      <image:title>${escapeXml(post.title || '')}</image:title>
-      <image:caption>${escapeXml(post.excerpt || post.title || '')}</image:caption>
-    </image:image>`;
+          sitemapContent += '<image:image><image:loc>' + escapeXml(imageUrl) + '</image:loc><image:title>' + escapeXml(post.title || '') + '</image:title><image:caption>' + escapeXml(post.excerpt || post.title || '') + '</image:caption></image:image>';
         }
 
-        sitemapContent += `
-  </url>`;
+        sitemapContent += '</url>';
       }
     }
 
@@ -139,18 +122,11 @@ serve(async (req) => {
           new Date(resource.updated_at).toISOString().split('T')[0] : 
           new Date(resource.created_at).toISOString().split('T')[0];
 
-        sitemapContent += `
-  <url>
-    <loc>${escapeXml(SITE_DOMAIN + resourceUrl)}</loc>
-    <lastmod>${lastmod}</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>`;
+        sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + resourceUrl) + '</loc><lastmod>' + lastmod + '</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>';
       }
     }
 
-    sitemapContent += `
-</urlset>`;
+    sitemapContent += '</urlset>';
 
     console.log(`사이트맵 XML 생성 완료 - 정적 페이지: ${staticUrls.length}개, 포스트: ${posts?.length || 0}개, 리소스: ${resources?.length || 0}개`);
 
@@ -164,7 +140,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Sitemap 생성 에러:', error);
     return new Response(
-      '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' + SITE_DOMAIN + '</loc><lastmod>' + new Date().toISOString().split('T')[0] + '</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>',
+      '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>' + SITE_DOMAIN + '</loc><lastmod>' + new Date().toISOString().split('T')[0] + '</lastmod><changefreq>daily</changefreq><priority>1.0</priority></url></urlset>',
       {
         status: 500,
         headers: {
