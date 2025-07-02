@@ -30,6 +30,13 @@ export function BlogCard({ post }: BlogCardProps) {
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
   const categoryThumbnail = getCategoryThumbnail(post.category);
   
+  // 디버깅을 위한 로그 추가
+  console.log(`[BlogCard Debug] 포스트: ${post.title}`);
+  console.log(`[BlogCard Debug] coverImage: "${post.coverImage}"`);
+  console.log(`[BlogCard Debug] extractedImage: "${extractedImage}"`);
+  console.log(`[BlogCard Debug] categoryThumbnail: "${categoryThumbnail}"`);
+  console.log(`[BlogCard Debug] post 전체:`, post);
+  
   // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본
   let cardImage = "";
   if (post.coverImage && post.coverImage.trim() !== '') {
