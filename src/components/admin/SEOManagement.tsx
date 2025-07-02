@@ -50,16 +50,16 @@ export function SEOManagement({}: SEOManagementProps) {
   const regenerateSitemap = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('sitemap');
+      const { data, error } = await supabase.functions.invoke('update-static-seo');
       if (error) throw error;
       
       setSitemapStatus('success');
       setLastUpdate(new Date().toLocaleString('ko-KR'));
-      toast.success('사이트맵이 성공적으로 재생성되었습니다.');
+      toast.success('정적 사이트맵이 성공적으로 업데이트되었습니다.');
     } catch (error) {
-      console.error('사이트맵 재생성 오류:', error);
+      console.error('정적 사이트맵 업데이트 오류:', error);
       setSitemapStatus('error');
-      toast.error('사이트맵 재생성에 실패했습니다.');
+      toast.error('정적 사이트맵 업데이트에 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -68,16 +68,16 @@ export function SEOManagement({}: SEOManagementProps) {
   const regenerateRSS = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('rss-feed');
+      const { data, error } = await supabase.functions.invoke('update-static-seo');
       if (error) throw error;
       
       setRssStatus('success');
       setLastUpdate(new Date().toLocaleString('ko-KR'));
-      toast.success('RSS 피드가 성공적으로 재생성되었습니다.');
+      toast.success('정적 RSS 피드가 성공적으로 업데이트되었습니다.');
     } catch (error) {
-      console.error('RSS 재생성 오류:', error);
+      console.error('정적 RSS 피드 업데이트 오류:', error);
       setRssStatus('error');
-      toast.error('RSS 피드 재생성에 실패했습니다.');
+      toast.error('정적 RSS 피드 업데이트에 실패했습니다.');
     } finally {
       setLoading(false);
     }
@@ -86,62 +86,34 @@ export function SEOManagement({}: SEOManagementProps) {
   const refreshAllSEO = async () => {
     setLoading(true);
     try {
-      toast.info('전체 SEO 최적화를 시작합니다...');
+      toast.info('정적 SEO 파일 업데이트를 시작합니다...');
       
-      // 고급 SEO 최적화 실행 (검색엔진 핑 포함)
-      console.log('고급 SEO 최적화 시작: 사이트맵, RSS, 검색엔진 핑');
-      const [sitemapResult, rssResult, scheduledResult] = await Promise.allSettled([
-        supabase.functions.invoke('sitemap'),
-        supabase.functions.invoke('rss-feed'),
-        supabase.functions.invoke('scheduled-seo-refresh')
-      ]);
+      // 정적 SEO 파일 업데이트 실행
+      console.log('정적 SEO 파일 업데이트 시작');
+      const { data, error } = await supabase.functions.invoke('update-static-seo');
 
-      console.log('사이트맵 결과:', sitemapResult);
-      console.log('RSS 결과:', rssResult);
-      console.log('SEO 스케줄러 결과:', scheduledResult);
-
-      let successCount = 0;
-      let errorMessages = [];
-
-      if (sitemapResult.status === 'fulfilled') {
-        setSitemapStatus('success');
-        successCount++;
-      } else {
+      if (error) {
+        console.error('정적 SEO 파일 업데이트 실패:', error);
         setSitemapStatus('error');
-        errorMessages.push('사이트맵');
-      }
-
-      if (rssResult.status === 'fulfilled') {
-        setRssStatus('success');
-        successCount++;
-      } else {
         setRssStatus('error');
-        errorMessages.push('RSS 피드');
+        toast.error('정적 SEO 파일 업데이트에 실패했습니다.');
+        return;
       }
 
-      // 고급 SEO 최적화 결과 처리
-      let searchEngineNotified = false;
-      if (scheduledResult.status === 'fulfilled') {
-        successCount++;
-        searchEngineNotified = true;
-        console.log('검색엔진 핑 성공');
-      } else {
-        errorMessages.push('검색엔진 알림');
-        console.error('검색엔진 핑 실패:', scheduledResult.reason);
-      }
-
+      console.log('정적 SEO 파일 업데이트 성공:', data);
+      
+      // 성공적으로 업데이트됨
+      setSitemapStatus('success');
+      setRssStatus('success');
       setLastUpdate(new Date().toLocaleString('ko-KR'));
 
-      if (successCount === 3) {
-        toast.success('🎉 전체 SEO 최적화가 완료되었습니다! Google과 Bing에 업데이트를 알렸습니다.');
-      } else if (successCount >= 2) {
-        toast.success(`✅ SEO 최적화 완료! ${searchEngineNotified ? '검색엔진에 알림 성공' : '일부 검색엔진 알림 실패'}`);
-      } else {
-        toast.warning(`일부 작업이 실패했습니다: ${errorMessages.join(', ')}`);
-      }
+      toast.success('🎉 정적 SEO 파일이 성공적으로 업데이트되었습니다! Google과 Bing에 알림을 보냈습니다.');
+      
     } catch (error) {
-      console.error('전체 SEO 최적화 오류:', error);
-      toast.error('SEO 최적화 중 오류가 발생했습니다.');
+      console.error('정적 SEO 파일 업데이트 오류:', error);
+      setSitemapStatus('error');
+      setRssStatus('error');
+      toast.error('정적 SEO 파일 업데이트 중 오류가 발생했습니다.');
     } finally {
       setLoading(false);
     }
@@ -185,21 +157,21 @@ export function SEOManagement({}: SEOManagementProps) {
       {/* 전체 SEO 상태 카드 */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="flex items-center gap-2">
-              <Globe className="w-5 h-5" />
-              SEO 상태 관리
-            </CardTitle>
-            <Button 
-              onClick={refreshAllSEO} 
-              disabled={loading}
-              variant="default"
-              className="gap-2"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              전체 최적화
-            </Button>
-          </div>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <Globe className="w-5 h-5" />
+                정적 SEO 파일 관리
+              </CardTitle>
+              <Button 
+                onClick={refreshAllSEO} 
+                disabled={loading}
+                variant="default"
+                className="gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                정적 파일 업데이트
+              </Button>
+            </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

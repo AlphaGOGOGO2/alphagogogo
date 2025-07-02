@@ -108,9 +108,9 @@ serve(async (req) => {
         await handleTags(supabase, data.id, postData.tags);
       }
       
-      // SEO 자동 갱신: 새 포스트 발행 시 사이트맵과 RSS 피드 자동 갱신
-      console.log("SEO 자동 갱신 시작...");
-      await refreshSEOFeeds(supabase);
+      // SEO 자동 갱신: 새 포스트 발행 시 정적 SEO 파일 업데이트
+      console.log("정적 SEO 파일 업데이트 시작...");
+      await updateStaticSEOFiles();
       
       result = data;
       
@@ -168,9 +168,9 @@ serve(async (req) => {
         }
       }
       
-      // SEO 자동 갱신: 포스트 업데이트 시에도 사이트맵과 RSS 피드 갱신
-      console.log("SEO 자동 갱신 시작...");
-      await refreshSEOFeeds(supabase);
+      // SEO 자동 갱신: 포스트 업데이트 시에도 정적 SEO 파일 업데이트
+      console.log("정적 SEO 파일 업데이트 시작...");
+      await updateStaticSEOFiles();
       
       result = data;
     } else {
@@ -365,62 +365,30 @@ function getCategoryThumbnail(category) {
   return thumbnails[category] || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80';
 }
 
-// SEO 피드 자동 갱신 함수
-async function refreshSEOFeeds(supabase) {
+// 정적 SEO 파일 업데이트 함수
+async function updateStaticSEOFiles() {
   try {
-    console.log("사이트맵과 RSS 피드 자동 갱신 중...");
+    console.log("정적 SEO 파일 업데이트 중...");
     
-    // 사이트맵과 RSS 피드를 병렬로 갱신
-    const promises = [];
+    // update-static-seo Edge Function 호출
+    const response = await fetch('https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/update-static-seo', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        'Content-Type': 'application/json'
+      }
+    });
     
-    // 사이트맵 갱신
-    promises.push(
-      fetch('https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-        }
-      }).then(response => {
-        if (response.ok) {
-          console.log("✅ 사이트맵 자동 갱신 완료");
-          return { type: 'sitemap', success: true };
-        } else {
-          console.error("❌ 사이트맵 갱신 실패:", response.status);
-          return { type: 'sitemap', success: false };
-        }
-      }).catch(error => {
-        console.error("❌ 사이트맵 갱신 오류:", error);
-        return { type: 'sitemap', success: false };
-      })
-    );
-    
-    // RSS 피드 갱신
-    promises.push(
-      fetch('https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
-        }
-      }).then(response => {
-        if (response.ok) {
-          console.log("✅ RSS 피드 자동 갱신 완료");
-          return { type: 'rss', success: true };
-        } else {
-          console.error("❌ RSS 피드 갱신 실패:", response.status);
-          return { type: 'rss', success: false };
-        }
-      }).catch(error => {
-        console.error("❌ RSS 피드 갱신 오류:", error);
-        return { type: 'rss', success: false };
-      })
-    );
-    
-    // 모든 갱신 작업 완료 대기
-    const results = await Promise.allSettled(promises);
-    console.log("SEO 피드 자동 갱신 결과:", results);
-    
+    if (response.ok) {
+      const result = await response.json();
+      console.log("✅ 정적 SEO 파일 업데이트 완료:", result);
+      return { success: true, result };
+    } else {
+      console.error("❌ 정적 SEO 파일 업데이트 실패:", response.status);
+      return { success: false, error: 'HTTP ' + response.status };
+    }
   } catch (error) {
-    console.error("SEO 피드 자동 갱신 중 오류:", error);
-    // 오류가 발생해도 포스트 저장은 계속 진행
+    console.error("❌ 정적 SEO 파일 업데이트 중 오류:", error);
+    return { success: false, error: error.message };
   }
 }

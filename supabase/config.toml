@@ -15,6 +15,9 @@ verify_jwt = false
 [functions.scheduled-seo-refresh]
 verify_jwt = false
 
+[functions.update-static-seo]
+verify_jwt = false
+
 [api]
 enabled = true
 port = 54321

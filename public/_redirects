@@ -1,12 +1,3 @@
-# Edge Function으로 리다이렉트 (서버 사이드) - SEO 최적화
-/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
-/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
-/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200
-
-# 레거시 API 경로들도 리다이렉트
-/api/functions/sitemap https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
-/api/functions/rss-feed https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
-
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200
 
