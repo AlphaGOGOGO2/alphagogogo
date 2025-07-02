@@ -97,7 +97,10 @@ serve(async (req) => {
     // 블로그 포스트들 추가
     if (posts && posts.length > 0) {
       for (const post of posts) {
-        const postUrl = post.slug ? `/blog/${post.slug}` : `/blog/post/${post.id}`;
+        // slug가 있으면 slug 기반 URL, 없으면 ID 기반 URL
+        const postUrl = (post.slug && post.slug.trim() !== '') ? 
+          `/blog/${post.slug}` : 
+          `/blog/post/${post.id}`;
         const lastmod = post.updated_at ? 
           new Date(post.updated_at).toISOString().split('T')[0] : 
           new Date(post.published_at).toISOString().split('T')[0];

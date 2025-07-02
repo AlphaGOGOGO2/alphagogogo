@@ -56,13 +56,12 @@ serve(async (req) => {
 
     console.log('RSS 피드 생성 시작...');
 
-    // 최신 50개 포스트 조회 (더 많은 포스트 포함)
+    // 모든 발행된 포스트 조회 (제한 없음)
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('*')
       .lte('published_at', new Date().toISOString())
-      .order('published_at', { ascending: false })
-      .limit(50);
+      .order('published_at', { ascending: false });
 
     if (error) {
       console.error('RSS 포스트 조회 에러:', error);
@@ -104,7 +103,8 @@ serve(async (req) => {
     // 포스트 아이템들 추가
     if (posts && posts.length > 0) {
       for (const post of posts) {
-        const postUrl = post.slug ? 
+        // slug가 있으면 slug 기반 URL, 없으면 ID 기반 URL
+        const postUrl = (post.slug && post.slug.trim() !== '') ? 
           `${SITE_DOMAIN}/blog/${post.slug}` : 
           `${SITE_DOMAIN}/blog/post/${post.id}`;
         
