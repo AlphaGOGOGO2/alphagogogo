@@ -108,6 +108,10 @@ serve(async (req) => {
         await handleTags(supabase, data.id, postData.tags);
       }
       
+      // SEO 자동 갱신: 새 포스트 발행 시 사이트맵과 RSS 피드 자동 갱신
+      console.log("SEO 자동 갱신 시작...");
+      await refreshSEOFeeds(supabase);
+      
       result = data;
       
     } else if (action === "update") {
@@ -163,6 +167,10 @@ serve(async (req) => {
           await handleTags(supabase, postId, postData.tags);
         }
       }
+      
+      // SEO 자동 갱신: 포스트 업데이트 시에도 사이트맵과 RSS 피드 갱신
+      console.log("SEO 자동 갱신 시작...");
+      await refreshSEOFeeds(supabase);
       
       result = data;
     } else {
@@ -355,4 +363,64 @@ function getCategoryThumbnail(category) {
   };
   
   return thumbnails[category] || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80';
+}
+
+// SEO 피드 자동 갱신 함수
+async function refreshSEOFeeds(supabase) {
+  try {
+    console.log("사이트맵과 RSS 피드 자동 갱신 중...");
+    
+    // 사이트맵과 RSS 피드를 병렬로 갱신
+    const promises = [];
+    
+    // 사이트맵 갱신
+    promises.push(
+      fetch('https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        }
+      }).then(response => {
+        if (response.ok) {
+          console.log("✅ 사이트맵 자동 갱신 완료");
+          return { type: 'sitemap', success: true };
+        } else {
+          console.error("❌ 사이트맵 갱신 실패:", response.status);
+          return { type: 'sitemap', success: false };
+        }
+      }).catch(error => {
+        console.error("❌ 사이트맵 갱신 오류:", error);
+        return { type: 'sitemap', success: false };
+      })
+    );
+    
+    // RSS 피드 갱신
+    promises.push(
+      fetch('https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`,
+        }
+      }).then(response => {
+        if (response.ok) {
+          console.log("✅ RSS 피드 자동 갱신 완료");
+          return { type: 'rss', success: true };
+        } else {
+          console.error("❌ RSS 피드 갱신 실패:", response.status);
+          return { type: 'rss', success: false };
+        }
+      }).catch(error => {
+        console.error("❌ RSS 피드 갱신 오류:", error);
+        return { type: 'rss', success: false };
+      })
+    );
+    
+    // 모든 갱신 작업 완료 대기
+    const results = await Promise.allSettled(promises);
+    console.log("SEO 피드 자동 갱신 결과:", results);
+    
+  } catch (error) {
+    console.error("SEO 피드 자동 갱신 중 오류:", error);
+    // 오류가 발생해도 포스트 저장은 계속 진행
+  }
 }
