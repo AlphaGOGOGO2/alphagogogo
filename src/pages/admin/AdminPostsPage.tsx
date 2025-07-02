@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { formatDate } from "@/lib/utils";
 import { Edit, Plus, Search, ExternalLink, SortDesc, SortAsc } from "lucide-react";
+import { BlogWriteModal } from "@/components/admin/BlogWriteModal";
+import { BlogPost } from "@/types/blog";
 import { 
   Table, 
   TableBody, 
@@ -21,6 +23,10 @@ export default function AdminPostsPage() {
   // 검색어 및 정렬 상태
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  
+  // 모달 상태
+  const [isWriteModalOpen, setIsWriteModalOpen] = useState(false);
+  const [editingPost, setEditingPost] = useState<BlogPost | null>(null);
   
   // 블로그 포스트 데이터 가져오기 (관리자용 함수 사용)
   const { data: posts = [], isLoading } = useQuery({
@@ -70,11 +76,9 @@ export default function AdminPostsPage() {
           </Button>
         </div>
         
-        <Button asChild>
-          <a href="/blog/write" target="_blank" rel="noopener noreferrer">
-            <Plus className="h-4 w-4 mr-2" />
-            새 포스트 작성
-          </a>
+        <Button onClick={() => setIsWriteModalOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          새 포스트 작성
         </Button>
       </div>
       
@@ -112,10 +116,16 @@ export default function AdminPostsPage() {
                   <TableCell>{post.updatedAt ? formatDate(post.updatedAt) : "-"}</TableCell>
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link to={`/blog/edit/${post.slug}`} title="포스트 편집">
-                          <Edit className="h-4 w-4" />
-                        </Link>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => {
+                          setEditingPost(post);
+                          setIsWriteModalOpen(true);
+                        }}
+                        title="포스트 편집"
+                      >
+                        <Edit className="h-4 w-4" />
                       </Button>
                       <Button variant="ghost" size="icon" asChild>
                         <a href={`/blog/${post.slug}`} target="_blank" rel="noopener noreferrer" title="포스트 보기">
@@ -138,6 +148,15 @@ export default function AdminPostsPage() {
       <div className="mt-4 text-sm text-gray-500">
         총 {filteredPosts.length}개의 포스트
       </div>
+      
+      <BlogWriteModal 
+        isOpen={isWriteModalOpen}
+        onClose={() => {
+          setIsWriteModalOpen(false);
+          setEditingPost(null);
+        }}
+        postToEdit={editingPost}
+      />
     </AdminLayout>
   );
 }
