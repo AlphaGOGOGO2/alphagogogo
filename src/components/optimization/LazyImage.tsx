@@ -28,7 +28,10 @@ export function LazyImage({
 
   useEffect(() => {
     const img = imgRef.current;
-    if (!img) return;
+    if (!img || !src || src.trim() === '') {
+      setHasError(true);
+      return;
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {

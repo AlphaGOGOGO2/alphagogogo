@@ -26,8 +26,8 @@ export function BlogCard({ post }: BlogCardProps) {
   // 마크다운 제거된 excerpt
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
   
-  // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출)
-  const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content));
+  // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출, 없으면 기본 이미지)
+  const cardImage = post.coverImage || (post.content && extractFirstImageUrl(post.content)) || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80";
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
@@ -64,17 +64,15 @@ export function BlogCard({ post }: BlogCardProps) {
       }}
     >
       <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
-        {cardImage && (
-          <div className="block overflow-hidden h-48">
-            <LazyImage
-              src={cardImage}
-              alt={displayTitle}
-              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-              width={400}
-              height={192}
-            />
-          </div>
-        )}
+        <div className="block overflow-hidden h-48">
+          <LazyImage
+            src={cardImage}
+            alt={displayTitle}
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            width={400}
+            height={192}
+          />
+        </div>
         <div className="p-5 flex-grow flex flex-col">
           <div className="mb-3">
             <span className="text-xs px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
