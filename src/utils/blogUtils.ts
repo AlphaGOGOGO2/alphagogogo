@@ -111,7 +111,6 @@ export const extractFirstImageUrl = (content: string): string | null => {
   for (const regex of figureRegexes) {
     const match = content.match(regex);
     if (match && match[1] && isValidImageUrl(match[1])) {
-      console.log('이미지 추출 성공 (figure):', match[1]);
       return match[1];
     }
   }
@@ -121,7 +120,6 @@ export const extractFirstImageUrl = (content: string): string | null => {
   const markdownMatch = content.match(markdownImgRegex);
   
   if (markdownMatch && markdownMatch[2] && isValidImageUrl(markdownMatch[2])) {
-    console.log('이미지 추출 성공 (markdown):', markdownMatch[2]);
     return markdownMatch[2];
   }
   
@@ -137,7 +135,6 @@ export const extractFirstImageUrl = (content: string): string | null => {
     const match = content.match(regex);
     const url = match && match.length > 1 ? (match[2] || match[1]) : null;
     if (url && isValidImageUrl(url)) {
-      console.log('이미지 추출 성공 (HTML):', url);
       return url;
     }
   }
@@ -147,11 +144,9 @@ export const extractFirstImageUrl = (content: string): string | null => {
   const base64Match = content.match(base64Regex);
   
   if (base64Match && base64Match[0]) {
-    console.log('이미지 추출 성공 (Base64)');
     return base64Match[0];
   }
   
-  console.log('이미지 추출 실패:', content.substring(0, 200) + '...');
   return null;
 };
 

@@ -108,7 +108,6 @@ export function LazyImage({
 
   // 이미지 로드 실패 시 기본 플레이스홀더 표시
   if (hasError && src && src.trim() !== '') {
-    console.warn('LazyImage 로드 실패:', src);
     return (
       <div className={`w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center ${className}`}>
         <div className="text-purple-500 opacity-60">
