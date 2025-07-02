@@ -26,32 +26,19 @@ export function BlogCard({ post }: BlogCardProps) {
   // 마크다운 제거된 excerpt
   const cleanExcerpt = stripMarkdown(post.excerpt ?? "");
   
-  // 카드 이미지 설정 - 강화된 우선순위와 폴백 로직
+  // 카드 이미지 설정 - 단순화된 우선순위 로직
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
   const categoryThumbnail = getCategoryThumbnail(post.category);
   
-  // 디버깅을 위한 로그 추가
-  console.log(`[BlogCard Debug] 포스트: ${post.title}`);
-  console.log(`[BlogCard Debug] post.coverImage: "${post.coverImage}"`);
-  console.log(`[BlogCard Debug] (post as any).cover_image: "${(post as any).cover_image}"`);
-  console.log(`[BlogCard Debug] extractedImage: "${extractedImage}"`);
-  console.log(`[BlogCard Debug] categoryThumbnail: "${categoryThumbnail}"`);
-  console.log(`[BlogCard Debug] post 전체:`, post);
-  
-  // 이미지 우선순위: cover_image → content에서 추출 → 카테고리별 기본
+  // 이미지 우선순위: coverImage → content에서 추출 → 카테고리별 기본
   let cardImage = "";
-  // 데이터베이스에서는 cover_image로 저장되므로 이를 확인
-  const coverImage = (post as any).cover_image || post.coverImage;
   
-  if (coverImage && coverImage.trim() !== '') {
-    cardImage = coverImage;
-    console.log(`[BlogCard] Cover image 사용: ${coverImage}`);
+  if (post.coverImage && post.coverImage.trim() !== '') {
+    cardImage = post.coverImage;
   } else if (extractedImage) {
     cardImage = extractedImage;
-    console.log(`[BlogCard] 추출된 이미지 사용: ${extractedImage}`);
   } else {
     cardImage = categoryThumbnail;
-    console.log(`[BlogCard] 카테고리 기본 이미지 사용: ${categoryThumbnail}`);
   }
   
 
@@ -97,10 +84,6 @@ export function BlogCard({ post }: BlogCardProps) {
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             width={400}
             height={192}
-            onError={() => {
-              // 이미지 로딩 실패 시 카테고리 기본 이미지로 대체
-              console.log(`[BlogCard] 이미지 로딩 실패, 카테고리 기본 이미지로 대체: ${cardImage} → ${categoryThumbnail}`);
-            }}
           />
         </div>
         <div className="p-5 flex-grow flex flex-col">
