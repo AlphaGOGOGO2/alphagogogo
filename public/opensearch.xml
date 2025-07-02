@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>알파고고고</ShortName>
+  <Description>알파고고고 사이트 검색</Description>
+  <Url type="text/html" template="https://alphagogogo.com/search?q={searchTerms}"/>
+  <Url type="application/x-suggestions+json" template="https://alphagogogo.com/api/suggestions?q={searchTerms}"/>
+  <Image height="16" width="16" type="image/x-icon">https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png</Image>
+  <Image height="64" width="64" type="image/png">https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png</Image>
+  <InputEncoding>UTF-8</InputEncoding>
+  <OutputEncoding>UTF-8</OutputEncoding>
+  <Language>ko-kr</Language>
+  <Developer>알파고고고</Developer>
+  <Contact>support@alphagogogo.com</Contact>
+  <Tags>AI 블로그 인사이트 뉴스</Tags>
+  <LongName>알파고고고 - AI 소식 & 인사이트 검색</LongName>
+</OpenSearchDescription>

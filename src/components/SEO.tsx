@@ -60,9 +60,14 @@ export function SEO({
       <meta name="description" content={optimizedDescription} />
       <link rel="canonical" href={normalizedCanonical} />
       
-      {/* 검색엔진 사이트 인증 메타 태그 - 실제 값으로 교체 필요 */}
+      {/* 검색엔진 사이트 인증 메타 태그 */}
       <meta name="google-site-verification" content="CJ9ZtF3aqgbLnIQqZF-mZ2rF7E6XkLhP8VzSaQqJpxs" />
       <meta name="naver-site-verification" content="d181058ce6b8b7b3c86efe4a48bb678f2b735694" />
+      
+      {/* 추가 검색엔진 최적화 */}
+      <meta name="msvalidate.01" content="" />
+      <meta name="yandex-verification" content="" />
+      <meta name="baidu-site-verification" content="" />
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
@@ -115,9 +120,14 @@ export function SEO({
         </>
       )}
       
-      {/* RSS 피드 및 사이트맵 링크 (표준 경로로 수정) */}
+      {/* RSS 피드 및 사이트맵 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
       <link rel="sitemap" type="application/xml" title="Sitemap" href={`${SITE_DOMAIN}/sitemap.xml`} />
+      
+      {/* 추가 검색 최적화 */}
+      <link rel="search" type="application/opensearchdescription+xml" href={`${SITE_DOMAIN}/opensearch.xml`} title="알파고고고 검색" />
+      <meta name="google" content="notranslate" />
+      <meta name="generator" content="알파고고고 - AI 소식 & 인사이트" />
       
       {/* 파비콘 및 아이콘 */}
       <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />

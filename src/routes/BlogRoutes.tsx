@@ -38,11 +38,8 @@ export function BlogRoutes() {
       <Route path="/chatgpt-guides" element={<ChatGPTGuidesPage />} />
       <Route path="/lovable-dev" element={<LovableDevPage />} />
       
-      {/* Slug 기반 포스트 라우트 (카테고리보다 우선) */}
+      {/* Slug 기반 포스트 라우트 (우선순위 높음) */}
       <Route path="/:slug" element={<BlogPostPage />} />
-      
-      {/* 동적 카테고리 페이지 (최후 fallback) */}
-      <Route path="/:category" element={<BlogCategoryPage />} />
     </Routes>
   );
 }
