@@ -30,8 +30,6 @@ export function BlogCard({ post }: BlogCardProps) {
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
   const cardImage = post.coverImage || extractedImage || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80";
   
-  // 디버깅 로그
-  console.log(`[BlogCard] 포스트 ${post.title}: coverImage="${post.coverImage}", extractedImage="${extractedImage}", 최종 cardImage="${cardImage}"`);
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
@@ -88,8 +86,8 @@ export function BlogCard({ post }: BlogCardProps) {
               {displayTitle}
             </h3>
           </div>
-          <p className="text-gray-600 text-sm mb-4 flex-grow">
-            {cleanExcerpt}
+          <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
+            {cleanExcerpt.length > 150 ? `${cleanExcerpt.substring(0, 150)}...` : cleanExcerpt}
           </p>
           {/* 태그가 있을 경우 표시 */}
           {post.tags && post.tags.length > 0 && (

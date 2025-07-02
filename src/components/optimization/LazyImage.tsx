@@ -64,7 +64,6 @@ export function LazyImage({
   };
 
   const handleError = () => {
-    console.log(`[LazyImage] 이미지 로드 실패: ${src}`);
     setHasError(true);
     onError?.();
   };
@@ -86,14 +85,15 @@ export function LazyImage({
     return originalSrc;
   };
 
-  // src가 없으면 에러 메시지 대신 기본 이미지 표시
-  if (hasError && src && src.trim() !== '') {
+  // 이미지 로드 실패 시 기본 플레이스홀더 표시
+  if (hasError) {
     return (
-      <div 
-        className={`bg-gray-200 flex items-center justify-center ${className}`}
-        style={{ width, height }}
-      >
-        <span className="text-gray-500 text-sm">이미지를 불러올 수 없습니다</span>
+      <div className="w-full h-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
+        <div className="text-purple-500 opacity-60">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+          </svg>
+        </div>
       </div>
     );
   }
