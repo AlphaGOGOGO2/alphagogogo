@@ -64,6 +64,7 @@ export function LazyImage({
   };
 
   const handleError = () => {
+    console.log(`[LazyImage] 이미지 로드 실패: ${src}`);
     setHasError(true);
     onError?.();
   };

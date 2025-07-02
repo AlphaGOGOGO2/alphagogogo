@@ -29,6 +29,9 @@ export function BlogCard({ post }: BlogCardProps) {
   // 카드 이미지 설정 (커버 이미지 또는 본문에서 추출, 없으면 기본 이미지)
   const extractedImage = post.content ? extractFirstImageUrl(post.content) : null;
   const cardImage = post.coverImage || extractedImage || "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80";
+  
+  // 디버깅 로그
+  console.log(`[BlogCard] 포스트 ${post.title}: coverImage="${post.coverImage}", extractedImage="${extractedImage}", 최종 cardImage="${cardImage}"`);
 
   // 블로그 카드 클릭 핸들러 - 개선된 네비게이션 처리
   const handleCardClick = () => {
