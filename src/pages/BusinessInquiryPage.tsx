@@ -2,14 +2,9 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { Mail, Handshake, Megaphone, Code, Users, Globe, PenTool, FileText } from "lucide-react";
 import { SEO } from "@/components/SEO";
-
 export default function BusinessInquiryPage() {
-  return (
-    <>
-      <SEO 
-        title="비즈니스 문의 | 알파블로그" 
-        description="알파블로그에 비즈니스 제휴 및 협업에 대한 문의를 보내주세요." 
-      />
+  return <>
+      <SEO title="비즈니스 문의 | 알파블로그" description="알파블로그에 비즈니스 제휴 및 협업에 대한 문의를 보내주세요." />
       
       <Navbar />
       
@@ -74,7 +69,7 @@ export default function BusinessInquiryPage() {
                     커뮤니티 운영
                   </h3>
                   <div className="space-y-2">
-                    <p className="text-gray-700">• 3개의 AI 오픈 커뮤니티 운영</p>
+                    <p className="text-gray-700">• 5,000명을 보유한 AI 오픈 커뮤니티 운영</p>
                     <p className="text-gray-700">• AI 정보 공유 및 네트워킹 활성화</p>
                   </div>
                 </div>
@@ -378,6 +373,5 @@ export default function BusinessInquiryPage() {
       </main>
       
       <Footer />
-    </>
-  );
+    </>;
 }
