@@ -65,9 +65,14 @@ export function SEO({
       <meta name="naver-site-verification" content="d181058ce6b8b7b3c86efe4a48bb678f2b735694" />
       
       {/* 추가 검색엔진 최적화 */}
-      <meta name="msvalidate.01" content="" />
-      <meta name="yandex-verification" content="" />
-      <meta name="baidu-site-verification" content="" />
+      <meta name="msvalidate.01" content="placeholder-bing-verification" />
+      <meta name="yandex-verification" content="placeholder-yandex-verification" />
+      <meta name="baidu-site-verification" content="placeholder-baidu-verification" />
+      
+      {/* 추가 SEO 메타 태그 */}
+      <meta name="referrer" content="origin-when-cross-origin" />
+      <meta name="color-scheme" content="light dark" />
+      <meta httpEquiv="content-language" content="ko-KR" />
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
