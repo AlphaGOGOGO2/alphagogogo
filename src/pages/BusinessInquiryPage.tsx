@@ -27,6 +27,82 @@ export default function BusinessInquiryPage() {
           </div>
         </section>
         
+        {/* 프로필 섹션 */}
+        <section className="pb-12 px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="bg-gradient-to-br from-purple-50 via-white to-purple-50/30 rounded-2xl p-8 md:p-12 shadow-lg border border-purple-100/50 mb-16">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-800 to-purple-600 bg-clip-text text-transparent mb-3">
+                  프로필
+                </h2>
+                <p className="text-lg font-medium text-gray-700 mb-2">AI 콘텐츠 크리에이터 & 에듀테이너 & AI 디렉터</p>
+              </div>
+              
+              <div className="grid md:grid-cols-2 gap-8">
+                {/* 주요 활동 */}
+                <div className="bg-white/70 rounded-xl p-6 shadow-sm border border-purple-100/30">
+                  <h3 className="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-purple-600 mr-3"></div>
+                    주요 활동
+                  </h3>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="font-medium text-gray-800">유튜브 채널 '알파GOGOGO' 운영자</p>
+                      <p className="text-sm text-gray-600">• 단기간에 구독자 2.6만명 달성</p>
+                      <p className="text-sm text-gray-600">• AI 활용법과 실전 노하우를 담은 콘텐츠 제작</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* 전문 분야 */}
+                <div className="bg-white/70 rounded-xl p-6 shadow-sm border border-purple-100/30">
+                  <h3 className="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-purple-600 mr-3"></div>
+                    전문 분야
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700">• AI를 활용한 퍼스널 브랜딩</p>
+                    <p className="text-gray-700">• 바이브코딩(Vibe Coding)</p>
+                    <p className="text-gray-700">• AI 도구 활용 및 응용 교육</p>
+                  </div>
+                </div>
+                
+                {/* 커뮤니티 운영 */}
+                <div className="bg-white/70 rounded-xl p-6 shadow-sm border border-purple-100/30">
+                  <h3 className="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-purple-600 mr-3"></div>
+                    커뮤니티 운영
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700">• 3개의 AI 오픈 커뮤니티 운영</p>
+                    <p className="text-gray-700">• AI 정보 공유 및 네트워킹 활성화</p>
+                  </div>
+                </div>
+                
+                {/* 강연 활동 */}
+                <div className="bg-white/70 rounded-xl p-6 shadow-sm border border-purple-100/30">
+                  <h3 className="text-xl font-bold text-purple-800 mb-4 flex items-center">
+                    <div className="w-2 h-2 rounded-full bg-purple-600 mr-3"></div>
+                    강연 활동
+                  </h3>
+                  <div className="space-y-2">
+                    <p className="text-gray-700">• 온·오프라인 AI 교육 강연</p>
+                    <p className="text-gray-700">• 실무 중심의 AI 활용법 전파</p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* 핵심 가치 */}
+              <div className="mt-8 text-center bg-gradient-to-r from-purple-100/50 to-purple-50/30 rounded-xl p-6 border border-purple-200/30">
+                <h3 className="text-lg font-bold text-purple-800 mb-3">핵심 가치</h3>
+                <p className="text-gray-700 italic leading-relaxed max-w-3xl mx-auto">
+                  "AI를 통해 누구나 자신만의 브랜드를 만들고, 창의적인 결과물을 만들어낼 수 있도록 돕는 것"
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* 연락처 정보 */}
         <section className="pb-12 px-6">
           <div className="max-w-5xl mx-auto">
