@@ -74,6 +74,11 @@ export function SEO({
       <meta name="color-scheme" content="light dark" />
       <meta httpEquiv="content-language" content="ko-KR" />
       
+      {/* 크롤링 최적화 */}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+      <meta name="bingbot" content="index, follow" />
+      
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={optimizedDescription} />
@@ -115,15 +120,7 @@ export function SEO({
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
       
       {/* 로봇 제어 */}
-      {noIndex ? (
-        <meta name="robots" content="noindex, nofollow" />
-      ) : (
-        <>
-          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-          <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-          <meta name="bingbot" content="index, follow" />
-        </>
-      )}
+      {noIndex && <meta name="robots" content="noindex, nofollow" />}
       
       {/* RSS 피드 및 사이트맵 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />

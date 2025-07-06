@@ -95,7 +95,7 @@ export function FeaturedPosts() {
                     <div className="relative overflow-hidden h-56">
                       <LazyImage
                         src={postImage}
-                        alt={post.title || "블로그 포스트 이미지"}
+                        alt={`${post.title} - ${post.category} 카테고리 알파고고고 블로그 포스트`}
                         className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                         width={800}
                         height={224}

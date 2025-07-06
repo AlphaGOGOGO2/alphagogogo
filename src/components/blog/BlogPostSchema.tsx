@@ -108,10 +108,48 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     JSON.parse(jsonString);
     
     return (
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: jsonString }}
-      />
+      <>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonString }}
+        />
+        {/* 브레드크럼 구조화 데이터 */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "BreadcrumbList",
+              "itemListElement": [
+                {
+                  "@type": "ListItem",
+                  "position": 1,
+                  "name": "홈",
+                  "item": SITE_DOMAIN
+                },
+                {
+                  "@type": "ListItem", 
+                  "position": 2,
+                  "name": "블로그",
+                  "item": `${SITE_DOMAIN}/blog`
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 3,
+                  "name": post.category,
+                  "item": `${SITE_DOMAIN}/blog/${encodeURIComponent(post.category.toLowerCase().replace(/\s+/g, '-'))}`
+                },
+                {
+                  "@type": "ListItem",
+                  "position": 4,
+                  "name": post.title,
+                  "item": canonicalUrl
+                }
+              ]
+            }, null, 0)
+          }}
+        />
+      </>
     );
   } catch (error) {
     console.error("구조화 데이터 JSON 오류:", error);

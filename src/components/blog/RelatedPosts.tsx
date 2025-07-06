@@ -59,7 +59,7 @@ function RelatedPostCard({ post }: RelatedPostCardProps) {
           <div className="mb-3 overflow-hidden rounded-md">
             <img
               src={post.coverImage}
-              alt={post.title}
+              alt={`${post.title} - ${post.category} 카테고리 블로그 포스트 썸네일`}
               loading="lazy"
               decoding="async"
               className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-300"
