@@ -97,6 +97,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col w-full">
       <SEO 
         title="알파고고고 - 최신 AI 소식 & 인사이트"
+        description="AI를 이해하는 새로운 관점, 비개발자와 비전문인의 시선으로 바라보는 AI 트렌드와 인사이트를 제공합니다."
         canonicalUrl={SITE_DOMAIN}
         structuredData={combinedSchema}
         ogImage="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/og-image.png"
