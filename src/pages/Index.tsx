@@ -47,7 +47,7 @@ const Index = () => {
       "query-input": "required name=search_term_string"
     },
     "description": "최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.",
-    "keywords": "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼"
+    "keywords": "알파고고고,알파블로그,알파고,알파GOGOGO,유튜브 알파GOGOGO,본질을 찾아서,퍼스널 브랜딩,AI,인공지능,챗GPT,제미나이,클로드,커서AI,러버블 DEV,노코드,AI 블로그,블로그 글쓰기,테크 블로그,머신러닝,딥러닝,LLM,AI 도구,프롬프트 엔지니어링,테크 리뷰,개발 도구"
   };
 
   // 조직 스키마
@@ -101,7 +101,7 @@ const Index = () => {
         canonicalUrl={SITE_DOMAIN}
         structuredData={combinedSchema}
         ogImage="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png"
-        keywords="알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼"
+        keywords="알파고고고,알파블로그,알파고,알파GOGOGO,유튜브 알파GOGOGO,본질을 찾아서,퍼스널 브랜딩,personal branding,AI,인공지능,artificial intelligence,챗GPT,ChatGPT,제미나이,Gemini,클로드,Claude,커서AI,Cursor AI,러버블 DEV,Lovable DEV,노코드,no-code,웹개발,web development,AI 블로그,AI blog,블로그 글쓰기,blog writing,블로그 자동화,blog automation,블로그 AI,블로그 GPT,테크 블로그,tech blog,인공지능 뉴스,AI news,기술 트렌드,tech trends,머신러닝,machine learning,딥러닝,deep learning,LLM,대화형 AI,conversational AI,AI 도구,AI tools,프롬프트 엔지니어링,prompt engineering,AI 리뷰,AI review,테크 리뷰,tech review,개발 도구,development tools,코딩,coding,프로그래밍,programming,스타트업,startup,테크 인사이트,tech insights,디지털 트랜스포메이션,digital transformation,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼"
       />
       <Navbar />
       <main>
