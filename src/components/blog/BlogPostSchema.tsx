@@ -100,12 +100,26 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     };
   }
 
-  // JSON 유효성 검사 및 변환
+  // JSON 유효성 검사 및 변환 강화
   try {
-    const jsonString = JSON.stringify(structuredData, null, 0);
+    // 빈 값이나 null 값 필터링
+    const cleanedData = Object.fromEntries(
+      Object.entries(structuredData).filter(([key, value]) => 
+        value !== null && value !== undefined && value !== '' && 
+        !(Array.isArray(value) && value.length === 0)
+      )
+    );
+    
+    const jsonString = JSON.stringify(cleanedData, null, 0);
     
     // 유효성 검증
     JSON.parse(jsonString);
+    
+    // 최소 길이 검증 (너무 짧은 JSON은 무효)
+    if (jsonString.length < 50) {
+      console.warn("구조화 데이터가 너무 짧습니다:", jsonString);
+      return <></>;
+    }
     
     return (
       <>

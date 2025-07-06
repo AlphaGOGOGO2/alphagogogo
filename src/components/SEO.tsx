@@ -67,20 +67,29 @@ export function SEO({
       <meta name="google-site-verification" content="CJ9ZtF3aqgbLnIQqZF-mZ2rF7E6XkLhP8VzSaQqJpxs" />
       <meta name="naver-site-verification" content="d181058ce6b8b7b3c86efe4a48bb678f2b735694" />
       
-      {/* 추가 검색엔진 최적화 */}
-      <meta name="msvalidate.01" content="placeholder-bing-verification" />
-      <meta name="yandex-verification" content="placeholder-yandex-verification" />
-      <meta name="baidu-site-verification" content="placeholder-baidu-verification" />
+      {/* 검색엔진 최적화 및 성능 지표 */}
+      <meta name="format-detection" content="telephone=no, date=no, email=no, address=no" />
+      <meta httpEquiv="x-dns-prefetch-control" content="on" />
+      <meta name="google" content="nositelinkssearchbox" />
+      <meta name="google" content="notranslate" />
       
-      {/* 추가 SEO 메타 태그 */}
-      <meta name="referrer" content="origin-when-cross-origin" />
-      <meta name="color-scheme" content="light dark" />
-      <meta httpEquiv="content-language" content="ko-KR" />
+      {/* 소셜 미디어 최적화 */}
+      <meta property="fb:app_id" content="" />
+      <meta name="twitter:dnt" content="on" />
+      
+      {/* 콘텐츠 보안 정책 힌트 */}
+      <meta httpEquiv="Content-Security-Policy" content="upgrade-insecure-requests" />
       
       {/* 크롤링 최적화 */}
-      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-      <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-      <meta name="bingbot" content="index, follow" />
+      {noIndex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <>
+          <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+          <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+          <meta name="bingbot" content="index, follow" />
+        </>
+      )}
       
       {/* 오픈 그래프 태그 */}
       <meta property="og:title" content={fullTitle} />
@@ -117,13 +126,16 @@ export function SEO({
         </>
       )}
       
-      {/* 기본 메타 태그 */}
+      {/* 브랜드 및 사이트 정보 */}
       <meta name="keywords" content={keywords} />
       <meta name="author" content={author} />
+      <meta name="publisher" content="알파고고고" />
+      <meta name="copyright" content="© 2025 알파고고고. All rights reserved." />
+      <meta name="generator" content="알파고고고 - AI 소식 & 인사이트" />
+      <meta name="application-name" content="알파고고고" />
       <meta name="google-adsense-account" content="ca-pub-2328910037798111" />
       
-      {/* 로봇 제어 */}
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      {/* 로봇 제어 - 위에서 조건부로 처리되므로 제거 */}
       
       {/* RSS 피드 및 사이트맵 링크 */}
       <link rel="alternate" type="application/rss+xml" title="알파고고고 RSS Feed" href={`${SITE_DOMAIN}/rss.xml`} />
@@ -131,19 +143,21 @@ export function SEO({
       
       {/* 추가 검색 최적화 */}
       <link rel="search" type="application/opensearchdescription+xml" href={`${SITE_DOMAIN}/opensearch.xml`} title="알파고고고 검색" />
-      <meta name="google" content="notranslate" />
-      <meta name="generator" content="알파고고고 - AI 소식 & 인사이트" />
       
       {/* 파비콘 및 아이콘 */}
-      <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="icon" type="image/png" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
       <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
       
-      {/* 추가 메타 태그 */}
+      {/* 추가 아이콘 사이즈 최적화 */}
+      <link rel="icon" type="image/png" sizes="32x32" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      
+      {/* 위치 및 언어 최적화 */}
       <meta name="language" content="Korean" />
       <meta name="geo.region" content="KR" />
       <meta name="geo.country" content="KR" />
       <meta name="theme-color" content="#8B5CF6" />
-      <meta name="format-detection" content="telephone=no" />
       <meta name="rating" content="general" />
       <meta name="distribution" content="global" />
       <meta name="coverage" content="worldwide" />
@@ -166,12 +180,17 @@ export function SEO({
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
       <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
       <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
+      <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
       
-      {/* 기본 Organization 스키마 - 메인 페이지에서만 */}
-      {(!canonicalUrl || canonicalUrl === 'https://alphagogogo.com' || canonicalUrl === '/') && (
+      {/* 리소스 힌트 최적화 */}
+      <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+      <link rel="preload" href={normalizedOgImage} as="image" />
+      
+      {/* 기본 Organization 스키마 - 홈페이지에서만 */}
+      {(!canonicalUrl || canonicalUrl === 'https://alphagogogo.com' || canonicalUrl === '/') && !structuredData && (
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",

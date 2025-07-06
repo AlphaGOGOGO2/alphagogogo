@@ -174,6 +174,7 @@ export default function BlogPostPage() {
         modifiedTime={post.updatedAt ? new Date(post.updatedAt).toISOString() : undefined}
         section={post.category}
         tags={post.tags || []}
+        noIndex={false}
       />
       <BlogPostSchema post={post} url={canonicalUrl} />
       
