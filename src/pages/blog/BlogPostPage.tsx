@@ -166,7 +166,7 @@ export default function BlogPostPage() {
         title={post.title}
         description={postDescription}
         canonicalUrl={canonicalUrl}
-        ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png"}
+        ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/og-image.png"}
         ogType="article"
         keywords={postKeywords}
         author={post.author.name}
