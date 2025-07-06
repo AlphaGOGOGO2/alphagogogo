@@ -22,7 +22,7 @@ export function SEO({
   title = "알파고고고 - 최신 AI 소식 & 인사이트",
   description = "AI를 이해하는 새로운 관점, 비개발자와 비전문인이 시선으로 바라보는 AI 트렌드와 인사이트를 제공합니다.",
   canonicalUrl,
-  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
+  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/og%20image.png",
   ogType = "website",
   structuredData,
   keywords = "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,블로그 자동화,알파블로그,블로그 GPTS,챗GPT,블로그 AI,블로그 GPT,챗지피티,블로그자동,블로그 글쓰기,블로그 AI글,러버블 DEV,Lovable DEV,러버블 DEV 회원가입,러버블 DEV 가격,러버블 DEV 요금제,AI 앱 개발,노코드 웹앱 만들기,AI 웹 개발,러버블 DEV 사용법,AI 앱 만들기,노코드 앱 제작,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼",
@@ -132,8 +132,8 @@ export function SEO({
       <meta name="generator" content="알파고고고 - AI 소식 & 인사이트" />
       
       {/* 파비콘 및 아이콘 */}
-      <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
-      <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" />
+      <link rel="icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
       
       {/* 추가 메타 태그 */}
       <meta name="language" content="Korean" />
@@ -175,7 +175,7 @@ export function SEO({
             "@type": "Organization",
             "name": "알파고고고",
             "url": "https://alphagogogo.com",
-            "logo": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+            "logo": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png",
             "sameAs": [
               "https://www.youtube.com/@alphagogogo",
               "https://twitter.com/alphagogogo"

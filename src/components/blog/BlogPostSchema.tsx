@@ -50,7 +50,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "url": SITE_DOMAIN,
       "logo": {
         "@type": "ImageObject",
-        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png",
         "width": 112,
         "height": 112
       },
@@ -93,7 +93,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
   } else {
     structuredData["image"] = {
       "@type": "ImageObject",
-      "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//og%20image.png",
+      "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/og%20image.png",
       "width": 1200,
       "height": 630,
       "caption": "알파고고고 - 최신 AI 소식 & 인사이트"
