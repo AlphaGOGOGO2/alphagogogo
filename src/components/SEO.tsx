@@ -49,7 +49,7 @@ export function SEO({
   // 정규화된 OG 이미지 URL 생성 (단순화된 로직)
   const normalizedOgImage = ogImage?.startsWith('http') 
     ? ogImage 
-    : `${SITE_DOMAIN}${ogImage?.startsWith('/') ? '' : '/'}${ogImage || 'images/og-image.png'}`;
+    : `${SITE_DOMAIN}${ogImage?.startsWith('/') ? '' : '/'}${ogImage || 'images//ogimage.png'}`;
   
   // description 길이 최적화 (160자 이내)
   const optimizedDescription = description.length > 160 
