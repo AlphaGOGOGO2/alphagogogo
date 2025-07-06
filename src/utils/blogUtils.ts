@@ -1,39 +1,57 @@
 
 // Utility functions for blog posts
 
-// 개선된 슬러그 생성 함수 - 더 짧고 깔끔한 URL 생성
+// SEO 최적화된 슬러그 생성 함수 - 간결하고 의미있는 URL 생성
 export const generateSlug = (title: string): string => {
   if (!title || title.trim() === '') {
-    // 제목이 비어있을 경우, 현재 시간과 랜덤 문자열로 대체
-    return `post-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
+    // 제목이 비어있을 경우, 짧은 랜덤 식별자
+    return `post-${Math.random().toString(36).substring(2, 8)}`;
   }
 
-  // 한글 및 영문을 포함한 슬러그 생성 (더 짧게 최적화)
-  const processed = title
+  // 한글과 영문을 SEO 친화적으로 처리
+  let slug = title
     .trim()
     .toLowerCase()
+    // 한글을 영어 키워드로 변환 (주요 키워드만)
+    .replace(/러버블\s*dev/gi, 'lovable-dev')
+    .replace(/ai\s*뉴스/gi, 'ai-news')
+    .replace(/챗\s*gpt/gi, 'chatgpt')
+    .replace(/가이드/gi, 'guide')
+    .replace(/튜토리얼/gi, 'tutorial')
+    .replace(/리뷰/gi, 'review')
+    .replace(/블로그/gi, 'blog')
+    .replace(/최신/gi, 'latest')
+    .replace(/업데이트/gi, 'update')
+    .replace(/분석/gi, 'analysis')
+    .replace(/완벽/gi, 'complete')
     // 공백을 하이픈으로 변환
     .replace(/\s+/g, '-')
-    // 특수문자 제거 (한글, 영문, 숫자, 하이픈만 유지)
-    .replace(/[^\wㄱ-ㅎㅏ-ㅣ가-힣\-]/g, '')
+    // 특수문자 제거 (영문, 숫자, 하이픈만 유지)
+    .replace(/[^a-z0-9\-]/g, '')
     // 연속된 하이픈 단일화
     .replace(/-+/g, '-')
     // 앞뒤 하이픈 제거
     .replace(/^-+|-+$/g, '');
 
-  // 슬러그가 너무 길면 앞의 50자만 사용
-  let slug = processed;
-  if (slug.length > 50) {
-    slug = slug.substring(0, 50).replace(/-[^-]*$/, ''); // 마지막 불완전한 단어 제거
+  // 슬러그가 너무 길면 의미있는 단위로 자르기
+  if (slug.length > 40) {
+    const words = slug.split('-');
+    slug = words.slice(0, 6).join('-'); // 첫 6개 단어만 사용
   }
   
-  // 처리된 문자열이 비었을 경우 기본값
-  if (!slug) {
-    slug = 'post';
+  // 처리된 문자열이 비었거나 너무 짧을 경우
+  if (!slug || slug.length < 3) {
+    // 제목에서 핵심 키워드 추출 시도
+    const coreKeywords = title.match(/러버블|AI|챗GPT|블로그|가이드|튜토리얼|리뷰/gi);
+    if (coreKeywords && coreKeywords.length > 0) {
+      slug = coreKeywords[0].toLowerCase().replace(/[^a-z]/g, '') + '-post';
+    } else {
+      slug = 'blog-post';
+    }
   }
   
-  // 더 짧은 고유 식별자 추가 (8자리)
-  const uniqueId = Date.now().toString(36) + Math.random().toString(36).substring(2, 4);
+  // 고유성을 위한 짧은 식별자 추가 (4자리만)
+  const uniqueId = Math.random().toString(36).substring(2, 6);
   
   return `${slug}-${uniqueId}`;
 };

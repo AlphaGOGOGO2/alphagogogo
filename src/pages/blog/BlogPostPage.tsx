@@ -58,6 +58,25 @@ export default function BlogPostPage() {
     retry: 2
   });
 
+  // URL 정규화 및 리다이렉트 로직 (SEO 최적화)
+  useEffect(() => {
+    if (post && !isLoading) {
+      // Case 1: ID로 접근했지만 slug가 있는 경우 -> slug URL로 리다이렉트 (301 효과)
+      if (id && post.slug && !slug) {
+        console.log(`[SEO 리다이렉트] ID(${id})에서 slug(${post.slug})로 리다이렉트`);
+        navigate(`/blog/${post.slug}`, { replace: true });
+        return;
+      }
+      
+      // Case 2: slug로 접근했지만 올바르지 않은 slug인 경우 -> 올바른 slug로 리다이렉트
+      if (slug && post.slug && slug !== post.slug) {
+        console.log(`[SEO 리다이렉트] 잘못된 slug(${slug})에서 올바른 slug(${post.slug})로 리다이렉트`);
+        navigate(`/blog/${post.slug}`, { replace: true });
+        return;
+      }
+    }
+  }, [post, isLoading, id, slug, navigate]);
+
   // 관련 포스트를 위한 전체 포스트 데이터
   const { data: allPosts = [] } = useQuery({
     queryKey: ["blog-posts", "all", "related"],
@@ -133,8 +152,10 @@ export default function BlogPostPage() {
     ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
     : "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,인공지능,AI";
   
-  // 올바른 도메인으로 canonical URL 생성
-  const canonicalUrl = `${SITE_DOMAIN}/blog/${post.slug || `post/${post.id}`}`;
+  // SEO 최적화된 canonical URL 생성 (항상 slug 우선)
+  const canonicalUrl = post.slug 
+    ? `${SITE_DOMAIN}/blog/${post.slug}`
+    : `${SITE_DOMAIN}/blog/post/${post.id}`;
   
   // 브레드크럼 생성
   const breadcrumbItems = createBlogPostBreadcrumbs(post.category, post.title);
