@@ -109,108 +109,80 @@ export default function BusinessInquiryPage() {
             
             <div className="grid md:grid-cols-2 gap-6">
               {/* Alphademy */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
-                <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100/50">
-                  <h3 className="text-lg font-bold text-purple-800 mb-2">Alphademy</h3>
-                  <p className="text-sm text-gray-600">AI 교육 플랫폼</p>
+              <a
+                href="https://alphademy.co.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="p-6 bg-gradient-to-r from-purple-50 to-purple-100/50">
+                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">Alphademy</h3>
+                  <p className="text-gray-600 mb-4">AI 교육 플랫폼</p>
+                  <p className="text-sm text-gray-500 mb-4">혁신적인 AI 교육 솔루션을 제공하는 온라인 플랫폼</p>
+                  <div className="flex items-center text-purple-600 group-hover:text-purple-800 font-medium">
+                    <span>사이트 방문하기</span>
+                    <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
                 </div>
-                <div className="relative h-64">
-                  <iframe
-                    src="https://alphademy.co.kr/"
-                    className="w-full h-full border-0"
-                    title="Alphademy"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4">
-                  <a
-                    href="https://alphademy.co.kr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
-                  >
-                    사이트 방문하기 →
-                  </a>
-                </div>
-              </div>
+                <div className="h-2 bg-gradient-to-r from-purple-400 to-purple-600"></div>
+              </a>
 
               {/* Beauty Life eBook */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
-                <div className="p-4 bg-gradient-to-r from-pink-50 to-purple-50">
-                  <h3 className="text-lg font-bold text-purple-800 mb-2">Beauty Life eBook</h3>
-                  <p className="text-sm text-gray-600">뷰티 라이프 전자책</p>
+              <a
+                href="https://beautylifeebook.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="p-6 bg-gradient-to-r from-pink-50 to-purple-50">
+                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">Beauty Life eBook</h3>
+                  <p className="text-gray-600 mb-4">뷰티 라이프 전자책</p>
+                  <p className="text-sm text-gray-500 mb-4">아름다운 라이프스타일을 위한 디지털 콘텐츠 플랫폼</p>
+                  <div className="flex items-center text-purple-600 group-hover:text-purple-800 font-medium">
+                    <span>사이트 방문하기</span>
+                    <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
                 </div>
-                <div className="relative h-64">
-                  <iframe
-                    src="https://beautylifeebook.kr/"
-                    className="w-full h-full border-0"
-                    title="Beauty Life eBook"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4">
-                  <a
-                    href="https://beautylifeebook.kr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
-                  >
-                    사이트 방문하기 →
-                  </a>
-                </div>
-              </div>
+                <div className="h-2 bg-gradient-to-r from-pink-400 to-purple-500"></div>
+              </a>
 
               {/* Lucky Rugby */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
-                <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50">
-                  <h3 className="text-lg font-bold text-purple-800 mb-2">Lucky Rugby</h3>
-                  <p className="text-sm text-gray-600">럭키 럭비 플랫폼</p>
+              <a
+                href="https://luckyrugby.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="p-6 bg-gradient-to-r from-green-50 to-blue-50">
+                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">Lucky Rugby</h3>
+                  <p className="text-gray-600 mb-4">럭키 럭비 플랫폼</p>
+                  <p className="text-sm text-gray-500 mb-4">럭비 스포츠 관련 정보와 커뮤니티 서비스</p>
+                  <div className="flex items-center text-purple-600 group-hover:text-purple-800 font-medium">
+                    <span>사이트 방문하기</span>
+                    <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
                 </div>
-                <div className="relative h-64">
-                  <iframe
-                    src="https://luckyrugby.kr/"
-                    className="w-full h-full border-0"
-                    title="Lucky Rugby"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4">
-                  <a
-                    href="https://luckyrugby.kr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
-                  >
-                    사이트 방문하기 →
-                  </a>
-                </div>
-              </div>
+                <div className="h-2 bg-gradient-to-r from-green-400 to-blue-500"></div>
+              </a>
 
               {/* Hian */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
-                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <h3 className="text-lg font-bold text-purple-800 mb-2">Hian</h3>
-                  <p className="text-sm text-gray-600">하이안 서비스</p>
+              <a
+                href="https://hian.co.kr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50">
+                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">Hian</h3>
+                  <p className="text-gray-600 mb-4">하이안 서비스</p>
+                  <p className="text-sm text-gray-500 mb-4">혁신적인 디지털 솔루션을 제공하는 서비스 플랫폼</p>
+                  <div className="flex items-center text-purple-600 group-hover:text-purple-800 font-medium">
+                    <span>사이트 방문하기</span>
+                    <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
                 </div>
-                <div className="relative h-64">
-                  <iframe
-                    src="https://hian.co.kr/"
-                    className="w-full h-full border-0"
-                    title="Hian"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-4">
-                  <a
-                    href="https://hian.co.kr/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
-                  >
-                    사이트 방문하기 →
-                  </a>
-                </div>
-              </div>
+                <div className="h-2 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+              </a>
             </div>
           </div>
         </section>
