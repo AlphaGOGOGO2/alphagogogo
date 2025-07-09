@@ -98,6 +98,123 @@ export default function BusinessInquiryPage() {
           </div>
         </section>
 
+        {/* 포트폴리오 사이트 */}
+        <section className="pb-12 px-6">
+          <div className="max-w-5xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-center mb-12">
+              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-800 via-purple-700 to-purple-600">
+                포트폴리오 사이트
+              </span>
+            </h2>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Alphademy */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100/50">
+                  <h3 className="text-lg font-bold text-purple-800 mb-2">Alphademy</h3>
+                  <p className="text-sm text-gray-600">AI 교육 플랫폼</p>
+                </div>
+                <div className="relative h-64">
+                  <iframe
+                    src="https://alphademy.co.kr/"
+                    className="w-full h-full border-0"
+                    title="Alphademy"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-4">
+                  <a
+                    href="https://alphademy.co.kr/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
+                  >
+                    사이트 방문하기 →
+                  </a>
+                </div>
+              </div>
+
+              {/* Beauty Life eBook */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
+                <div className="p-4 bg-gradient-to-r from-pink-50 to-purple-50">
+                  <h3 className="text-lg font-bold text-purple-800 mb-2">Beauty Life eBook</h3>
+                  <p className="text-sm text-gray-600">뷰티 라이프 전자책</p>
+                </div>
+                <div className="relative h-64">
+                  <iframe
+                    src="https://beautylifeebook.kr/"
+                    className="w-full h-full border-0"
+                    title="Beauty Life eBook"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-4">
+                  <a
+                    href="https://beautylifeebook.kr/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
+                  >
+                    사이트 방문하기 →
+                  </a>
+                </div>
+              </div>
+
+              {/* Lucky Rugby */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
+                <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50">
+                  <h3 className="text-lg font-bold text-purple-800 mb-2">Lucky Rugby</h3>
+                  <p className="text-sm text-gray-600">럭키 럭비 플랫폼</p>
+                </div>
+                <div className="relative h-64">
+                  <iframe
+                    src="https://luckyrugby.kr/"
+                    className="w-full h-full border-0"
+                    title="Lucky Rugby"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-4">
+                  <a
+                    href="https://luckyrugby.kr/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
+                  >
+                    사이트 방문하기 →
+                  </a>
+                </div>
+              </div>
+
+              {/* Hian */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50">
+                  <h3 className="text-lg font-bold text-purple-800 mb-2">Hian</h3>
+                  <p className="text-sm text-gray-600">하이안 서비스</p>
+                </div>
+                <div className="relative h-64">
+                  <iframe
+                    src="https://hian.co.kr/"
+                    className="w-full h-full border-0"
+                    title="Hian"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="p-4">
+                  <a
+                    href="https://hian.co.kr/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center text-purple-600 hover:text-purple-800 font-medium text-sm"
+                  >
+                    사이트 방문하기 →
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* 연락처 정보 */}
         <section className="pb-12 px-6">
           <div className="max-w-5xl mx-auto">
