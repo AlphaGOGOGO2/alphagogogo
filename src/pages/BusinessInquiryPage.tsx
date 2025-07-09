@@ -173,9 +173,9 @@ export default function BusinessInquiryPage() {
                 className="group bg-white/80 backdrop-blur-sm rounded-xl shadow-lg overflow-hidden border border-purple-100/50 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50">
-                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">Hian</h3>
-                  <p className="text-gray-600 mb-4">하이안 서비스</p>
-                  <p className="text-sm text-gray-500 mb-4">혁신적인 디지털 솔루션을 제공하는 서비스 플랫폼</p>
+                  <h3 className="text-xl font-bold text-purple-800 mb-2 group-hover:text-purple-900">히안 (HIAN)</h3>
+                  <p className="text-gray-600 mb-4">야끼니쿠 전문점</p>
+                  <p className="text-sm text-gray-500 mb-4">프리미엄 야끼니쿠를 제공하는 일식 전문 레스토랑</p>
                   <div className="flex items-center text-purple-600 group-hover:text-purple-800 font-medium">
                     <span>사이트 방문하기</span>
                     <span className="ml-2 transform group-hover:translate-x-1 transition-transform">→</span>
