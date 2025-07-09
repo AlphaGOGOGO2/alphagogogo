@@ -119,7 +119,12 @@ export function BlogForm({
           )}
         </div>
       </div>
-      <div className="space-y-6 flex-grow overflow-auto pb-16">
+      
+      {/* 저장 버튼을 상단으로 이동 */}
+      <div className="mb-6 flex justify-end">
+        <BlogSubmitButton isSubmitting={isSubmitting} isEditMode={isEditMode} />
+      </div>
+      <div className="space-y-6 flex-grow overflow-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <BlogCategorySelect
             category={category}
@@ -131,9 +136,6 @@ export function BlogForm({
         </div>
         <BlogTitleInput title={title} setTitle={setTitle} />
         <BlogContentInput content={content} setContent={setContent} />
-      </div>
-      <div className="absolute bottom-8 right-8 left-8 bg-white py-4 border-t border-gray-100 flex flex-row-reverse gap-3">
-        <BlogSubmitButton isSubmitting={isSubmitting} isEditMode={isEditMode} />
       </div>
     </form>
   );
