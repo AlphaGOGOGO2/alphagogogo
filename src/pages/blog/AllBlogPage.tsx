@@ -12,8 +12,6 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 export default function AllBlogPage() {
-  
-  
   // 최적화된 캐시 설정과 에러 처리
   const { data: posts = [], isLoading, error, isError } = useQuery({
     queryKey: ["blog-posts", "all", "optimized"],

@@ -57,8 +57,12 @@ export function LazyBlogGrid({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {visiblePosts.map((post) => (
-          <BlogCard key={post.id} post={post} />
+        {visiblePosts.map((post, index) => (
+          <BlogCard 
+            key={post.id} 
+            post={post} 
+            priority={index < 6} // 첫 6개 포스트는 우선 로딩
+          />
         ))}
       </div>
       

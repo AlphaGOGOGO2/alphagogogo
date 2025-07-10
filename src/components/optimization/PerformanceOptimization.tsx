@@ -53,6 +53,18 @@ export function PerformanceOptimization({ children }: PerformanceOptimizationPro
           crossOrigin=""
         />
         
+        {/* 중요한 이미지 프리로드 - 블로그 최적화 */}
+        <link 
+          rel="preload" 
+          href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/instructor%20profile%20image.png" 
+          as="image" 
+          type="image/png"
+        />
+        
+        {/* LCP 개선을 위한 중요 리소스 프리페치 */}
+        <link rel="prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/blog-images/" />
+        <link rel="prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/" />
+        
         {/* Core Web Vitals 최적화 힌트 */}
         <meta name="resource-type" content="document" />
         <meta name="distribution" content="global" />

@@ -106,6 +106,9 @@ export function LazyImage({
     return originalSrc;
   };
 
+  // 최적화된 이미지 소스 생성
+  const optimizedSrc = getOptimizedImageSrc(imageSrc || src);
+
   // 이미지 로드 실패 시 기본 플레이스홀더 표시
   if (hasError && src && src.trim() !== '') {
     return (
@@ -140,7 +143,7 @@ export function LazyImage({
           
           <img
             ref={imgRef}
-            src={imageSrc || src}
+            src={optimizedSrc || imageSrc || src}
             alt={alt}
             loading={loading}
             decoding="async"

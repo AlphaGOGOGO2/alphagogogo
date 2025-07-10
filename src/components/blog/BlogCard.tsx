@@ -14,9 +14,10 @@ function extractPlainTitle(markdownTitle: string): string {
 
 interface BlogCardProps {
   post: BlogPost;
+  priority?: boolean;
 }
 
-export function BlogCard({ post }: BlogCardProps) {
+export function BlogCard({ post, priority = false }: BlogCardProps) {
   const navigate = useNavigate();
   
   // 저장된 프로필 이미지 URL 사용
@@ -78,6 +79,7 @@ export function BlogCard({ post }: BlogCardProps) {
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             width={400}
             height={192}
+            loading={priority ? "eager" : "lazy"}
           />
         </div>
         <div className="p-5 flex-grow flex flex-col">
