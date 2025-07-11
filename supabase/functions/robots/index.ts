@@ -16,13 +16,29 @@ serve(async (req) => {
     const robotsContent = `User-agent: *
 Allow: /
 
-# 검색엔진이 크롤링하지 않았으면 하는 영역
+# 이미지 크롤링 허용
+Allow: /images/
+Allow: /*.jpg$
+Allow: /*.jpeg$
+Allow: /*.png$
+Allow: /*.gif$
+Allow: /*.webp$
+Allow: /*.svg$
+
+# 검색엔진이 크롤링하지 않았으면 하는 영역 (더 세밀한 제어)
 Disallow: /blog/write
 Disallow: /blog/edit/
 Disallow: /admin/
 Disallow: /private/
 Disallow: /_next/
 Disallow: /api/auth/
+Disallow: /node_modules/
+Disallow: /.git/
+Disallow: /src/
+
+# 블로그 포스트는 적극적으로 크롤링 허용
+Allow: /blog/
+Allow: /blog/*
 
 # 검색엔진이 유용하지 않은 파라미터 페이지를 크롤링하지 않도록 설정
 Disallow: /*?*utm_source=
@@ -33,13 +49,18 @@ Disallow: /*?*utm_content=
 Disallow: /*?*ref=
 Disallow: /*?*fbclid=
 Disallow: /*?*gclid=
+Disallow: /*?*print=
+Disallow: /*?*share=
 
-# 크롤링 속도 제한 완화
-Crawl-delay: 0.5
+# 크롤링 속도 제한 완화 (더 빠른 크롤링 허용)
+Crawl-delay: 0.2
 
-# 사이트맵 위치 명시
+# 사이트맵 위치 명시 (올바른 경로로 수정)
 Sitemap: ${SITE_DOMAIN}/sitemap.xml
 Sitemap: ${SITE_DOMAIN}/rss.xml
+
+# 호스트 지정
+Host: ${SITE_DOMAIN}
 
 # 구글봇 최적화 설정
 User-agent: Googlebot
@@ -54,8 +75,7 @@ Crawl-delay: 0.5
 # 빙봇 설정
 User-agent: bingbot
 Allow: /
-Crawl-delay: 0.3
-`;
+Crawl-delay: 0.3`;
 
     console.log('robots.txt 요청 처리됨');
 

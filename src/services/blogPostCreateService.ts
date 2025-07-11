@@ -4,6 +4,7 @@ import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
 import { generateSlug, calculateReadingTime, generateExcerpt, extractFirstImageUrl } from "@/utils/blogUtils";
 import { toast } from "sonner";
 import { handleBlogTags } from "./blogPostTagsService";
+import { triggerSEOUpdate } from "./seoNotificationService";
 
 // Create a new blog post
 export const createBlogPost = async (
@@ -84,6 +85,11 @@ export const createBlogPost = async (
       toast.success(`블로그 포스트가 ${new Date(publishedAt).toLocaleString('ko-KR')}에 발행되도록 예약되었습니다`);
     } else {
       toast.success("블로그 포스트가 성공적으로 작성되었습니다");
+    }
+    
+    // SEO 업데이트 알림 (비동기 처리)
+    if (!isScheduled) {
+      triggerSEOUpdate('create', data.id);
     }
     
     return data;

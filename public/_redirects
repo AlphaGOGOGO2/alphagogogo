@@ -1,6 +1,7 @@
-# RSS 및 사이트맵을 Edge Functions로 서빙
-/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
-/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
+# RSS 및 사이트맵을 Edge Functions로 서빙 (301 리다이렉트로 변경)
+/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 301
+/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 301
+/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 301
 
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200

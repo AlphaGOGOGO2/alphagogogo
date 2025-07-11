@@ -4,6 +4,7 @@ import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
 import { calculateReadingTime, generateExcerpt, extractFirstImageUrl } from "@/utils/blogUtils";
 import { toast } from "sonner";
 import { handleBlogTags, removeExistingTags } from "./blogPostTagsService";
+import { triggerSEOUpdate } from "./seoNotificationService";
 
 // Update an existing blog post
 export const updateBlogPost = async (
@@ -82,6 +83,12 @@ export const updateBlogPost = async (
       }
     } else {
       toast.success("블로그 포스트가 성공적으로 수정되었습니다");
+    }
+    
+    // SEO 업데이트 알림 (현재 시간 기준으로 발행된 포스트만)
+    const isCurrentlyPublished = !post.published_at || new Date(post.published_at) <= new Date();
+    if (isCurrentlyPublished) {
+      triggerSEOUpdate('update', data.id);
     }
     
     return data;
