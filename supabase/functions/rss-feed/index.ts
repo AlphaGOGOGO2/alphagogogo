@@ -102,7 +102,7 @@ serve(async (req) => {
     return new Response(rssContent, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
-        'Cache-Control': 'public, max-age=1800', // 30분 캐시
+        'Cache-Control': 'public, max-age=600', // 10분 캐시
       },
     });
   } catch (error) {
