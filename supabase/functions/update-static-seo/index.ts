@@ -182,18 +182,18 @@ serve(async (req) => {
 
     rssContent += '</channel></rss>';
 
-    // 정적 파일로 저장 (Netlify Functions API 사용)
+    // 정적 파일로 저장 (기존 images 버킷 사용)
     const updateFiles = async () => {
       // Supabase Storage에 업로드하는 방식으로 구현
       const { error: sitemapError } = await supabase.storage
-        .from('public')
+        .from('images')
         .upload('sitemap.xml', sitemapContent, {
           contentType: 'application/xml',
           upsert: true
         });
 
       const { error: rssError } = await supabase.storage
-        .from('public')
+        .from('images')
         .upload('rss.xml', rssContent, {
           contentType: 'application/rss+xml',
           upsert: true

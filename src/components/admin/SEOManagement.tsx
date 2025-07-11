@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,46 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 interface SEOManagementProps {}
+
+function SEOStats() {
+  const [stats, setStats] = useState({
+    totalPosts: 0,
+    totalResources: 0,
+    staticPages: 16
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const [postsResponse, resourcesResponse] = await Promise.all([
+          supabase.from('blog_posts').select('id', { count: 'exact' }).lte('published_at', new Date().toISOString()),
+          supabase.from('resources').select('id', { count: 'exact' })
+        ]);
+
+        setStats({
+          totalPosts: postsResponse.count || 0,
+          totalResources: resourcesResponse.count || 0,
+          staticPages: 16
+        });
+      } catch (error) {
+        console.error('통계 조회 실패:', error);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  const totalPages = stats.totalPosts + stats.totalResources + stats.staticPages;
+
+  return (
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <Badge variant="outline">총 {stats.totalPosts}개 블로그 포스트</Badge>
+      <Badge variant="outline">{stats.totalResources}개 리소스</Badge>
+      <Badge variant="outline">{stats.staticPages}개 정적 페이지</Badge>
+      <Badge variant="outline">예상 총 {totalPages}개 페이지</Badge>
+    </div>
+  );
+}
 
 export function SEOManagement({}: SEOManagementProps) {
   const [loading, setLoading] = useState(false);
@@ -96,18 +136,23 @@ export function SEOManagement({}: SEOManagementProps) {
         console.error('정적 SEO 파일 업데이트 실패:', error);
         setSitemapStatus('error');
         setRssStatus('error');
-        toast.error('정적 SEO 파일 업데이트에 실패했습니다.');
+        toast.error(`정적 SEO 파일 업데이트에 실패했습니다: ${error.message}`);
         return;
       }
 
       console.log('정적 SEO 파일 업데이트 성공:', data);
       
-      // 성공적으로 업데이트됨
-      setSitemapStatus('success');
-      setRssStatus('success');
-      setLastUpdate(new Date().toLocaleString('ko-KR'));
-
-      toast.success('🎉 정적 SEO 파일이 성공적으로 업데이트되었습니다! Google과 Bing에 알림을 보냈습니다.');
+      // 응답 데이터 확인
+      if (data?.success) {
+        setSitemapStatus('success');
+        setRssStatus('success');
+        setLastUpdate(new Date().toLocaleString('ko-KR'));
+        toast.success(`🎉 정적 SEO 파일이 성공적으로 업데이트되었습니다! (블로그 포스트: ${data.posts_count}개, 리소스: ${data.resources_count}개)`);
+      } else {
+        setSitemapStatus('error');
+        setRssStatus('error');
+        toast.error(data?.message || '정적 SEO 파일 업데이트에 실패했습니다.');
+      }
       
     } catch (error) {
       console.error('정적 SEO 파일 업데이트 오류:', error);
@@ -286,14 +331,9 @@ export function SEOManagement({}: SEOManagementProps) {
                 </p>
               </div>
 
-              <div className="space-y-2">
+                <div className="space-y-2">
                 <h4 className="font-medium text-sm">현재 사이트맵 상태:</h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <Badge variant="outline">총 27개 블로그 포스트</Badge>
-                  <Badge variant="outline">2개 리소스</Badge>
-                  <Badge variant="outline">16개 정적 페이지</Badge>
-                  <Badge variant="outline">예상 총 45개 페이지</Badge>
-                </div>
+                <SEOStats />
               </div>
             </CardContent>
           </Card>
