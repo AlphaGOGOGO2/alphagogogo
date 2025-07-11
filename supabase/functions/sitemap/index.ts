@@ -67,12 +67,18 @@ serve(async (req) => {
 
     const today = new Date().toISOString().split('T')[0];
 
-    // XML 시작 (완전히 첫 문자부터)
-    let sitemapContent = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">';
+    // XML 시작 (완전히 첫 문자부터, 프리티 형식으로)
+    let sitemapContent = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    sitemapContent += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">\n';
 
     // 정적 페이지들 추가
     for (const { url, priority, changefreq } of staticUrls) {
-      sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + url) + '</loc><lastmod>' + today + '</lastmod><changefreq>' + changefreq + '</changefreq><priority>' + priority + '</priority></url>';
+      sitemapContent += `  <url>\n`;
+      sitemapContent += `    <loc>${escapeXml(SITE_DOMAIN + url)}</loc>\n`;
+      sitemapContent += `    <lastmod>${today}</lastmod>\n`;
+      sitemapContent += `    <changefreq>${changefreq}</changefreq>\n`;
+      sitemapContent += `    <priority>${priority}</priority>\n`;
+      sitemapContent += `  </url>\n`;
     }
 
     // 블로그 포스트들 추가
@@ -89,15 +95,23 @@ serve(async (req) => {
         const categoryChangefreq = getCategoryChangefreq(post.category);
         const categoryPriority = getCategoryPriority(post.category);
 
-        sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + postUrl) + '</loc><lastmod>' + lastmod + '</lastmod><changefreq>' + categoryChangefreq + '</changefreq><priority>' + categoryPriority + '</priority>';
+        sitemapContent += `  <url>\n`;
+        sitemapContent += `    <loc>${escapeXml(SITE_DOMAIN + postUrl)}</loc>\n`;
+        sitemapContent += `    <lastmod>${lastmod}</lastmod>\n`;
+        sitemapContent += `    <changefreq>${categoryChangefreq}</changefreq>\n`;
+        sitemapContent += `    <priority>${categoryPriority}</priority>\n`;
 
         // 이미지 처리 개선 - cover_image가 없어도 기본 이미지 포함
         const imageUrl = post.cover_image || getCategoryThumbnail(post.category);
         if (imageUrl && imageUrl.trim() !== '') {
-          sitemapContent += '<image:image><image:loc>' + escapeXml(imageUrl) + '</image:loc><image:title>' + escapeXml(post.title || '') + '</image:title><image:caption>' + escapeXml(post.excerpt || post.title || '') + '</image:caption></image:image>';
+          sitemapContent += `    <image:image>\n`;
+          sitemapContent += `      <image:loc>${escapeXml(imageUrl)}</image:loc>\n`;
+          sitemapContent += `      <image:title>${escapeXml(post.title || '')}</image:title>\n`;
+          sitemapContent += `      <image:caption>${escapeXml(post.excerpt || post.title || '')}</image:caption>\n`;
+          sitemapContent += `    </image:image>\n`;
         }
 
-        sitemapContent += '</url>';
+        sitemapContent += `  </url>\n`;
       }
     }
 
@@ -109,7 +123,12 @@ serve(async (req) => {
           new Date(resource.updated_at).toISOString().split('T')[0] : 
           new Date(resource.created_at).toISOString().split('T')[0];
 
-        sitemapContent += '<url><loc>' + escapeXml(SITE_DOMAIN + resourceUrl) + '</loc><lastmod>' + lastmod + '</lastmod><changefreq>monthly</changefreq><priority>0.6</priority></url>';
+        sitemapContent += `  <url>\n`;
+        sitemapContent += `    <loc>${escapeXml(SITE_DOMAIN + resourceUrl)}</loc>\n`;
+        sitemapContent += `    <lastmod>${lastmod}</lastmod>\n`;
+        sitemapContent += `    <changefreq>monthly</changefreq>\n`;
+        sitemapContent += `    <priority>0.6</priority>\n`;
+        sitemapContent += `  </url>\n`;
       }
     }
 
