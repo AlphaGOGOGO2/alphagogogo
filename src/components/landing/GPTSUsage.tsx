@@ -41,7 +41,7 @@ export function GPTSUsage() {
             무료 체험
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gray-800">
-            GPTS 이용하기
+            GPTS 도구 소개
           </h2>
           <p className="text-purple-700 max-w-2xl mx-auto text-balance">
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
@@ -90,7 +90,7 @@ export function GPTSUsage() {
         <div className={`bg-white p-8 md:p-10 rounded-2xl shadow-lg border border-purple-100 mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '400ms' }}>
           <div className="flex flex-col md:flex-row items-center md:items-start gap-8">
             <div className="w-full md:w-2/3">
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">GPTS로 작업 효율성을 높이세요</h3>
+              <h4 className="text-2xl font-bold mb-4 text-gray-800">GPTS로 작업 효율성을 높이세요</h4>
               <p className="text-gray-600 mb-6">
                 알파블로그의 GPTS 도구는 콘텐츠 제작, SEO 최적화, 이미지 생성 등 다양한 작업을 자동화하여 작업 효율성을 크게 향상시킵니다. 
                 시간을 절약하고 더 창의적인 작업에 집중할 수 있습니다.

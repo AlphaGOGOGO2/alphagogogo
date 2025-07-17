@@ -54,7 +54,7 @@ export function Services() {
             알파블로그 서비스
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gray-800">
-            제공하는 서비스
+            알파블로그 서비스
           </h2>
           <p className="text-purple-700 max-w-2xl mx-auto text-balance">
             알파블로그는 실용적인 AI 기반 서비스를 통해 여러분의 작업을 더 쉽고 효율적으로 만듭니다.

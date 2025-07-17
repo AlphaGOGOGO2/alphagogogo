@@ -55,7 +55,7 @@ export function FeaturedPosts() {
             주요 콘텐츠
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gray-800">
-            최신 소식
+            최신 AI 소식
           </h2>
           <p className="text-purple-700 max-w-2xl mx-auto text-balance">
             전 세계의 인공지능 관련 트렌드 토픽과 획기적인 개발 사항을 발견하세요.
@@ -117,9 +117,9 @@ export function FeaturedPosts() {
                         </div>
                       </div>
                       
-                      <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
+                      <h4 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
                         {post.title}
-                      </h3>
+                      </h4>
                       
                       <p className="text-gray-600 mb-4 flex-1 text-balance">
                         {stripMarkdown(post.excerpt || '')}

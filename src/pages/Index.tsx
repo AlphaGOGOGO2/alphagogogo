@@ -7,6 +7,8 @@ import { FeaturedPosts } from "@/components/landing/FeaturedPost";
 import { GPTSUsage } from "@/components/landing/GPTSUsage";
 import { Services } from "@/components/landing/Services";
 import { Community } from "@/components/landing/Community";
+import { Resources } from "@/components/landing/Resources";
+import { AIGuide } from "@/components/landing/AIGuide";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { StructuredData } from "@/components/seo/StructuredData";
@@ -110,6 +112,8 @@ const Index = () => {
         <GPTSUsage />
         <Services />
         <Community />
+        <Resources />
+        <AIGuide />
       </main>
       <Footer />
     </div>

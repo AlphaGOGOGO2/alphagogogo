@@ -43,7 +43,7 @@ export function Community() {
             함께 성장하기
           </span>
           <h2 className="text-3xl md:text-5xl font-bold mb-4 tracking-tight text-gray-800">
-            커뮤니티
+            AI 커뮤니티
           </h2>
           <p className="text-purple-700 max-w-2xl mx-auto text-balance">
             AI에 관심 있는 사람들이 모여 실시간으로 대화하고 정보를 공유하는 활기찬 커뮤니티에 참여하세요.
@@ -72,9 +72,9 @@ export function Community() {
         <div className="bg-white p-8 md:p-12 rounded-2xl shadow-md border border-purple-100 mb-4">
           <div className="md:flex items-center justify-between">
             <div className="mb-6 md:mb-0 md:mr-8">
-              <h3 className="text-2xl font-bold mb-4 text-gray-800">
+              <h4 className="text-2xl font-bold mb-4 text-gray-800">
                 지금 커뮤니티에 참여하세요
-              </h3>
+              </h4>
               <p className="text-gray-600 mb-6">
                 실시간 채팅으로 다른 AI 애호가들과 의견을 나누고, 최신 정보와 아이디어를 공유하세요.
                 지금 바로 대화에 참여하고 함께 성장하는 경험을 시작해보세요.
