@@ -99,7 +99,7 @@ const Index = () => {
     <div className="min-h-screen flex flex-col w-full">
       <SEO 
         title="알파고고고 - 최신 AI 소식, GPTS 도구, 블로그 자동화 서비스 | 비개발자를 위한 AI 가이드"
-        description="AI 트렌드와 인사이트를 비개발자 관점에서 제공하는 알파고고고입니다. 최신 AI 뉴스, 무료 GPTS 도구, 블로그 버튼 생성기, SEO 최적화 가이드, AI 학습 자료실까지 - AI 시대를 살아가는 모든 분들을 위한 실용적인 정보와 도구를 한 곳에서 만나보세요."
+        description="AI를 이해하는 새로운 관점으로 비개발자와 비전문인을 위한 실용적인 AI 가이드를 제공하는 알파고고고입니다. 최신 AI 뉴스와 기술 트렌드, 챗GPT·클로드·제미나이 활용법, 무료 GPTS 도구 모음, 블로그 자동화 서비스, SEO 최적화 가이드, AI 학습 자료실, 실시간 커뮤니티까지 - AI 시대를 살아가는 모든 분들이 필요한 정보와 도구를 한 곳에서 만나보세요. 퍼스널 브랜딩부터 비즈니스 활용까지 AI의 모든 것을 다룹니다."
         canonicalUrl={SITE_DOMAIN}
         structuredData={combinedSchema}
         ogImage="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png"
