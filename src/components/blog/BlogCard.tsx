@@ -2,7 +2,7 @@
 import { BlogPost } from "@/types/blog";
 import { Calendar, Clock } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { stripMarkdown, extractFirstImageUrl, getCategoryThumbnail } from "@/utils/blogUtils";
+import { stripMarkdown, extractFirstImageUrl, getCategoryThumbnail, generateImageAlt } from "@/utils/blogUtils";
 import { useNavigate } from "react-router-dom";
 import { LazyImage } from "@/components/optimization/LazyImage";
 
@@ -75,7 +75,7 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
         <div className="block overflow-hidden h-48">
           <LazyImage
             src={cardImage}
-            alt={displayTitle}
+            alt={generateImageAlt(cardImage, displayTitle, post.category)}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
             width={400}
             height={192}

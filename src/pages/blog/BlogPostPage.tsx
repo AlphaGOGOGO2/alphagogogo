@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { BlogPasswordModal } from "@/components/blog/BlogPasswordModal";
 import { SEO } from "@/components/SEO";
 import { BlogPostSchema } from "@/components/blog/BlogPostSchema";
-import { generateExcerpt } from "@/utils/blogUtils";
+import { generateExcerpt, generateSEODescription, generateSEOTitle, generateImageAlt, generateLongTailKeywords } from "@/utils/blogUtils";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useState, useEffect } from "react";
@@ -143,14 +143,15 @@ export default function BlogPostPage() {
     );
   }
   
-  // SEO 메타데이터 개선
-  const postDescription = post.excerpt && post.excerpt.trim() !== '' 
+  // SEO 최적화된 메타데이터 생성
+  const seoTitle = generateSEOTitle(post.title, post.category);
+  const seoDescription = post.excerpt && post.excerpt.trim() !== '' 
     ? post.excerpt 
-    : generateExcerpt(post.content, 160);
+    : generateSEODescription(post.content, post.title, post.category);
   
-  const postKeywords = post.tags && post.tags.length > 0
-    ? `${post.tags.join(',')},알파고고고,알파고,알파GOGOGO,블로그,인공지능,AI`
-    : "알파고고고,알파고,알파GOGOGO,유튜브 알파GOGOGO,유튜브 알파고고고,본질을 찾아서,블로그,인공지능,AI";
+  // 롱테일 키워드 생성
+  const longTailKeywords = generateLongTailKeywords(post.title, post.category, post.tags);
+  const postKeywords = longTailKeywords.join(',');
   
   // SEO 최적화된 canonical URL 생성 (항상 slug 우선)
   const canonicalUrl = post.slug 
@@ -163,8 +164,8 @@ export default function BlogPostPage() {
   return (
     <BlogLayout title={post.title}>
       <SEO 
-        title={post.title}
-        description={postDescription}
+        title={seoTitle}
+        description={seoDescription}
         canonicalUrl={canonicalUrl}
         ogImage={post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png"}
         ogType="article"
@@ -265,14 +266,19 @@ export default function BlogPostPage() {
                 table: ({node, ...props}) => <table className="w-full border-t border-purple-200 my-4" {...props} />,
                 th: ({node, ...props}) => <th className="bg-purple-50 text-purple-700 px-4 py-2 font-medium border-b border-purple-200" {...props} />,
                 td: ({node, ...props}) => <td className="px-4 py-2 border-b border-purple-100" {...props} />,
-                img: ({node, ...props}) => (
-                  <img 
-                    className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" 
-                    loading="lazy"
-                    decoding="async"
-                    {...props} 
-                  />
-                ),
+                img: ({node, ...props}) => {
+                  // SEO 최적화된 alt 태그 자동 생성
+                  const altText = props.alt || generateImageAlt(props.src || '', post.title, post.category);
+                  return (
+                    <img 
+                      className="rounded-lg my-4 max-w-full mx-auto shadow-md border border-purple-100" 
+                      loading="lazy"
+                      decoding="async"
+                      alt={altText}
+                      {...props} 
+                    />
+                  );
+                },
               }}
             >
               {post.content}

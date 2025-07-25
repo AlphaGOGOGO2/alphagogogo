@@ -1,7 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
-import { generateSlug, calculateReadingTime, generateExcerpt, extractFirstImageUrl } from "@/utils/blogUtils";
+import { generateSlug, calculateReadingTime, generateExcerpt, extractFirstImageUrl, generateSEODescription } from "@/utils/blogUtils";
 import { toast } from "sonner";
 import { handleBlogTags } from "./blogPostTagsService";
 import { triggerSEOUpdate } from "./seoNotificationService";
@@ -13,7 +13,10 @@ export const createBlogPost = async (
   try {
     const slug = generateSlug(post.title!);
     const readTime = calculateReadingTime(post.content!);
-    const excerpt = generateExcerpt(post.content!);
+    // SEO 최적화된 excerpt 생성
+    const excerpt = post.category 
+      ? generateSEODescription(post.content!, post.title!, post.category)
+      : generateExcerpt(post.content!);
     
     // Extract first image URL from content if any
     const coverImageUrl = extractFirstImageUrl(post.content!);

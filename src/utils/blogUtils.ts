@@ -93,8 +93,8 @@ export const stripMarkdown = (md: string): string => {
     .trim();
 };
 
-// Generate excerpt from content, 마크다운 태그 제거 - 성능 최적화
-export const generateExcerpt = (content: string, maxLength: number = 150): string => {
+// Generate SEO-optimized excerpt from content - 향상된 SEO 최적화
+export const generateExcerpt = (content: string, maxLength: number = 160): string => {
   if (!content) return '';
   
   // 마크다운과 HTML 태그 제거
@@ -114,6 +114,62 @@ export const generateExcerpt = (content: string, maxLength: number = 150): strin
     : truncated;
     
   return finalText.trim() + '...';
+};
+
+// SEO 최적화된 메타 설명 생성 함수
+export const generateSEODescription = (content: string, title: string, category: string): string => {
+  const excerpt = generateExcerpt(content, 140);
+  
+  // 카테고리별 키워드 추가
+  const categoryKeywords = {
+    'AI 뉴스': 'AI 뉴스, 인공지능 최신 소식',
+    '테크 리뷰': '기술 리뷰, 제품 분석',
+    '튜토리얼': '튜토리얼, 가이드, 사용법',
+    'ChatGPT 가이드': 'ChatGPT, 챗GPT 활용법',
+    '러브블 개발': '러버블 개발, 웹개발',
+    '최신 업데이트': '최신 업데이트, 신규 기능',
+    '트렌딩': '트렌딩, 인기 주제',
+    '라이프스타일': '라이프스타일, 일상 활용'
+  };
+  
+  const keywords = categoryKeywords[category] || '실용적인 정보';
+  
+  // 설명 + 키워드 조합 (160자 제한)
+  const description = `${excerpt} ${keywords}, 알파고고고에서 제공하는 비개발자를 위한 실용적인 가이드입니다.`;
+  
+  return description.length > 160 ? description.substring(0, 157) + '...' : description;
+};
+
+// SEO 최적화된 제목 생성 함수 (50-60자 최적화)
+export const generateSEOTitle = (title: string, category: string): string => {
+  // 브랜드명 제거하고 핵심만 추출
+  const cleanTitle = title.replace(/알파고고고|알파고|GOGOGO/gi, '').trim();
+  
+  // 카테고리별 키워드 추가
+  const categoryKeywords = {
+    'AI 뉴스': 'AI 뉴스',
+    '테크 리뷰': '리뷰',
+    '튜토리얼': '가이드',
+    'ChatGPT 가이드': 'ChatGPT',
+    '러브블 개발': '개발',
+    '최신 업데이트': '업데이트',
+    '트렌딩': '트렌딩',
+    '라이프스타일': '활용법'
+  };
+  
+  const keyword = categoryKeywords[category] || '';
+  
+  // 제목 구성: 핵심제목 + 키워드 + 브랜드
+  let seoTitle = keyword ? `${cleanTitle} ${keyword} | 알파고고고` : `${cleanTitle} | 알파고고고`;
+  
+  // 60자 제한
+  if (seoTitle.length > 60) {
+    const maxTitleLength = 60 - '| 알파고고고'.length - 1;
+    const truncatedTitle = cleanTitle.substring(0, maxTitleLength);
+    seoTitle = `${truncatedTitle}... | 알파고고고`;
+  }
+  
+  return seoTitle;
 };
 
 // Extract the first image URL from markdown content or HTML content - 강화된 버전
@@ -221,6 +277,85 @@ export const getCategoryThumbnail = (category: string): string => {
   };
   
   return thumbnails[category] || 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&h=192&q=80';
+};
+
+// 이미지 alt 태그 자동 생성 함수
+export const generateImageAlt = (imageSrc: string, postTitle: string, category: string): string => {
+  // 이미지 파일명에서 정보 추출
+  const filename = imageSrc.split('/').pop()?.split('.')[0] || '';
+  
+  // 카테고리별 기본 설명
+  const categoryContext = {
+    'AI 뉴스': 'AI 뉴스 관련 이미지',
+    '테크 리뷰': '기술 제품 리뷰 이미지',
+    '튜토리얼': '가이드 설명 이미지',
+    'ChatGPT 가이드': 'ChatGPT 활용 가이드 이미지',
+    '러브블 개발': '웹개발 관련 이미지',
+    '최신 업데이트': '업데이트 소식 이미지',
+    '트렌딩': '트렌딩 주제 이미지',
+    '라이프스타일': '라이프스타일 관련 이미지'
+  };
+  
+  const context = categoryContext[category] || '블로그 포스트 이미지';
+  
+  // alt 텍스트 생성
+  const altText = `${postTitle} - ${context}`;
+  
+  return altText.length > 100 ? altText.substring(0, 97) + '...' : altText;
+};
+
+// 롱테일 키워드 생성 함수
+export const generateLongTailKeywords = (title: string, category: string, tags: string[] = []): string[] => {
+  const baseKeywords = ['알파고고고', 'AI', '인공지능', '비개발자'];
+  
+  // 제목에서 핵심 키워드 추출
+  const titleKeywords = title.toLowerCase().match(/ai|chatgpt|gpt|클로드|제미나이|블로그|가이드|튜토리얼|리뷰|개발|업데이트/g) || [];
+  
+  // 카테고리별 롱테일 키워드
+  const categoryLongTail = {
+    'AI 뉴스': ['최신 AI 소식', 'AI 업계 동향', 'AI 기술 발전'],
+    '테크 리뷰': ['기술 제품 비교', '실사용 후기', '제품 장단점 분석'],
+    '튜토리얼': ['초보자 가이드', '단계별 설명', '쉬운 사용법'],
+    'ChatGPT 가이드': ['ChatGPT 활용팁', '프롬프트 작성법', 'AI 대화 기술'],
+    '러브블 개발': ['노코드 개발', '웹사이트 제작', '개발 도구'],
+    '최신 업데이트': ['신기능 소개', '업데이트 내용', '변경사항 정리'],
+    '트렌딩': ['인기 주제', '화제의 기술', '주목받는 AI'],
+    '라이프스타일': ['일상 AI 활용', '생산성 향상', 'AI 라이프해킹']
+  };
+  
+  const categoryKeywords = categoryLongTail[category] || ['실용적인 정보'];
+  
+  // 모든 키워드 조합
+  return [...baseKeywords, ...titleKeywords, ...categoryKeywords, ...tags].filter(Boolean);
+};
+
+// 내부 링크 자동 생성 함수
+export const generateInternalLinks = (content: string, allPosts: any[] = []): string => {
+  if (!allPosts.length) return content;
+  
+  // 관련 포스트에서 링크할 키워드 찾기
+  const linkableKeywords = ['ChatGPT', 'AI', '인공지능', '러버블', '블로그', '가이드', '튜토리얼'];
+  
+  let linkedContent = content;
+  
+  linkableKeywords.forEach(keyword => {
+    const relatedPost = allPosts.find(post => 
+      post.title.includes(keyword) && post.slug
+    );
+    
+    if (relatedPost) {
+      // 첫 번째 등장하는 키워드만 링크로 변환
+      const regex = new RegExp(`\\b${keyword}\\b`, 'i');
+      if (regex.test(linkedContent) && !linkedContent.includes(`[${keyword}]`)) {
+        linkedContent = linkedContent.replace(
+          regex, 
+          `[${keyword}](/blog/${relatedPost.slug})`
+        );
+      }
+    }
+  });
+  
+  return linkedContent;
 };
 
 // 성능 최적화를 위한 debounce 함수

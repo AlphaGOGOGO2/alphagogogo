@@ -25,7 +25,7 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     ? new Date(post.updatedAt).toISOString() 
     : publishDate;
   
-  // 구조화 데이터 객체 생성
+  // 확장된 구조화 데이터 객체 생성
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -42,7 +42,12 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "@type": "Person",
       "name": post.author.name,
       "url": `${SITE_DOMAIN}/author/${encodeURIComponent(post.author.name.toLowerCase().replace(/\s+/g, '-'))}`,
-      "sameAs": ["https://alphagogogo.com"]
+      "sameAs": ["https://alphagogogo.com"],
+      "jobTitle": "AI 콘텐츠 크리에이터",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "알파고고고"
+      }
     },
     "publisher": {
       "@type": "Organization",
@@ -57,7 +62,8 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "sameAs": [
         "https://alphagogogo.com",
         "https://www.youtube.com/@alphagogogo"
-      ]
+      ],
+      "description": "AI를 이해하는 새로운 관점으로 비개발자를 위한 실용적인 가이드 제공"
     },
     "datePublished": publishDate,
     "dateModified": modifiedDate,
@@ -66,7 +72,30 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
       "@type": "WebPage",
       "@id": canonicalUrl,
       "url": canonicalUrl,
-      "name": post.title
+      "name": post.title,
+      "breadcrumb": {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": SITE_DOMAIN,
+            "name": "홈"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": `${SITE_DOMAIN}/blog`,
+            "name": "블로그"
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": canonicalUrl,
+            "name": post.title
+          }
+        ]
+      }
     },
     "keywords": keywordsArray.join(","),
     "articleBody": post.content,
@@ -77,8 +106,16 @@ export function BlogPostSchema({ post, url }: BlogPostSchemaProps) {
     "isPartOf": {
       "@type": "Blog",
       "name": "알파고고고 블로그",
-      "url": `${SITE_DOMAIN}/blog`
-    }
+      "url": `${SITE_DOMAIN}/blog`,
+      "description": "AI와 기술에 대한 비개발자 친화적인 인사이트"
+    },
+    "audience": {
+      "@type": "Audience",
+      "audienceType": "비개발자, AI 초보자, 기술 입문자"
+    },
+    "educationalLevel": "초급",
+    "learningResourceType": "블로그 포스트",
+    "teaches": post.category
   };
 
   // 이미지 추가
