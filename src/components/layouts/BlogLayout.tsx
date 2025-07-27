@@ -57,8 +57,9 @@ export function BlogLayout({ children, title, isLoading = false }: BlogLayoutPro
                    aria-label={`${title} 페이지`}
                  >
                   {title}
-                </h1>
+                 </h1>
                 
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">카테고리</h2>
                 <nav aria-label="블로그 카테고리" className="flex flex-wrap gap-2 md:gap-4 mb-8 items-center">
                   {blogCategories.map((category, index) => (
                     <Link

@@ -89,9 +89,9 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
             </span>
           </div>
           <div className="block mb-2">
-            <h3 className="text-lg font-bold text-gray-800 hover:text-purple-700 transition-colors duration-200">
+            <h2 className="text-lg font-bold text-gray-800 hover:text-purple-700 transition-colors duration-200">
               {displayTitle}
-            </h3>
+            </h2>
           </div>
           <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
             {cleanExcerpt.length > 150 ? `${cleanExcerpt.substring(0, 150)}...` : cleanExcerpt}

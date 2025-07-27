@@ -99,7 +99,10 @@ export default function AllBlogPage() {
             <p className="text-gray-500 mt-2">첫 번째 글을 작성해보세요!</p>
           </div>
         ) : (
-          <LazyBlogGrid posts={posts} />
+          <section>
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">모든 포스트</h2>
+            <LazyBlogGrid posts={posts} />
+          </section>
         )}
       </ErrorBoundary>
     </BlogLayout>
