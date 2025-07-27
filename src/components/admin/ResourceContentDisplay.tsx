@@ -18,10 +18,13 @@ export function ResourceContentDisplay({ content, className = "" }: ResourceCont
   const isHtmlContent = content.includes('<') && content.includes('>');
   
   if (isHtmlContent) {
+    const { sanitizeHtml } = require('@/utils/securityUtils');
+    const sanitizedContent = sanitizeHtml(content);
+    
     return (
       <div 
         className={`${className} prose prose-sm max-w-none`}
-        dangerouslySetInnerHTML={{ __html: content }}
+        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
     );
   }

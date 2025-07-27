@@ -3,6 +3,7 @@ import { FC, FormEvent, useState, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Send } from "lucide-react";
+import { validateMessageContent, sanitizeText } from "@/utils/securityUtils";
 
 interface MessageInputProps {
   onSendMessage: (message: string) => void;
@@ -15,8 +16,17 @@ export const MessageInput: FC<MessageInputProps> = ({ onSendMessage, disabled = 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim() || disabled) return;
+
+    // 메시지 유효성 검사
+    const validation = validateMessageContent(newMessage);
+    if (!validation.isValid) {
+      // 에러는 부모 컴포넌트에서 처리하도록 onSendMessage로 전달
+      return;
+    }
     
-    onSendMessage(newMessage);
+    // 메시지 새니타이즈
+    const sanitizedMessage = sanitizeText(newMessage);
+    onSendMessage(sanitizedMessage);
     setNewMessage("");
   };
 
@@ -24,7 +34,15 @@ export const MessageInput: FC<MessageInputProps> = ({ onSendMessage, disabled = 
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       if (newMessage.trim() && !disabled) {
-        onSendMessage(newMessage);
+        // 메시지 유효성 검사
+        const validation = validateMessageContent(newMessage);
+        if (!validation.isValid) {
+          return;
+        }
+        
+        // 메시지 새니타이즈
+        const sanitizedMessage = sanitizeText(newMessage);
+        onSendMessage(sanitizedMessage);
         setNewMessage("");
       }
     }

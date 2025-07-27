@@ -14,8 +14,9 @@ export const secureCreateBlogPost = async (
       return null;
     }
 
-    // 관리자 토큰 확인
-    const token = sessionStorage.getItem("blogAuthToken");
+    // 보안 관리자 토큰 확인
+    const { getAdminToken } = await import("@/services/secureAuthService");
+    const token = getAdminToken();
     if (!token) {
       toast.error("관리자 인증이 필요합니다");
       return null;
@@ -119,8 +120,9 @@ export const secureUpdateBlogPost = async (
       return null;
     }
     
-    // 관리자 토큰 확인
-    const token = sessionStorage.getItem("blogAuthToken");
+    // 보안 관리자 토큰 확인
+    const { getAdminToken } = await import("@/services/secureAuthService");
+    const token = getAdminToken();
     if (!token) {
       toast.error("관리자 인증이 필요합니다");
       return null;
