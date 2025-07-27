@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { secureLogin, checkLoginRateLimit, recordLoginAttempt, clearLoginAttempts } from "@/services/secureAuthService";
 
 interface BlogPasswordModalProps {
   isOpen: boolean;
@@ -25,21 +25,18 @@ export function BlogPasswordModal({ isOpen, onClose, onSuccess }: BlogPasswordMo
     setError(null);
 
     try {
-      // Use the Supabase edge function to verify password
-      const { data, error } = await supabase.functions.invoke('verify-admin-password', {
-        body: { password }
-      });
-
-      if (error) {
-        console.error("Error calling verify-admin-password function:", error);
-        setError("인증 중 오류가 발생했습니다. 다시 시도해주세요.");
+      // Check rate limiting
+      if (!checkLoginRateLimit()) {
+        setError("너무 많은 로그인 시도입니다. 15분 후 다시 시도해주세요.");
         setIsSubmitting(false);
         return;
       }
 
-      if (data && data.success) {
-        // Correct password
-        sessionStorage.setItem("blogAuthToken", data.token);
+      // Use secure login service
+      const result = await secureLogin("admin@example.com", password);
+      
+      if (result.success) {
+        clearLoginAttempts();
         setIsSubmitting(false);
 
         if (onSuccess) {
@@ -49,8 +46,8 @@ export function BlogPasswordModal({ isOpen, onClose, onSuccess }: BlogPasswordMo
           navigate("/blog/write");
         }
       } else {
-        // Incorrect password
-        setError("비밀번호가 올바르지 않습니다. 다시 시도해주세요.");
+        recordLoginAttempt();
+        setError(result.message || "비밀번호가 올바르지 않습니다.");
         setIsSubmitting(false);
       }
     } catch (error) {

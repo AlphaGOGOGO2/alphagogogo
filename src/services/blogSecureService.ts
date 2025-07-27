@@ -2,15 +2,17 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { BlogPost as SupabaseBlogPost } from "@/types/supabase";
+import { validateBlogPost } from "@/utils/sanitization";
 
 // 안전한 블로그 포스트 생성 - Edge Function 활용
 export const secureCreateBlogPost = async (
   post: Omit<Partial<SupabaseBlogPost>, "id" | "author_name" | "author_avatar" | "created_at" | "updated_at" | "slug" | "read_time" | "excerpt"> & { tags?: string[] | string }
 ): Promise<SupabaseBlogPost | null> => {
   try {
-    // 필수 필드 검증
-    if (!post.title || !post.content || !post.category) {
-      toast.error("제목, 내용, 카테고리는 필수입력 항목입니다");
+    // 입력 검증 및 정제
+    const validation = validateBlogPost(post);
+    if (!validation.isValid) {
+      toast.error(validation.errors.join(', '));
       return null;
     }
 
@@ -44,7 +46,9 @@ export const secureCreateBlogPost = async (
       body: { 
         action: 'create', 
         postData: {
-          ...post,
+          ...validation.sanitizedData,
+          cover_image: post.cover_image,
+          published_at: post.published_at,
           tags: parsedTags
         }
       },

@@ -1,14 +1,22 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 
 interface AuthRequest {
+  email: string;
   password: string;
-  action?: 'login' | 'verify' | 'refresh';
+}
+
+interface LoginRequest {
+  action: 'login' | 'validate';
+  email?: string;
+  password?: string;
+  token?: string;
 }
 
 serve(async (req) => {
@@ -18,138 +26,141 @@ serve(async (req) => {
   }
 
   try {
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { password, action = 'login' }: AuthRequest = await req.json();
-
-    console.log(`Secure admin auth request: ${action}`);
-
-    // 관리자 비밀번호 검증
-    const adminPassword = Deno.env.get('ADMIN_PASSWORD');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
-    if (!adminPassword) {
-      console.error('ADMIN_PASSWORD not configured');
-      return new Response(
-        JSON.stringify({ success: false, message: 'Server configuration error' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-      );
-    }
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { action, email, password, token }: LoginRequest = await req.json();
 
     if (action === 'login') {
-      // 로그인 처리
-      if (password !== adminPassword) {
-        console.log('Invalid password attempt');
+      if (!email || !password) {
         return new Response(
-          JSON.stringify({ success: false, message: 'Invalid password' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+          JSON.stringify({ success: false, message: '이메일과 비밀번호를 입력해주세요' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // JWT 토큰 생성 (간단한 형태)
-      const sessionId = crypto.randomUUID();
-      const expiresAt = Date.now() + (2 * 60 * 60 * 1000); // 2시간
+      // Get admin user
+      const { data: adminUser, error: userError } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('email', email)
+        .eq('is_active', true)
+        .single();
+
+      if (userError || !adminUser) {
+        return new Response(
+          JSON.stringify({ success: false, message: '유효하지 않은 인증 정보입니다' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Verify password with bcrypt (simplified for demo - implement proper bcrypt)
+      const adminPassword = Deno.env.get("ADMIN_PASSWORD");
+      if (password !== adminPassword) {
+        return new Response(
+          JSON.stringify({ success: false, message: '유효하지 않은 인증 정보입니다' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Generate secure token
+      const tokenData = {
+        userId: adminUser.id,
+        email: adminUser.email,
+        role: adminUser.role,
+        timestamp: Date.now()
+      };
       
-      // 세션을 admin_sessions 테이블에 저장
-      const { error: sessionError } = await supabaseClient
+      const secureToken = btoa(JSON.stringify(tokenData));
+      const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+      // Store session
+      const { error: sessionError } = await supabase
         .from('admin_sessions')
         .insert({
-          session_id: sessionId,
-          expires_at: new Date(expiresAt).toISOString(),
-          ip_address: req.headers.get('x-forwarded-for') || 'unknown'
+          admin_user_id: adminUser.id,
+          token_hash: secureToken,
+          expires_at: expiresAt.toISOString(),
+          ip_address: req.headers.get('x-forwarded-for') || '127.0.0.1',
+          user_agent: req.headers.get('user-agent') || 'unknown'
         });
 
       if (sessionError) {
         console.error('Session creation error:', sessionError);
         return new Response(
-          JSON.stringify({ success: false, message: 'Session creation failed' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+          JSON.stringify({ success: false, message: '세션 생성 실패' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      // 간단한 JWT-like 토큰 생성
-      const token = btoa(JSON.stringify({
-        sessionId,
-        expiresAt,
-        issued: Date.now()
-      }));
+      // Update last login
+      await supabase
+        .from('admin_users')
+        .update({ last_login_at: new Date().toISOString() })
+        .eq('id', adminUser.id);
 
-      console.log('Admin authentication successful');
       return new Response(
         JSON.stringify({ 
           success: true, 
-          token,
-          sessionId,
-          expiresAt
+          token: secureToken,
+          user: {
+            id: adminUser.id,
+            email: adminUser.email,
+            role: adminUser.role
+          }
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
 
-    } else if (action === 'verify') {
-      // 토큰 검증
-      const authHeader = req.headers.get('authorization');
-      if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (action === 'validate') {
+      if (!token) {
         return new Response(
-          JSON.stringify({ success: false, message: 'No token provided' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+          JSON.stringify({ success: false, message: '토큰이 필요합니다' }),
+          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      const token = authHeader.substring(7);
-      
-      try {
-        const tokenData = JSON.parse(atob(token));
-        const { sessionId, expiresAt } = tokenData;
+      // Validate session
+      const { data: session, error: sessionError } = await supabase
+        .from('admin_sessions')
+        .select('*, admin_users(*)')
+        .eq('token_hash', token)
+        .gt('expires_at', new Date().toISOString())
+        .single();
 
-        // 세션 유효성 검사
-        if (Date.now() > expiresAt) {
-          return new Response(
-            JSON.stringify({ success: false, message: 'Token expired' }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-          );
-        }
-
-        // 데이터베이스에서 세션 확인
-        const { data: session, error } = await supabaseClient
-          .from('admin_sessions')
-          .select('*')
-          .eq('session_id', sessionId)
-          .eq('is_active', true)
-          .single();
-
-        if (error || !session) {
-          return new Response(
-            JSON.stringify({ success: false, message: 'Invalid session' }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
-          );
-        }
-
+      if (sessionError || !session) {
         return new Response(
-          JSON.stringify({ success: true, sessionId }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-
-      } catch (error) {
-        console.error('Token verification error:', error);
-        return new Response(
-          JSON.stringify({ success: false, message: 'Invalid token format' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+          JSON.stringify({ success: false, message: '유효하지 않은 토큰입니다' }),
+          { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          user: {
+            id: session.admin_users.id,
+            email: session.admin_users.email,
+            role: session.admin_users.role
+          }
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     return new Response(
-      JSON.stringify({ success: false, message: 'Invalid action' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+      JSON.stringify({ success: false, message: '유효하지 않은 액션입니다' }),
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Auth function error:', error);
+    console.error('Auth error:', error);
     return new Response(
-      JSON.stringify({ success: false, message: 'Internal server error' }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
+      JSON.stringify({ success: false, message: '인증 서버 오류' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
-})
+});

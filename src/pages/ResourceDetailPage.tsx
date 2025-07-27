@@ -166,9 +166,9 @@ export default function ResourceDetailPage() {
               {resource.description && (
                 <div className="border-t pt-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">자료 설명</h2>
-                  <div 
+                  <SafeHTML 
+                    content={resource.description}
                     className="prose max-w-none text-gray-700 break-words overflow-hidden"
-                    dangerouslySetInnerHTML={{ __html: resource.description }}
                   />
                 </div>
               )}

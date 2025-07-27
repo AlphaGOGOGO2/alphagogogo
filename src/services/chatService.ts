@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { validateChatMessage, checkRateLimit } from "@/utils/sanitization";
 
 // 채널 상태 확인
 export const checkChannelHealth = async (): Promise<boolean> => {
@@ -35,28 +36,44 @@ export const fetchRecentMessages = async (limit = 100) => {
   }
 };
 
-// 메시지 전송
+// 메시지 전송 (보안 강화)
 export const sendChatMessage = async (
   messageId: string, 
   nickname: string, 
   content: string, 
   userColor: string
-): Promise<boolean> => {
+): Promise<{ success: boolean; error?: string }> => {
   try {
+    // Rate limiting check (5 messages per minute)
+    const clientId = localStorage.getItem('clientId') || 'anonymous';
+    if (!checkRateLimit(`chat_${clientId}`, 5, 60000)) {
+      return { success: false, error: '메시지 전송 속도 제한에 걸렸습니다. 잠시 후 다시 시도해주세요.' };
+    }
+
+    // Validate and sanitize input
+    const validation = validateChatMessage(content, nickname);
+    if (!validation.isValid) {
+      return { success: false, error: validation.errors.join(', ') };
+    }
+
     const { error } = await supabase
       .from('community_messages')
       .insert([{
         id: messageId,
-        nickname,
-        content,
+        nickname: validation.sanitizedData.nickname,
+        content: validation.sanitizedData.content,
         color: userColor
       }]);
 
-    if (error) throw error;
-    return true;
+    if (error) {
+      console.error("메시지 전송 실패:", error);
+      return { success: false, error: '메시지 전송에 실패했습니다.' };
+    }
+    
+    return { success: true };
   } catch (error) {
     console.error("메시지 전송 실패:", error);
-    return false;
+    return { success: false, error: '메시지 전송 중 오류가 발생했습니다.' };
   }
 };
 
