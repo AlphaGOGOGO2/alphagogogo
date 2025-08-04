@@ -15,11 +15,50 @@ serve(async (req) => {
   }
 
   try {
-    // 인증 토큰 확인
+    // 인증 토큰 확인 - 실제 세션 토큰 검증
     const adminToken = req.headers.get('admin-token');
-    const correctToken = "authorized"; // 고정 값, 관리자 인증 시 사용되는 토큰
     
-    if (adminToken !== correctToken) {
+    if (!adminToken) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          message: "인증 토큰이 필요합니다" 
+        }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    // 토큰 검증을 위해 secure-admin-auth 함수 호출
+    const authResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/secure-admin-auth`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`
+      },
+      body: JSON.stringify({
+        action: 'validate',
+        token: adminToken
+      })
+    });
+    
+    if (!authResponse.ok) {
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          message: "토큰 검증 실패" 
+        }),
+        { 
+          status: 401,
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    const authResult = await authResponse.json();
+    if (!authResult.success) {
       return new Response(
         JSON.stringify({ 
           success: false, 
