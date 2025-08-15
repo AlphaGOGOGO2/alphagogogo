@@ -8,12 +8,12 @@ import { ko } from "date-fns/locale";
 interface InviteLink {
   id: string;
   service_name: string;
-  invite_url: string;
-  user_nickname: string;
+  user_nickname: string; // anonymized in public view
   description: string | null;
   click_count: number;
   created_at: string;
   updated_at: string;
+  // invite_url removed from public interface
 }
 
 interface InviteLinkCardProps {
@@ -23,8 +23,8 @@ interface InviteLinkCardProps {
 
 export function InviteLinkCard({ link, onLinkClick }: InviteLinkCardProps) {
   const handleClick = () => {
+    // Only pass the link ID - the component will handle URL fetching
     onLinkClick(link.id);
-    window.open(link.invite_url, '_blank', 'noopener,noreferrer');
   };
 
   return (

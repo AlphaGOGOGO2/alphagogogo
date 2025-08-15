@@ -12,6 +12,15 @@ verify_jwt = false
 [functions.fix-blog-thumbnails]
 verify_jwt = false
 
+[functions.get-visitor-stats]
+verify_jwt = false
+
+[functions.get-invite-links]
+verify_jwt = false
+
+[functions.get-invite-link-url]
+verify_jwt = false
+
 [functions.sitemap]
 verify_jwt = false
 

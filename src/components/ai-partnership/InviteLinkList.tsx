@@ -8,12 +8,12 @@ import { getClientId } from "@/utils/clientIdUtils";
 interface InviteLink {
   id: string;
   service_name: string;
-  invite_url: string;
-  user_nickname: string;
+  user_nickname: string; // anonymized in public view
   description: string | null;
   click_count: number;
   created_at: string;
   updated_at: string;
+  // invite_url removed from public interface
 }
 
 interface InviteLinkListProps {
@@ -27,19 +27,22 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
   const fetchLinks = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('invite_links')
-        .select('*')
-        .eq('service_name', selectedService)
-        .order('click_count', { ascending: false })
-        .order('created_at', { ascending: false });
+      // Use secure edge function to get public invite link data
+      const response = await fetch(
+        `https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/get-invite-links?service=${encodeURIComponent(selectedService)}`
+      );
 
-      if (error) {
-        console.error('Fetch error:', error);
+      if (!response.ok) {
+        console.error('Fetch error:', response.status);
         return;
       }
 
-      setLinks(data || []);
+      const result = await response.json();
+      if (result.success) {
+        setLinks(result.data || []);
+      } else {
+        console.error('API error:', result.error);
+      }
     } catch (error) {
       console.error('Fetch error:', error);
     } finally {
@@ -49,7 +52,23 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
 
   const handleLinkClick = async (linkId: string) => {
     try {
-      // 클라이언트 ID를 가져와서 중복 클릭 방지
+      // Get actual invite URL via secure function
+      const urlResponse = await fetch(
+        `https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/get-invite-link-url?id=${linkId}`
+      );
+      
+      if (!urlResponse.ok) {
+        console.error('URL fetch error:', urlResponse.status);
+        return;
+      }
+      
+      const urlResult = await urlResponse.json();
+      if (!urlResult.success) {
+        console.error('URL fetch failed:', urlResult.error);
+        return;
+      }
+      
+      // Track click with RPC
       const clientId = getClientId();
       console.log('클라이언트 ID로 클릭 추적:', clientId);
       
@@ -58,10 +77,13 @@ export function InviteLinkList({ selectedService }: InviteLinkListProps) {
         client_id: clientId
       });
       
-      // 로컬 상태 업데이트 (클릭수가 100에 도달하면 서버에서 삭제되므로 refetch)
+      // Open the actual invite URL
+      window.open(urlResult.invite_url, '_blank', 'noopener,noreferrer');
+      
+      // Refresh links (click count may have changed, link may be deleted at 100 clicks)
       fetchLinks();
     } catch (error) {
-      console.error('Click tracking error:', error);
+      console.error('Click handling error:', error);
     }
   };
 
