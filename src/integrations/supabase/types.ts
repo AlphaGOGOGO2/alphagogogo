@@ -472,6 +472,7 @@ export type Database = {
           id: string
           ip_address: string | null
           user_agent: string | null
+          visit_date: string | null
           visited_at: string
         }
         Insert: {
@@ -479,6 +480,7 @@ export type Database = {
           id?: string
           ip_address?: string | null
           user_agent?: string | null
+          visit_date?: string | null
           visited_at?: string
         }
         Update: {
@@ -486,6 +488,7 @@ export type Database = {
           id?: string
           ip_address?: string | null
           user_agent?: string | null
+          visit_date?: string | null
           visited_at?: string
         }
         Relationships: []

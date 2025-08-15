@@ -33,37 +33,27 @@ export function useRecordVisit() {
           console.log("[방문자 기록] 오늘 시작:", today.toISOString());
         }
         
-        // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인
-        const { data: existingVisits, error: fetchError } = await supabase
-          .from("visit_logs")
-          .select("id")
-          .eq("client_id", clientId)
-          .gte("visited_at", today.toISOString())
-          .lt("visited_at", tomorrow.toISOString())
-          .limit(1);
-          
-        if (fetchError) {
-          console.error("[방문자 기록] - 방문 기록 조회 실패:", fetchError.message);
-          return;
-        }
-          
-        // 오늘 이미 방문 기록이 있으면 중복 기록하지 않음
-        if (existingVisits && existingVisits.length > 0) {
-          return;
-        }
-
-        // 방문 기록 데이터 구성
+        // 오늘 이 클라이언트 ID로 이미 방문 기록이 있는지 확인 대신
+        // DB 고유 인덱스(client_id, visit_date) 기반 upsert로 중복 방지
         const visitData = {
           user_agent: window.navigator.userAgent,
           client_id: clientId,
-          // IP 주소는 서버에서 자동으로 설정 (브라우저에서 직접 접근 불가)
+          // visited_at은 DB 기본값 now()
         };
 
-        // 방문 기록 추가
-        const { data: insertResult, error } = await supabase
+        const { error } = await supabase
           .from("visit_logs")
-          .insert(visitData)
+          .upsert(visitData, {
+            onConflict: "client_id,visit_date",
+            ignoreDuplicates: true,
+          })
           .select();
+        
+        if (error) {
+          console.error("[방문자 기록] 실패:", error.message);
+        } else if (process.env.NODE_ENV === 'development') {
+          console.log("[방문자 기록] 성공 (upsert)");
+        }
         
         if (error) {
           console.error("[방문자 기록] 실패:", error.message);
