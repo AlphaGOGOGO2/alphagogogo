@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -20,7 +20,7 @@ export type Database = {
           created_at: string
           expires_at: string
           id: string
-          ip_address: unknown | null
+          ip_address: string | null
           token_hash: string
           user_agent: string | null
         }
@@ -29,7 +29,7 @@ export type Database = {
           created_at?: string
           expires_at: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: string | null
           token_hash: string
           user_agent?: string | null
         }
@@ -38,7 +38,7 @@ export type Database = {
           created_at?: string
           expires_at?: string
           id?: string
-          ip_address?: unknown | null
+          ip_address?: string | null
           token_hash?: string
           user_agent?: string | null
         }
@@ -59,8 +59,7 @@ export type Database = {
           id: string
           is_active: boolean
           last_login_at: string | null
-          password_hash: string
-          role: Database["public"]["Enums"]["admin_role"]
+          role: string
           updated_at: string
         }
         Insert: {
@@ -69,8 +68,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_login_at?: string | null
-          password_hash: string
-          role?: Database["public"]["Enums"]["admin_role"]
+          role?: string
           updated_at?: string
         }
         Update: {
@@ -79,8 +77,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           last_login_at?: string | null
-          password_hash?: string
-          role?: Database["public"]["Enums"]["admin_role"]
+          role?: string
           updated_at?: string
         }
         Relationships: []
@@ -503,7 +500,7 @@ export type Database = {
         Returns: undefined
       }
       increment_invite_click_count: {
-        Args: { link_id: string; client_id?: string }
+        Args: { client_id?: string; link_id: string }
         Returns: undefined
       }
       validate_message_content: {
