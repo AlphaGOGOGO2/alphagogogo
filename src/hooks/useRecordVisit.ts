@@ -46,19 +46,12 @@ export function useRecordVisit() {
           .upsert(visitData, {
             onConflict: "client_id,visit_date",
             ignoreDuplicates: true,
-          })
-          .select();
+          });
         
         if (error) {
           console.error("[방문자 기록] 실패:", error.message);
         } else if (process.env.NODE_ENV === 'development') {
           console.log("[방문자 기록] 성공 (upsert)");
-        }
-        
-        if (error) {
-          console.error("[방문자 기록] 실패:", error.message);
-        } else if (process.env.NODE_ENV === 'development') {
-          console.log("[방문자 기록] 성공");
         }
       } catch (error) {
         // 방문 기록 실패해도 UI에 영향 없게 처리
