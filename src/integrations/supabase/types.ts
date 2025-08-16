@@ -546,6 +546,14 @@ export type Database = {
         }
         Returns: undefined
       }
+      monitor_security_events: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          high_risk_events_count: number
+          last_event_time: string
+          recent_events_count: number
+        }[]
+      }
       validate_message_content: {
         Args: { content: string }
         Returns: boolean
