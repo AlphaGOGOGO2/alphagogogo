@@ -81,10 +81,13 @@ function sanitizeUserAgent(ua: string | null): string {
 }
 
 interface LoginRequest {
-  action: 'login' | 'validate';
+  action: 'login' | 'validate' | 'invalidate' | 'cleanup_sessions' | 'log_security_event';
   email?: string;
   password?: string;
   token?: string;
+  event_type?: string;
+  description?: string;
+  metadata?: any;
 }
 
 serve(async (req) => {
@@ -107,7 +110,8 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const { action, email, password, token }: LoginRequest = await req.json();
+    const body: LoginRequest = await req.json();
+    const { action, email, password, token } = body;
 
     if (action === 'login') {
       if (!email || !password) {
@@ -204,6 +208,7 @@ serve(async (req) => {
         .from('admin_sessions')
         .select('id, admin_users(id, email, role)')
         .eq('token_hash', tokenHash)
+        .eq('is_active', true)
         .gt('expires_at', new Date().toISOString())
         .single();
 
@@ -219,6 +224,48 @@ serve(async (req) => {
           role: session.admin_users.role,
         },
       });
+    }
+
+    // Invalidate token action (for session rotation)
+    if (action === 'invalidate') {
+      const { token: tokenToInvalidate } = body;
+      if (!tokenToInvalidate) {
+        return jsonRes(req, { success: false, message: '토큰이 필요합니다' });
+      }
+
+      const tokenHash = await sha256(tokenToInvalidate);
+      
+      // Mark session as inactive
+      await supabase
+        .from('admin_sessions')
+        .update({ is_active: false, invalidated_at: new Date().toISOString() })
+        .eq('token_hash', tokenHash);
+
+      return jsonRes(req, { success: true, message: '토큰이 무효화되었습니다' });
+    }
+
+    // Cleanup expired sessions action
+    if (action === 'cleanup_sessions') {
+      await supabase.rpc('cleanup_expired_admin_sessions');
+      return jsonRes(req, { success: true, message: '만료된 세션이 정리되었습니다' });
+    }
+
+    // Log security event action
+    if (action === 'log_security_event') {
+      const { event_type, description, metadata } = body;
+      
+      const ip = anonymizeIpAddress(req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown');
+      const userAgent = sanitizeUserAgent(req.headers.get('user-agent'));
+
+      await supabase.from('security_audit_logs').insert({
+        event_type,
+        event_description: description,
+        ip_address: ip,
+        user_agent: userAgent,
+        metadata: metadata || {}
+      });
+
+      return jsonRes(req, { success: true, message: '보안 이벤트가 기록되었습니다' });
     }
 
     return jsonRes(req, { success: false, message: '유효하지 않은 액션입니다' }, { status: 400 });

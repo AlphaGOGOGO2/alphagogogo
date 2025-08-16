@@ -50,7 +50,10 @@ export type Database = {
           created_at: string
           expires_at: string
           id: string
+          invalidated_at: string | null
           ip_address: string | null
+          is_active: boolean | null
+          last_used_at: string | null
           token_hash: string
           user_agent: string | null
         }
@@ -59,7 +62,10 @@ export type Database = {
           created_at?: string
           expires_at: string
           id?: string
+          invalidated_at?: string | null
           ip_address?: string | null
+          is_active?: boolean | null
+          last_used_at?: string | null
           token_hash: string
           user_agent?: string | null
         }
@@ -68,7 +74,10 @@ export type Database = {
           created_at?: string
           expires_at?: string
           id?: string
+          invalidated_at?: string | null
           ip_address?: string | null
+          is_active?: boolean | null
+          last_used_at?: string | null
           token_hash?: string
           user_agent?: string | null
         }
@@ -145,6 +154,33 @@ export type Database = {
           name?: string
           updated_at?: string
           url_pattern?: string
+        }
+        Relationships: []
+      }
+      api_rate_limits: {
+        Row: {
+          created_at: string
+          endpoint: string
+          id: string
+          identifier: string
+          request_count: number
+          window_start: string
+        }
+        Insert: {
+          created_at?: string
+          endpoint: string
+          id?: string
+          identifier: string
+          request_count?: number
+          window_start?: string
+        }
+        Update: {
+          created_at?: string
+          endpoint?: string
+          id?: string
+          identifier?: string
+          request_count?: number
+          window_start?: string
         }
         Relationships: []
       }
@@ -558,6 +594,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_admin_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      cleanup_old_rate_limits: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       increment_download_count: {
         Args: { resource_id: string }
         Returns: undefined
