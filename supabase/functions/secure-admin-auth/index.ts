@@ -51,6 +51,35 @@ function generateToken(): string {
   return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
 
+// Anonymize IP to minimize PII leakage (IPv4: mask last octet, IPv6: mask last 4 groups)
+function anonymizeIpAddress(ip: string): string {
+  if (!ip) return '0.0.0.0';
+  // In case of multiple IPs (x-forwarded-for), take the first
+  const first = ip.split(',')[0].trim();
+  if (first.includes('.')) {
+    const parts = first.split('.');
+    if (parts.length === 4) {
+      parts[3] = '0';
+      return parts.join('.');
+    }
+  }
+  if (first.includes(':')) {
+    const parts = first.split(':');
+    if (parts.length >= 4) {
+      for (let i = parts.length - 4; i < parts.length; i++) {
+        if (i >= 0) parts[i] = '0';
+      }
+      return parts.join(':');
+    }
+  }
+  return first;
+}
+
+function sanitizeUserAgent(ua: string | null): string {
+  if (!ua) return 'unknown';
+  return ua.slice(0, 120);
+}
+
 interface LoginRequest {
   action: 'login' | 'validate';
   email?: string;
@@ -85,8 +114,9 @@ serve(async (req) => {
         return jsonRes(req, { success: false, message: '이메일과 비밀번호를 입력해주세요' }, { status: 400 });
       }
 
-      // Server-side rate limiting: max 5 attempts per 15 minutes per IP
-      const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';
+      // Server-side rate limiting: max 5 attempts per 15 minutes per masked IP
+      const rawIp = req.headers.get('x-forwarded-for') || '127.0.0.1';
+      const ip = anonymizeIpAddress(rawIp);
       const windowStart = new Date(Date.now() - 15 * 60 * 1000).toISOString();
       const { count: attemptCount, error: rlError } = await supabase
         .from('admin_login_attempts')
@@ -105,7 +135,7 @@ serve(async (req) => {
       // Record this attempt (regardless of success)
       const { error: rlInsertError } = await supabase
         .from('admin_login_attempts')
-        .insert({ ip_address: ip });
+        .insert({ ip_address: ip, user_agent: sanitizeUserAgent(req.headers.get('user-agent')) });
       if (rlInsertError) {
         console.error('[secure-admin-auth] Rate limit insert error:', rlInsertError);
       }
@@ -141,7 +171,7 @@ serve(async (req) => {
           token_hash: tokenHash,
           expires_at: expiresAt.toISOString(),
           ip_address: ip,
-          user_agent: req.headers.get('user-agent') || 'unknown',
+          user_agent: sanitizeUserAgent(req.headers.get('user-agent')),
         });
 
       if (sessionError) {
