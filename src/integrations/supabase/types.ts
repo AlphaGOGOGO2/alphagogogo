@@ -466,6 +466,36 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_logs: {
+        Row: {
+          created_at: string
+          event_description: string
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_description: string
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_description?: string
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       visit_logs: {
         Row: {
           client_id: string | null
@@ -506,7 +536,21 @@ export type Database = {
         Args: { client_id?: string; link_id: string }
         Returns: undefined
       }
+      log_security_event: {
+        Args: {
+          event_description: string
+          event_type: string
+          ip_address?: string
+          metadata?: Json
+          user_agent?: string
+        }
+        Returns: undefined
+      }
       validate_message_content: {
+        Args: { content: string }
+        Returns: boolean
+      }
+      validate_message_content_enhanced: {
         Args: { content: string }
         Returns: boolean
       }
