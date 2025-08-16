@@ -21,6 +21,9 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
     cleanupAuthState();
     try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
 
+    // 기존 세션 정리 (세션 회전)
+    await cleanupExpiredSessions();
+
     const { data, error } = await supabase.functions.invoke('secure-admin-auth', {
       body: {
         action: 'login',
@@ -34,7 +37,17 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
     }
 
     if (data.success) {
-      // Secure token storage
+      // Secure token storage with rotation
+      const oldToken = getAdminToken();
+      if (oldToken) {
+        // 기존 토큰 무효화
+        try {
+          await supabase.functions.invoke('secure-admin-auth', {
+            body: { action: 'invalidate', token: oldToken }
+          });
+        } catch {}
+      }
+      
       sessionStorage.setItem(TOKEN_KEY, data.token);
       sessionStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
       
@@ -152,4 +165,31 @@ export const getLoginBackoffDelay = (): number => {
   if (n <= 2) return 0;
   const delay = Math.min(30000, Math.pow(2, n - 2) * 1000);
   return delay;
+};
+
+// 만료된 세션 정리
+export const cleanupExpiredSessions = async (): Promise<void> => {
+  try {
+    await supabase.functions.invoke('secure-admin-auth', {
+      body: { action: 'cleanup_sessions' }
+    });
+  } catch (error) {
+    console.error('Session cleanup error:', error);
+  }
+};
+
+// 보안 이벤트 로깅
+export const logSecurityEvent = async (eventType: string, description: string, metadata?: any): Promise<void> => {
+  try {
+    await supabase.functions.invoke('secure-admin-auth', {
+      body: {
+        action: 'log_security_event',
+        event_type: eventType,
+        description,
+        metadata
+      }
+    });
+  } catch (error) {
+    console.error('Security logging error:', error);
+  }
 };

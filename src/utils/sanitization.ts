@@ -98,21 +98,21 @@ export const validateChatMessage = (content: string, nickname: string) => {
   };
 };
 
-// Rate limiting utility
+// Enhanced rate limiting utility with progressive backoff
 export const checkRateLimit = (key: string, limit: number, windowMs: number): boolean => {
   const now = Date.now();
   const rateLimitKey = `rate_limit_${key}`;
   const stored = localStorage.getItem(rateLimitKey);
   
   if (!stored) {
-    localStorage.setItem(rateLimitKey, JSON.stringify({ count: 1, resetTime: now + windowMs }));
+    localStorage.setItem(rateLimitKey, JSON.stringify({ count: 1, resetTime: now + windowMs, attempts: [now] }));
     return true;
   }
 
   const data = JSON.parse(stored);
   
   if (now > data.resetTime) {
-    localStorage.setItem(rateLimitKey, JSON.stringify({ count: 1, resetTime: now + windowMs }));
+    localStorage.setItem(rateLimitKey, JSON.stringify({ count: 1, resetTime: now + windowMs, attempts: [now] }));
     return true;
   }
 
@@ -121,6 +121,62 @@ export const checkRateLimit = (key: string, limit: number, windowMs: number): bo
   }
 
   data.count++;
+  data.attempts = data.attempts || [];
+  data.attempts.push(now);
   localStorage.setItem(rateLimitKey, JSON.stringify(data));
   return true;
+};
+
+// Get progressive delay for rate limiting
+export const getRateLimitDelay = (key: string): number => {
+  const rateLimitKey = `rate_limit_${key}`;
+  const stored = localStorage.getItem(rateLimitKey);
+  
+  if (!stored) return 0;
+  
+  const data = JSON.parse(stored);
+  const attempts = data.attempts || [];
+  const recentAttempts = attempts.filter((time: number) => Date.now() - time < 60000); // 1 minute window
+  
+  if (recentAttempts.length <= 2) return 0;
+  
+  // Progressive delay: 1s, 2s, 4s, 8s, max 30s
+  const delay = Math.min(30000, Math.pow(2, recentAttempts.length - 2) * 1000);
+  return delay;
+};
+
+// Enhanced file validation
+export const validateFileUpload = (file: File): { isValid: boolean; error?: string } => {
+  const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  
+  if (!allowedTypes.includes(file.type)) {
+    return { isValid: false, error: '허용되지 않는 파일 형식입니다. JPEG, PNG, GIF, WebP만 지원됩니다.' };
+  }
+  
+  if (file.size > maxSize) {
+    return { isValid: false, error: '파일 크기가 5MB를 초과합니다.' };
+  }
+  
+  // Check file header for actual file type
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const arr = new Uint8Array(e.target?.result as ArrayBuffer);
+      let header = '';
+      for (let i = 0; i < arr.length && i < 4; i++) {
+        header += arr[i].toString(16);
+      }
+      
+      // Check magic numbers for common image formats
+      const validHeaders = ['ffd8ff', '89504e', '474946', '52494646'];
+      const isValidImage = validHeaders.some(h => header.startsWith(h));
+      
+      resolve({ 
+        isValid: isValidImage, 
+        error: isValidImage ? undefined : '유효하지 않은 이미지 파일입니다.' 
+      });
+    };
+    reader.readAsArrayBuffer(file.slice(0, 4));
+  }) as any;
 };
