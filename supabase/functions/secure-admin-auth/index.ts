@@ -113,7 +113,7 @@ serve(async (req) => {
       // Get admin user
       const { data: adminUser, error: userError } = await supabase
         .from('admin_users')
-        .select('*')
+        .select('id, email, role, is_active')
         .eq('email', email)
         .eq('is_active', true)
         .single();
@@ -172,7 +172,7 @@ serve(async (req) => {
       // Validate session
       const { data: session, error: sessionError } = await supabase
         .from('admin_sessions')
-        .select('*, admin_users(*)')
+        .select('id, admin_users(id, email, role)')
         .eq('token_hash', tokenHash)
         .gt('expires_at', new Date().toISOString())
         .single();
