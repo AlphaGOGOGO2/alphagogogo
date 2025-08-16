@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Download, FileText, Image, File, Star } from "lucide-react";
 import { Resource } from "@/types/resources";
-import { resourceService } from "@/services/resourceService";
+import { incrementDownloadCountSafely } from "@/utils/downloadPrivacy";
 
 interface ResourceCardProps {
   resource: Resource;
@@ -32,12 +32,8 @@ export function ResourceCard({ resource }: ResourceCardProps) {
     if (!resource.file_url) return;
 
     try {
-      // IP 주소 가져오기 (선택사항)
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
-      const ipData = await ipResponse.json();
-      
-      // 다운로드 수 증가
-      await resourceService.incrementDownloadCount(resource.id, ipData.ip);
+      // 개인정보 보호를 적용한 안전한 다운로드 로깅
+      await incrementDownloadCountSafely(resource.id);
       
       // 파일 다운로드
       window.open(resource.file_url, '_blank');

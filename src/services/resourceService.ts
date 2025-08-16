@@ -132,13 +132,32 @@ export const resourceService = {
 
   // 다운로드 수 증가
   async incrementDownloadCount(resourceId: string, ipAddress?: string) {
-    // 다운로드 로그 추가
+    // 개인정보 보호 경고
     if (ipAddress) {
+      console.warn(
+        'PRIVACY WARNING: IP address collection detected. ' +
+        'Consider using incrementDownloadCountSafely() from downloadPrivacy.ts instead.'
+      );
+    }
+
+    // 다운로드 로그 추가 (IP 주소가 제공된 경우 익명화)
+    if (ipAddress) {
+      const anonymizeIp = (ip: string): string => {
+        if (ip.includes('.')) {
+          const parts = ip.split('.');
+          if (parts.length === 4) {
+            parts[3] = '0';
+            return parts.join('.');
+          }
+        }
+        return ip;
+      };
+
       await supabase
         .from('resource_downloads')
         .insert({
           resource_id: resourceId,
-          ip_address: ipAddress
+          ip_address: anonymizeIp(ipAddress)
         });
     }
 

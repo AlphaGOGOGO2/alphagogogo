@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SafeHTML } from "@/components/SafeHTML";
 import { resourceService } from "@/services/resourceService";
+import { incrementDownloadCountSafely } from "@/utils/downloadPrivacy";
 
 export default function ResourceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -42,10 +43,8 @@ export default function ResourceDetailPage() {
     if (!resource?.file_url) return;
 
     try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json');
-      const ipData = await ipResponse.json();
-      
-      await resourceService.incrementDownloadCount(resource.id, ipData.ip);
+      // 개인정보 보호를 적용한 안전한 다운로드 로깅
+      await incrementDownloadCountSafely(resource.id);
       
       window.open(resource.file_url, '_blank');
     } catch (error) {
