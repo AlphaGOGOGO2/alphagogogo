@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { cleanupAuthState } from "@/utils/authCleanup";
 
 interface AuthResponse {
   success: boolean;
@@ -16,6 +17,10 @@ const TOKEN_KEY = 'secure_admin_token';
 
 export const secureLogin = async (email: string, password: string): Promise<AuthResponse> => {
   try {
+    // 기존 인증 상태 정리 및 강제 로그아웃 시도 (실패해도 무시)
+    cleanupAuthState();
+    try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
+
     const { data, error } = await supabase.functions.invoke('secure-admin-auth', {
       body: {
         action: 'login',
@@ -88,8 +93,11 @@ export const getAdminToken = (): string | null => {
 };
 
 export const clearAuth = (): void => {
+  try { cleanupAuthState(); } catch {}
   sessionStorage.removeItem(TOKEN_KEY);
   sessionStorage.removeItem('blogAuthToken');
+  // 글로벌 로그아웃 시도 (실패해도 무시)
+  try { supabase.auth.signOut({ scope: 'global' }); } catch {}
 };
 
 export const isAuthenticated = async (): Promise<boolean> => {
@@ -133,4 +141,15 @@ export const recordLoginAttempt = (): void => {
 
 export const clearLoginAttempts = (): void => {
   localStorage.removeItem(LOGIN_ATTEMPT_KEY);
+};
+
+// 지수 백오프 지연(ms) 계산 (최대 30초)
+export const getLoginBackoffDelay = (): number => {
+  const attempts = JSON.parse(localStorage.getItem(LOGIN_ATTEMPT_KEY) || '[]');
+  const now = Date.now();
+  const recentAttempts = attempts.filter((time: number) => now - time < LOCKOUT_DURATION);
+  const n = recentAttempts.length;
+  if (n <= 2) return 0;
+  const delay = Math.min(30000, Math.pow(2, n - 2) * 1000);
+  return delay;
 };

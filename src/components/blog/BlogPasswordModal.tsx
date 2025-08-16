@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, ShieldAlert } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { secureLogin, checkLoginRateLimit, recordLoginAttempt, clearLoginAttempts } from "@/services/secureAuthService";
+import { secureLogin, checkLoginRateLimit, recordLoginAttempt, clearLoginAttempts, getLoginBackoffDelay } from "@/services/secureAuthService";
 
 interface BlogPasswordModalProps {
   isOpen: boolean;
@@ -31,6 +31,10 @@ export function BlogPasswordModal({ isOpen, onClose, onSuccess }: BlogPasswordMo
         setIsSubmitting(false);
         return;
       }
+
+      // 반복 실패 시 지수 백오프 지연 적용
+      const backoff = getLoginBackoffDelay();
+      if (backoff > 0) await new Promise((r) => setTimeout(r, backoff));
 
       // Use secure login service
       const result = await secureLogin("admin@example.com", password);

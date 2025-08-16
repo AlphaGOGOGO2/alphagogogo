@@ -1,7 +1,7 @@
-
 import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ChatMessage } from "@/types/chat";
+import { sanitizeText } from "@/utils/sanitization";
 
 export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -97,13 +97,17 @@ export function useChat() {
   // 메시지 전송
   const sendMessage = async (nickname: string, content: string, color: string) => {
     try {
-      if (!content.trim()) return;
+      const trimmed = content.trim();
+      if (!trimmed) return;
+
+      const safeContent = sanitizeText(trimmed).slice(0, 500);
+      const safeNickname = sanitizeText(nickname).slice(0, 20) || '익명';
       
       const { error } = await supabase.from("community_messages").insert([
         {
           id: crypto.randomUUID(),
-          nickname,
-          content,
+          nickname: safeNickname,
+          content: safeContent,
           color,
         },
       ]);

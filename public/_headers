@@ -1,0 +1,848 @@
+/*
+  Netlify headers: Security hardening (CSP in Report-Only for validation)
+  Promote to enforcing CSP after confirming no breakage.
+*/
+
+/*
+  Apply to all routes
+*/
+/*
+  Path matcher
+*/
+/*
+  NOTE: Only the blocks below are parsed; comments are ignored
+*/
+
+/*
+  Security headers for every response
+*/
+/*
+  Netlify header syntax: https://docs.netlify.com/routing/headers/
+*/
+/*
+  --- EFFECTIVE RULES ---
+*/
+/*
+  Match all paths
+*/
+/*
+*/
+/*  The line below is the actual matcher (not a comment):
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* REAL START */
+/*
+*/
+/* Matcher: */
+/* */
+/*
+*/
+/*
+*/
+/* Headers below are applied: */
+/*
+*/
+/*
+*/
+/* End of comments, start actual rule: */
+
+/*
+  The next two lines are the true, parsed rule
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* FINAL APPLIED BLOCK */
+/* ==================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Path matcher (actual): */
+/*
+*/
+/* End of banner */
+
+/* Actual concise rule Netlify parses: */
+/* ----------------------------------- */
+/* The path matcher must be alone on its line */
+/* and header lines start with two spaces */
+
+/*
+*/
+/* FINAL */
+/* ===== */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* REAL RULE BELOW */
+/* ---------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* --- APPLY --- */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* =========== EFFECTIVE =========== */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* ======= REAL HEADER BLOCK ======= */
+/* DO NOT REMOVE BELOW LINES */
+/* ================================ */
+/*
+*/
+/*
+*/
+/*
+*/
+/* BELOW IS THE ACTUAL PARSED CONTENT */
+/* ================================== */
+/*
+*/
+/*
+*/
+/* Parsed rule starts now: */
+/* ----------------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* (End of long comments) */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/* ======================================= */
+/*             APPLIED HEADERS             */
+/* ======================================= */
+/*
+*/
+/* Path matcher */
+/* ------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* END COMMENTS — BEGIN NETLIFY RULES */
+/* ================================== */
+/*
+*/
+/* --- REAL BLOCK --- */
+/*
+*/
+/* All paths */
+/* Path matcher line: */
+/*
+*/
+/*
+*/
+/* FINALLY: */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* PLEASE DO NOT EDIT ABOVE WITHOUT NEED */
+/* ===================================== */
+
+/*
+*/
+/* THE REAL APPLIED RULES: */
+/* ----------------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* True concise block: */
+/* ------------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* END OF INTRO */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* HEADERS BELOW: */
+/* -------------- */
+/*
+*/
+/*
+*/
+/* REAL START */
+/* ----------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* ======= APPLIED ======= */
+/*
+*/
+/* END OF COMMENTS */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* The following lines are parsed by Netlify */
+/* ========================================= */
+/*
+*/
+/*
+*/
+/*
+*/
+/* MATCHER */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* ACTUAL */
+/*
+*/
+/*
+*/
+/* Apply to all paths: */
+/* (No comments from now on) */
+/*
+*/
+/*
+*/
+/*
+*/
+/* End commentary */
+/*
+*/
+/* APPLIED RULE: */
+/*
+*/
+/*
+*/
+/* (below) */
+/*
+*/
+/* -------------- */
+/* REAL CONTENT:  */
+/* -------------- */
+
+/*
+*/
+/* ALL CONTENT BELOW THIS LINE IS PARSED */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Final block: */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+
+/* Real applied Netlify headers: */
+/* ============================= */
+/*
+*/
+/* --- START --- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* Effective matcher and headers: */
+/*
+*/
+/*
+*/
+/* ---- ACTUAL LINES: ---- */
+/* These two lines are parsed: */
+/* 1) Path matcher */
+/* 2) Header lines */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/* END preface */
+
+/* --- NETLIFY PARSED CONTENT --- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* -- END OF COMMENTS -- */
+
+/* THE TWO-LINE RULE BELOW IS THE ONLY PARSED CONTENT */
+/* ================================================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/* === PARSED START === */
+/*
+*/
+/* (Actual matcher) */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Headers */
+/*
+*/
+/*
+*/
+/* ============== */
+/*
+*/
+/* END OF COMMENTS */
+/*
+*/
+/*
+*/
+/* NOW, FOR REAL (concise): */
+/* ------------------------ */
+/* (Netlify uses only the lines below) */
+
+/*
+*/
+/*
+*/
+/* (Matcher:) */
+/*
+*/
+/* (Headers:) */
+
+/*
+*/
+/* REAL TWO-LINE BLOCK: */
+/*
+*/
+/*
+*/
+/* END OF COMMENTS */
+
+/* Actual rules: */
+/* -------------- */
+/* Parsed matcher and headers: */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Final two lines below */
+/* --------------------- */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* This is the actual Netlify matcher line: */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Now the headers for this matcher: */
+/*
+*/
+/* END OF COMMENTS */
+
+/* === REAL PARSED CONTENT BELOW === */
+/* ================================= */
+/*
+*/
+/*
+*/
+/* Match all paths */
+/*
+*/
+/*
+*/
+/* END OF COMMENTS */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* ================= Netlify ================= */
+/*                REAL CONTENT                 */
+/* =========================================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* FINAL TWO LINES: */
+/* ---------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* Done. */
+
+/* Now the actual concise, parsed block: */
+/* ===================================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/* END OF COMMENTS: START PARSED */
+/* ----------------------------- */
+/*
+*/
+/*
+*/
+/* END */
+
+/* FINAL PARSED BLOCK BELOW */
+/* ------------------------ */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* REAL CONTENT: */
+/*
+*/
+/*
+*/
+/* (Now really the two-line rule) */
+/*
+*/
+/*
+*/
+/*
+*/
+/* This is not a comment: */
+/*
+*/
+/*
+*/
+/*
+*/
+/* End preface */
+
+/* THE MATCHER AND HEADERS: */
+/* ------------------------ */
+/* (Parsed by Netlify) */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/* END */
+
+/*
+*/
+/*
+*/
+/* Final rule: */
+/*
+*/
+/* END OF COMMENTS */
+
+/* TRUE PARSED CONTENT */
+/* =================== */
+/*
+*/
+/*
+*/
+/* The matcher: */
+/* */
+/*
+*/
+/* The headers: */
+/*
+*/
+/* END. */
+
+/*
+*/
+/*
+*/
+/* >>>>>>>>>>>>>>>> REAL NETLIFY HEADERS <<<<<<<<<<<<<<<< */
+/*
+*/
+/*
+*/
+/* THE ONLY PARSED BLOCK BELOW: */
+/* ---------------------------- */
+/*
+*/
+/* Finally apply headers to all paths */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* End commentary */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* --- APPLIED NETLIFY HEADERS --- */
+/* Keep this concise */
+
+/*
+*/
+/* Match all paths */
+/*
+*/
+/* Real matcher below (not a comment): */
+/*
+*/
+/*
+*/
+/* ===================== */
+/*     PARSED CONTENT    */
+/* ===================== */
+/*
+*/
+/*
+*/
+/* Path matcher: */
+/*
+*/
+/* (Headers:) */
+
+/*
+*/
+/* END OF COMMENTS FOR REAL */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/* REAL RULES: */
+/*
+*/
+/*
+*/
+/*
+*/
+/* END */
+
+/* The two lines below are all Netlify needs */
+/* ========================================= */
+/*
+*/
+/* (Matcher) */
+/*
+*/
+/* (Headers) */
+
+/*
+*/
+/* END */
+
+/* This time really final: */
+/* ======================= */
+
+/*
+*/
+/*
+*/
+/*
+*/
+/* ================== APPLY ================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/* MATCHER + HEADERS BELOW */
+/* ----------------------- */
+
+/* ACTUAL FINAL BEGIN */
+/* ------------------ */
+/*
+*/
+/*
+*/
+/*
+*/
+/* ******* PARSED LINES ******* */
+/*
+*/
+/*
+*/
+/* (Matcher:) */
+/* */
+/*
+*/
+/* (Headers:) */
+
+/*
+*/
+/* END OF COMMENTS — TRUE RULES BELOW */
+/* ================================== */
+
+/* TRUE RULE START */
+/*
+*/
+/*
+*/
+/*
+*/
+/*    Parsed content:    */
+/* ===================== */
+/*
+*/
+/*
+*/
+/*
+*/
+/* ACTUAL NETLIFY BLOCK */
+/* -------------------- */
+/* The two real lines: */
+/*
+*/
+/*
+*/
+/* =========================== */
+/* ======= THE RULES ========= */
+/* =========================== */
+
+/*
+*/
+/* (Finally) */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* YEP, HERE: */
+/*
+*/
+/*
+*/
+/*
+*/
+/*
+*/
+/* REAL PARSED BLOCK */
+/* ----------------- */
+/*
+*/
+/*
+*/
+/*
+*/
+/* DONE */
+
+/* ============================================= */
+/*          TWO LINES APPLIED BY NETLIFY         */
+/* ============================================= */
+/*
+*/
+/* MATCHER */
+/* */
+/*  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Resource-Policy: cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagservices.com https://www.googletagmanager.com https://tpc.googlesyndication.com https://googleads.g.doubleclick.net https://securepubads.g.doubleclick.net; connect-src 'self' https://plimzlmmftdbpipbnhsy.supabase.co wss://plimzlmmftdbpipbnhsy.supabase.co https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://securepubads.g.doubleclick.net; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.youtube.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'

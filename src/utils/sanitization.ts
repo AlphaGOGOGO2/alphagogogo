@@ -14,7 +14,8 @@ export const sanitizeHTML = (dirty: string): string => {
     ALLOWED_TAGS,
     ALLOWED_ATTR: ALLOWED_ATTRIBUTES,
     ALLOW_DATA_ATTR: false,
-    FORCE_BODY: true
+    FORCE_BODY: true,
+    ALLOWED_URI_REGEXP: /^https?:/i
   });
 };
 
