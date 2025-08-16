@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_login_attempts: {
+        Row: {
+          attempted_at: string
+          email: string | null
+          id: string
+          ip_address: string
+          metadata: Json | null
+          success: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          attempted_at?: string
+          email?: string | null
+          id?: string
+          ip_address: string
+          metadata?: Json | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          attempted_at?: string
+          email?: string | null
+          id?: string
+          ip_address?: string
+          metadata?: Json | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       admin_sessions: {
         Row: {
           admin_user_id: string
