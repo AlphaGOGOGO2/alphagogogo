@@ -1,74 +1,68 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+// CORS allowlist
+const allowedOrigins = new Set<string>([
+  'https://alphagogogo.com',
+  'https://www.alphagogogo.com',
+  'https://66c7be07-a569-452d-94ac-a575dd055960.lovableproject.com',
+  'http://localhost:3000',
+  'http://localhost:5173'
+]);
+
+const baseCorsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
+
+function getAllowOrigin(req: Request): string {
+  const origin = req.headers.get('origin');
+  if (origin && allowedOrigins.has(origin)) return origin;
+  return 'https://alphagogogo.com';
+}
+
+function jsonRes(req: Request, body: unknown, init?: ResponseInit) {
+  const allowOrigin = getAllowOrigin(req);
+  return new Response(JSON.stringify(body), {
+    ...(init || {}),
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': allowOrigin,
+      ...baseCorsHeaders,
+      ...(init?.headers || {}),
+    },
+  });
 }
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return new Response(null, { headers: { 'Access-Control-Allow-Origin': getAllowOrigin(req), ...baseCorsHeaders } });
+  }
+
+  // Enforce Origin allowlist (if present)
+  const origin = req.headers.get('origin');
+  if (origin && !allowedOrigins.has(origin)) {
+    console.warn('[verify-admin-password] Blocked request from disallowed origin:', origin);
+    return jsonRes(req, { success: false, message: '허용되지 않은 Origin' }, { status: 403 });
   }
 
   try {
-    // Parse request body
     const { password } = await req.json();
-    
-    // Verify password using environment variable
-    // Access the password from Supabase secrets
-    const correctPassword = Deno.env.get("ADMIN_PASSWORD");
-    
+    const correctPassword = Deno.env.get('ADMIN_PASSWORD');
+
     if (!correctPassword) {
-      console.error("ADMIN_PASSWORD environment variable is not set");
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          message: "Server configuration error: Admin password not configured" 
-        }),
-        { 
-          status: 500,
-          headers: { ...corsHeaders, "Content-Type": "application/json" } 
-        }
-      );
+      console.error('[verify-admin-password] ADMIN_PASSWORD env not set');
+      return jsonRes(req, { success: false, message: 'Server configuration error: Admin password not configured' }, { status: 500 });
     }
-    
+
     if (password === correctPassword) {
-      // Return success response
-      return new Response(
-        JSON.stringify({ 
-          success: true, 
-          message: "Authentication successful",
-          token: "authorized" 
-        }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    } else {
-      // Return error response for incorrect password
-      return new Response(
-        JSON.stringify({ 
-          success: false, 
-          message: "Authentication failed: Incorrect password" 
-        }),
-        { 
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" } 
-        }
-      );
+      return jsonRes(req, { success: true, message: 'Authentication successful', token: 'authorized' });
     }
+
+    return jsonRes(req, { success: false, message: 'Authentication failed: Incorrect password' }, { status: 401 });
   } catch (error) {
-    // Return error response
-    console.error("Error in verify-admin-password function:", error.message);
-    return new Response(
-      JSON.stringify({ 
-        success: false, 
-        message: `Authentication error: ${error.message}` 
-      }),
-      { 
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      }
-    );
+    console.error('[verify-admin-password] Error:', (error as Error).message);
+    return jsonRes(req, { success: false, message: `Authentication error: ${(error as Error).message}` }, { status: 500 });
   }
 });
