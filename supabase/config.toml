@@ -39,7 +39,7 @@ verify_jwt = false
 [functions.run-thumbnail-fix]
 verify_jwt = false
 
-[functions.notify-search-engines]
+[functions.record-visit]
 verify_jwt = false
 
 [api]
