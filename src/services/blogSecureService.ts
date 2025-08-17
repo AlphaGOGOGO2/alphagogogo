@@ -53,7 +53,7 @@ export const secureCreateBlogPost = async (
         }
       },
       headers: {
-        'admin-token': token
+        'admin-token': token as string
       }
     });
 
@@ -161,7 +161,7 @@ export const secureUpdateBlogPost = async (
         }
       },
       headers: {
-        'admin-token': token
+        'admin-token': token as string
       }
     });
 

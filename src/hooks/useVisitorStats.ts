@@ -39,7 +39,7 @@ export function useVisitorStats(): VisitorStatsResult {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "admin-token": token,
+            "admin-token": token as string,
           },
         }
       );
