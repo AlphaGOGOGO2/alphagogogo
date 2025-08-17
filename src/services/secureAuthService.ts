@@ -1,5 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { cleanupAuthState } from "@/utils/authCleanup";
+import { encryptedStorage } from "@/utils/encryptedStorage";
+import { logSecurityEvent } from "@/utils/adminSecurityCheck";
 
 interface AuthResponse {
   success: boolean;
@@ -48,8 +50,11 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
         } catch {}
       }
       
-      sessionStorage.setItem(TOKEN_KEY, data.token);
-      sessionStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
+      await encryptedStorage.setItem(TOKEN_KEY, data.token);
+      await encryptedStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
+      
+      // Log successful login
+      await logSecurityEvent('ADMIN_LOGIN_SUCCESS', 'Admin user logged in successfully');
       
       return {
         success: true,
@@ -66,7 +71,7 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
 };
 
 export const validateToken = async (token?: string): Promise<AuthResponse> => {
-  const authToken = token || getAdminToken();
+  const authToken = token || await getAdminToken();
   
   if (!authToken) {
     return { success: false, message: '토큰이 없습니다.' };
@@ -101,20 +106,23 @@ export const validateToken = async (token?: string): Promise<AuthResponse> => {
   }
 };
 
-export const getAdminToken = (): string | null => {
-  return sessionStorage.getItem(TOKEN_KEY);
+export const getAdminToken = async (): Promise<string | null> => {
+  return await encryptedStorage.getItem(TOKEN_KEY);
 };
 
-export const clearAuth = (): void => {
+export const clearAuth = async (): Promise<void> => {
   try { cleanupAuthState(); } catch {}
-  sessionStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem('blogAuthToken');
+  encryptedStorage.removeItem(TOKEN_KEY);
+  encryptedStorage.removeItem('blogAuthToken');
   // 글로벌 로그아웃 시도 (실패해도 무시)
-  try { supabase.auth.signOut({ scope: 'global' }); } catch {}
+  try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
+  
+  // Log logout event
+  await logSecurityEvent('ADMIN_LOGOUT', 'Admin user logged out');
 };
 
 export const isAuthenticated = async (): Promise<boolean> => {
-  const token = getAdminToken();
+  const token = await getAdminToken();
   if (!token) return false;
 
   const validation = await validateToken(token);
