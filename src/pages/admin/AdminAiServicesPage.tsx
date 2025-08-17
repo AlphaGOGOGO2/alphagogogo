@@ -166,35 +166,33 @@ export default function AdminAiServicesPage() {
         display_name: formData.display_name.trim(),
         url_pattern: formData.url_pattern.trim(),
         description: formData.description.trim(),
-        benefits: benefits, // JSON.stringify 제거 - JSONB에 직접 배열 저장
+        benefits: benefits,
         is_active: formData.is_active
       };
 
       console.log('전체 저장 데이터:', serviceData);
 
-      if (editingService) {
-        const { error } = await supabase
-          .from('ai_services')
-          .update(serviceData)
-          .eq('id', editingService.id);
-        
-        if (error) throw error;
-        toast.success("서비스가 수정되었습니다.");
-      } else {
-        const { error } = await supabase
-          .from('ai_services')
-          .insert(serviceData);
-        
-        if (error) throw error;
-        toast.success("서비스가 추가되었습니다.");
-      }
+      const action = editingService ? 'update' : 'create';
+      const requestData = {
+        action,
+        ...(editingService && { service_id: editingService.id }),
+        service_data: serviceData
+      };
 
+      const { data, error } = await supabase.functions.invoke('manage-ai-services', {
+        body: requestData
+      });
+
+      if (error) throw error;
+      if (!data.success) throw new Error(data.error);
+
+      toast.success(editingService ? "서비스가 수정되었습니다." : "서비스가 추가되었습니다.");
       setIsDialogOpen(false);
       resetForm();
       fetchServices();
     } catch (error: any) {
       console.error('서비스 저장 오류:', error);
-      if (error.code === '23505') {
+      if (error.message?.includes('23505') || error.message?.includes('이미 존재')) {
         toast.error("이미 존재하는 서비스명입니다.");
       } else {
         toast.error("서비스 저장 중 오류가 발생했습니다.");
@@ -220,31 +218,43 @@ export default function AdminAiServicesPage() {
     if (!confirm(`"${service.display_name}" 서비스를 삭제하시겠습니까?`)) return;
 
     try {
-      const { error } = await supabase
-        .from('ai_services')
-        .delete()
-        .eq('id', service.id);
+      const { data, error } = await supabase.functions.invoke('manage-ai-services', {
+        body: {
+          action: 'delete',
+          service_id: service.id
+        }
+      });
 
       if (error) throw error;
+      if (!data.success) throw new Error(data.error);
+
       toast.success("서비스가 삭제되었습니다.");
       fetchServices();
-    } catch (error) {
+    } catch (error: any) {
       console.error('서비스 삭제 오류:', error);
-      toast.error("서비스 삭제 중 오류가 발생했습니다.");
+      if (error.message?.includes('existing invite links')) {
+        toast.error("연결된 초대링크가 있어 삭제할 수 없습니다. 먼저 모든 초대링크를 삭제해주세요.");
+      } else {
+        toast.error("서비스 삭제 중 오류가 발생했습니다.");
+      }
     }
   };
 
   const toggleActive = async (service: AIService) => {
     try {
-      const { error } = await supabase
-        .from('ai_services')
-        .update({ is_active: !service.is_active })
-        .eq('id', service.id);
+      const { data, error } = await supabase.functions.invoke('manage-ai-services', {
+        body: {
+          action: 'toggle_active',
+          service_id: service.id
+        }
+      });
 
       if (error) throw error;
+      if (!data.success) throw new Error(data.error);
+
       toast.success(`서비스가 ${!service.is_active ? '활성화' : '비활성화'}되었습니다.`);
       fetchServices();
-    } catch (error) {
+    } catch (error: any) {
       console.error('서비스 상태 변경 오류:', error);
       toast.error("서비스 상태 변경 중 오류가 발생했습니다.");
     }

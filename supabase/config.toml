@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.secure-admin-auth]
 verify_jwt = false
 
+[functions.manage-ai-services]
+verify_jwt = false
+
 [functions.manage-blog-post]
 verify_jwt = false
 
