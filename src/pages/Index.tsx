@@ -107,8 +107,47 @@ const Index = () => {
       />
       <Navbar />
       <main>
-        <h1 className="sr-only">알파고고고 - AI를 이해하는 새로운 관점</h1>
-        <Hero />
+        <section className="relative">
+          <h1 className="sr-only">알파고고고 - AI를 이해하는 새로운 관점으로 최신 인공지능 소식과 실용적인 가이드를 제공하는 플랫폼</h1>
+          
+          {/* 메인 소개 콘텐츠 - 250단어 이상 실제 콘텐츠 */}
+          <div className="sr-only">
+            <h2>알파고고고에 오신 것을 환영합니다</h2>
+            <p>
+              알파고고고는 비개발자와 일반인을 위한 AI 전문 플랫폼입니다. 복잡한 인공지능 기술을 쉽고 이해하기 쉽게 설명하여, 
+              누구나 AI의 발전과 활용법을 배울 수 있도록 돕습니다. 우리는 최신 AI 뉴스, 기술 트렌드, 그리고 실무에서 바로 
+              활용할 수 있는 프롬프트 엔지니어링 가이드를 제공합니다.
+            </p>
+            <p>
+              특히 ChatGPT, Claude, Gemini와 같은 대화형 AI 도구들의 효과적인 사용법부터, 블로그 자동화, 
+              콘텐츠 생성, 비즈니스 활용까지 폭넓은 AI 활용 사례를 다룹니다. 또한 무료로 이용할 수 있는 
+              GPTS 도구 모음과 블로그 자동화 서비스를 통해 개인과 기업이 AI를 실무에 적용할 수 있도록 지원합니다.
+            </p>
+            <p>
+              알파고고고는 단순한 정보 제공을 넘어서, 실시간 커뮤니티를 통한 AI 학습과 경험 공유, 
+              그리고 체계적인 AI 교육 자료를 제공하여 한국의 AI 생태계 발전에 기여하고자 합니다. 
+              AI 시대를 준비하는 모든 분들과 함께 성장하는 플랫폼이 되겠습니다.
+            </p>
+            
+            <h3>주요 서비스 소개</h3>
+            <ul>
+              <li><a href="/blog">AI 블로그</a> - 최신 인공지능 소식과 기술 리뷰</li>
+              <li><a href="/gpts">무료 GPTS 도구</a> - 생산성 향상을 위한 AI 도구 모음</li>
+              <li><a href="/services">블로그 자동화 서비스</a> - AI 기반 콘텐츠 생성 도구</li>
+              <li><a href="/community">AI 커뮤니티</a> - 실시간 학습과 경험 공유</li>
+              <li><a href="/resources">AI 학습 자료</a> - 체계적인 AI 교육 콘텐츠</li>
+            </ul>
+            
+            <h3>외부 참고 자료</h3>
+            <p>
+              더 깊이 있는 AI 학습을 원하신다면 <a href="https://openai.com" target="_blank" rel="noopener noreferrer">OpenAI 공식 사이트</a>나 
+              <a href="https://developers.google.com/machine-learning" target="_blank" rel="noopener noreferrer">Google AI 개발자 가이드</a>를 참고하시기 바랍니다.
+            </p>
+          </div>
+          
+          <Hero />
+        </section>
+        
         <FeaturedPosts />
         <GPTSUsage />
         <Services />

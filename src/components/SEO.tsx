@@ -154,7 +154,8 @@ export function SEO({
       <link rel="apple-touch-icon" sizes="180x180" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
       
       {/* 위치 및 언어 최적화 */}
-      <meta name="language" content="Korean" />
+      <meta name="language" content="ko" />
+      <meta httpEquiv="content-language" content="ko" />
       <meta name="geo.region" content="KR" />
       <meta name="geo.country" content="KR" />
       <meta name="theme-color" content="#8B5CF6" />
