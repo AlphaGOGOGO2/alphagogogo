@@ -48,36 +48,45 @@ export type Database = {
         Row: {
           admin_user_id: string
           created_at: string
+          device_fingerprint: string | null
           expires_at: string
           id: string
           invalidated_at: string | null
           ip_address: string | null
           is_active: boolean | null
           last_used_at: string | null
+          location_data: Json | null
+          security_flags: Json | null
           token_hash: string
           user_agent: string | null
         }
         Insert: {
           admin_user_id: string
           created_at?: string
+          device_fingerprint?: string | null
           expires_at: string
           id?: string
           invalidated_at?: string | null
           ip_address?: string | null
           is_active?: boolean | null
           last_used_at?: string | null
+          location_data?: Json | null
+          security_flags?: Json | null
           token_hash: string
           user_agent?: string | null
         }
         Update: {
           admin_user_id?: string
           created_at?: string
+          device_fingerprint?: string | null
           expires_at?: string
           id?: string
           invalidated_at?: string | null
           ip_address?: string | null
           is_active?: boolean | null
           last_used_at?: string | null
+          location_data?: Json | null
+          security_flags?: Json | null
           token_hash?: string
           user_agent?: string | null
         }
@@ -562,6 +571,51 @@ export type Database = {
         }
         Relationships: []
       }
+      security_threats: {
+        Row: {
+          auto_blocked: boolean
+          created_at: string
+          description: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          threat_type: string
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          auto_blocked?: boolean
+          created_at?: string
+          description: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          severity: string
+          status?: string
+          threat_type: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          auto_blocked?: boolean
+          created_at?: string
+          description?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          threat_type?: string
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       visit_logs: {
         Row: {
           client_id: string | null
@@ -601,6 +655,21 @@ export type Database = {
       cleanup_old_rate_limits: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      cleanup_security_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      detect_security_threat: {
+        Args: {
+          p_description: string
+          p_ip_address?: string
+          p_metadata?: Json
+          p_severity?: string
+          p_threat_type: string
+          p_user_agent?: string
+        }
+        Returns: string
       }
       increment_download_count: {
         Args: { resource_id: string }

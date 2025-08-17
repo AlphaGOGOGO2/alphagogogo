@@ -1,7 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { cleanupAuthState } from "@/utils/authCleanup";
 import { encryptedStorage } from "@/utils/encryptedStorage";
-import { logSecurityEvent } from "@/utils/adminSecurityCheck";
 
 interface AuthResponse {
   success: boolean;
@@ -52,9 +51,6 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
       
       await encryptedStorage.setItem(TOKEN_KEY, data.token);
       await encryptedStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
-      
-      // Log successful login
-      await logSecurityEvent('ADMIN_LOGIN_SUCCESS', 'Admin user logged in successfully');
       
       return {
         success: true,
@@ -116,9 +112,6 @@ export const clearAuth = async (): Promise<void> => {
   encryptedStorage.removeItem('blogAuthToken');
   // 글로벌 로그아웃 시도 (실패해도 무시)
   try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
-  
-  // Log logout event
-  await logSecurityEvent('ADMIN_LOGOUT', 'Admin user logged out');
 };
 
 export const isAuthenticated = async (): Promise<boolean> => {

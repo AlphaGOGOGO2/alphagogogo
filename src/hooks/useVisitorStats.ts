@@ -28,7 +28,7 @@ export function useVisitorStats(): VisitorStatsResult {
       setIsLoadingTodayVisits(true);
       setIsLoadingMonthlyVisits(true);
 
-      const token = getAdminToken();
+      const token = await getAdminToken();
       if (!token) {
         throw new Error("관리자 인증 토큰이 없습니다. 다시 로그인 해주세요.");
       }
