@@ -13,6 +13,7 @@ export default function LifestylePage() {
   
   return (
     <BlogLayout title="라이프스타일">
+      <h1 className="sr-only">라이프스타일 - 블로그</h1>
       {isLoading ? (
         <div className="flex justify-center items-center py-20">
           <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />

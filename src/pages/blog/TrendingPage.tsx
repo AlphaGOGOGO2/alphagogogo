@@ -13,6 +13,7 @@ export default function TrendingPage() {
   
   return (
     <BlogLayout title="화제의 이슈">
+      <h1 className="sr-only">화제의 이슈 - 블로그</h1>
       {isLoading ? (
         <div className="flex justify-center items-center py-20">
           <Loader2 className="h-10 w-10 text-purple-600 animate-spin" />

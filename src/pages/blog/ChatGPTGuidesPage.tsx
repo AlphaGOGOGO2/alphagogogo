@@ -69,15 +69,16 @@ export default function ChatGPTGuidesPage() {
         structuredData={structuredData}
       />
 
+      <h1 className="sr-only">ChatGPT 가이드 - 효과적인 활용법</h1>
       <div className="mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white mb-4">
           <span className="text-lg">🤖</span>
           <span className="text-sm font-medium">CHATGPT GUIDES</span>
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
           ChatGPT 가이드 - 효과적인 활용법
-        </h1>
+        </h2>
         <p className="text-lg text-gray-600 max-w-3xl">
           ChatGPT와 GPT 모델을 효과적으로 활용하는 방법과 팁을 공유합니다. 프롬프트 엔지니어링부터 실무 활용까지 완벽 가이드입니다.
         </p>

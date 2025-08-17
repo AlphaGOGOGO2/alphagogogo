@@ -107,6 +107,7 @@ const Index = () => {
       />
       <Navbar />
       <main>
+        <h1 className="sr-only">알파고고고 - AI를 이해하는 새로운 관점</h1>
         <Hero />
         <FeaturedPosts />
         <GPTSUsage />

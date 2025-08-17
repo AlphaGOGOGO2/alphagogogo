@@ -65,9 +65,9 @@ export function Hero() {
             <span className="text-white/90 text-sm font-medium">AI를 이해하는 새로운 관점</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-tight animate-fade-in max-w-4xl mx-auto text-balance text-white">
             AI를 바라보는 시선<br />이제는 미래가 아닌 현재
-          </h1>
+          </h2>
           
           <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 animate-fade-in text-balance">
             비개발자, 비전문인의 시선으로 바라보는 AI

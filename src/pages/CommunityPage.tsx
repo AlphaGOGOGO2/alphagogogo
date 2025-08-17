@@ -67,7 +67,7 @@ export default function CommunityPage() {
             <div className="flex items-start gap-3">
               <AlertTriangle className="text-purple-500 h-6 w-6 flex-shrink-0 mt-0.5" />
               <div>
-                <h3 className="font-semibold text-purple-800 mb-1">주의사항</h3>
+                <h2 className="font-semibold text-purple-800 mb-1">주의사항</h2>
                 <p className="text-purple-700 text-sm mb-1">
                   알파GOGOGO는 그 어떤 금전요구나 쿠폰 광고 홍보 등 하지 않습니다!
                 </p>

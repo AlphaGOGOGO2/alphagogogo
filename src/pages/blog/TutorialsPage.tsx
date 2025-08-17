@@ -69,15 +69,16 @@ export default function TutorialsPage() {
         structuredData={structuredData}
       />
 
+      <h1 className="sr-only">AI 튜토리얼 - 단계별 가이드</h1>
       <div className="mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-purple-500 to-purple-600 text-white mb-4">
           <span className="text-lg">📚</span>
           <span className="text-sm font-medium">TUTORIALS</span>
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
           AI 튜토리얼 - 단계별 가이드
-        </h1>
+        </h2>
         <p className="text-lg text-gray-600 max-w-3xl">
           AI 기술 활용을 위한 실용적인 튜토리얼과 가이드를 제공합니다. 초보자부터 전문가까지 단계별로 학습할 수 있습니다.
         </p>

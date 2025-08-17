@@ -69,15 +69,16 @@ export default function TechReviewsPage() {
         structuredData={structuredData}
       />
 
+      <h1 className="sr-only">기술 리뷰 - AI 도구 및 서비스 분석</h1>
       <div className="mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white mb-4">
           <span className="text-lg">⭐</span>
           <span className="text-sm font-medium">TECH REVIEWS</span>
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
           기술 리뷰 - AI 도구 및 서비스 분석
-        </h1>
+        </h2>
         <p className="text-lg text-gray-600 max-w-3xl">
           최신 AI 도구, 서비스, 플랫폼에 대한 상세한 리뷰와 분석을 제공합니다. 실제 사용 후기와 비교 분석으로 최적의 선택을 도와드립니다.
         </p>

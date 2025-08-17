@@ -69,15 +69,16 @@ export default function LovableDevPage() {
         structuredData={structuredData}
       />
 
+      <h1 className="sr-only">Lovable DEV - AI 앱 개발 가이드</h1>
       <div className="mb-8">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-pink-500 to-pink-600 text-white mb-4">
           <span className="text-lg">💻</span>
           <span className="text-sm font-medium">LOVABLE DEV</span>
         </div>
         
-        <h1 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
           Lovable DEV - AI 앱 개발 가이드
-        </h1>
+        </h2>
         <p className="text-lg text-gray-600 max-w-3xl">
           Lovable DEV 플랫폼을 활용한 AI 앱 개발 방법과 노하우를 제공합니다. 노코드로 전문적인 웹앱을 만드는 모든 과정을 안내합니다.
         </p>

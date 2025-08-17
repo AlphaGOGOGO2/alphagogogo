@@ -117,9 +117,9 @@ export function FeaturedPosts() {
                         </div>
                       </div>
                       
-                      <h4 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
+                      <h3 className="text-xl font-bold mb-3 transition-colors group-hover:text-purple-700 text-balance">
                         {post.title}
-                      </h4>
+                      </h3>
                       
                       <p className="text-gray-600 mb-4 flex-1 text-balance">
                         {stripMarkdown(post.excerpt || '')}

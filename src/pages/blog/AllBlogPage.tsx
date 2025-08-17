@@ -100,6 +100,7 @@ export default function AllBlogPage() {
           </div>
         ) : (
           <section>
+            <h1 className="sr-only">블로그 - 모든 글</h1>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">모든 포스트</h2>
             <LazyBlogGrid posts={posts} />
           </section>
