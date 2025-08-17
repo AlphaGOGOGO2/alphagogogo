@@ -49,11 +49,16 @@ serve(async (req) => {
       console.log('✅ RSS 피드 재생성 완료');
     }
 
-    // 3. Google에 사이트맵 제출 알림 (핑)
+    // 3. Google에 사이트맵 제출 알림 (핑) - HTTPS로 변경
     console.log('🔔 Google에 사이트맵 업데이트 알림 중...');
     try {
-      const pingUrl = `http://www.google.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
-      const pingResponse = await fetch(pingUrl);
+      const pingUrl = `https://www.google.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
+      const pingResponse = await fetch(pingUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; AlphaGogogo-Bot/1.0)'
+        }
+      });
       
       if (pingResponse.ok) {
         console.log('✅ Google 사이트맵 핑 성공');
@@ -64,11 +69,16 @@ serve(async (req) => {
       console.error('⚠️ Google 사이트맵 핑 오류:', error);
     }
 
-    // 4. Bing에 사이트맵 제출 알림
+    // 4. Bing에 사이트맵 제출 알림 - HTTPS로 변경
     console.log('🔔 Bing에 사이트맵 업데이트 알림 중...');
     try {
-      const bingPingUrl = `http://www.bing.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
-      const bingPingResponse = await fetch(bingPingUrl);
+      const bingPingUrl = `https://www.bing.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
+      const bingPingResponse = await fetch(bingPingUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; AlphaGogogo-Bot/1.0)'
+        }
+      });
       
       if (bingPingResponse.ok) {
         console.log('✅ Bing 사이트맵 핑 성공');
@@ -79,19 +89,20 @@ serve(async (req) => {
       console.error('⚠️ Bing 사이트맵 핑 오류:', error);
     }
 
-    // 5. 통계 조회 및 로깅
-    const { data: postsCount } = await supabase
+    // 5. 통계 조회 및 로깅 - count 방식 수정
+    const { count: postsCount } = await supabase
       .from('blog_posts')
-      .select('id', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .lte('published_at', new Date().toISOString());
 
-    const { data: resourcesCount } = await supabase
+    const { count: resourcesCount } = await supabase
       .from('resources')
-      .select('id', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true });
 
     console.log(`📊 현재 콘텐츠 통계:`);
-    console.log(`   - 블로그 포스트: ${postsCount?.length || 0}개`);
-    console.log(`   - 리소스: ${resourcesCount?.length || 0}개`);
-    console.log(`   - 총 예상 사이트맵 페이지: ${16 + (postsCount?.length || 0) + (resourcesCount?.length || 0)}개`);
+    console.log(`   - 블로그 포스트: ${postsCount || 0}개`);
+    console.log(`   - 리소스: ${resourcesCount || 0}개`);
+    console.log(`   - 총 예상 사이트맵 페이지: ${16 + (postsCount || 0) + (resourcesCount || 0)}개`);
 
     const result = {
       success: true,
@@ -101,9 +112,9 @@ serve(async (req) => {
       google_pinged: true,
       bing_pinged: true,
       content_stats: {
-        blog_posts: postsCount?.length || 0,
-        resources: resourcesCount?.length || 0,
-        total_pages: 16 + (postsCount?.length || 0) + (resourcesCount?.length || 0)
+        blog_posts: postsCount || 0,
+        resources: resourcesCount || 0,
+        total_pages: 16 + (postsCount || 0) + (resourcesCount || 0)
       }
     };
 
