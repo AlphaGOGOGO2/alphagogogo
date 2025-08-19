@@ -26,8 +26,6 @@ import AdminAiServicesPage from "./pages/admin/AdminAiServicesPage";
 import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import NotFound from "./pages/NotFound";
-import SitemapPage from "./pages/SitemapPage";
-import RSSPage from "./pages/RSSPage";
 import { PerformanceOptimization } from "./components/optimization/PerformanceOptimization";
 import "./App.css";
 
@@ -98,8 +96,6 @@ function App() {
                     <Route path="/admin/ai-services" element={<AdminAiServicesPage />} />
                     <Route path="/admin/categories" element={<AdminCategoriesPage />} />
                     <Route path="/admin/settings" element={<AdminSettingsPage />} />
-                    <Route path="/sitemap.xml" element={<SitemapPage />} />
-                    <Route path="/rss.xml" element={<RSSPage />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ErrorBoundary>

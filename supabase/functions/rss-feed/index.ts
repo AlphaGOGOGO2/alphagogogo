@@ -59,8 +59,33 @@ serve(async (req) => {
     const now = new Date();
     const buildDate = now.toUTCString();
 
-    // XML 시작 (완전히 첫 문자부터)
-    let rssContent = '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title><link>' + SITE_DOMAIN + '</link><description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description><language>ko-KR</language><lastBuildDate>' + buildDate + '</lastBuildDate><pubDate>' + buildDate + '</pubDate><ttl>60</ttl><atom:link href="' + SITE_DOMAIN + '/rss.xml" rel="self" type="application/rss+xml"/><managingEditor>support@alphagogogo.com (알파고고고)</managingEditor><webMaster>support@alphagogogo.com (알파고고고)</webMaster><copyright>Copyright ' + now.getFullYear() + ' 알파고고고. All rights reserved.</copyright><category>Technology</category><category>Artificial Intelligence</category><category>AI News</category><category>Korean AI Blog</category><image><url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png</url><title>알파고고고</title><link>' + SITE_DOMAIN + '</link><width>112</width><height>112</height></image>';
+    // XML 시작 (올바른 형식으로)
+    const xmlLines: string[] = [];
+    xmlLines.push('<?xml version="1.0" encoding="UTF-8"?>');
+    xmlLines.push('<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">');
+    xmlLines.push('  <channel>');
+    xmlLines.push('    <title>알파고고고 - 최신 AI 소식 &amp; 인사이트</title>');
+    xmlLines.push(`    <link>${SITE_DOMAIN}</link>`);
+    xmlLines.push('    <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>');
+    xmlLines.push('    <language>ko-KR</language>');
+    xmlLines.push(`    <lastBuildDate>${buildDate}</lastBuildDate>`);
+    xmlLines.push(`    <pubDate>${buildDate}</pubDate>`);
+    xmlLines.push('    <ttl>60</ttl>');
+    xmlLines.push(`    <atom:link href="${SITE_DOMAIN}/rss.xml" rel="self" type="application/rss+xml"/>`);
+    xmlLines.push('    <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>');
+    xmlLines.push('    <webMaster>support@alphagogogo.com (알파고고고)</webMaster>');
+    xmlLines.push(`    <copyright>Copyright ${now.getFullYear()} 알파고고고. All rights reserved.</copyright>`);
+    xmlLines.push('    <category>Technology</category>');
+    xmlLines.push('    <category>Artificial Intelligence</category>');
+    xmlLines.push('    <category>AI News</category>');
+    xmlLines.push('    <category>Korean AI Blog</category>');
+    xmlLines.push('    <image>');
+    xmlLines.push('      <url>https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png</url>');
+    xmlLines.push('      <title>알파고고고</title>');
+    xmlLines.push(`      <link>${SITE_DOMAIN}</link>`);
+    xmlLines.push('      <width>112</width>');
+    xmlLines.push('      <height>112</height>');
+    xmlLines.push('    </image>');
 
     // 포스트 아이템들 추가
     if (posts && posts.length > 0) {
@@ -87,17 +112,28 @@ serve(async (req) => {
         // content 생성 (마크다운과 HTML 태그 제거)
         const cleanContent = post.content ? escapeXml(stripHtml(stripMarkdown(post.content))) : '';
 
-        rssContent += '<item><title>' + cleanTitle + '</title><link>' + postUrl + '</link><guid isPermaLink="true">' + postUrl + '</guid><description>' + description + '</description><content:encoded><![CDATA[' + cleanContent + ']]></content:encoded><pubDate>' + pubDate + '</pubDate><dc:creator><![CDATA[' + escapeXml(post.author_name || '알파고고고') + ']]></dc:creator><category><![CDATA[' + escapeXml(post.category || '일반') + ']]></category>';
+        xmlLines.push('    <item>');
+        xmlLines.push(`      <title>${cleanTitle}</title>`);
+        xmlLines.push(`      <link>${postUrl}</link>`);
+        xmlLines.push(`      <guid isPermaLink="true">${postUrl}</guid>`);
+        xmlLines.push(`      <description>${description}</description>`);
+        xmlLines.push(`      <content:encoded><![CDATA[${cleanContent}]]></content:encoded>`);
+        xmlLines.push(`      <pubDate>${pubDate}</pubDate>`);
+        xmlLines.push(`      <dc:creator><![CDATA[${escapeXml(post.author_name || '알파고고고')}]]></dc:creator>`);
+        xmlLines.push(`      <category><![CDATA[${escapeXml(post.category || '일반')}]]></category>`);
 
         if (post.cover_image) {
-          rssContent += '<enclosure url="' + escapeXml(post.cover_image) + '" type="image/jpeg" length="0"/>';
+          xmlLines.push(`      <enclosure url="${escapeXml(post.cover_image)}" type="image/jpeg" length="0"/>`);
         }
 
-        rssContent += '</item>';
+        xmlLines.push('    </item>');
       }
     }
 
-    rssContent += '</channel></rss>';
+    xmlLines.push('  </channel>');
+    xmlLines.push('</rss>');
+
+    const rssContent = xmlLines.join('\n');
 
     return new Response(rssContent, {
       headers: {
