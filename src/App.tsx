@@ -61,7 +61,6 @@ function App() {
               <Route path="/admin/ai-services" element={<AdminAiServicesPage />} />
               <Route path="/admin/categories" element={<AdminCategoriesPage />} />
               <Route path="/admin/settings" element={<AdminSettingsPage />} />
-              <Route path="/robots.txt" element={<div>Redirecting...</div>} />
               <Route path="/sitemap.xml" element={<SitemapPage />} />
               <Route path="/rss.xml" element={<RSSPage />} />
               <Route path="*" element={<NotFound />} />
