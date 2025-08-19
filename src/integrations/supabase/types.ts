@@ -679,6 +679,10 @@ export type Database = {
         Args: { client_id?: string; link_id: string }
         Returns: undefined
       }
+      is_valid_invite_link: {
+        Args: { p_invite_url: string; p_service_id: string }
+        Returns: boolean
+      }
       log_security_event: {
         Args: {
           event_description: string
