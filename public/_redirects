@@ -1,5 +1,8 @@
 # www와 non-www 도메인 통일 (www → non-www)  
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
+# robots.txt → Supabase Edge Function
+/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200!
+
 # SPA fallback - robots.txt는 자동으로 정적 파일로 서빙됨
 /* /index.html 200
