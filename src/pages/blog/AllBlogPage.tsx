@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { BlogLayout } from "@/components/layouts/BlogLayout";
 import { LazyBlogGrid } from "@/components/blog/LazyBlogGrid";
+import { PreloadCriticalResources } from "@/components/optimization/PreloadCriticalResources";
 import { useQuery } from "@tanstack/react-query";
 import { getAllBlogPosts } from "@/services/blogPostService";
 import { Loader2 } from "lucide-react";
@@ -67,8 +68,19 @@ export default function AllBlogPage() {
     "@graph": [structuredData, breadcrumbSchema]
   };
   
+  // 중요 리소스 프리로드 설정
+  const criticalImages = posts.slice(0, 3).map(post => 
+    post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/instructor%20profile%20image.png"
+  ).filter(Boolean);
+
   return (
     <BlogLayout title="블로그">
+      <PreloadCriticalResources 
+        criticalImages={criticalImages}
+        criticalFonts={[
+          "https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+        ]}
+      />
       <SEO 
         title="블로그 - 알파고고고"
         description="알파고고고의 모든 글 모음입니다. 인공지능, 기술, 라이프스타일에 관한 다양한 콘텐츠를 확인하세요."
@@ -102,7 +114,13 @@ export default function AllBlogPage() {
           <section>
             <h1 className="sr-only">블로그 - 모든 글</h1>
             <h2 className="text-2xl font-bold text-gray-900 mb-6">모든 포스트</h2>
-            <LazyBlogGrid posts={posts} />
+            <LazyBlogGrid 
+              posts={posts} 
+              enableVirtualization={posts.length > 50}
+              virtualItemHeight={420}
+              initialBatchSize={12}
+              loadMoreSize={8}
+            />
           </section>
         )}
       </ErrorBoundary>

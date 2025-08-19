@@ -91,7 +91,7 @@ const monitorPerformance = () => {
   }
 };
 
-// 초기화 실행
+// 서비스 및 모니터링 초기화
 registerServiceWorker();
 initializeAdSense();
 monitorPerformance();
@@ -102,6 +102,13 @@ if (typeof window !== 'undefined') {
   initWebVitals();
   const performanceMonitor = PerformanceMonitor.getInstance();
   performanceMonitor.init();
+  
+  // 번들 분석 초기화 (지연 실행)
+  setTimeout(() => {
+    import('@/utils/bundleAnalyzer').then(({ bundleAnalyzer }) => {
+      bundleAnalyzer.analyzeBundle();
+    });
+  }, 5000);
   
   // 헬스 모니터링 시작 (30초마다)
   const healthCheckInterval = startHealthMonitoring(30000);

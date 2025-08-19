@@ -1,52 +1,65 @@
-import { BlogPost } from "@/types/blog";
-import { useState, useEffect, useMemo } from "react";
-import { BlogCard } from "./BlogCard";
+import React, { useEffect, useState, useMemo } from 'react';
+import { BlogGrid } from './BlogGrid';
+import { VirtualizedBlogGrid } from '@/components/optimization/VirtualizedBlogGrid';
+import { BlogPost } from '@/types/blog';
+import { measurePerformance } from '@/utils/performanceUtils';
+import { bundleAnalyzer } from '@/utils/bundleAnalyzer';
 
 interface LazyBlogGridProps {
   posts: BlogPost[];
   initialBatchSize?: number;
   loadMoreSize?: number;
+  enableVirtualization?: boolean;
+  virtualItemHeight?: number;
 }
 
-export function LazyBlogGrid({ 
+export const LazyBlogGrid: React.FC<LazyBlogGridProps> = ({ 
   posts, 
-  initialBatchSize = 6, 
-  loadMoreSize = 6 
-}: LazyBlogGridProps) {
+  initialBatchSize = 9, 
+  loadMoreSize = 6,
+  enableVirtualization = false,
+  virtualItemHeight = 400
+}) => {
   const [visibleCount, setVisibleCount] = useState(initialBatchSize);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
 
-  // 표시할 포스트 계산 (메모이제이션)
+  // 성능 측정된 포스트 처리
+  const processedPosts = useMemo(() => {
+    const startTime = performance.now();
+    const result = posts;
+    bundleAnalyzer.measureChunkLoad('BlogPostProcessing', startTime);
+    return result;
+  }, [posts]);
+
   const visiblePosts = useMemo(() => 
-    posts.slice(0, visibleCount), 
-    [posts, visibleCount]
+    processedPosts.slice(0, visibleCount), 
+    [processedPosts, visibleCount]
   );
 
-  const hasMorePosts = visibleCount < posts.length;
+  const hasMorePosts = visibleCount < processedPosts.length;
 
-  // 더 보기 핸들러
+  // 더 많은 포스트 로드
   const handleLoadMore = async () => {
     if (isLoadingMore || !hasMorePosts) return;
     
     setIsLoadingMore(true);
-    
-    // 시뮬레이션된 로딩 지연 (실제로는 필요 없음)
+    // 의도적인 지연으로 UX 향상
     await new Promise(resolve => setTimeout(resolve, 300));
-    
-    setVisibleCount(prev => Math.min(prev + loadMoreSize, posts.length));
+    setVisibleCount(prev => prev + loadMoreSize);
     setIsLoadingMore(false);
   };
 
-  // 무한 스크롤 감지
+  // 무한 스크롤
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + document.documentElement.scrollTop 
-        >= document.documentElement.offsetHeight - 1000 // 1000px 전에 로드
-        && hasMorePosts 
-        && !isLoadingMore
+        window.innerHeight + document.documentElement.scrollTop
+        >= document.documentElement.offsetHeight - 1000
       ) {
-        handleLoadMore();
+        if (hasMorePosts && !isLoadingMore) {
+          handleLoadMore();
+        }
       }
     };
 
@@ -54,30 +67,39 @@ export function LazyBlogGrid({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [hasMorePosts, isLoadingMore]);
 
-  return (
-    <>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {visiblePosts.map((post, index) => (
-          <BlogCard 
-            key={post.id} 
-            post={post} 
-            priority={index < 6} // 첫 6개 포스트는 우선 로딩
-          />
-        ))}
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+      // 번들 분석
+      bundleAnalyzer.analyzeBundle();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (enableVirtualization && processedPosts.length > 20) {
+    return (
+      <div className={`transition-all duration-500 ease-out ${isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
+        <VirtualizedBlogGrid posts={processedPosts} itemHeight={virtualItemHeight} />
       </div>
+    );
+  }
+
+  return (
+    <div className={`transition-all duration-500 ease-out ${isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
+      <BlogGrid posts={visiblePosts} />
       
       {hasMorePosts && (
-        <div className="flex justify-center mt-8">
+        <div className="text-center mt-8">
           <button
             onClick={handleLoadMore}
             disabled={isLoadingMore}
             className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            aria-label="더 많은 포스트 로드하기"
           >
-            {isLoadingMore ? '로딩 중...' : `더보기 (${posts.length - visibleCount}개 남음)`}
+            {isLoadingMore ? '로딩 중...' : `더 보기 (${processedPosts.length - visibleCount}개 남음)`}
           </button>
         </div>
       )}
-    </>
+    </div>
   );
-}
+};
