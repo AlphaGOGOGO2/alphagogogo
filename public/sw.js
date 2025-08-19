@@ -7,10 +7,7 @@ const CACHE_NAME = `alphagogogo-cache-${CACHE_VERSION}`;
 const PRECACHE_ASSETS = [
   '/',
   '/index.html',
-  '/favicon.ico',
-  '/robots.txt',
-  '/sitemap.xml',
-  '/rss.xml'
+  '/favicon.ico'
 ];
 
 // 서비스 워커 설치 시
@@ -57,11 +54,14 @@ self.addEventListener('activate', event => {
 // 페치 이벤트 처리
 self.addEventListener('fetch', event => {
   // API 요청 및 동적 콘텐츠는 네트워크만 사용
-  if (
+if (
     event.request.url.includes('/api/') || 
     event.request.url.includes('sockjs-node') ||
     event.request.url.includes('hot-update.json') ||
-    event.request.url.includes('supabase.co')
+    event.request.url.includes('supabase.co') ||
+    event.request.url.endsWith('/robots.txt') ||
+    event.request.url.endsWith('/sitemap.xml') ||
+    event.request.url.endsWith('/rss.xml')
   ) {
     return;
   }
