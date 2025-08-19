@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { logError, logUserAction } from "@/utils/logger";
+import type { SupabaseError } from "@/types/api";
 
 interface AIService {
   id: string;
@@ -22,8 +24,14 @@ interface InviteLinkFormProps {
   serviceConfig?: AIService;
 }
 
+interface FormData {
+  nickname: string;
+  inviteUrl: string;
+  description: string;
+}
+
 export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     nickname: "",
     inviteUrl: "",
     description: ""
@@ -35,7 +43,7 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
     return url.startsWith(serviceConfig.url_pattern) && url.length > serviceConfig.url_pattern.length;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     if (!formData.nickname.trim() || !formData.inviteUrl.trim()) {
@@ -62,19 +70,31 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
         });
 
       if (error) {
-        if (error.code === '23505') { // Unique constraint violation
+        const supabaseError = error as SupabaseError;
+        
+        if (supabaseError.code === '23505') { // Unique constraint violation
           toast.error("이미 등록된 초대링크입니다.");
         } else {
-          console.error('Insert error:', error);
+          logError('Invite link insert error', {
+            code: supabaseError.code || 'UNKNOWN_ERROR',
+            message: supabaseError.message,
+            details: { table: 'invite_links', operation: 'insert' },
+            timestamp: new Date().toISOString()
+          });
           toast.error("등록 중 오류가 발생했습니다.");
         }
         return;
       }
 
+      logUserAction('invite_link_created', undefined, {
+        service: selectedService,
+        nickname: formData.nickname
+      });
+      
       toast.success("초대링크가 성공적으로 등록되었습니다!");
       setFormData({ nickname: "", inviteUrl: "", description: "" });
     } catch (error) {
-      console.error('Submission error:', error);
+      logError('Submission error', error as Error);
       toast.error("등록 중 오류가 발생했습니다.");
     } finally {
       setIsSubmitting(false);
@@ -107,6 +127,7 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
                 onChange={(e) => setFormData(prev => ({ ...prev, nickname: e.target.value }))}
                 placeholder="닉네임"
                 maxLength={50}
+                required
               />
             </div>
 
@@ -118,6 +139,7 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
                 onChange={(e) => setFormData(prev => ({ ...prev, inviteUrl: e.target.value }))}
                 placeholder={serviceConfig.url_pattern + "여기에-초대코드"}
                 type="url"
+                required
               />
             </div>
 

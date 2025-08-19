@@ -54,7 +54,10 @@ export default function AdminDashboardPage() {
       {/* 대시보드 통계 카드 - 개선된 로딩 상태 포함 */}
       <DashboardStats 
         posts={posts}
-        categories={categories}
+        categories={categories.map(cat => ({ 
+          name: cat.name, 
+          count: categoryPostCounts[cat.name] || 0 
+        }))}
         categoryPostCounts={categoryPostCounts}
         recentPosts={recentPosts}
         scheduledPostsCount={scheduledPostsCount}

@@ -4,12 +4,28 @@ import { StatCard } from "./StatCard";
 import { FileText, TrendingUp, Users, Tag, Clock, Calendar } from "lucide-react";
 import { formatDate } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { logDebug } from "@/utils/logger";
+
+interface CategorySummary {
+  name: string;
+  count: number;
+}
+
+interface BlogPostSummary {
+  id: string;
+  title: string;
+  category: string;
+  publishedAt: string;
+  readTime: number;
+  excerpt?: string;
+  slug: string;
+}
 
 interface DashboardStatsProps {
-  posts: any[];
-  categories: any[];
+  posts: BlogPostSummary[];
+  categories: CategorySummary[];
   categoryPostCounts: Record<string, number>;
-  recentPosts: any[];
+  recentPosts: BlogPostSummary[];
   scheduledPostsCount: number;
   todayVisitCount: number | null;
   monthlyVisitCount: number | null;
@@ -36,10 +52,7 @@ export function DashboardStats({
   const today = new Date();
   
   // 개발환경에서만 디버깅 로그 출력
-  if (process.env.NODE_ENV === 'development') {
-    console.log("[DashboardStats] 오늘 방문자:", todayVisitCount, "로딩:", isLoadingTodayVisits);
-    console.log("[DashboardStats] 이달 방문자:", monthlyVisitCount, "로딩:", isLoadingMonthlyVisits);
-  }
+  logDebug("[DashboardStats] Visitor stats loaded");
   
   return (
     <div className="grid gap-6 mb-8 md:grid-cols-2 lg:grid-cols-4">
@@ -59,7 +72,7 @@ export function DashboardStats({
       
       <StatCard
         title="최근 활동"
-        value={recentPosts.length > 0 ? formatDate(recentPosts[0].publishedAt) : "없음"}
+        value={recentPosts.length > 0 ? formatDate(recentPosts[0]!.publishedAt) : "없음"}
         description="최근 포스트 등록일"
         icon={Clock}
       />
