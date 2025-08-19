@@ -6,7 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { logError, logUserAction } from "@/utils/logger";
+import { handleError, handleApiError } from "@/utils/errorHandler";
+import { useErrorHandler } from "@/hooks/useErrorHandler";
+import { validators } from "@/utils/validation";
+import { logUserAction } from "@/utils/logger";
 import type { SupabaseError } from "@/types/api";
 
 interface AIService {
@@ -37,22 +40,40 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
     description: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { handleError: handleFormError } = useErrorHandler({ context: 'InviteLinkForm' });
 
   const validateUrl = (url: string): boolean => {
     if (!serviceConfig) return false;
     return url.startsWith(serviceConfig.url_pattern) && url.length > serviceConfig.url_pattern.length;
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    
-    if (!formData.nickname.trim() || !formData.inviteUrl.trim()) {
-      toast.error("닉네임과 초대링크를 모두 입력해주세요.");
-      return;
+  const validateForm = (): boolean => {
+    const validation = validators.inviteLink.validate({
+      user_nickname: formData.nickname,
+      invite_url: formData.inviteUrl,
+      description: formData.description,
+      service_name: selectedService
+    });
+
+    if (!validation.isValid) {
+      if (validation.firstError) {
+        toast.error(validation.firstError.message);
+      }
+      return false;
     }
 
     if (!validateUrl(formData.inviteUrl)) {
       toast.error(`올바른 ${serviceConfig?.display_name} 초대링크 형식이 아닙니다.`);
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
 
@@ -70,19 +91,7 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
         });
 
       if (error) {
-        const supabaseError = error as SupabaseError;
-        
-        if (supabaseError.code === '23505') { // Unique constraint violation
-          toast.error("이미 등록된 초대링크입니다.");
-        } else {
-          logError('Invite link insert error', {
-            code: supabaseError.code || 'UNKNOWN_ERROR',
-            message: supabaseError.message,
-            details: { table: 'invite_links', operation: 'insert' },
-            timestamp: new Date().toISOString()
-          });
-          toast.error("등록 중 오류가 발생했습니다.");
-        }
+        handleApiError(error, 'invite_links');
         return;
       }
 
@@ -94,8 +103,7 @@ export function InviteLinkForm({ selectedService, serviceConfig }: InviteLinkFor
       toast.success("초대링크가 성공적으로 등록되었습니다!");
       setFormData({ nickname: "", inviteUrl: "", description: "" });
     } catch (error) {
-      logError('Submission error', error as Error);
-      toast.error("등록 중 오류가 발생했습니다.");
+      handleFormError(error);
     } finally {
       setIsSubmitting(false);
     }
