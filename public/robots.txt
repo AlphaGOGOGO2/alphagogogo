@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin/
+Disallow: /api/
+
+# This file exists to prevent 404 errors
+# The actual robots.txt is served by Edge Function at /robots.txt
+# See public/_redirects for routing configuration
+
+Sitemap: https://alphagogogo.com/sitemap.xml

@@ -2,9 +2,9 @@
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
 # RSS, 사이트맵, robots.txt를 Edge Functions로 서빙
-/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200
-/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
-/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
+/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200!
+/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200!
+/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200!
 
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200
