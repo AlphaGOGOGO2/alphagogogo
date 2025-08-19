@@ -46,5 +46,10 @@ export default defineConfig(({ mode }) => ({
       }
     },
     chunkSizeWarningLimit: 1000, // 청크 크기 경고 한계 설정
+    // 정적 파일 복사 설정
+    copyPublicDir: true,
+    assetsDir: 'assets'
   },
+  // 정적 파일 서빙을 위한 publicDir 설정
+  publicDir: 'public',
 }));
