@@ -1,22 +1,15 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
 const SITE_DOMAIN = 'https://alphagogogo.com';
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
   try {
+    console.log('robots.txt request received:', req.method, req.url);
+    
     const robotsContent = `User-agent: *
 Allow: /
 
-# 이미지 크롤링 허용
+# Image crawling allowed
 Allow: /images/
 Allow: /*.jpg$
 Allow: /*.jpeg$
@@ -25,7 +18,7 @@ Allow: /*.gif$
 Allow: /*.webp$
 Allow: /*.svg$
 
-# 검색엔진이 크롤링하지 않았으면 하는 영역 (더 세밀한 제어)
+# Areas not to be crawled by search engines
 Disallow: /blog/write
 Disallow: /blog/edit/
 Disallow: /admin/
@@ -36,11 +29,11 @@ Disallow: /node_modules/
 Disallow: /.git/
 Disallow: /src/
 
-# 블로그 포스트는 적극적으로 크롤링 허용
+# Blog posts actively allowed for crawling
 Allow: /blog/
 Allow: /blog/*
 
-# 검색엔진이 유용하지 않은 파라미터 페이지를 크롤링하지 않도록 설정
+# Prevent crawling of parameter pages that are not useful to search engines
 Disallow: /*?*utm_source=
 Disallow: /*?*utm_medium=
 Disallow: /*?*utm_campaign=
@@ -52,51 +45,51 @@ Disallow: /*?*gclid=
 Disallow: /*?*print=
 Disallow: /*?*share=
 
-# 크롤링 속도 제한 완화 (더 빠른 크롤링 허용)
+# Crawling speed limit relaxation (allow faster crawling)
 Crawl-delay: 0.2
 
-# 사이트맵 위치 명시 (올바른 경로로 수정)
+# Specify sitemap location
 Sitemap: ${SITE_DOMAIN}/sitemap.xml
 Sitemap: ${SITE_DOMAIN}/rss.xml
 
-# 호스트 지정
+# Host specification
 Host: ${SITE_DOMAIN}
 
-# 구글봇 최적화 설정
+# Google bot optimization settings
 User-agent: Googlebot
 Allow: /
 Crawl-delay: 0.2
 
-# 네이버봇 설정
+# Naver bot settings
 User-agent: Yeti
 Allow: /
 Crawl-delay: 0.5
 
-# 빙봇 설정
+# Bing bot settings
 User-agent: bingbot
 Allow: /
 Crawl-delay: 0.3`;
 
-    console.log('robots.txt 요청 처리됨');
+    console.log('robots.txt content generated, length:', robotsContent.length);
 
-    return new Response(robotsContent, {
+    const response = new Response(robotsContent, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': 'inline',
-        'X-Content-Type-Options': 'nosniff',
-        'Cache-Control': 'public, max-age=60',
-        ...corsHeaders,
+        'Cache-Control': 'public, max-age=3600',
       },
     });
+
+    console.log('robots.txt response created successfully');
+    return response;
+    
   } catch (error) {
-    console.error('robots.txt 생성 에러:', error);
+    console.error('robots.txt generation error:', error);
     return new Response(
       'User-agent: *\nAllow: /',
       {
         status: 500,
         headers: {
           'Content-Type': 'text/plain; charset=utf-8',
-          ...corsHeaders,
         },
       }
     );

@@ -1,6 +1,6 @@
 
 // 서비스 워커 버전
-const CACHE_VERSION = 'v2'; // robots.txt 수정을 위한 캐시 버전 업데이트
+const CACHE_VERSION = 'v3'; // robots.txt 캐시 완전 제외를 위한 버전 업데이트
 const CACHE_NAME = `alphagogogo-cache-${CACHE_VERSION}`;
 
 // 사전 캐시할 자산 목록
@@ -55,17 +55,12 @@ self.addEventListener('activate', event => {
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
   
-  // robots.txt, sitemap.xml, rss.xml은 Service Worker를 완전히 bypass하고 네트워크로 직접 요청
+  // robots.txt, sitemap.xml, rss.xml은 Service Worker를 완전히 bypass
   if (url.pathname === '/robots.txt' || 
       url.pathname === '/sitemap.xml' || 
       url.pathname === '/rss.xml') {
-    event.respondWith(
-      fetch(event.request, { 
-        cache: 'no-cache',
-        redirect: 'follow'
-      })
-    );
-    return;
+    console.log('[서비스워커] SEO 파일 bypass:', url.pathname);
+    return; // Service Worker 완전 우회
   }
 
   // API 요청 및 동적 콘텐츠는 네트워크만 사용
