@@ -76,57 +76,81 @@ export const resourceService = {
     return (data || []).map(transformDatabaseResource);
   },
 
-  // 자료 생성
+  // 자료 생성 (Edge Function 사용 - 관리자 전용)
   async createResource(resourceData: Omit<Resource, 'id' | 'created_at' | 'updated_at' | 'download_count'>): Promise<Resource> {
-    const { data, error } = await supabase
-      .from('resources')
-      .insert({
-        ...resourceData,
-        tags: JSON.stringify(resourceData.tags)
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error('Error creating resource:', error);
-      throw error;
+    const { getAdminToken } = await import('./secureAuthService');
+    const token = await getAdminToken();
+    if (!token) {
+      throw new Error('관리자 인증이 필요합니다. 다시 로그인해주세요.');
     }
 
-    return transformDatabaseResource(data);
+    const { data, error } = await supabase.functions.invoke('manage-resources', {
+      headers: { 'admin-token': token },
+      body: {
+        action: 'create',
+        resource_data: {
+          title: resourceData.title,
+          description: resourceData.description,
+          category: resourceData.category,
+          file_url: resourceData.file_url,
+          file_type: resourceData.file_type,
+          file_size: resourceData.file_size,
+          tags: Array.isArray(resourceData.tags) ? resourceData.tags : [],
+          is_featured: resourceData.is_featured,
+          author_name: resourceData.author_name,
+        },
+      },
+    } as any);
+
+    if (error || !data?.success) {
+      console.error('Error creating resource via function:', error || data);
+      throw (error as any) || new Error(data?.message || '생성 실패');
+    }
+
+    return transformDatabaseResource(data.data);
   },
 
-  // 자료 수정
+  // 자료 수정 (Edge Function 사용)
   async updateResource(id: string, resourceData: Partial<Omit<Resource, 'id' | 'created_at' | 'updated_at'>>): Promise<Resource> {
-    const updateData = { ...resourceData };
-    if (updateData.tags) {
-      updateData.tags = JSON.stringify(updateData.tags) as any;
+    const { getAdminToken } = await import('./secureAuthService');
+    const token = await getAdminToken();
+    if (!token) {
+      throw new Error('관리자 인증이 필요합니다. 다시 로그인해주세요.');
     }
 
-    const { data, error } = await supabase
-      .from('resources')
-      .update(updateData)
-      .eq('id', id)
-      .select()
-      .single();
+    const { data, error } = await supabase.functions.invoke('manage-resources', {
+      headers: { 'admin-token': token },
+      body: {
+        action: 'update',
+        id,
+        resource_data: resourceData,
+      },
+    } as any);
 
-    if (error) {
-      console.error('Error updating resource:', error);
-      throw error;
+    if (error || !data?.success) {
+      console.error('Error updating resource via function:', error || data);
+      throw (error as any) || new Error(data?.message || '수정 실패');
     }
 
-    return transformDatabaseResource(data);
+    return transformDatabaseResource(data.data);
   },
 
-  // 자료 삭제
+  // 자료 삭제 (Edge Function 사용)
   async deleteResource(id: string): Promise<void> {
-    const { error } = await supabase
-      .from('resources')
-      .delete()
-      .eq('id', id);
+    const { getAdminToken } = await import('./secureAuthService');
+    const token = await getAdminToken();
+    if (!token) {
+      throw new Error('관리자 인증이 필요합니다. 다시 로그인해주세요.');
+    }
 
-    if (error) {
-      console.error('Error deleting resource:', error);
-      throw error;
+    const { data, error } = await supabase.functions.invoke('manage-resources', {
+      headers: { 'admin-token': token },
+      body: { action: 'delete', id },
+    } as any);
+
+    if (error || !data?.success) {
+      console.error('Error deleting resource via function:', error || data);
+      throw (error as any) || new Error(data?.message || '삭제 실패');
     }
   },
 
