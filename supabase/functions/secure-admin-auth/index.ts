@@ -6,6 +6,7 @@ const allowedOrigins = new Set<string>([
   'https://alphagogogo.com',
   'https://www.alphagogogo.com',
   'https://66c7be07-a569-452d-94ac-a575dd055960.lovableproject.com',
+  'https://66c7be07-a569-452d-94ac-a575dd055960.sandbox.lovable.dev',
   'http://localhost:3000',
   'http://localhost:5173'
 ]);
