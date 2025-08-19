@@ -15,6 +15,12 @@
   force = true
 
 [[redirects]]
+  from = "/robots.txt"
+  to = "https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/rss.xml" 
   to = "https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed"
   status = 200
