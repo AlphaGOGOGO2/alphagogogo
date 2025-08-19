@@ -1,6 +1,6 @@
 
 // 서비스 워커 버전
-const CACHE_VERSION = 'v3'; // robots.txt 캐시 완전 제외를 위한 버전 업데이트
+const CACHE_VERSION = 'v4'; // robots.txt 정적 파일 제공을 확실히 반영하기 위한 버전 업데이트
 const CACHE_NAME = `alphagogogo-cache-${CACHE_VERSION}`;
 
 // 사전 캐시할 자산 목록

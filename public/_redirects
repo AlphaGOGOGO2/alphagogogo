@@ -1,8 +1,7 @@
 # www와 non-www 도메인 통일 (www → non-www)  
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
-# SEO 파일들을 Edge Functions로 프록시
-/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200!
+# RSS, 사이트맵은 Edge Functions로 프록시
 /sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200!
 /rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200!
 
