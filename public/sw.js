@@ -1,6 +1,6 @@
 
 // 서비스 워커 버전
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2'; // robots.txt 수정을 위한 캐시 버전 업데이트
 const CACHE_NAME = `alphagogogo-cache-${CACHE_VERSION}`;
 
 // 사전 캐시할 자산 목록
@@ -53,15 +53,27 @@ self.addEventListener('activate', event => {
 
 // 페치 이벤트 처리
 self.addEventListener('fetch', event => {
+  const url = new URL(event.request.url);
+  
+  // robots.txt, sitemap.xml, rss.xml은 Service Worker를 완전히 bypass하고 네트워크로 직접 요청
+  if (url.pathname === '/robots.txt' || 
+      url.pathname === '/sitemap.xml' || 
+      url.pathname === '/rss.xml') {
+    event.respondWith(
+      fetch(event.request, { 
+        cache: 'no-cache',
+        redirect: 'follow'
+      })
+    );
+    return;
+  }
+
   // API 요청 및 동적 콘텐츠는 네트워크만 사용
-if (
+  if (
     event.request.url.includes('/api/') || 
     event.request.url.includes('sockjs-node') ||
     event.request.url.includes('hot-update.json') ||
-    event.request.url.includes('supabase.co') ||
-    event.request.url.endsWith('/robots.txt') ||
-    event.request.url.endsWith('/sitemap.xml') ||
-    event.request.url.endsWith('/rss.xml')
+    event.request.url.includes('supabase.co')
   ) {
     return;
   }
