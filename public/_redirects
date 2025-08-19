@@ -1,12 +1,12 @@
 # www와 non-www 도메인 통일 (www → non-www)
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
-# RSS 및 사이트맵을 Edge Functions로 서빙 (301 리다이렉트로 변경)
+# robots.txt를 정적 파일로 강제 서빙 (우선순위 최상위)
+/robots.txt /robots.txt 200!
+
+# RSS 및 사이트맵을 Edge Functions로 서빙
 /sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
 /rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
-
-# robots.txt는 정적 파일로 서빙
-# /robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200
 
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200
