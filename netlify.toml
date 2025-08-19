@@ -3,9 +3,9 @@
   command = "npm run build"
 
 [[redirects]]
-  from = "/robots.txt"
-  to = "/robots.txt"
-  status = 200
+  from = "https://www.alphagogogo.com/*"
+  to = "https://alphagogogo.com/:splat"
+  status = 301
   force = true
 
 [[redirects]]
@@ -21,12 +21,9 @@
   force = true
 
 [[redirects]]
-  from = "https://www.alphagogogo.com/*"
-  to = "https://alphagogogo.com/:splat"
-  status = 301
-  force = true
-
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+[build.environment]
+  NODE_VERSION = "18"

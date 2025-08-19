@@ -1,13 +1,5 @@
 # www와 non-www 도메인 통일 (www → non-www)  
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
-# 정적 SEO 파일들을 우선 처리
-/robots.txt /robots.txt 200
-/favicon.ico /favicon.ico 200
-
-# RSS, 사이트맵은 Edge Functions로 프록시
-/sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200!
-/rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200!
-
-# SPA fallback (이 규칙이 robots.txt를 가로채지 않도록 맨 마지막에 배치)
+# SPA fallback - robots.txt는 자동으로 정적 파일로 서빙됨
 /* /index.html 200
