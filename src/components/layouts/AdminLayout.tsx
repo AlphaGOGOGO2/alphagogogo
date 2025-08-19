@@ -2,6 +2,7 @@
 import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { isAuthenticated } from "@/services/secureAuthService";
 import { 
   BarChart3, 
   FileText, 
@@ -38,9 +39,23 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [isAuthorized, setIsAuthorized] = useState(false);
 
-  // 로컬 스토리지에서 사이드바 상태 불러오기
+  // 인증 확인 및 설정 로드
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const authResult = await isAuthenticated();
+        setIsAuthorized(authResult);
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        setIsAuthorized(false);
+      } finally {
+        setIsAuthChecking(false);
+      }
+    };
+
     const savedSidebarState = localStorage.getItem('adminSidebarCollapsed');
     const savedTheme = localStorage.getItem('adminTheme');
     
@@ -52,6 +67,8 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
       setIsDarkMode(savedTheme === 'dark');
       document.documentElement.classList.toggle('dark', savedTheme === 'dark');
     }
+
+    checkAuth();
   }, []);
 
   // 사이드바 토글
@@ -70,13 +87,23 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
   };
 
   // 로그아웃
-  const handleLogout = () => {
-    sessionStorage.removeItem("blogAuthToken");
+  const handleLogout = async () => {
+    const { clearAuth } = await import("@/services/secureAuthService");
+    await clearAuth();
     window.location.href = "/admin";
   };
 
-  // 관리자 세션 확인
-  const isAuthorized = sessionStorage.getItem("blogAuthToken") === "authorized";
+  // 로딩 중이면 로딩 표시
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <p>인증 확인 중...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 인증 확인
   if (!isAuthorized) {
@@ -92,7 +119,10 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
           <BlogPasswordModal 
             isOpen={showAuthModal} 
             onClose={() => setShowAuthModal(false)} 
-            onSuccess={() => window.location.reload()} // 인증 성공 시 새로고침(즉시 어드민 진입)
+            onSuccess={() => {
+              setIsAuthorized(true);
+              setShowAuthModal(false);
+            }}
           />
         </div>
       </div>
