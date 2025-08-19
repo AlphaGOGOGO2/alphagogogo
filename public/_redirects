@@ -5,8 +5,8 @@ https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 /sitemap.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap 200
 /rss.xml https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed 200
 
-# robots.txt도 Edge Function으로 서빙 (동적 관리)
-/robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200
+# robots.txt는 정적 파일로 서빙
+# /robots.txt https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots 200
 
 # 추가 SEO 관련 리다이렉트
 /favicon.ico /favicon.ico 200

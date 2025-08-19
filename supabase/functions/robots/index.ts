@@ -82,9 +82,10 @@ Crawl-delay: 0.3`;
     return new Response(robotsContent, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
-        'Content-Disposition': 'inline',
+        'Content-Disposition': 'inline; filename="robots.txt"',
         'X-Content-Type-Options': 'nosniff',
         'Cache-Control': 'public, max-age=300, must-revalidate',
+        'Accept-Ranges': 'none',
         ...corsHeaders,
       },
     });
