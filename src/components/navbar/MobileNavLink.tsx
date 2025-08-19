@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
+import { NavigationStyles, NavLinkStyleOptions } from "@/utils/navigationStyles";
+import { useNavigationStyles } from "@/hooks/useCommonStyles";
 
 interface MobileNavLinkProps {
   name: string;
@@ -12,6 +13,16 @@ interface MobileNavLinkProps {
 }
 
 export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExternal }: MobileNavLinkProps) {
+  // 공통 네비게이션 스타일 사용
+  const styleOptions: NavLinkStyleOptions = {
+    isScrolled: true, // 모바일은 항상 스크롤된 상태로 간주
+    isActive,
+    isMobile: true,
+    size: 'lg'
+  };
+  
+  const { linkStyles, activeIndicatorStyles } = useNavigationStyles(styleOptions);
+  
   const handleClick = (e) => {
     if (onClick) {
       const shouldProceed = onClick();
@@ -27,7 +38,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
         href={path}
         target="_blank"
         rel="noopener noreferrer"
-        className="text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative flex items-center hover:bg-purple-50/50 hover:pl-4"
+        className={linkStyles}
         onClick={handleClick}
       >
         <span>{name}</span>
@@ -38,12 +49,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
   return (
     <Link
       to={path}
-      className={cn(
-        "text-xl font-medium text-purple-800 p-2 rounded-md transition-all duration-300 relative flex items-center",
-        isActive 
-          ? "bg-purple-50 pl-4" 
-          : "hover:bg-purple-50/50 hover:pl-4"
-      )}
+      className={linkStyles}
       onClick={handleClick}
       aria-current={isActive ? "page" : undefined}
     >
@@ -51,7 +57,7 @@ export function MobileNavLink({ name, path, isActive, onClick, iconRight, isExte
       {iconRight && <span className="ml-1">{iconRight}</span>}
       {isActive && (
         <span 
-          className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-purple-600 rounded-r-full" 
+          className={activeIndicatorStyles} 
           aria-hidden="true" 
         />
       )}

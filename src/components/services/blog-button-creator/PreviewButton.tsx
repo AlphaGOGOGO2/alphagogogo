@@ -1,7 +1,6 @@
 
 import React from "react";
-import { ButtonStyle } from "./BlogButtonCreator";
-import { getButtonStyles, getButtonClass } from "./utils/buttonStyleUtils";
+import { ButtonStyle, BlogButtonCreatorService } from "@/services/blogButtonCreatorService";
 import { ZoomIn } from "lucide-react";
 
 interface PreviewButtonProps {
@@ -9,12 +8,12 @@ interface PreviewButtonProps {
 }
 
 export function PreviewButton({ buttonStyle }: PreviewButtonProps) {
-  const buttonClass = getButtonClass(buttonStyle);
+  const buttonClass = BlogButtonCreatorService.getButtonClass(buttonStyle);
   
   return (
     <a 
       href={buttonStyle.url} 
-      style={getButtonStyles(buttonStyle)}
+      style={BlogButtonCreatorService.getButtonStyles(buttonStyle)}
       className={buttonClass}
       target="_blank" 
       rel="noopener noreferrer"
