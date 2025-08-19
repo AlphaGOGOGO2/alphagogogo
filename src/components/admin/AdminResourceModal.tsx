@@ -194,7 +194,10 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
                     <SelectValue placeholder="카테고리를 선택하세요" />
                   </SelectTrigger>
                   <SelectContent className="bg-white border shadow-lg z-50">
-                    <SelectItem value="기타">기타</SelectItem>
+                    {/* 기타 카테고리가 없는 경우에만 추가 */}
+                    {!categories.some(cat => cat.name === "기타") && (
+                      <SelectItem value="기타">기타</SelectItem>
+                    )}
                     {categories.map((category) => (
                       <SelectItem key={category.id} value={category.name}>
                         {category.name}
