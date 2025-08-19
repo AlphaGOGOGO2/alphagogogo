@@ -1,6 +1,3 @@
-# robots.txt를 정적 파일로 강제 서빙 (최우선)
-/robots.txt /robots.txt 200!
-
 # www와 non-www 도메인 통일 (www → non-www)  
 https://www.alphagogogo.com/* https://alphagogogo.com/:splat 301!
 
