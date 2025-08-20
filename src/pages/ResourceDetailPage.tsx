@@ -40,15 +40,24 @@ export default function ResourceDetailPage() {
   };
 
   const handleDownload = async () => {
-    if (!resource?.file_url) return;
+    console.log('다운로드 버튼 클릭됨', { resourceId: resource?.id, fileUrl: resource?.file_url });
+    
+    if (!resource?.file_url) {
+      console.log('파일 URL이 없습니다');
+      return;
+    }
 
     try {
+      console.log('다운로드 카운트 증가 시작');
       // 개인정보 보호를 적용한 안전한 다운로드 로깅
       await incrementDownloadCountSafely(resource.id);
+      console.log('다운로드 카운트 증가 완료');
       
+      console.log('파일 다운로드 시작:', resource.file_url);
       window.open(resource.file_url, '_blank');
     } catch (error) {
       console.error('Download error:', error);
+      console.log('오류 발생, 직접 다운로드 시도');
       if (resource.file_url) {
         window.open(resource.file_url, '_blank');
       }
