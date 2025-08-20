@@ -107,7 +107,8 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
     },
     onError: (error) => {
       console.error("Save error:", error);
-      toast.error("저장 중 오류가 발생했습니다.");
+      const msg = (error as any)?.message || (error as any)?.error?.message || '저장 중 오류가 발생했습니다.';
+      toast.error(msg);
     }
   });
 

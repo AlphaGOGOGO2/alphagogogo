@@ -96,7 +96,7 @@ serve(async (req) => {
         file_url: resource_data.file_url ?? null,
         file_type: resource_data.file_type,
         file_size: resource_data.file_size ?? null,
-        tags: JSON.stringify(resource_data.tags || []),
+        tags: resource_data.tags || [],
         is_featured: !!resource_data.is_featured,
         author_name: resource_data.author_name || '알파GOGOGO',
       };
@@ -119,7 +119,7 @@ serve(async (req) => {
 
       const updateData: any = { ...resource_data };
       if (typeof updateData.tags !== 'undefined') {
-        updateData.tags = JSON.stringify(updateData.tags || []);
+        updateData.tags = updateData.tags || [];
       }
       updateData.updated_at = new Date().toISOString();
 
