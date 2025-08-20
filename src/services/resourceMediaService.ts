@@ -2,13 +2,16 @@
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { v4 as uuidv4 } from "uuid";
+import { sanitizeFilename } from "@/utils/downloadPrivacy";
 
 // Upload resource images and files
 export const uploadResourceImage = async (file: File): Promise<string | null> => {
   try {
     // Check for valid file types (images primarily, but also documents)
     const fileExt = file.name.split('.').pop()?.toLowerCase();
-    const fileName = `${uuidv4()}.${fileExt}`;
+    const originalBase = sanitizeFilename(file.name.replace(/\.[^/.]+$/, ''));
+    const shortId = uuidv4().split('-')[0];
+    const fileName = `${originalBase || 'file'}-${shortId}.${fileExt}`;
     const filePath = `${fileName}`;
 
     // Check file size (max 10MB)
@@ -59,7 +62,9 @@ export const uploadResourceImage = async (file: File): Promise<string | null> =>
 export const uploadResourceFile = async (file: File): Promise<{ url: string; size: number } | null> => {
   try {
     const fileExt = file.name.split('.').pop()?.toLowerCase();
-    const fileName = `${uuidv4()}.${fileExt}`;
+    const originalBase = sanitizeFilename(file.name.replace(/\.[^/.]+$/, ''));
+    const shortId = uuidv4().split('-')[0];
+    const fileName = `${originalBase || 'file'}-${shortId}.${fileExt}`;
     const filePath = `files/${fileName}`;
 
     // Check file size (max 1GB for files)
