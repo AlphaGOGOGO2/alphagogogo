@@ -56,7 +56,7 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
       
       await encryptedStorage.setItem(TOKEN_KEY, data.token);
       await encryptedStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
-      
+      try { sessionStorage.setItem('blogAuthToken', 'authorized'); } catch {}
       return {
         success: true,
         token: data.token,
@@ -115,6 +115,7 @@ export const clearAuth = async (): Promise<void> => {
   try { cleanupAuthState(); } catch {}
   encryptedStorage.removeItem(TOKEN_KEY);
   encryptedStorage.removeItem('blogAuthToken');
+  try { sessionStorage.removeItem('blogAuthToken'); } catch {}
   // 글로벌 로그아웃 시도 (실패해도 무시)
   try { await supabase.auth.signOut({ scope: 'global' }); } catch {}
 };
