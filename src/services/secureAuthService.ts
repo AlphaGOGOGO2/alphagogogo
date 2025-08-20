@@ -34,7 +34,12 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
     });
 
     if (error) {
-      return { success: false, message: '로그인 중 오류가 발생했습니다.' };
+      const status = (error as any)?.status ?? (error as any)?.context?.status;
+      let message = '로그인 중 오류가 발생했습니다.';
+      if (status === 401) message = '이메일 또는 비밀번호가 올바르지 않습니다.';
+      else if (status === 429) message = '로그인 시도가 일시적으로 제한되었습니다. 잠시 후 다시 시도하세요.';
+      else if ((error as any)?.message) message = (error as any).message;
+      return { success: false, message };
     }
 
     if (data.success) {
