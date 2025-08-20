@@ -62,10 +62,10 @@ export const uploadResourceFile = async (file: File): Promise<{ url: string; siz
     const fileName = `${uuidv4()}.${fileExt}`;
     const filePath = `files/${fileName}`;
 
-    // Check file size (max 50MB for files)
-    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+    // Check file size (max 1GB for files)
+    const MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
     if (file.size > MAX_FILE_SIZE) {
-      toast.error(`파일 크기는 50MB 이하여야 합니다 (현재: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
+      toast.error(`파일 크기는 1GB 이하여야 합니다 (현재: ${(file.size / (1024 * 1024)).toFixed(2)}MB)`);
       return null;
     }
 
