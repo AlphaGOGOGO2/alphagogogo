@@ -107,8 +107,43 @@ export function AdminResourceModal({ isOpen, onClose, resource, categories }: Ad
     },
     onError: (error) => {
       console.error("Save error:", error);
-      const msg = (error as any)?.message || (error as any)?.error?.message || '저장 중 오류가 발생했습니다.';
-      toast.error(msg);
+      
+      // 더 구체적인 에러 메시지 제공
+      let errorMessage = '저장 중 오류가 발생했습니다.';
+      
+      if (error instanceof Error) {
+        const errorData = (error as any).response?.data || error;
+        
+        if (errorData.error_code === '23505' || errorData.message?.includes('duplicate key')) {
+          errorMessage = '중복된 데이터가 있습니다. 잠시 후 다시 시도하세요.';
+        } else if (errorData.error_code === '42704' || errorData.message?.includes('constraint')) {
+          errorMessage = '데이터베이스 제약 조건 오류입니다. 관리자에게 문의하세요.';
+        } else if (errorData.message?.includes('JWT') || errorData.message?.includes('인증')) {
+          errorMessage = '인증이 만료되었습니다. 다시 로그인하세요.';
+          // 자동으로 로그인 페이지로 리다이렉트
+          setTimeout(() => {
+            window.location.href = '/admin';
+          }, 2000);
+        } else if (errorData.message?.includes('네트워크') || errorData.message?.includes('fetch')) {
+          errorMessage = '네트워크 오류입니다. 인터넷 연결을 확인하세요.';
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (errorData.error_details) {
+          errorMessage = `오류 발생: ${errorData.error_details}`;
+        }
+      }
+      
+      toast.error(errorMessage, {
+        duration: 5000,
+        action: {
+          label: '다시 시도',
+          onClick: () => {
+            if (!saveResourceMutation.isPending) {
+              saveResourceMutation.mutate(formData);
+            }
+          }
+        }
+      });
     }
   });
 
