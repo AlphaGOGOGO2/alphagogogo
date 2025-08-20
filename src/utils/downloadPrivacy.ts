@@ -93,6 +93,43 @@ export const incrementDownloadCountSafely = async (resourceId: string): Promise<
 };
 
 /**
+ * 다운로드 파일명/URL 도우미
+ */
+export const sanitizeFilename = (name: string) => {
+  const trimmed = name?.toString().trim() || 'download';
+  return trimmed.replace(/[\\/:*?"<>|]+/g, '-');
+};
+
+export const getExtensionFromUrl = (url: string) => {
+  try {
+    const pathname = new URL(url).pathname;
+    const last = pathname.split('/').pop() || '';
+    const dot = last.lastIndexOf('.');
+    return dot >= 0 ? last.slice(dot) : '';
+  } catch {
+    const dot = url.lastIndexOf('.');
+    return dot >= 0 ? url.slice(dot) : '';
+  }
+};
+
+export const buildDownloadFilename = (title: string, fileUrl: string) => {
+  const clean = sanitizeFilename(title || 'download');
+  const ext = getExtensionFromUrl(fileUrl) || '';
+  return ext ? `${clean}${ext}` : clean;
+};
+
+export const buildDownloadUrl = (fileUrl: string, desiredFilename: string) => {
+  try {
+    const u = new URL(fileUrl);
+    u.searchParams.set('download', desiredFilename);
+    return u.toString();
+  } catch {
+    const sep = fileUrl.includes('?') ? '&' : '?';
+    return `${fileUrl}${sep}download=${encodeURIComponent(desiredFilename)}`;
+  }
+};
+
+/**
  * 레거시 코드 경고 - 개인정보 수집을 방지
  */
 export const warnAboutPrivacyViolation = () => {

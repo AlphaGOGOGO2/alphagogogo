@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SafeHTML } from "@/components/SafeHTML";
 import { resourceService } from "@/services/resourceService";
-import { incrementDownloadCountSafely } from "@/utils/downloadPrivacy";
+import { incrementDownloadCountSafely, buildDownloadFilename, buildDownloadUrl } from "@/utils/downloadPrivacy";
 
 export default function ResourceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -53,13 +53,16 @@ export default function ResourceDetailPage() {
       await incrementDownloadCountSafely(resource.id);
       console.log('다운로드 카운트 증가 완료');
       
-      console.log('파일 다운로드 시작:', resource.file_url);
-      window.open(resource.file_url, '_blank');
+      const filename = buildDownloadFilename(resource.title, resource.file_url || '');
+      const finalUrl = buildDownloadUrl(resource.file_url, filename);
+      window.open(finalUrl, '_blank');
     } catch (error) {
       console.error('Download error:', error);
       console.log('오류 발생, 직접 다운로드 시도');
       if (resource.file_url) {
-        window.open(resource.file_url, '_blank');
+        const filename = buildDownloadFilename(resource.title, resource.file_url || '');
+        const finalUrl = buildDownloadUrl(resource.file_url, filename);
+        window.open(finalUrl, '_blank');
       }
     }
   };

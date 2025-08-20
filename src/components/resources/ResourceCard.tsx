@@ -3,7 +3,7 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Download, FileText, Image, File, Star } from "lucide-react";
 import { Resource } from "@/types/resources";
-import { incrementDownloadCountSafely } from "@/utils/downloadPrivacy";
+import { incrementDownloadCountSafely, buildDownloadFilename, buildDownloadUrl } from "@/utils/downloadPrivacy";
 
 interface ResourceCardProps {
   resource: Resource;
@@ -34,15 +34,17 @@ export function ResourceCard({ resource }: ResourceCardProps) {
     try {
       // 개인정보 보호를 적용한 안전한 다운로드 로깅
       await incrementDownloadCountSafely(resource.id);
-      
-      // 파일 다운로드
-      window.open(resource.file_url, '_blank');
+
+      // 보기 좋은 파일명으로 다운로드 강제
+      const filename = buildDownloadFilename(resource.title, resource.file_url || '');
+      const finalUrl = buildDownloadUrl(resource.file_url, filename);
+      window.open(finalUrl, '_blank');
     } catch (error) {
       console.error('Download error:', error);
-      // 에러가 발생해도 다운로드는 진행
-      if (resource.file_url) {
-        window.open(resource.file_url, '_blank');
-      }
+      // 에러가 발생해도 다운로드는 진행 (동일한 파일명 적용)
+      const filename = buildDownloadFilename(resource.title, resource.file_url || '');
+      const finalUrl = buildDownloadUrl(resource.file_url!, filename);
+      window.open(finalUrl, '_blank');
     }
   };
 
