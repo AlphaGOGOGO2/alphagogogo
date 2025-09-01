@@ -22,10 +22,10 @@ export function SEO({
   title = "알파고고고 - 최신 AI 소식 & 인사이트",
   description = "AI를 이해하는 새로운 관점, 비개발자와 비전문인이 시선으로 바라보는 AI 트렌드와 인사이트를 제공합니다.",
   canonicalUrl,
-  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png",
+  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/ogimage.png",
   ogType = "website",
   structuredData,
-  keywords = "알파고고고,alphagogogo,AI,인공지능,AI트렌드,AI뉴스,AI소식,AI초보자,AI입문,쉬운AI,비개발자AI,AI기초,AI블로그,AI가이드,AI튜토리얼,ChatGPT,GPT-4,Gemini,Claude,생성AI,대화형AI,LLM,AI도구,AI활용,비즈니스AI,한국AI,프롬프트 엔지니어링,블로그 자동화,테크 블로그,디지털 트랜스포메이션",
+  keywords = "알파고고고,AI,인공지능,ChatGPT,Gemini,Claude,AI뉴스,AI블로그,AI가이드,프롬프트 엔지니어링,블로그 자동화,테크 블로그",
   noIndex = false,
   author = "알파고고고",
   publishedTime,
@@ -46,10 +46,10 @@ export function SEO({
     : (typeof window !== 'undefined' ? `${SITE_DOMAIN}${window.location.pathname}` : SITE_DOMAIN);
   
   
-  // 정규화된 OG 이미지 URL 생성 (단순화된 로직)
+  // 정규화된 OG 이미지 URL 생성 (더블 슬래시 제거 로직 포함)
   const normalizedOgImage = ogImage?.startsWith('http') 
-    ? ogImage 
-    : `${SITE_DOMAIN}${ogImage?.startsWith('/') ? '' : '/'}${ogImage || 'images//ogimage.png'}`;
+    ? ogImage.replace(/([^:]\/)\/+/g, '$1') // 더블 슬래시 제거
+    : `${SITE_DOMAIN}${ogImage?.startsWith('/') ? '' : '/'}${ogImage || 'images/ogimage.png'}`.replace(/([^:]\/)\/+/g, '$1');
   
   // description 길이 최적화 (160자 이내)
   const optimizedDescription = description.length > 160 
@@ -186,8 +186,9 @@ export function SEO({
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
       
-      {/* 리소스 힌트 최적화 */}
+      {/* 리소스 힌트 최적화 - 폰트 display=swap 추가 */}
       <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" />
       <link rel="preload" href={normalizedOgImage} as="image" />
       
       {/* 기본 Organization 스키마 - 홈페이지에서만 */}
