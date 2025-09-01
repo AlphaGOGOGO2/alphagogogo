@@ -33,6 +33,12 @@ verify_jwt = false
 [functions.robots]
 verify_jwt = false
 
+[functions.notify-search-engines]
+verify_jwt = false
+
+[functions.seo-status-check]
+verify_jwt = false
+
 [functions.scheduled-seo-refresh]
 verify_jwt = false
 

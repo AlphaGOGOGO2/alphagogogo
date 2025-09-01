@@ -49,44 +49,29 @@ serve(async (req) => {
       console.log('✅ RSS 피드 재생성 완료');
     }
 
-    // 3. Google에 사이트맵 제출 알림 (핑) - HTTPS로 변경
-    console.log('🔔 Google에 사이트맵 업데이트 알림 중...');
+    // 3. 검색엔진 알림 Edge Function 호출
+    console.log('🔔 검색엔진에 사이트맵 업데이트 알림 중...');
     try {
-      const pingUrl = `https://www.google.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
-      const pingResponse = await fetch(pingUrl, {
-        method: 'GET',
+      const notifyResponse = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/notify-search-engines`, {
+        method: 'POST',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; AlphaGogogo-Bot/1.0)'
-        }
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_ANON_KEY')}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          timestamp: new Date().toISOString(),
+          trigger: 'scheduled-refresh'
+        })
       });
       
-      if (pingResponse.ok) {
-        console.log('✅ Google 사이트맵 핑 성공');
+      if (notifyResponse.ok) {
+        const notifyResult = await notifyResponse.json();
+        console.log('✅ 검색엔진 알림 완료:', notifyResult.message);
       } else {
-        console.error('⚠️ Google 사이트맵 핑 실패:', pingResponse.status);
+        console.error('⚠️ 검색엔진 알림 실패:', notifyResponse.status);
       }
     } catch (error) {
-      console.error('⚠️ Google 사이트맵 핑 오류:', error);
-    }
-
-    // 4. Bing에 사이트맵 제출 알림 - HTTPS로 변경
-    console.log('🔔 Bing에 사이트맵 업데이트 알림 중...');
-    try {
-      const bingPingUrl = `https://www.bing.com/ping?sitemap=https://alphagogogo.com/sitemap.xml`;
-      const bingPingResponse = await fetch(bingPingUrl, {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; AlphaGogogo-Bot/1.0)'
-        }
-      });
-      
-      if (bingPingResponse.ok) {
-        console.log('✅ Bing 사이트맵 핑 성공');
-      } else {
-        console.error('⚠️ Bing 사이트맵 핑 실패:', bingPingResponse.status);
-      }
-    } catch (error) {
-      console.error('⚠️ Bing 사이트맵 핑 오류:', error);
+      console.error('⚠️ 검색엔진 알림 오류:', error);
     }
 
     // 5. 통계 조회 및 로깅 - count 방식 수정
