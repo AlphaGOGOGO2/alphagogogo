@@ -2,12 +2,12 @@
   publish = "dist"
   command = "npm run build"
 
-# Domain redirects - www to non-www (highest priority)
-[[redirects]]
-  from = "https://www.alphagogogo.com/*"
-  to = "https://alphagogogo.com/:splat"
-  status = 301
-  force = true
+# Domain redirects - www to non-www (temporarily disabled for DNS setup)
+# [[redirects]]
+#   from = "https://www.alphagogogo.com/*"
+#   to = "https://alphagogogo.com/:splat"
+#   status = 301
+#   force = true
 
 # SEO files to Edge Functions
 [[redirects]]
