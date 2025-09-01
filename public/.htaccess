@@ -93,10 +93,10 @@ RewriteCond %{HTTP_HOST} ^(www\.)?alphablog\.app$ [NC]
 RewriteCond %{REQUEST_URI} !^/naver.*\.html$
 RewriteRule ^(.*)$ https://alphagogogo.com/$1 [L,R=301]
 
-# non-www에서 www로 리다이렉트 (네이버 파일은 제외)
-RewriteCond %{HTTP_HOST} ^alphagogogo.com [NC]
-RewriteCond %{REQUEST_URI} !^/naver.*\.html$
-RewriteRule ^(.*)$ https://www.alphagogogo.com/$1 [L,R=301]
+# non-www에서 www로 리다이렉트 (Netlify에서 처리하므로 비활성화)
+# RewriteCond %{HTTP_HOST} ^alphagogogo.com [NC]
+# RewriteCond %{REQUEST_URI} !^/naver.*\.html$
+# RewriteRule ^(.*)$ https://www.alphagogogo.com/$1 [L,R=301]
 
 # Service specific redirects
 RewriteRule ^services/youtube-transcript/?$ /youtube-transcript [R=301,L]
