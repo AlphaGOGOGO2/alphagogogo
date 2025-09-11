@@ -96,8 +96,17 @@ export const incrementDownloadCountSafely = async (resourceId: string): Promise<
  * 다운로드 파일명/URL 도우미
  */
 export const sanitizeFilename = (name: string) => {
-  const trimmed = name?.toString().trim() || 'download';
-  return trimmed.replace(/[\\/:*?"<>|]+/g, '-');
+  const trimmed = (name ?? 'download').toString().trim();
+  // 1) 유니코드 정규화로 분해 2) 발음 구별 기호 제거 3) ASCII 안전 문자만 남김
+  const base = trimmed
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '') // 결합 문자 제거
+    .replace(/[^a-zA-Z0-9._-]+/g, '-') // 비 ASCII 문자는 하이픈으로 대체
+    .replace(/-+/g, '-') // 연속 하이픈 축소
+    .replace(/^[-.]+|[-.]+$/g, ''); // 앞뒤 구분자 제거
+  const safe = base || 'file';
+  // 너무 긴 파일명은 잘라내고, 일관성을 위해 소문자화
+  return safe.slice(0, 100).toLowerCase();
 };
 
 export const getExtensionFromUrl = (url: string) => {

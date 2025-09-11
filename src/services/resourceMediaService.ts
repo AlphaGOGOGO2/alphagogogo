@@ -79,7 +79,8 @@ export const uploadResourceFile = async (file: File): Promise<{ url: string; siz
       .from('resource-media')
       .upload(filePath, file, {
         cacheControl: '3600',
-        upsert: true
+        upsert: true,
+        contentType: file.type || 'application/octet-stream'
       });
 
     if (uploadError) {
