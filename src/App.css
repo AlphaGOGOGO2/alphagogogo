@@ -95,3 +95,23 @@ body {
 .neo-brutalism {
   @apply bg-white border-4 border-black shadow-[5px_5px_0px_0px_rgba(0,0,0,1)];
 }
+
+/* 반짝이는 텍스트 효과 */
+@keyframes sparkle {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.sparkle-text {
+  animation: sparkle 2s ease-in-out infinite;
+  background: linear-gradient(90deg, #eab308 0%, #fbbf24 50%, #eab308 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}

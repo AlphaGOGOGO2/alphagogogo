@@ -66,6 +66,17 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     />
   );
 
+  const renderBlogAILink = () => (
+    <NavLink
+      name="블로그 AI"
+      path="https://www.alphablogogo.com/"
+      isScrolled={isScrolled}
+      isActive={false}
+      isExternal={true}
+      isSparkle={true}
+    />
+  );
+
   useEffect(() => {
     setActiveDropdown(null);
   }, [location.pathname]);
@@ -81,16 +92,18 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         isActive={location.pathname === "/"}
       />
       
-      <BlogDropdown 
+      <BlogDropdown
         isScrolled={isScrolled}
         isActive={location.pathname.startsWith("/blog") && !isServicePage}
         categories={blogCategories}
         isOpen={activeDropdown === "blog"}
         onOpenChange={handleBlogDropdownChange}
       />
-      
+
+      {renderBlogAILink()}
+
       {renderPremiumLink()}
-      
+
       <GPTSDropdown 
         isScrolled={isScrolled}
         isActive={location.pathname === "/gpts"}

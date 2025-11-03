@@ -104,13 +104,14 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           item.name !== "커뮤니티" &&
           item.name !== "서비스"
         ).map((item) => (
-          <MobileNavLink 
+          <MobileNavLink
             key={item.path}
-            name={item.name} 
-            path={item.path} 
+            name={item.name}
+            path={item.path}
             isActive={location.pathname === item.path}
             onClick={() => handleNavLinkClick(item)}
             isExternal={item.isExternal}
+            isSparkle={item.isSparkle}
           />
         ))}
       </nav>

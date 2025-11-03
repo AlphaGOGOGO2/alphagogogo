@@ -7,6 +7,7 @@ export interface NavItem {
   icon?: React.ReactNode;
   isExternal?: boolean;
   isComingSoon?: boolean;
+  isSparkle?: boolean;
 }
 
 export interface BlogCategory {
@@ -17,6 +18,7 @@ export interface BlogCategory {
 export const mainNavItems: NavItem[] = [
   { name: "홈", path: "/" },
   { name: "블로그", path: "/blog" },
+  { name: "블로그 AI", path: "https://www.alphablogogo.com/", isExternal: true, isSparkle: true },
   { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "GPTS 이용하기", path: "/gpts" },
   { name: "자료실", path: "/resources" },
