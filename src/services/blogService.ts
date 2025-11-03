@@ -9,12 +9,8 @@
 // Post management (CRUD operations)
 export * from "./blogPostService";
 
-// Tag and category management
-export * from "./blogTagService";
+// Category management
 export * from "./blogCategoryService";
-
-// Media handling
-export * from "./blogMediaService";
 
 // Data adapters and utilities
 export * from "./blogAdapters";

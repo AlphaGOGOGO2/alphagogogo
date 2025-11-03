@@ -15,8 +15,80 @@ interface AuthResponse {
 
 // 보안 토큰 관리
 const TOKEN_KEY = 'secure_admin_token';
+const SESSION_KEY = 'local_admin_session';
+
+// 로컬 모드 체크
+const isLocalMode = (): boolean => {
+  return import.meta.env.VITE_LOCAL_MODE === 'true';
+};
+
+// 로컬 모드 인증
+const localLogin = (password: string): AuthResponse => {
+  const adminPassword = import.meta.env.VITE_ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    return { success: false, message: '로컬 모드 설정이 올바르지 않습니다.' };
+  }
+
+  if (password === adminPassword) {
+    const session = {
+      user: {
+        id: 'local-admin',
+        email: 'admin@local',
+        role: 'admin'
+      },
+      timestamp: Date.now()
+    };
+
+    sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+    sessionStorage.setItem('blogAuthToken', 'authorized');
+
+    return {
+      success: true,
+      user: session.user
+    };
+  }
+
+  return { success: false, message: '비밀번호가 올바르지 않습니다.' };
+};
+
+// 로컬 모드 세션 검증
+const validateLocalSession = (): AuthResponse => {
+  const sessionData = sessionStorage.getItem(SESSION_KEY);
+
+  if (!sessionData) {
+    return { success: false, message: '세션이 없습니다.' };
+  }
+
+  try {
+    const session = JSON.parse(sessionData);
+    const now = Date.now();
+    const SESSION_DURATION = 24 * 60 * 60 * 1000; // 24시간
+
+    if (now - session.timestamp > SESSION_DURATION) {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem('blogAuthToken');
+      return { success: false, message: '세션이 만료되었습니다.' };
+    }
+
+    return {
+      success: true,
+      user: session.user
+    };
+  } catch (error) {
+    sessionStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem('blogAuthToken');
+    return { success: false, message: '세션 정보가 올바르지 않습니다.' };
+  }
+};
 
 export const secureLogin = async (email: string, password: string): Promise<AuthResponse> => {
+  // 로컬 모드: 비밀번호만 검증 (email 무시)
+  if (isLocalMode()) {
+    return localLogin(password);
+  }
+
+  // 기존 Supabase 인증 로직
   try {
     // 기존 인증 상태 정리 및 강제 로그아웃 시도 (실패해도 무시)
     cleanupAuthState();
@@ -53,7 +125,7 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
           });
         } catch {}
       }
-      
+
       await encryptedStorage.setItem(TOKEN_KEY, data.token);
       await encryptedStorage.setItem('blogAuthToken', 'authorized'); // Legacy compatibility
       try { sessionStorage.setItem('blogAuthToken', 'authorized'); } catch {}
@@ -72,8 +144,14 @@ export const secureLogin = async (email: string, password: string): Promise<Auth
 };
 
 export const validateToken = async (token?: string): Promise<AuthResponse> => {
+  // 로컬 모드: 세션 검증
+  if (isLocalMode()) {
+    return validateLocalSession();
+  }
+
+  // 기존 Supabase 토큰 검증
   const authToken = token || await getAdminToken();
-  
+
   if (!authToken) {
     return { success: false, message: '토큰이 없습니다.' };
   }
@@ -112,6 +190,16 @@ export const getAdminToken = async (): Promise<string | null> => {
 };
 
 export const clearAuth = async (): Promise<void> => {
+  // 로컬 모드: 세션 스토리지만 정리
+  if (isLocalMode()) {
+    try {
+      sessionStorage.removeItem(SESSION_KEY);
+      sessionStorage.removeItem('blogAuthToken');
+    } catch {}
+    return;
+  }
+
+  // 기존 Supabase 인증 정리
   try { cleanupAuthState(); } catch {}
   encryptedStorage.removeItem(TOKEN_KEY);
   encryptedStorage.removeItem('blogAuthToken');
@@ -121,6 +209,13 @@ export const clearAuth = async (): Promise<void> => {
 };
 
 export const isAuthenticated = async (): Promise<boolean> => {
+  // 로컬 모드: 세션 검증
+  if (isLocalMode()) {
+    const validation = validateLocalSession();
+    return validation.success;
+  }
+
+  // 기존 Supabase 토큰 검증
   const token = await getAdminToken();
   if (!token) return false;
 

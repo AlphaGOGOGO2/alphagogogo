@@ -1,16 +1,16 @@
-import { supabase } from "@/integrations/supabase/client";
-
 /**
- * 다운로드 개인정보 보호 유틸리티
- * 사용자 다운로드 추적 데이터를 안전하게 처리
+ * 다운로드 개인정보 보호 유틸리티 - 로컬 모드
+ * 로컬 모드에서는 메모리 기반 카운터만 제공
  */
+
+import { incrementDownloadCount } from '@/data/resources';
 
 /**
  * IP 주소를 익명화하여 개인정보를 보호
  */
 export const anonymizeIpAddress = (ip: string): string => {
   if (!ip) return '';
-  
+
   // IPv4인 경우 마지막 옥텟을 0으로 마스킹
   if (ip.includes('.')) {
     const parts = ip.split('.');
@@ -19,7 +19,7 @@ export const anonymizeIpAddress = (ip: string): string => {
       return parts.join('.');
     }
   }
-  
+
   // IPv6인 경우 마지막 4개 그룹을 마스킹
   if (ip.includes(':')) {
     const parts = ip.split(':');
@@ -30,66 +30,26 @@ export const anonymizeIpAddress = (ip: string): string => {
       return parts.join(':');
     }
   }
-  
+
   return ip;
 };
 
 /**
- * 안전한 다운로드 로깅 - IP 주소를 익명화하여 저장
+ * 안전한 다운로드 로깅 - 로컬 모드에서는 메모리만 사용
  */
 export const logDownloadSafely = async (resourceId: string): Promise<void> => {
-  try {
-    // 외부 IP 조회 시도
-    let anonymizedIp = 'unknown';
-    try {
-      const ipResponse = await fetch('https://api.ipify.org?format=json', {
-        signal: AbortSignal.timeout(3000) // 3초 타임아웃
-      });
-      const ipData = await ipResponse.json();
-      
-      if (ipData.ip) {
-        // IP 주소를 익명화하여 개인정보 보호
-        anonymizedIp = anonymizeIpAddress(ipData.ip);
-      }
-    } catch (error) {
-      console.log('IP address retrieval failed, using anonymous logging');
-    }
-
-    // 익명화된 IP로 다운로드 로그 저장
-    const { error } = await supabase
-      .from('resource_downloads')
-      .insert({
-        resource_id: resourceId,
-        ip_address: anonymizedIp
-      });
-
-    if (error) {
-      console.error('Download logging error:', error);
-    }
-  } catch (error) {
-    console.error('Safe download logging failed:', error);
-  }
+  // 로컬 모드: 메모리 카운터만 증가
+  incrementDownloadCount(resourceId);
+  console.log(`Download logged for resource: ${resourceId} (local mode - memory only)`);
 };
 
 /**
- * 다운로드 수 증가 (개인정보 보호 적용)
+ * 다운로드 수 증가 (로컬 모드 - 메모리 기반)
  */
 export const incrementDownloadCountSafely = async (resourceId: string): Promise<void> => {
-  try {
-    // 개인정보를 보호하는 방식으로 다운로드 로깅
-    await logDownloadSafely(resourceId);
-    
-    // 다운로드 수 증가
-    const { error } = await supabase.rpc('increment_download_count', {
-      resource_id: resourceId
-    });
-
-    if (error) {
-      console.error('Error incrementing download count:', error);
-    }
-  } catch (error) {
-    console.error('Safe download count increment failed:', error);
-  }
+  // 로컬 모드: 메모리 카운터만 증가
+  incrementDownloadCount(resourceId);
+  console.log(`Download count incremented for resource: ${resourceId} (local mode - memory only)`);
 };
 
 /**

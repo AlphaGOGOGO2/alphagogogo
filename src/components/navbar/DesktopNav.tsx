@@ -99,18 +99,11 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         onOpenChange={handleGPTSDropdownChange}
       />
 
-      <NavLink 
-        name="자료실" 
-        path="/resources" 
-        isScrolled={isScrolled} 
+      <NavLink
+        name="자료실"
+        path="/resources"
+        isScrolled={isScrolled}
         isActive={location.pathname.startsWith("/resources")}
-      />
-
-      <NavLink 
-        name="AI품앗이" 
-        path="/ai-partnership" 
-        isScrolled={isScrolled} 
-        isActive={location.pathname === "/ai-partnership"}
       />
 
       <ServicesDropdown

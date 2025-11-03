@@ -25,3 +25,4 @@ dist-ssr
 
 # Large resource files (exceeds GitHub 100MB limit)
 public/resources/files/AlphaBlog-*.exe
+public/files/*.exe

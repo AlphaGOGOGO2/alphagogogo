@@ -73,7 +73,11 @@ export function BlogPasswordModal({ isOpen, onClose, onSuccess }: BlogPasswordMo
           <ShieldAlert className="text-amber-600 h-5 w-5 mt-0.5" />
           <div className="text-amber-800 text-sm">
             <p className="font-medium">글쓰기는 관리자만 사용할 수 있습니다</p>
-            <p className="mt-1">계속하려면 관리자 비밀번호를 입력하세요.</p>
+            <p className="mt-1">
+              {import.meta.env.VITE_LOCAL_MODE === 'true'
+                ? '계속하려면 관리자 비밀번호를 입력하세요.'
+                : '계속하려면 관리자 비밀번호를 입력하세요.'}
+            </p>
           </div>
         </div>
 

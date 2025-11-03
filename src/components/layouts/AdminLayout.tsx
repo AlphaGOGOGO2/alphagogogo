@@ -3,16 +3,15 @@ import { ReactNode, useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { isAuthenticated } from "@/services/secureAuthService";
-import { 
-  BarChart3, 
-  FileText, 
-  Settings, 
-  Tags, 
+import {
+  BarChart3,
+  FileText,
+  Settings,
+  Tags,
   Newspaper,
   Home,
   User,
   FolderOpen,
-  HandHeart,
   LogOut,
   Moon,
   Sun,
@@ -134,7 +133,6 @@ export function AdminLayout({ children, title }: AdminLayoutProps) {
     { name: "대시보드", path: "/admin", icon: BarChart3 },
     { name: "블로그 관리", path: "/admin/posts", icon: FileText },
     { name: "자료실 관리", path: "/admin/resources", icon: FolderOpen },
-    { name: "AI 품앗이 관리", path: "/admin/ai-services", icon: HandHeart },
     { name: "카테고리 관리", path: "/admin/categories", icon: Tags },
     { name: "시스템 설정", path: "/admin/settings", icon: Settings },
   ];

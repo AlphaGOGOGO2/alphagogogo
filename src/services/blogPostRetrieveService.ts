@@ -1,12 +1,15 @@
+/**
+ * Blog Post Retrieve Service - Supabase backend (현재 미사용, 로컬 모드 사용 중)
+ *
+ * 이 파일은 로컬 블로그 서비스로 대체되었습니다.
+ * 실제 기능은 localBlogService.ts에서 제공됩니다.
+ */
 
-// 최적화된 블로그 포스트 조회 서비스 - 배치 처리와 캐싱으로 성능 개선
-export { 
-  getAllBlogPostsOptimized as getAllBlogPosts, 
-  getBlogPostsByCategoryOptimized as getBlogPostsByCategory 
-} from './blogPostBatchService';
+import * as localBlogService from './localBlogService';
 
-export { 
-  getBlogPostById, 
-  getBlogPostBySlug, 
-  getAllBlogPostsForAdmin 
-} from './blogPostRetrieveServiceLegacy';
+// 로컬 서비스로 리다이렉트
+export const getAllBlogPosts = localBlogService.getAllBlogPosts;
+export const getBlogPostsByCategory = localBlogService.getBlogPostsByCategory;
+export const getBlogPostById = localBlogService.getBlogPostById;
+export const getBlogPostBySlug = localBlogService.getBlogPostBySlug;
+export const getAllBlogPostsForAdmin = localBlogService.getAllBlogPostsForAdmin;

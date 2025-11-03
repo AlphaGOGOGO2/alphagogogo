@@ -35,10 +35,22 @@ export const getAllBlogPostsForAdmin = USE_LOCAL_BLOG
   ? localBlogService.getAllBlogPostsForAdmin
   : supabaseBlogService.getAllBlogPostsForAdmin;
 
-// 쓰기 작업은 Supabase만 지원 (로컬은 읽기 전용)
-export { createBlogPost } from './blogPostCreateService';
-export { updateBlogPost } from './blogPostUpdateService';
-export { handleBlogTags, removeExistingTags } from './blogPostTagsService';
+// 쓰기 작업은 로컬 모드에서 비활성화 (읽기 전용)
+export const createBlogPost = async () => {
+  throw new Error('로컬 모드에서는 블로그 포스트 생성이 불가능합니다.');
+};
+
+export const updateBlogPost = async () => {
+  throw new Error('로컬 모드에서는 블로그 포스트 수정이 불가능합니다.');
+};
+
+export const handleBlogTags = async () => {
+  throw new Error('로컬 모드에서는 태그 관리가 불가능합니다.');
+};
+
+export const removeExistingTags = async () => {
+  throw new Error('로컬 모드에서는 태그 관리가 불가능합니다.');
+};
 
 // Add error handling helpers
 export const handleBlogServiceError = (error: any, customMessage: string): void => {

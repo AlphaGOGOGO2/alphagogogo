@@ -17,13 +17,9 @@ import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
 import ResourcesPage from "./pages/ResourcesPage";
 import ResourceDetailPage from "./pages/ResourceDetailPage";
-import AIPartnershipPage from "./pages/AIPartnershipPage";
-import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import AdminPostsPage from "./pages/admin/AdminPostsPage";
-import AdminResourcesPage from "./pages/admin/AdminResourcesPage";
-import AdminAiServicesPage from "./pages/admin/AdminAiServicesPage";
-import AdminCategoriesPage from "./pages/admin/AdminCategoriesPage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminBlog from "./pages/admin/AdminBlog";
+import AdminResources from "./pages/admin/AdminResources";
 import NotFound from "./pages/NotFound";
 import { PerformanceOptimization } from "./components/optimization/PerformanceOptimization";
 import "./App.css";
@@ -87,13 +83,9 @@ function App() {
                     <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
                     <Route path="/resources" element={<ResourcesPage />} />
                     <Route path="/resources/:id" element={<ResourceDetailPage />} />
-                    <Route path="/ai-partnership" element={<AIPartnershipPage />} />
-                    <Route path="/admin" element={<AdminDashboardPage />} />
-                    <Route path="/admin/posts" element={<AdminPostsPage />} />
-                    <Route path="/admin/resources" element={<AdminResourcesPage />} />
-                    <Route path="/admin/ai-services" element={<AdminAiServicesPage />} />
-                    <Route path="/admin/categories" element={<AdminCategoriesPage />} />
-                    <Route path="/admin/settings" element={<AdminSettingsPage />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/blog" element={<AdminBlog />} />
+                    <Route path="/admin/resources" element={<AdminResources />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ErrorBoundary>

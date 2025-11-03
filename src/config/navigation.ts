@@ -20,9 +20,8 @@ export const mainNavItems: NavItem[] = [
   { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "GPTS 이용하기", path: "/gpts" },
   { name: "자료실", path: "/resources" },
-  { name: "AI품앗이", path: "/ai-partnership" },
   { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
-  { name: "커뮤니티", path: "/community" }
+  { name: "커뮤니티", path: "/open-chat-rooms" }
 ];
 
 export const blogCategories: BlogCategory[] = [
@@ -78,33 +77,3 @@ export const servicesCategories: ServicesCategory[] = [
   }
 ];
 
-// AI품앗이 서비스 카테고리
-export interface AIPartnershipService {
-  name: string;
-  value: string;
-  description: string;
-  urlPattern: string;
-  benefits: string[];
-}
-
-export const aiPartnershipServices: AIPartnershipService[] = [
-  {
-    name: "러버블",
-    value: "lovable",
-    description: "웹 애플리케이션 개발 플랫폼",
-    urlPattern: "https://lovable.dev/invite/",
-    benefits: [
-      "초대받은 사람: 추가 10크레딧 획득",
-      "초대한 사람: 상대방이 첫 웹사이트 발행 시 10크레딧 획득"
-    ]
-  },
-  {
-    name: "마누스",
-    value: "manus",
-    description: "AI 글쓰기 도구",
-    urlPattern: "https://manus.im/invitation/",
-    benefits: [
-      "친구들과 초대 링크를 공유하고, 각자 500 크레딧을 받으세요"
-    ]
-  }
-];
