@@ -179,12 +179,10 @@ export function SEO({
       {/* DNS Prefetch 및 Preconnect 최적화 */}
       <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
       <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-      <link rel="dns-prefetch" href="https://plimzlmmftdbpipbnhsy.supabase.co" />
       <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
       <link rel="dns-prefetch" href="https://www.google-analytics.com" />
       <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="anonymous" />
       
       {/* 리소스 힌트 최적화 - 폰트 display=swap 추가 */}
       <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style" />

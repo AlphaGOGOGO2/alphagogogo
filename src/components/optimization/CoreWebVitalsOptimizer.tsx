@@ -46,8 +46,7 @@ export function CoreWebVitalsOptimizer({
     // Critical Resource Hints 추가
     const resourceHints = [
       { rel: 'dns-prefetch', href: 'https://fonts.googleapis.com' },
-      { rel: 'dns-prefetch', href: 'https://fonts.gstatic.com' },
-      { rel: 'dns-prefetch', href: 'https://plimzlmmftdbpipbnhsy.supabase.co' }
+      { rel: 'dns-prefetch', href: 'https://fonts.gstatic.com' }
     ];
 
     resourceHints.forEach(hint => {

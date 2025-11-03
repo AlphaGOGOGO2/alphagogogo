@@ -2,7 +2,6 @@
 import { Routes, Route } from "react-router-dom";
 import AllBlogPage from "@/pages/blog/AllBlogPage";
 import BlogPostPage from "@/pages/blog/BlogPostPage";
-import BlogWritePage from "@/pages/blog/BlogWritePage";
 import { BlogCategoryPage } from "@/components/blog/BlogCategoryPage";
 import LatestAIUpdates from "@/pages/blog/LatestAIUpdates";
 import TrendingPage from "@/pages/blog/TrendingPage";
@@ -18,11 +17,7 @@ export function BlogRoutes() {
     <Routes>
       {/* 블로그 메인 페이지 */}
       <Route path="/" element={<AllBlogPage />} />
-      
-      {/* 글 작성 및 수정 */}
-      <Route path="/write" element={<BlogWritePage />} />
-      <Route path="/edit/:slug" element={<BlogWritePage />} />
-      
+
       {/* ID 기반 포스트 라우트 (우선순위 높음) */}
       <Route path="/post/:id" element={<BlogPostPage />} />
       

@@ -23,14 +23,12 @@ export function PerformanceOptimization({ children }: PerformanceOptimizationPro
         {/* DNS 프리페치 최적화 */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-        <link rel="dns-prefetch" href="//plimzlmmftdbpipbnhsy.supabase.co" />
         <link rel="dns-prefetch" href="//pagead2.googlesyndication.com" />
         <link rel="dns-prefetch" href="//googleads.g.doubleclick.net" />
-        
+
         {/* 프리커넥트 최적화 */}
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="preconnect" href="https://plimzlmmftdbpipbnhsy.supabase.co" crossOrigin="" />
         
         {/* 중요 리소스 프리로드 */}
         <link 
