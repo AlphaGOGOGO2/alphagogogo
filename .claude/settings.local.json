@@ -13,7 +13,9 @@
       "Bash(git rm:*)",
       "Bash(npm run build:*)",
       "Bash(npm run dev:*)",
-      "Bash(.env)"
+      "Bash(.env)",
+      "Bash(node scripts/generate-sitemap.js:*)",
+      "Bash(node scripts/generate-seo-files.mjs:*)"
     ],
     "deny": [],
     "ask": []
