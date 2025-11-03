@@ -12,8 +12,7 @@ export * from "./blogPostService";
 // Category management
 export * from "./blogCategoryService";
 
-// Data adapters and utilities
-export * from "./blogAdapters";
+// Utilities
 export * from "@/utils/blogUtils";
 
 // 추가 디버깅용 함수
