@@ -3,7 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Download, Calendar, User, Tag, Eye, Star } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

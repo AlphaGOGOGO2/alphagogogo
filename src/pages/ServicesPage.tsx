@@ -1,5 +1,5 @@
 
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import { Link } from "react-router-dom";

@@ -31,7 +31,7 @@ export function Footer() {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center gap-2 font-heading text-xl md:text-2xl font-semibold mb-4">
               <img 
-                src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+                src="/images/logo.png" 
                 alt="알파블로그 로고" 
                 className="w-8 h-8 object-contain"
               />

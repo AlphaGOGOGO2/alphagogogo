@@ -52,10 +52,9 @@ export interface CommunityCategory {
 }
 
 export const communityCategories: CommunityCategory[] = [
-  { name: "실시간 채팅", path: "/community" },
   { name: "오픈 채팅방", path: "/open-chat-rooms" },
-  { 
-    name: "비즈니스 문의", 
+  {
+    name: "비즈니스 문의",
     path: "/business-inquiry"
   }
 ];

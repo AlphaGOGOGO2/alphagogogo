@@ -113,7 +113,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         isActive={location.pathname === "/ai-partnership"}
       />
 
-      <ServicesDropdown 
+      <ServicesDropdown
         isScrolled={isScrolled}
         isActive={isServicePage}
         categories={servicesCategories}
@@ -123,7 +123,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
 
       <CommunityDropdown
         isScrolled={isScrolled}
-        isActive={location.pathname === "/community"}
+        isActive={location.pathname === "/open-chat-rooms" || location.pathname === "/business-inquiry"}
         categories={communityCategories}
         isOpen={activeDropdown === "community"}
         onOpenChange={handleCommunityDropdownChange}

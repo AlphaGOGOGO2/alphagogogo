@@ -80,19 +80,19 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           showCategories={location.pathname.startsWith("/blog") && !isServicePage}
         />
 
-        <MobileNavLink 
-          name="커뮤니티" 
-          path="/community" 
-          isActive={location.pathname === "/community"}
+        <MobileNavLink
+          name="커뮤니티"
+          path="/open-chat-rooms"
+          isActive={location.pathname === "/open-chat-rooms" || location.pathname === "/business-inquiry"}
           onClick={onClose}
         />
-        
-        <MobileCommunityItems 
-          onClose={onClose} 
-          locationPathname={location.pathname} 
+
+        <MobileCommunityItems
+          onClose={onClose}
+          locationPathname={location.pathname}
         />
-        
-        <MobileNavLink 
+
+        <MobileNavLink
           name="서비스" 
           path="/services" 
           isActive={isServicePage}

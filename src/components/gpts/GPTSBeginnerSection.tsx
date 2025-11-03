@@ -16,7 +16,7 @@ const beginnerGPTS = [
     title: "블로그 1단계, 키워드 검색&분석",
     description: "효과적인 블로그 작성을 위한 첫 단계로, 관련 키워드를 검색하고 분석해주는 도구입니다.",
     url: "https://chatgpt.com/g/g-vyVVIK1Ba-beulrogeu-1dangye-kiweodeu-geomsaeg-bunseog",
-    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    imageUrl: "/images/logo.png",
     isHot: false
   },
   {
@@ -24,7 +24,7 @@ const beginnerGPTS = [
     title: "블로그 2단계, SEO 블로그 글 생성기",
     description: "검색 엔진 최적화를 고려한 블로그 콘텐츠를 생성해주는 도구입니다.",
     url: "https://chatgpt.com/g/g-OEMSu2Dyw-beulrogeu-2dangye-seo-beulrogeu-geul-saengseonggi",
-    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    imageUrl: "/images/logo.png",
     isHot: true
   },
   {
@@ -32,7 +32,7 @@ const beginnerGPTS = [
     title: "블로그 +단계, 고급형 SEO블로그 글 생성기[HTML형식]",
     description: "전문적인 수준의 SEO 최적화 블로그 콘텐츠를 HTML 형식으로 생성해주는 고급 도구입니다.",
     url: "https://chatgpt.com/g/g-67799bfcb9d88191b1d272362e36454a-beulrogeu-dangye-gogeubhyeong-seobeulrogeu-geul-saengseonggi-htmlhyeongsig",
-    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    imageUrl: "/images/logo.png",
     isHot: true
   },
   {
@@ -40,7 +40,7 @@ const beginnerGPTS = [
     title: "블로그 3-1단계, 블로그 글 이미지 생성기",
     description: "블로그 콘텐츠에 어울리는 맞춤형 이미지를 생성해주는 도구입니다.",
     url: "https://chatgpt.com/g/g-yfnEmWED1-beulrogeu-3-1dangye-beulrogeu-geul-imiji-saengseonggi",
-    imageUrl: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png",
+    imageUrl: "/images/logo.png",
     isHot: false
   }
 ];

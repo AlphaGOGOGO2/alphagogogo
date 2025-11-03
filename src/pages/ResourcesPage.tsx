@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, Star, LayoutGrid, LayoutList } from "lucide-react";
 import { SEO } from "@/components/SEO";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { ResourceCard } from "@/components/resources/ResourceCard";
 import { ResourceTable } from "@/components/resources/ResourceTable";

@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Hero } from "@/components/landing/Hero";
 import { FeaturedPosts } from "@/components/landing/FeaturedPost";
 import { GPTSUsage } from "@/components/landing/GPTSUsage";
@@ -60,7 +60,7 @@ const Index = () => {
     "url": SITE_DOMAIN,
       "logo": {
         "@type": "ImageObject",
-        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png",
+        "url": "/images/logo.png",
       "width": 200,
       "height": 200
     },
@@ -102,7 +102,7 @@ const Index = () => {
         description="AI를 이해하는 새로운 관점으로 비개발자와 비전문인을 위한 실용적인 AI 가이드를 제공하는 알파고고고입니다. 최신 AI 뉴스와 기술 트렌드, 챗GPT·클로드·제미나이 활용법, 무료 GPTS 도구 모음, 블로그 자동화 서비스, SEO 최적화 가이드, AI 학습 자료실, 실시간 커뮤니티까지 - AI 시대를 살아가는 모든 분들이 필요한 정보와 도구를 한 곳에서 만나보세요. 퍼스널 브랜딩부터 비즈니스 활용까지 AI의 모든 것을 다룹니다."
         canonicalUrl={SITE_DOMAIN}
         structuredData={combinedSchema}
-        ogImage="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png"
+        ogImage="/images/ogimage.png"
         keywords="알파고고고,알파블로그,알파고,알파GOGOGO,유튜브 알파GOGOGO,본질을 찾아서,퍼스널 브랜딩,personal branding,AI,인공지능,artificial intelligence,챗GPT,ChatGPT,제미나이,Gemini,클로드,Claude,커서AI,Cursor AI,러버블 DEV,Lovable DEV,노코드,no-code,웹개발,web development,AI 블로그,AI blog,블로그 글쓰기,blog writing,블로그 자동화,blog automation,블로그 AI,블로그 GPT,테크 블로그,tech blog,인공지능 뉴스,AI news,기술 트렌드,tech trends,머신러닝,machine learning,딥러닝,deep learning,LLM,대화형 AI,conversational AI,AI 도구,AI tools,프롬프트 엔지니어링,prompt engineering,AI 리뷰,AI review,테크 리뷰,tech review,개발 도구,development tools,코딩,coding,프로그래밍,programming,스타트업,startup,테크 인사이트,tech insights,디지털 트랜스포메이션,digital transformation,URL 단축,무료 URL 단축,유튜브 자막,유튜브 자막 다운로드,블로그 버튼 생성,버튼 생성기,링크 버튼 생성,링크 버튼,GPTS 도구,AI 가이드,SEO 최적화,AI 학습,AI 커뮤니티,AI 자료실"
       />
       <Navbar />

@@ -1,6 +1,6 @@
 
 import { ReactNode, useEffect, useState } from "react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";

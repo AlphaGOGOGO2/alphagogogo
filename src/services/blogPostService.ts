@@ -1,12 +1,41 @@
 
 /**
  * Blog Post Service - Core CRUD operations for blog posts
- * 
+ *
  * This file re-exports blog post functionality from specialized service files.
+ * Supports both local Markdown files and Supabase backend.
  */
 
-// Re-export blog post service functions from separate files
-export { getAllBlogPosts, getBlogPostsByCategory, getBlogPostBySlug, getBlogPostById, getAllBlogPostsForAdmin } from './blogPostRetrieveService';
+// 로컬 블로그 사용 여부 (환경변수 또는 기본값)
+const USE_LOCAL_BLOG = import.meta.env.VITE_USE_LOCAL_BLOG === 'true' || true;
+
+// 로컬 블로그 서비스 import
+import * as localBlogService from './localBlogService';
+// Supabase 블로그 서비스 import
+import * as supabaseBlogService from './blogPostRetrieveService';
+
+// Re-export blog post service functions - 로컬 또는 Supabase 중 선택
+export const getAllBlogPosts = USE_LOCAL_BLOG
+  ? localBlogService.getAllBlogPosts
+  : supabaseBlogService.getAllBlogPosts;
+
+export const getBlogPostsByCategory = USE_LOCAL_BLOG
+  ? localBlogService.getBlogPostsByCategory
+  : supabaseBlogService.getBlogPostsByCategory;
+
+export const getBlogPostBySlug = USE_LOCAL_BLOG
+  ? localBlogService.getBlogPostBySlug
+  : supabaseBlogService.getBlogPostBySlug;
+
+export const getBlogPostById = USE_LOCAL_BLOG
+  ? localBlogService.getBlogPostById
+  : supabaseBlogService.getBlogPostById;
+
+export const getAllBlogPostsForAdmin = USE_LOCAL_BLOG
+  ? localBlogService.getAllBlogPostsForAdmin
+  : supabaseBlogService.getAllBlogPostsForAdmin;
+
+// 쓰기 작업은 Supabase만 지원 (로컬은 읽기 전용)
 export { createBlogPost } from './blogPostCreateService';
 export { updateBlogPost } from './blogPostUpdateService';
 export { handleBlogTags, removeExistingTags } from './blogPostTagsService';

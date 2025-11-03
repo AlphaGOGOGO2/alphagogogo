@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import { getBlogPostsByCategory } from "@/services/blogPostService";
 import { BlogPost } from "@/types/blog";
 import { BlogGrid } from "@/components/blog/BlogGrid";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { Breadcrumbs, createCategoryBreadcrumbs } from "@/components/ui/breadcrumbs";
 
@@ -133,7 +133,7 @@ export function BlogCategoryPage() {
       "name": "알파고고고",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png"
+        "url": "/images/logo.png"
       }
     }
   };

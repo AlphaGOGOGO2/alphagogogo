@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx playwright test:*)",
+      "Bash(node scripts/check-blog.js:*)",
+      "Bash(node scripts/check-blog-detailed.js:*)",
+      "Bash(npm install:*)",
+      "Bash(node scripts/test-blog-final.js:*)",
+      "Bash(if exist nul del nul)",
+      "Bash(git add:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

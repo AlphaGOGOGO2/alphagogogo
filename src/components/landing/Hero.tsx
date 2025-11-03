@@ -41,7 +41,7 @@ export function Hero() {
           }}
         >
           <source 
-            src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/videos/background%20video.mp4" 
+            src="/videos/background-video.mp4" 
             type="video/mp4"
           />
           Your browser does not support the video tag.

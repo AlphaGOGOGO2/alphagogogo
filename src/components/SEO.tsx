@@ -22,7 +22,7 @@ export function SEO({
   title = "알파고고고 - 최신 AI 소식 & 인사이트",
   description = "AI를 이해하는 새로운 관점, 비개발자와 비전문인이 시선으로 바라보는 AI 트렌드와 인사이트를 제공합니다.",
   canonicalUrl,
-  ogImage = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/ogimage.png",
+  ogImage = "/images/ogimage.png",
   ogType = "website",
   structuredData,
   keywords = "알파고고고,AI,인공지능,ChatGPT,Gemini,Claude,AI뉴스,AI블로그,AI가이드,프롬프트 엔지니어링,블로그 자동화,테크 블로그",
@@ -145,13 +145,13 @@ export function SEO({
       <link rel="search" type="application/opensearchdescription+xml" href={`${SITE_DOMAIN}/opensearch.xml`} title="알파고고고 검색" />
       
       {/* 파비콘 및 아이콘 */}
-      <link rel="icon" type="image/png" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
-      <link rel="apple-touch-icon" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="icon" type="image/png" href="/images/logo.png" />
+      <link rel="apple-touch-icon" href="/images/logo.png" />
       
       {/* 추가 아이콘 사이즈 최적화 */}
-      <link rel="icon" type="image/png" sizes="32x32" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
-      <link rel="icon" type="image/png" sizes="16x16" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
-      <link rel="apple-touch-icon" sizes="180x180" href="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="/images/logo.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="/images/logo.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="/images/logo.png" />
       
       {/* 위치 및 언어 최적화 */}
       <meta name="language" content="ko" />
@@ -199,7 +199,7 @@ export function SEO({
             "@type": "Organization",
             "name": "알파고고고",
             "url": "https://alphagogogo.com",
-            "logo": "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/logo.png",
+            "logo": "/images/logo.png",
             "sameAs": [
               "https://www.youtube.com/@alphagogogo",
               "https://twitter.com/alphagogogo"

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { ServiceTabs } from "@/components/ai-partnership/ServiceTabs";
 import { InviteLinkForm } from "@/components/ai-partnership/InviteLinkForm";

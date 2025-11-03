@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
 import { GPTSBeginnerSection } from "@/components/gpts/GPTSBeginnerSection";
 import { GPTSBlogSection } from "@/components/gpts/GPTSBlogSection";

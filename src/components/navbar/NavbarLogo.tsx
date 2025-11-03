@@ -16,7 +16,7 @@ export function NavbarLogo({ isScrolled, onClick }: NavbarLogoProps) {
     >
       <div className="relative w-8 h-8 md:w-10 md:h-10 overflow-hidden rounded-lg group-hover:scale-105 transition-transform duration-300">
         <img 
-          src="https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//logo.png" 
+          src="/images/logo.png" 
           alt="알파블로그 로고" 
           className="w-full h-full object-contain"
         />

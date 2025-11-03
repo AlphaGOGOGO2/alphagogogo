@@ -5,10 +5,17 @@ import './index.css'
 import { registerServiceWorker } from './registerSW';
 import { initWebVitals, PerformanceMonitor } from './utils/webVitals.ts';
 import { initErrorTracking, startHealthMonitoring } from './utils/healthCheck.ts';
+import { Buffer } from 'buffer';
+
+// Buffer polyfill for gray-matter
+if (typeof window !== 'undefined') {
+  window.Buffer = Buffer;
+}
 
 // AdSense 전역 타입 선언
 declare global {
   interface Window {
+    Buffer: typeof Buffer;
     adsbygoogle: any[] & {
       loaded?: boolean;
       push: (ad: any) => void;

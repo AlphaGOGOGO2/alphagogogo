@@ -24,7 +24,7 @@ export default function AdminSettingsPage() {
     seoTitle: "알파GOGOGO - AI 전문 블로그",
     seoDescription: "최신 AI 소식, 인공지능 동향, 그리고 실용적인 AI 서비스 리뷰를 제공하는 전문 블로그입니다.",
     metaKeywords: "알파고고고,알파고,인공지능,AI,블로그,AI 소식,인공지능 뉴스,AI 서비스,AI 리뷰,AI 트렌드,ChatGPT,인공지능 기술",
-    ogImage: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//ogimage.png",
+    ogImage: "/images/ogimage.png",
     customCss: "",
     customJs: ""
   });

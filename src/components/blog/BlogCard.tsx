@@ -21,7 +21,7 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
   const navigate = useNavigate();
   
   // 저장된 프로필 이미지 URL 사용
-  const authorAvatarUrl = "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/instructor%20profile%20image.png";
+  const authorAvatarUrl = "/images/instructor-profile-image.png";
   // 제목에서 마크다운 기호 제거
   const displayTitle = extractPlainTitle(post.title ?? "");
   // 마크다운 제거된 excerpt

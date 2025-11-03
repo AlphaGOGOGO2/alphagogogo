@@ -1,0 +1,57 @@
+{
+  "stats": {
+    "total": 24,
+    "success": 19,
+    "failed": 3,
+    "skipped": 2,
+    "by_bucket": {
+      "videos": {
+        "total": 1,
+        "success": 0,
+        "failed": 1,
+        "skipped": 0
+      },
+      "blog-images": {
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1
+      },
+      "resource-media": {
+        "total": 6,
+        "success": 6,
+        "failed": 0,
+        "skipped": 0
+      },
+      "fonts": {
+        "total": 9,
+        "success": 9,
+        "failed": 0,
+        "skipped": 0
+      },
+      "naver": {
+        "total": 1,
+        "success": 0,
+        "failed": 0,
+        "skipped": 1
+      },
+      "images": {
+        "total": 6,
+        "success": 4,
+        "failed": 2,
+        "skipped": 0
+      }
+    }
+  },
+  "bucket_paths": {
+    "blog-images": "public/blog-images",
+    "images": "public/images",
+    "fonts": "public/fonts",
+    "videos": "public/videos",
+    "naver": "public",
+    "resource-media": "public/resources",
+    "resources": "public/resources",
+    "blog_assets": "public/blog-assets",
+    "user_uploads": "public/user-uploads"
+  }
+}

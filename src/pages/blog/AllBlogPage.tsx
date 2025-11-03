@@ -70,7 +70,7 @@ export default function AllBlogPage() {
   
   // 중요 리소스 프리로드 설정
   const criticalImages = posts.slice(0, 3).map(post => 
-    post.coverImage || "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images/instructor%20profile%20image.png"
+    post.coverImage || "/images/instructor-profile-image.png"
   ).filter(Boolean);
 
   return (

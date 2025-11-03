@@ -1,0 +1,66 @@
+{
+  "backup_date": "2025-11-02",
+  "description": "AI품앗이 데이터 백업 (ai_services, invite_links, invite_clicks)",
+  "ai_services": [
+    {
+      "id": "1b4c206f-ea0c-4555-b173-c5fee744e19d",
+      "name": "manus",
+      "display_name": "마누스",
+      "url_pattern": "https://manus.im/invitation/",
+      "description": "AI 글쓰기 도구",
+      "benefits": [
+        "친구들과 초대 링크를 공유하고, 각자 500 크레딧을 받으세요"
+      ],
+      "is_active": true,
+      "created_at": "2025-06-28T08:46:06.166371+00:00"
+    },
+    {
+      "id": "2b6a35ca-5134-403f-9599-1458b76c657d",
+      "name": "lovable",
+      "display_name": "러버블",
+      "url_pattern": "https://lovable.dev/invite/",
+      "description": "웹 애플리케이션 개발 플랫폼",
+      "benefits": [
+        "초대받은 사람: 추가 10크레딧 획득",
+        "초대한 사람: 상대방이 첫 웹사이트 발행 시 10크레딧 획득"
+      ],
+      "is_active": false,
+      "created_at": "2025-06-28T08:46:06.166371+00:00"
+    },
+    {
+      "id": "4da2c353-06a3-4b01-b5b7-cc57aca7bcbb",
+      "name": "suno",
+      "display_name": "수노 AI",
+      "url_pattern": "https://suno.com/invite/",
+      "description": "수노 AI는 음원 생성형 AI입니다",
+      "benefits": [
+        "초대 링크를 공유하여 크레딧을 획득하세요.",
+        "친구가 가입하고 10곡을 생성하면, 두 분 모두 250개의 무료 크레딧을 받게 됩니다.",
+        "1인당 최대 2,500크레딧까지 가능합니다."
+      ],
+      "is_active": true,
+      "created_at": "2025-06-28T09:02:04.043044+00:00"
+    },
+    {
+      "id": "e0e02e83-cf3a-429a-b460-6b6eedbd82dd",
+      "name": "Skywork AI",
+      "display_name": "스카이워크",
+      "url_pattern": "https://skywork.ai/home?invite_code=",
+      "description": "Skywork AI는 문서, 슬라이드, 스프레드시트 등을 지원하는 AI 서비스",
+      "benefits": [
+        "하루 최대 5 명 초대 가능",
+        "가입 시 포인트 보상 지급"
+      ],
+      "is_active": true,
+      "created_at": "2025-07-02T03:12:07.938944+00:00"
+    }
+  ],
+  "statistics": {
+    "ai_services_count": 4,
+    "invite_links_count": 435,
+    "invite_clicks_count": 949,
+    "active_services": 3,
+    "inactive_services": 1
+  },
+  "note": "이 데이터는 AI품앗이 기능에 필수적이므로 삭제하지 마세요. 백업 목적으로만 저장되었습니다."
+}

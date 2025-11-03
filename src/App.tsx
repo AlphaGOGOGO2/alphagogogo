@@ -12,7 +12,6 @@ import Index from "./pages/Index";
 import ServicesPage from "./pages/ServicesPage";
 import { BlogRoutes } from "./routes/BlogRoutes";
 import GPTSPage from "./pages/GPTSPage";
-import CommunityPage from "./pages/CommunityPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
@@ -83,7 +82,6 @@ function App() {
                     <Route path="/blog/*" element={<BlogRoutes />} />
                     
                     <Route path="/gpts" element={<GPTSPage />} />
-                    <Route path="/community" element={<CommunityPage />} />
                     <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
                     <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
                     <Route path="/business-inquiry" element={<BusinessInquiryPage />} />

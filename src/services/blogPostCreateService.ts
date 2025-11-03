@@ -44,7 +44,7 @@ export const createBlogPost = async (
       read_time: readTime,
       excerpt,
       author_name: "알파GOGOGO", // Default author name
-      author_avatar: "https://plimzlmmftdbpipbnhsy.supabase.co/storage/v1/object/public/images//instructor%20profile%20image.png", // Updated profile image URL
+      author_avatar: "/images/instructor-profile-image.png", // Updated profile image URL
       published_at: publishedAt
     };
     
