@@ -13,6 +13,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save, Upload, Image as ImageIcon } from "lucide-react";
 import { Link } from "react-router-dom";
+
+// API 키 헤더 생성 함수
+const getAPIHeaders = () => ({
+  'x-api-key': import.meta.env.VITE_API_KEY || 'alphagogo-admin-2024-secure-key'
+});
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useToast } from "@/hooks/use-toast";
@@ -72,6 +77,7 @@ export default function AdminBlogWrite() {
 
       const response = await fetch('http://localhost:3001/api/images/upload', {
         method: 'POST',
+        headers: getAPIHeaders(),
         body: formDataObj,
       });
 
@@ -133,6 +139,7 @@ export default function AdminBlogWrite() {
 
       const response = await fetch('http://localhost:3001/api/images/upload', {
         method: 'POST',
+        headers: getAPIHeaders(),
         body: formDataObj,
       });
 
@@ -177,6 +184,7 @@ export default function AdminBlogWrite() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          ...getAPIHeaders()
         },
         body: JSON.stringify({
           ...formData,
@@ -196,7 +204,8 @@ export default function AdminBlogWrite() {
         const shouldPush = confirm("GitHub에 푸시하시겠습니까?");
         if (shouldPush) {
           const pushResponse = await fetch('http://localhost:3001/api/git/push', {
-            method: 'POST'
+            method: 'POST',
+            headers: getAPIHeaders()
           });
           const pushData = await pushResponse.json();
 

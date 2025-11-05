@@ -19,8 +19,30 @@ const execAsync = promisify(exec);
 const app = express();
 const PORT = 3001;
 
+// API 키 (환경변수에서 읽거나 기본값 사용)
+const API_KEY = process.env.API_KEY || 'alphagogo-admin-2024-secure-key';
+
+// API 인증 미들웨어
+const authenticateAPI = (req, res, next) => {
+  const apiKey = req.headers['x-api-key'];
+
+  if (!apiKey || apiKey !== API_KEY) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid API key' });
+  }
+
+  next();
+};
+
+// Git 커밋 메시지 새니타이징 (쉘 특수문자 제거)
+const sanitizeCommitMessage = (message) => {
+  return message.replace(/["`'$\\;\n\r]/g, '');
+};
+
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:8085'],
+  credentials: true
+}));
 app.use(express.json({ limit: '50mb' }));
 
 // Multer 설정 (파일 업로드)
@@ -130,7 +152,7 @@ app.get('/api/blog/posts', async (req, res) => {
 /**
  * POST /api/blog/posts - 새 블로그 글 작성
  */
-app.post('/api/blog/posts', async (req, res) => {
+app.post('/api/blog/posts', authenticateAPI, async (req, res) => {
   try {
     const { title, excerpt, content, category, author, coverImage, slug, tags, readTime } = req.body;
 
@@ -187,12 +209,24 @@ ${content}`;
       tags: tags || []
     };
 
-    // Git 커밋 (마크다운 파일만)
+    // SEO 파일 자동 생성 (Sitemap & RSS)
     try {
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename}`);
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new blog post - ${title}
+      console.log('🔄 SEO 파일 생성 중...');
+      await execAsync(`cd "${path.join(__dirname, '..')}" && node scripts/generate-seo.js`);
+      console.log('✅ SEO 파일 생성 완료');
+    } catch (seoError) {
+      console.error('⚠️  SEO 파일 생성 실패:', seoError);
+      // SEO 생성 실패는 치명적이지 않으므로 계속 진행
+    }
 
-🤖 Generated via Admin Panel"`);
+    // Git 커밋 (마크다운 파일 + SEO 파일)
+    try {
+      const safeTitle = sanitizeCommitMessage(title);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename} public/sitemap.xml public/rss.xml`);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new blog post - ${safeTitle}
+
+🤖 Generated via Admin Panel
+📊 SEO files updated automatically"`);
 
       res.json({
         success: true,
@@ -218,7 +252,7 @@ ${content}`;
 /**
  * PUT /api/blog/posts/:id - 블로그 글 수정
  */
-app.put('/api/blog/posts/:id', async (req, res) => {
+app.put('/api/blog/posts/:id', authenticateAPI, async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -268,7 +302,7 @@ app.put('/api/blog/posts/:id', async (req, res) => {
 /**
  * POST /api/images/upload - 블로그 이미지 업로드 (썸네일, 본문 이미지)
  */
-app.post('/api/images/upload', uploadImage.single('image'), async (req, res) => {
+app.post('/api/images/upload', authenticateAPI, uploadImage.single('image'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image uploaded' });
