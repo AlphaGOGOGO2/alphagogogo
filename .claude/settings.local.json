@@ -15,7 +15,8 @@
       "Bash(npm run dev:*)",
       "Bash(.env)",
       "Bash(node scripts/generate-sitemap.js:*)",
-      "Bash(node scripts/generate-seo-files.mjs:*)"
+      "Bash(node scripts/generate-seo-files.mjs:*)",
+      "Bash(ls -la \"d:\\저장용\\alphagogogo\\alphagogogo\\public\\files\"\" 2>/dev/null || echo \"public/files 폴더 없음 \")"
     ],
     "deny": [],
     "ask": []

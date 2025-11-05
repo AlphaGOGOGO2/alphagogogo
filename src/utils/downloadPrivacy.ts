@@ -88,13 +88,20 @@ export const buildDownloadFilename = (title: string, fileUrl: string) => {
 };
 
 export const buildDownloadUrl = (fileUrl: string, desiredFilename: string) => {
+  // 로컬 모드: public 폴더의 정적 파일은 쿼리 파라미터 없이 직접 사용
+  // 파일이 /files/ 경로에 있으면 그대로 반환
+  if (fileUrl.startsWith('/files/') || fileUrl.startsWith('./files/')) {
+    return fileUrl;
+  }
+
+  // 외부 URL이거나 Supabase 같은 스토리지 URL인 경우에만 쿼리 파라미터 추가
   try {
     const u = new URL(fileUrl);
     u.searchParams.set('download', desiredFilename);
     return u.toString();
   } catch {
-    const sep = fileUrl.includes('?') ? '&' : '?';
-    return `${fileUrl}${sep}download=${encodeURIComponent(desiredFilename)}`;
+    // 상대 경로인 경우 그대로 반환
+    return fileUrl;
   }
 };
 
