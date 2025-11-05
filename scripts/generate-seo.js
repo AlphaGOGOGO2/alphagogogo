@@ -256,7 +256,9 @@ async function generateRSS(posts) {
         // 상대 경로인 경우 /blog-images/ 추가
         imageUrl = `${SITE_DOMAIN}/blog-images/${post.coverImage}`;
       }
-      rss += `      <enclosure url="${imageUrl}" type="image/jpeg"/>
+      // RSS 2.0 spec requires length attribute (image file size in bytes)
+      // Using a default value since we don't fetch actual file sizes
+      rss += `      <enclosure url="${imageUrl}" type="image/jpeg" length="100000"/>
 `;
     }
 
