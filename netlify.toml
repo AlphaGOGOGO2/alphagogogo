@@ -9,26 +9,7 @@
   status = 301
   force = true
 
-# SEO files to Edge Functions
-[[redirects]]
-  from = "/sitemap.xml"
-  to = "https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/sitemap"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/robots.txt"
-  to = "https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/robots"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/rss.xml" 
-  to = "https://plimzlmmftdbpipbnhsy.supabase.co/functions/v1/rss-feed"
-  status = 200
-  force = true
-
-# SPA fallback (lowest priority)
+# SPA fallback (lowest priority) - SEO files (sitemap.xml, rss.xml, robots.txt) served as static files from /public
 [[redirects]]
   from = "/*"
   to = "/index.html"
