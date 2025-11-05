@@ -40,6 +40,45 @@ const upload = multer({
   limits: { fileSize: 200 * 1024 * 1024 } // 200MB 제한
 });
 
+// 이미지 업로드 설정 (블로그 이미지용)
+const imageStorage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const uploadDir = path.join(__dirname, '../public/images/blog');
+    // 폴더가 없으면 생성
+    try {
+      await fs.mkdir(uploadDir, { recursive: true });
+    } catch (err) {
+      console.error('Error creating directory:', err);
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    // 타임스탬프 + 원본 파일명으로 저장
+    const timestamp = Date.now();
+    const safeName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    const ext = path.extname(safeName);
+    const nameWithoutExt = path.basename(safeName, ext);
+    cb(null, `${timestamp}-${nameWithoutExt}${ext}`);
+  }
+});
+
+const uploadImage = multer({
+  storage: imageStorage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB 제한
+  fileFilter: (req, file, cb) => {
+    // 이미지 파일만 허용
+    const allowedTypes = /jpeg|jpg|png|gif|webp|svg/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  }
+});
+
 // ==================== 블로그 글 API ====================
 
 /**
@@ -193,6 +232,31 @@ app.put('/api/blog/posts/:id', async (req, res) => {
     res.json({ success: true, post: updatedPost });
   } catch (error) {
     console.error('Error updating blog post:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// ==================== 이미지 업로드 API ====================
+
+/**
+ * POST /api/images/upload - 블로그 이미지 업로드 (썸네일, 본문 이미지)
+ */
+app.post('/api/images/upload', uploadImage.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image uploaded' });
+    }
+
+    const imageUrl = `/images/blog/${req.file.filename}`;
+
+    res.json({
+      success: true,
+      url: imageUrl,
+      filename: req.file.filename,
+      size: req.file.size
+    });
+  } catch (error) {
+    console.error('Error uploading image:', error);
     res.status(500).json({ error: error.message });
   }
 });
