@@ -84,10 +84,17 @@ function App() {
                     <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
                     <Route path="/resources" element={<ResourcesPage />} />
                     <Route path="/resources/:id" element={<ResourceDetailPage />} />
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/admin/blog" element={<AdminBlog />} />
-                    <Route path="/admin/blog/write" element={<AdminBlogWrite />} />
-                    <Route path="/admin/resources" element={<AdminResources />} />
+
+                    {/* Admin routes - only available in development */}
+                    {import.meta.env.DEV && (
+                      <>
+                        <Route path="/admin" element={<AdminDashboard />} />
+                        <Route path="/admin/blog" element={<AdminBlog />} />
+                        <Route path="/admin/blog/write" element={<AdminBlogWrite />} />
+                        <Route path="/admin/resources" element={<AdminResources />} />
+                      </>
+                    )}
+
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </ErrorBoundary>

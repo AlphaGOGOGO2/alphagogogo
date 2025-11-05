@@ -16,7 +16,11 @@
       "Bash(git push:*)",
       "Bash(test:*)",
       "Bash(gh repo view:*)",
-      "Bash(gh repo edit:*)"
+      "Bash(gh repo edit:*)",
+      "Bash(git commit:*)",
+      "Bash(cat:*)",
+      "Bash(git log:*)",
+      "Bash(git rm:*)"
     ],
     "deny": [],
     "ask": []
