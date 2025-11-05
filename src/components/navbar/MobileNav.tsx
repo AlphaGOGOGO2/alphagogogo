@@ -39,19 +39,21 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
   };
   
   return (
-    <div 
+    <div
       className={cn(
-        "fixed inset-0 bg-white shadow-lg z-50 transform transition-all duration-300 ease-in-out",
+        "fixed top-0 left-0 right-0 bottom-0 bg-white shadow-lg z-[9999] transform transition-all duration-300 ease-in-out flex flex-col",
+        "h-screen w-screen overflow-hidden",
         isOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0 pointer-events-none"
       )}
       aria-hidden={!isOpen}
       role="dialog"
       aria-modal="true"
       aria-label="Mobile navigation menu"
+      style={{ height: '100vh', height: '100dvh' }}
     >
-      <div className="flex justify-between items-center p-6 border-b bg-white">
+      <div className="flex justify-between items-center p-4 sm:p-6 border-b bg-white flex-shrink-0 min-h-[60px]">
         <NavbarLogo isScrolled={true} onClick={onClose} />
-        <button 
+        <button
           onClick={onClose}
           className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
           aria-label="Close navigation menu"
@@ -59,8 +61,8 @@ export function MobileNav({ isOpen, onClose }: MobileNavProps) {
           <X size={20} className="text-purple-800" />
         </button>
       </div>
-      
-      <nav className="flex flex-col p-6 space-y-4 animate-fade-in pb-20 bg-white">
+
+      <nav className="flex flex-col p-4 sm:p-6 space-y-2 sm:space-y-4 bg-white overflow-y-auto flex-1 pb-safe">
         <MobileNavLink 
           name="홈" 
           path="/" 

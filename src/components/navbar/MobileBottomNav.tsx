@@ -9,7 +9,7 @@ export function MobileBottomNav() {
   const navItems = [
     { name: "홈", path: "/", icon: <Home size={22} /> },
     { name: "블로그", path: "/blog", icon: <BookOpen size={22} /> },
-    { name: "실시간 채팅", path: "/community", icon: <MessageCircle size={22} /> },
+    { name: "커뮤니티", path: "/open-chat-rooms", icon: <MessageCircle size={22} /> },
     { name: "더보기", path: "#", icon: <Menu size={22} /> }
   ];
 
@@ -39,13 +39,13 @@ export function MobileBottomNav() {
                 "flex flex-col items-center justify-center w-full h-full min-h-[44px] touch-manipulation active:bg-purple-50 transition-colors",
                 (location.pathname === item.path ||
                  (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                 (item.path === "/community" && location.pathname === "/community"))
+                 (item.path === "/open-chat-rooms" && (location.pathname === "/open-chat-rooms" || location.pathname === "/business-inquiry")))
                   ? "text-purple-700"
                   : "text-gray-600"
               )}
               aria-current={(location.pathname === item.path ||
                             (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                            (item.path === "/community" && location.pathname === "/community"))
+                            (item.path === "/open-chat-rooms" && (location.pathname === "/open-chat-rooms" || location.pathname === "/business-inquiry")))
                               ? "page"
                               : undefined}
             >

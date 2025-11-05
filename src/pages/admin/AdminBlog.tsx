@@ -3,21 +3,43 @@
  * 블로그 포스트 목록 확인 및 데이터 파일 편집 안내
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Code, ExternalLink } from "lucide-react";
+import { ArrowLeft, Search, Code, ExternalLink, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
-import { blogPosts } from "@/data/blogPosts";
+import { blogPosts as staticBlogPosts } from "@/data/blogPosts";
 import { formatDate } from "@/lib/utils";
+import * as localBlogService from "@/services/localBlogService";
 
 export default function AdminBlog() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [markdownPosts, setMarkdownPosts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredPosts = blogPosts.filter(post =>
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const loadPosts = async () => {
+    setLoading(true);
+    try {
+      const posts = await localBlogService.getAllBlogPosts();
+      setMarkdownPosts(posts);
+    } catch (error) {
+      console.error('Failed to load markdown posts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Combine static posts and markdown posts
+  const allPosts = [...staticBlogPosts, ...markdownPosts];
+
+  const filteredPosts = allPosts.filter(post =>
     post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     post.category.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -41,14 +63,22 @@ export default function AdminBlog() {
               </Link>
             </Button>
             <h1 className="text-3xl font-bold">블로그 관리</h1>
-            <p className="text-muted-foreground">총 {blogPosts.length}개의 포스트</p>
+            <p className="text-muted-foreground">
+              총 {allPosts.length}개의 포스트 ({staticBlogPosts.length}개 정적 + {markdownPosts.length}개 Markdown)
+            </p>
           </div>
-          <Button asChild>
-            <a href="vscode://file/D:/저장용/alphagogogo/alphagogogo/src/data/blogPosts.ts">
-              <Code className="mr-2 h-4 w-4" />
-              데이터 파일 편집
-            </a>
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={loadPosts} disabled={loading}>
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              새로고침
+            </Button>
+            <Button asChild>
+              <a href="vscode://file/D:/저장용/alphagogogo/alphagogogo/src/data/blogPosts.ts">
+                <Code className="mr-2 h-4 w-4" />
+                데이터 파일 편집
+              </a>
+            </Button>
+          </div>
         </div>
 
         {/* 검색 */}
