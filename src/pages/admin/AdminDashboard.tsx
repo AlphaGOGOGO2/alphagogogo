@@ -6,12 +6,46 @@
 import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, FolderOpen, Code, Info, PenTool, Upload } from "lucide-react";
+import { FileText, FolderOpen, Code, Info, PenTool, Upload, Server, CheckCircle, XCircle, RefreshCw } from "lucide-react";
 import { Link } from "react-router-dom";
 import { blogPosts } from "@/data/blogPosts";
 import { resources } from "@/data/resources";
+import { useState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function AdminDashboard() {
+  const { toast } = useToast();
+  const [apiStatus, setApiStatus] = useState<'checking' | 'online' | 'offline'>('checking');
+
+  const checkApiStatus = async () => {
+    setApiStatus('checking');
+    try {
+      const response = await fetch('http://localhost:3001/api/git/status', {
+        method: 'GET',
+        signal: AbortSignal.timeout(2000)
+      });
+      if (response.ok) {
+        setApiStatus('online');
+      } else {
+        setApiStatus('offline');
+      }
+    } catch (error) {
+      setApiStatus('offline');
+    }
+  };
+
+  useEffect(() => {
+    checkApiStatus();
+  }, []);
+
+  const handleRefreshStatus = () => {
+    checkApiStatus();
+    toast({
+      title: "상태 확인 중...",
+      description: "API 서버 상태를 확인하고 있습니다.",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <SEO
@@ -30,7 +64,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* 통계 */}
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-3">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <CardTitle className="text-sm font-medium">블로그 포스트</CardTitle>
@@ -56,7 +90,67 @@ export default function AdminDashboard() {
               </p>
             </CardContent>
           </Card>
+
+          <Card className={apiStatus === 'online' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium">API 서버</CardTitle>
+              <Server className={`h-4 w-4 ${apiStatus === 'online' ? 'text-green-600' : 'text-red-600'}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center gap-2">
+                {apiStatus === 'checking' && (
+                  <>
+                    <RefreshCw className="h-5 w-5 text-gray-500 animate-spin" />
+                    <span className="text-sm text-gray-600">확인 중...</span>
+                  </>
+                )}
+                {apiStatus === 'online' && (
+                  <>
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <span className="text-sm font-medium text-green-700">실행 중</span>
+                  </>
+                )}
+                {apiStatus === 'offline' && (
+                  <>
+                    <XCircle className="h-5 w-5 text-red-600" />
+                    <span className="text-sm font-medium text-red-700">오프라인</span>
+                  </>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRefreshStatus}
+                className="mt-2 h-7 text-xs"
+              >
+                <RefreshCw className="mr-1 h-3 w-3" />
+                상태 확인
+              </Button>
+            </CardContent>
+          </Card>
         </div>
+
+        {/* API 서버 안내 */}
+        {apiStatus === 'offline' && (
+          <Card className="border-orange-200 bg-orange-50">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Info className="h-5 w-5 text-orange-600" />
+                <CardTitle className="text-orange-900">API 서버 실행 필요</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent className="text-sm text-orange-800 space-y-3">
+              <p>블로그 글 작성 및 파일 업로드 기능을 사용하려면 API 서버를 실행해야 합니다.</p>
+              <div className="bg-orange-100 p-3 rounded-md">
+                <p className="font-semibold mb-2">터미널에서 실행:</p>
+                <code className="block bg-black text-white px-3 py-2 rounded">npm run dev:api</code>
+              </div>
+              <p className="text-xs">
+                💡 <strong>팁:</strong> 별도 터미널 창에서 실행하면 프론트엔드와 API 서버를 동시에 사용할 수 있습니다.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* 빠른 작업 */}
         <div className="grid gap-4 md:grid-cols-2">
