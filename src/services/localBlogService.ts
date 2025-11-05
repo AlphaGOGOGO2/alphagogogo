@@ -55,8 +55,11 @@ const parseBlogPost = (filepath: string, content: string): BlogPost | null => {
 
 // 모든 블로그 포스트를 캐시에 로드
 const loadBlogPosts = (): BlogPostCache => {
-  if (cache && Date.now() - cache.lastUpdated < 60000) {
-    // 1분 캐시
+  // 개발 모드에서는 캐시 비활성화 (항상 최신 파일 목록 사용)
+  const isDev = import.meta.env.DEV;
+  const cacheTime = isDev ? 0 : 60000; // 개발: 캐시 없음, 프로덕션: 1분
+
+  if (cache && Date.now() - cache.lastUpdated < cacheTime) {
     return cache;
   }
 
