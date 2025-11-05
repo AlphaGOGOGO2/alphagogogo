@@ -71,8 +71,8 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
         }
       }}
     >
-      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500">
-        <div className="block overflow-hidden h-48">
+      <article className="rounded-lg overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow duration-300 h-full flex flex-col hover:-translate-y-1 transition-transform border-2 border-purple-300 hover:border-purple-500 touch-manipulation">
+        <div className="block overflow-hidden h-40 sm:h-48 md:h-56">
           <LazyImage
             src={cardImage}
             alt={generateImageAlt(cardImage, displayTitle, post.category)}
@@ -82,18 +82,18 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
             loading={priority ? "eager" : "lazy"}
           />
         </div>
-        <div className="p-5 flex-grow flex flex-col">
-          <div className="mb-3">
-            <span className="text-xs px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
+        <div className="p-3 sm:p-4 md:p-5 flex-grow flex flex-col">
+          <div className="mb-2 sm:mb-3">
+            <span className="text-xs px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full font-medium">
               {post.category}
             </span>
           </div>
           <div className="block mb-2">
-            <h2 className="text-lg font-bold text-gray-800 hover:text-purple-700 transition-colors duration-200">
+            <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-800 hover:text-purple-700 transition-colors duration-200 line-clamp-2">
               {displayTitle}
             </h2>
           </div>
-          <p className="text-gray-600 text-sm mb-4 flex-grow line-clamp-3">
+          <p className="text-gray-600 text-xs sm:text-sm mb-3 sm:mb-4 flex-grow line-clamp-2 sm:line-clamp-3">
             {cleanExcerpt.length > 150 ? `${cleanExcerpt.substring(0, 150)}...` : cleanExcerpt}
           </p>
           {/* 태그가 있을 경우 표시 */}
@@ -112,26 +112,26 @@ export function BlogCard({ post, priority = false }: BlogCardProps) {
               )}
             </div>
           )}
-          <div className="flex items-center justify-between text-xs text-gray-500 mt-2">
-            <div className="flex items-center">
+          <div className="flex items-center justify-between text-xs text-gray-500 mt-2 flex-wrap gap-2">
+            <div className="flex items-center min-w-0">
               <LazyImage
                 src={authorAvatarUrl}
                 alt={post.author.name}
-                className="w-6 h-6 rounded-full mr-2 object-cover"
+                className="w-5 h-5 sm:w-6 sm:h-6 rounded-full mr-2 object-cover flex-shrink-0"
                 width={24}
                 height={24}
                 loading="lazy"
               />
-              <span>{post.author.name}</span>
+              <span className="truncate">{post.author.name}</span>
             </div>
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3 flex-shrink-0">
               <div className="flex items-center">
-                <Calendar size={14} className="mr-1 text-purple-500" />
-                <span>{formatDate(post.publishedAt)}</span>
+                <Calendar size={12} className="mr-1 text-purple-500 sm:w-3.5 sm:h-3.5" />
+                <span className="text-xs">{formatDate(post.publishedAt)}</span>
               </div>
               <div className="flex items-center">
-                <Clock size={14} className="mr-1 text-purple-500" />
-                <span>{post.readTime}분</span>
+                <Clock size={12} className="mr-1 text-purple-500 sm:w-3.5 sm:h-3.5" />
+                <span className="text-xs">{post.readTime}분</span>
               </div>
             </div>
           </div>

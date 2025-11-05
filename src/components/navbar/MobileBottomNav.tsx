@@ -14,19 +14,19 @@ export function MobileBottomNav() {
   ];
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg">
-      <div className="flex justify-around items-center h-16">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 shadow-lg safe-area-pb">
+      <div className="flex justify-around items-center h-16 sm:h-18">
         {navItems.map((item) => {
           if (item.name === "더보기") {
             return (
-              <button 
+              <button
                 key={item.name}
-                className="flex flex-col items-center justify-center w-full h-full"
+                className="flex flex-col items-center justify-center w-full h-full min-h-[44px] touch-manipulation active:bg-purple-50 transition-colors"
                 aria-label="더 많은 메뉴 보기"
                 onClick={() => document.getElementById('mobile-menu-trigger')?.click()}
               >
                 <span className="text-purple-600">{item.icon}</span>
-                <span className="text-xs mt-1 text-purple-600">{item.name}</span>
+                <span className="text-xs mt-1 text-purple-600 font-medium">{item.name}</span>
               </button>
             );
           }
@@ -36,21 +36,21 @@ export function MobileBottomNav() {
               key={item.name}
               to={item.path}
               className={cn(
-                "flex flex-col items-center justify-center w-full h-full",
-                (location.pathname === item.path || 
+                "flex flex-col items-center justify-center w-full h-full min-h-[44px] touch-manipulation active:bg-purple-50 transition-colors",
+                (location.pathname === item.path ||
                  (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                 (item.path === "/community" && location.pathname === "/community")) 
-                  ? "text-purple-700" 
+                 (item.path === "/community" && location.pathname === "/community"))
+                  ? "text-purple-700"
                   : "text-gray-600"
               )}
-              aria-current={(location.pathname === item.path || 
+              aria-current={(location.pathname === item.path ||
                             (item.path === "/blog" && location.pathname.startsWith("/blog")) ||
-                            (item.path === "/community" && location.pathname === "/community")) 
-                              ? "page" 
+                            (item.path === "/community" && location.pathname === "/community"))
+                              ? "page"
                               : undefined}
             >
               <span>{item.icon}</span>
-              <span className="text-xs mt-1">{item.name}</span>
+              <span className="text-xs mt-1 font-medium">{item.name}</span>
             </Link>
           );
         })}

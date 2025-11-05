@@ -20,7 +20,22 @@
       "Bash(git commit:*)",
       "Bash(cat:*)",
       "Bash(git log:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(taskkill:*)",
+      "Bash(node:*)",
+      "Bash(npm run dev:all:*)",
+      "Bash(cmd /c taskkill /PID 62432 /F)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"d:\\저장용\\alphagogogo\\alphagogogo\\kill-port-3001.ps1\")",
+      "Bash(tasklist:*)",
+      "Bash(powershell -ExecutionPolicy Bypass -File \"kill-api.ps1\")",
+      "Bash(git restore:*)",
+      "Bash(cmd /c taskkill /F /PID 119572)",
+      "Bash(cmd /c taskkill /F /PID 71344)",
+      "Bash(npm run generate:seo:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(npx playwright install)"
     ],
     "deny": [],
     "ask": []
