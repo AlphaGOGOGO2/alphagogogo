@@ -247,9 +247,15 @@ async function generateRSS(posts) {
 
     // 커버 이미지가 있는 경우
     if (post.coverImage) {
-      const imageUrl = post.coverImage.startsWith('http')
-        ? post.coverImage
-        : `${SITE_DOMAIN}${post.coverImage}`;
+      let imageUrl;
+      if (post.coverImage.startsWith('http')) {
+        imageUrl = post.coverImage;
+      } else if (post.coverImage.startsWith('/')) {
+        imageUrl = `${SITE_DOMAIN}${post.coverImage}`;
+      } else {
+        // 상대 경로인 경우 /blog-images/ 추가
+        imageUrl = `${SITE_DOMAIN}/blog-images/${post.coverImage}`;
+      }
       rss += `      <enclosure url="${imageUrl}" type="image/jpeg"/>
 `;
     }

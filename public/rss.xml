@@ -5,8 +5,8 @@
     <link>https://alphagogogo.com</link>
     <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>
     <language>ko-KR</language>
-    <lastBuildDate>Wed, 05 Nov 2025 14:52:50 GMT</lastBuildDate>
-    <pubDate>Wed, 05 Nov 2025 14:52:50 GMT</pubDate>
+    <lastBuildDate>Wed, 05 Nov 2025 15:22:10 GMT</lastBuildDate>
+    <pubDate>Wed, 05 Nov 2025 15:22:10 GMT</pubDate>
     <ttl>60</ttl>
     <atom:link href="https://alphagogogo.com/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
@@ -230,7 +230,7 @@
       <pubDate>Thu, 22 May 2025 03:00:00 GMT</pubDate>
       <author>support@alphagogogo.com (알파GOGOGO)</author>
       <category>라이프스타일</category>
-      <enclosure url="https://alphagogogo.comlovable-dev-seo.jpg" type="image/jpeg"/>
+      <enclosure url="https://alphagogogo.com/blog-images/lovable-dev-seo.jpg" type="image/jpeg"/>
     </item>
     <item>
       <title>러버블DEV AI로 반응형 모바일 웹사이트 구축하기: 모바일 최적화 가이드</title>
