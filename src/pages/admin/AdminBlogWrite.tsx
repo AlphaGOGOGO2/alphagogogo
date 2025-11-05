@@ -20,11 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 const CATEGORIES = [
   "최신 AI소식",
   "화제의 이슈",
-  "라이프스타일",
-  "테크 리뷰",
-  "튜토리얼",
-  "ChatGPT 가이드",
-  "러브블 개발"
+  "라이프스타일"
 ];
 
 export default function AdminBlogWrite() {
