@@ -82,20 +82,45 @@ const uploadImage = multer({
 // ==================== 블로그 글 API ====================
 
 /**
- * GET /api/blog/posts - 모든 블로그 글 조회
+ * GET /api/blog/posts - 모든 블로그 글 조회 (마크다운 파일 읽기)
  */
 app.get('/api/blog/posts', async (req, res) => {
   try {
-    const blogPostsPath = path.join(__dirname, '../src/data/blogPosts.ts');
-    const content = await fs.readFile(blogPostsPath, 'utf-8');
+    const matter = require('gray-matter');
+    const blogDir = path.join(__dirname, '../src/content/blog');
+    const files = await fs.readdir(blogDir);
 
-    // TypeScript 파일에서 데이터 추출
-    const arrayMatch = content.match(/export const blogPosts: BlogPost\[\] = (\[[\s\S]*?\]);/);
-    if (!arrayMatch) {
-      return res.status(500).json({ error: 'Failed to parse blog posts' });
+    const posts = [];
+    for (const file of files) {
+      if (!file.endsWith('.md')) continue;
+
+      const filePath = path.join(blogDir, file);
+      const fileContent = await fs.readFile(filePath, 'utf-8');
+      const { data: frontmatter, content: markdown } = matter(fileContent);
+
+      const slug = frontmatter.slug || file.replace(/\.md$/, '');
+      posts.push({
+        id: slug,
+        title: frontmatter.title || 'Untitled',
+        excerpt: frontmatter.excerpt || markdown.slice(0, 200) + '...',
+        content: markdown,
+        category: frontmatter.category || 'Uncategorized',
+        author: {
+          name: frontmatter.author || 'Anonymous',
+          avatar: '/images/instructor-profile-image.png',
+        },
+        publishedAt: frontmatter.date || new Date().toISOString(),
+        readTime: frontmatter.readTime || Math.ceil(markdown.length / 1000),
+        coverImage: frontmatter.coverImage || '',
+        slug: slug,
+        tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
+      });
     }
 
-    res.json({ success: true, content: arrayMatch[1] });
+    // 최신순 정렬
+    posts.sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+    res.json({ success: true, posts });
   } catch (error) {
     console.error('Error reading blog posts:', error);
     res.status(500).json({ error: error.message });
@@ -113,59 +138,21 @@ app.post('/api/blog/posts', async (req, res) => {
       return res.status(400).json({ error: 'Required fields missing' });
     }
 
-    const blogPostsPath = path.join(__dirname, '../src/data/blogPosts.ts');
-    const fileContent = await fs.readFile(blogPostsPath, 'utf-8');
-
-    // 새 ID 생성 (기존 최대 ID + 1)
-    const idMatches = fileContent.match(/id: "(\d+)"/g);
-    const maxId = idMatches ? Math.max(...idMatches.map(m => parseInt(m.match(/\d+/)[0]))) : 0;
-    const newId = String(maxId + 1);
-
     // 현재 날짜
     const publishedAt = new Date().toISOString().split('T')[0];
 
     // 읽기 시간 자동 계산 (단어 수 / 200)
     const calculatedReadTime = readTime || Math.max(1, Math.ceil(content.split(/\s+/).length / 200));
 
-    // 새 글 객체 생성
-    const newPost = {
-      id: newId,
-      title,
-      excerpt,
-      content,
-      category,
-      author: author || { name: "알파GOGOGO", avatar: "https://i.pravatar.cc/150?img=10" },
-      publishedAt,
-      readTime: calculatedReadTime,
-      coverImage: coverImage || "",
-      slug: slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-가-힣]/g, ''),
-      tags: tags || []
-    };
+    // Slug 생성
+    const finalSlug = slug || title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-가-힣]/g, '');
 
-    // blogPosts 배열에 새 글 추가
-    const arrayMatch = fileContent.match(/(export const blogPosts: BlogPost\[\] = \[)([\s\S]*?)(\];)/);
-    if (!arrayMatch) {
-      return res.status(500).json({ error: 'Failed to parse blog posts array' });
-    }
-
-    const [, prefix, existingPosts, suffix] = arrayMatch;
-
-    // 새 글을 맨 앞에 추가 (최신글이 먼저 보이도록)
-    const newPostString = `  ${JSON.stringify(newPost, null, 2).replace(/"(\w+)":/g, '$1:').replace(/\n/g, '\n  ')},\n`;
-    const newContent = fileContent.replace(
-      arrayMatch[0],
-      `${prefix}\n${newPostString}${existingPosts}${suffix}`
-    );
-
-    // 파일 저장
-    await fs.writeFile(blogPostsPath, newContent, 'utf-8');
-
-    // Markdown 파일도 생성 (src/content/blog/)
+    // Markdown 파일 생성 (src/content/blog/)
     const markdownDir = path.join(__dirname, '../src/content/blog');
     await fs.mkdir(markdownDir, { recursive: true });
 
     // Markdown 파일명 생성 (날짜-slug.md)
-    const markdownFilename = `${publishedAt}-${newPost.slug}.md`;
+    const markdownFilename = `${publishedAt}-${finalSlug}.md`;
     const markdownPath = path.join(markdownDir, markdownFilename);
 
     // Markdown 내용 생성 (frontmatter + content)
@@ -177,7 +164,7 @@ author: "${author?.name || '알파GOGOGO'}"
 excerpt: "${excerpt || ''}"
 coverImage: "${coverImage || ''}"
 readTime: ${calculatedReadTime}
-slug: "${newPost.slug}"
+slug: "${finalSlug}"
 tags: ${JSON.stringify(tags || [])}
 ---
 
@@ -185,9 +172,24 @@ ${content}`;
 
     await fs.writeFile(markdownPath, markdownContent, 'utf-8');
 
-    // Git 커밋 (두 파일 모두)
+    // 새 글 객체 생성 (응답용)
+    const newPost = {
+      id: finalSlug,
+      title,
+      excerpt,
+      content,
+      category,
+      author: author || { name: "알파GOGOGO", avatar: "https://i.pravatar.cc/150?img=10" },
+      publishedAt,
+      readTime: calculatedReadTime,
+      coverImage: coverImage || "",
+      slug: finalSlug,
+      tags: tags || []
+    };
+
+    // Git 커밋 (마크다운 파일만)
     try {
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/data/blogPosts.ts src/content/blog/${markdownFilename}`);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename}`);
       await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new blog post - ${title}
 
 🤖 Generated via Admin Panel"`);
