@@ -1,22 +1,19 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx playwright test:*)",
-      "Bash(node scripts/check-blog.js:*)",
-      "Bash(node scripts/check-blog-detailed.js:*)",
-      "Bash(npm install:*)",
-      "Bash(node scripts/test-blog-final.js:*)",
-      "Bash(if exist nul del nul)",
+      "Bash(awk:*)",
+      "Bash(gh release create:*)",
+      "Bash(winget install:*)",
+      "Bash(gh --version:*)",
+      "Bash(gh auth:*)",
+      "Bash(curl:*)",
+      "Bash(gh release view:*)",
+      "Bash(timeout 3 curl:*)",
+      "Bash(gh release:*)",
+      "Bash(gh api:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
-      "Bash(git push:*)",
-      "Bash(git rm:*)",
-      "Bash(npm run build:*)",
-      "Bash(npm run dev:*)",
-      "Bash(.env)",
-      "Bash(node scripts/generate-sitemap.js:*)",
-      "Bash(node scripts/generate-seo-files.mjs:*)",
-      "Bash(ls -la \"d:\\저장용\\alphagogogo\\alphagogogo\\public\\files\"\" 2>/dev/null || echo \"public/files 폴더 없음 \")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Migrate resource files to GitHub Releases\n\n- Move AlphaBlog.exe (127 MB) to GitHub Release hosting\n- Move alphatube-v4.exe (42 MB) to GitHub Release hosting  \n- Update resources.ts with GitHub Release download URLs\n- Bypass GitHub 100MB file size limit via Releases\n- Fixes 404 errors on /files/*.exe downloads\n\nFiles now hosted at:\nhttps://github.com/AlphaGOGOGO2/alphagogogo/releases/tag/files-v1.0\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []
