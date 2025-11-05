@@ -6,7 +6,7 @@
 import { SEO } from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, FolderOpen, Code, Info } from "lucide-react";
+import { FileText, FolderOpen, Code, Info, PenTool, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { blogPosts } from "@/data/blogPosts";
 import { resources } from "@/data/resources";
@@ -53,6 +53,45 @@ export default function AdminDashboard() {
               <div className="text-2xl font-bold">{resources.length}</div>
               <p className="text-xs text-muted-foreground">
                 다운로드 가능한 파일
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* 빠른 작업 */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="border-purple-200 bg-purple-50">
+            <CardHeader>
+              <CardTitle className="text-purple-900">📝 새 글 작성</CardTitle>
+              <CardDescription>마크다운으로 블로그 글 작성하기</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button asChild className="w-full bg-purple-600 hover:bg-purple-700">
+                <Link to="/admin/blog/write">
+                  <PenTool className="mr-2 h-4 w-4" />
+                  글 작성하기
+                </Link>
+              </Button>
+              <p className="text-xs text-purple-700">
+                💡 로컬 API 서버가 실행 중이어야 합니다 (npm run dev:api)
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card className="border-green-200 bg-green-50">
+            <CardHeader>
+              <CardTitle className="text-green-900">📁 파일 업로드</CardTitle>
+              <CardDescription>자료실 파일 업로드 및 관리</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+                <Link to="/admin/resources/upload">
+                  <Upload className="mr-2 h-4 w-4" />
+                  파일 업로드
+                </Link>
+              </Button>
+              <p className="text-xs text-green-700">
+                💡 최대 200MB까지 업로드 가능
               </p>
             </CardContent>
           </Card>

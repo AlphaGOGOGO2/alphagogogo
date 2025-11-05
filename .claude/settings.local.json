@@ -13,7 +13,10 @@
       "Bash(gh api:*)",
       "Bash(git add:*)",
       "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Migrate resource files to GitHub Releases\n\n- Move AlphaBlog.exe (127 MB) to GitHub Release hosting\n- Move alphatube-v4.exe (42 MB) to GitHub Release hosting  \n- Update resources.ts with GitHub Release download URLs\n- Bypass GitHub 100MB file size limit via Releases\n- Fixes 404 errors on /files/*.exe downloads\n\nFiles now hosted at:\nhttps://github.com/AlphaGOGOGO2/alphagogogo/releases/tag/files-v1.0\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(test:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh repo edit:*)"
     ],
     "deny": [],
     "ask": []
