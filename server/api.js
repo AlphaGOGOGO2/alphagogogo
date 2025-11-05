@@ -160,9 +160,34 @@ app.post('/api/blog/posts', async (req, res) => {
     // 파일 저장
     await fs.writeFile(blogPostsPath, newContent, 'utf-8');
 
-    // Git 커밋
+    // Markdown 파일도 생성 (src/content/blog/)
+    const markdownDir = path.join(__dirname, '../src/content/blog');
+    await fs.mkdir(markdownDir, { recursive: true });
+
+    // Markdown 파일명 생성 (날짜-slug.md)
+    const markdownFilename = `${publishedAt}-${newPost.slug}.md`;
+    const markdownPath = path.join(markdownDir, markdownFilename);
+
+    // Markdown 내용 생성 (frontmatter + content)
+    const markdownContent = `---
+title: "${title}"
+date: "${publishedAt}"
+category: "${category}"
+author: "${author?.name || '알파GOGOGO'}"
+excerpt: "${excerpt || ''}"
+coverImage: "${coverImage || ''}"
+readTime: ${calculatedReadTime}
+slug: "${newPost.slug}"
+tags: ${JSON.stringify(tags || [])}
+---
+
+${content}`;
+
+    await fs.writeFile(markdownPath, markdownContent, 'utf-8');
+
+    // Git 커밋 (두 파일 모두)
     try {
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/data/blogPosts.ts`);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/data/blogPosts.ts src/content/blog/${markdownFilename}`);
       await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new blog post - ${title}
 
 🤖 Generated via Admin Panel"`);

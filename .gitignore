@@ -26,3 +26,9 @@ dist-ssr
 # Large resource files (exceeds GitHub 100MB limit)
 public/resources/files/AlphaBlog-*.exe
 public/files/*.exe
+
+# Local utility scripts (not for GitHub)
+*.bat
+*.ps1
+관리자페이지-실행.bat
+kill-port-*.ps1
