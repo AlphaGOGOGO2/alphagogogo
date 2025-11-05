@@ -263,114 +263,100 @@ export default function AdminBlogWrite() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* 왼쪽: 입력 폼 */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <Card>
-              <CardHeader>
-                <CardTitle>기본 정보</CardTitle>
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg">기본 정보</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="title">제목 *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleChange("title", e.target.value)}
-                    placeholder="블로그 글 제목"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="category">카테고리 *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CATEGORIES.map((cat) => (
-                        <SelectItem key={cat} value={cat}>
-                          {cat}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div>
-                  <Label htmlFor="excerpt">요약</Label>
-                  <Textarea
-                    id="excerpt"
-                    value={formData.excerpt}
-                    onChange={(e) => handleChange("excerpt", e.target.value)}
-                    placeholder="글 요약 (선택사항)"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="slug">슬러그 (URL)</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) => handleChange("slug", e.target.value)}
-                    placeholder="자동 생성됨"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    비워두면 제목에서 자동 생성됩니다
-                  </p>
-                </div>
-
-                <div>
-                  <Label htmlFor="coverImage">썸네일 이미지</Label>
-                  <div className="flex gap-2">
+              <CardContent className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="col-span-2">
+                    <Label htmlFor="title" className="text-sm">제목 *</Label>
                     <Input
-                      id="coverImage"
-                      value={formData.coverImage}
-                      onChange={(e) => handleChange("coverImage", e.target.value)}
-                      placeholder="/images/blog/썸네일.jpg"
-                      className="flex-1"
+                      id="title"
+                      value={formData.title}
+                      onChange={(e) => handleChange("title", e.target.value)}
+                      placeholder="블로그 글 제목"
+                      className="mt-1"
                     />
-                    <input
-                      type="file"
-                      ref={thumbnailInputRef}
-                      onChange={handleThumbnailUpload}
-                      accept="image/*"
-                      className="hidden"
-                    />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => thumbnailInputRef.current?.click()}
-                      disabled={isUploadingThumbnail}
-                    >
-                      <Upload className="mr-2 h-4 w-4" />
-                      {isUploadingThumbnail ? "업로드 중..." : "업로드"}
-                    </Button>
                   </div>
-                  {formData.coverImage && (
-                    <img
-                      src={formData.coverImage}
-                      alt="Thumbnail preview"
-                      className="mt-2 w-full h-32 object-cover rounded-md"
-                    />
-                  )}
-                </div>
 
-                <div>
-                  <Label htmlFor="tags">태그</Label>
-                  <Input
-                    id="tags"
-                    value={formData.tags}
-                    onChange={(e) => handleChange("tags", e.target.value)}
-                    placeholder="AI, 튜토리얼, ChatGPT (쉼표로 구분)"
-                  />
+                  <div>
+                    <Label htmlFor="category" className="text-sm">카테고리 *</Label>
+                    <Select value={formData.category} onValueChange={(value) => handleChange("category", value)}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CATEGORIES.map((cat) => (
+                          <SelectItem key={cat} value={cat}>
+                            {cat}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label htmlFor="tags" className="text-sm">태그</Label>
+                    <Input
+                      id="tags"
+                      value={formData.tags}
+                      onChange={(e) => handleChange("tags", e.target.value)}
+                      placeholder="AI, 튜토리얼"
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label htmlFor="excerpt" className="text-sm">요약</Label>
+                    <Textarea
+                      id="excerpt"
+                      value={formData.excerpt}
+                      onChange={(e) => handleChange("excerpt", e.target.value)}
+                      placeholder="글 요약 (선택사항)"
+                      rows={2}
+                      className="mt-1"
+                    />
+                  </div>
+
+                  <div className="col-span-2">
+                    <Label htmlFor="coverImage" className="text-sm">썸네일 이미지</Label>
+                    <div className="flex gap-2 mt-1">
+                      <input
+                        type="file"
+                        ref={thumbnailInputRef}
+                        onChange={handleThumbnailUpload}
+                        accept="image/*"
+                        className="hidden"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => thumbnailInputRef.current?.click()}
+                        disabled={isUploadingThumbnail}
+                        className="w-full"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        {isUploadingThumbnail ? "업로드 중..." : formData.coverImage ? "썸네일 변경" : "썸네일 업로드"}
+                      </Button>
+                    </div>
+                    {formData.coverImage && (
+                      <img
+                        src={formData.coverImage}
+                        alt="Thumbnail preview"
+                        className="mt-2 w-full h-24 object-cover rounded-md"
+                      />
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader>
+              <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
-                  <CardTitle>본문 작성 (마크다운)</CardTitle>
+                  <CardTitle className="text-lg">본문 작성</CardTitle>
                   <div className="flex gap-2">
                     <input
                       type="file"
@@ -398,23 +384,23 @@ export default function AdminBlogWrite() {
                   value={formData.content}
                   onChange={(e) => handleChange("content", e.target.value)}
                   placeholder="마크다운으로 작성하세요...&#10;&#10;# 제목&#10;## 소제목&#10;**굵게** *기울임*&#10;&#10;![이미지](URL)&#10;[링크](URL)"
-                  className="min-h-[500px] font-mono"
+                  className="min-h-[700px] font-mono text-sm"
                 />
                 <p className="text-xs text-muted-foreground mt-2">
-                  💡 이미지 삽입: 위 버튼으로 이미지 업로드 → 자동으로 마크다운 삽입
+                  💡 이미지: 위 버튼 클릭 → 커서 위치에 자동 삽입
                 </p>
               </CardContent>
             </Card>
           </div>
 
           {/* 오른쪽: 실시간 미리보기 */}
-          <div className="lg:sticky lg:top-6 h-fit">
+          <div className="lg:sticky lg:top-6 h-fit max-h-[calc(100vh-100px)] overflow-auto">
             <Card>
-              <CardHeader>
-                <CardTitle>실시간 미리보기</CardTitle>
+              <CardHeader className="pb-3 sticky top-0 bg-white z-10 border-b">
+                <CardTitle className="text-lg">실시간 미리보기</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="prose prose-sm max-w-none bg-white p-6 rounded-md border min-h-[500px]">
+              <CardContent className="pt-4">
+                <div className="prose prose-sm max-w-none bg-gray-50 p-6 rounded-md border min-h-[800px]">
                   {formData.title && (
                     <h1 className="text-3xl font-bold mb-4">{formData.title}</h1>
                   )}
