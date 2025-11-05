@@ -142,11 +142,13 @@ export default function AdminDashboard() {
             <CardContent className="text-sm text-orange-800 space-y-3">
               <p>블로그 글 작성 및 파일 업로드 기능을 사용하려면 API 서버를 실행해야 합니다.</p>
               <div className="bg-orange-100 p-3 rounded-md">
-                <p className="font-semibold mb-2">터미널에서 실행:</p>
+                <p className="font-semibold mb-2">터미널에서 실행 (추천):</p>
+                <code className="block bg-black text-white px-3 py-2 rounded mb-2">npm run dev:all</code>
+                <p className="text-xs text-orange-700">또는 API 서버만 실행:</p>
                 <code className="block bg-black text-white px-3 py-2 rounded">npm run dev:api</code>
               </div>
               <p className="text-xs">
-                💡 <strong>팁:</strong> 별도 터미널 창에서 실행하면 프론트엔드와 API 서버를 동시에 사용할 수 있습니다.
+                💡 <strong>팁:</strong> <code className="bg-orange-200 px-1 rounded">npm run dev:all</code>을 사용하면 프론트엔드와 API 서버가 한 번에 실행됩니다.
               </p>
             </CardContent>
           </Card>
