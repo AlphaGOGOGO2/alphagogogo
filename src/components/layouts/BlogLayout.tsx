@@ -45,16 +45,22 @@ export function BlogLayout({ children, title, isLoading = false }: BlogLayoutPro
       <div className="min-h-screen flex flex-col">
         <Navbar />
 
-        <div className="pt-24">
-          <BlogAIBanner />
-        </div>
-
-        <main className="flex-grow pb-16 relative" role="main">
+        <main className="flex-grow pb-16 relative pt-24" role="main">
           <div className={cn(
             "mx-auto px-4 sm:px-6 lg:px-8",
             isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
           )}>
-            {!isWritePage && <Banner className="mb-8" />}
+            {!isWritePage && (
+              <div className="mb-8">
+                <Banner className="mb-4" />
+                <BlogAIBanner />
+              </div>
+            )}
+            {isWritePage && (
+              <div className="mb-8">
+                <BlogAIBanner />
+              </div>
+            )}
             
             <header className="py-8">
               <div>
