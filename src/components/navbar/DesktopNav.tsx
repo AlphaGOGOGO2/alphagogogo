@@ -73,6 +73,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
+      className="!text-sm md:!text-base whitespace-nowrap"
     />
   );
 
@@ -81,8 +82,8 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
   }, [location.pathname]);
   
   return (
-    <nav 
-      className="hidden md:flex items-center gap-8" 
+    <nav
+      className="hidden md:flex items-center gap-4 lg:gap-6"
     >
       <NavLink 
         name="홈" 
