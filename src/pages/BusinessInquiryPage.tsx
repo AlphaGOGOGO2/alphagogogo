@@ -10,12 +10,15 @@ export default function BusinessInquiryPage() {
 
       <Navbar />
 
-      <div className="pt-16">
-        <Banner />
-        <BlogAIBanner />
-      </div>
+      <main className="min-h-screen bg-gradient-to-b from-white via-purple-50/20 to-purple-50/30 pt-24">
+        {/* 배너 섹션 */}
+        <section className="pb-8 px-6">
+          <div className="max-w-7xl mx-auto">
+            <Banner className="mb-4" />
+            <BlogAIBanner />
+          </div>
+        </section>
 
-      <main className="min-h-screen bg-gradient-to-b from-white via-purple-50/20 to-purple-50/30">
         {/* 헤더 섹션 */}
         <section className="pb-12 md:pb-16 px-6">
           <div className="max-w-5xl mx-auto text-center">

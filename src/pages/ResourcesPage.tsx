@@ -93,13 +93,13 @@ export default function ResourcesPage() {
       <div className="min-h-screen bg-gray-50">
         <Navbar />
 
-        <div className="pt-16">
-          <Banner />
-          <BlogAIBanner />
-        </div>
-
-        <main className="pb-16">
+        <main className="pb-16 pt-24">
           <div className="max-w-7xl mx-auto px-6 md:px-8">
+            <div className="mb-8">
+              <Banner className="mb-4" />
+              <BlogAIBanner />
+            </div>
+
             {/* 헤더 섹션 */}
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">

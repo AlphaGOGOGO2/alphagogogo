@@ -14,7 +14,7 @@ export function Banner({ className }: BannerProps) {
     <section
       onClick={handleClick}
       className={cn(
-        "w-full bg-gradient-to-r from-purple-700 to-purple-500 text-white py-6 px-6 cursor-pointer",
+        "w-full bg-gradient-to-r from-purple-700 to-purple-500 text-white py-6 px-6 cursor-pointer rounded-lg shadow-lg",
         "hover:opacity-90 transition-all duration-300 select-none",
         className
       )}

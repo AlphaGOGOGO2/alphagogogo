@@ -110,8 +110,8 @@ const Index = () => {
       <Navbar />
 
       <div className="pt-16">
-        <Banner />
-        <BlogAIBanner />
+        <Banner className="!rounded-none !shadow-none" />
+        <BlogAIBanner className="!rounded-none !shadow-none" />
       </div>
 
       <main>

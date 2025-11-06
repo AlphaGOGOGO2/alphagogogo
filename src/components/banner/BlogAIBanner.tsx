@@ -5,7 +5,11 @@
 
 import { cn } from "@/lib/utils";
 
-export function BlogAIBanner() {
+interface BlogAIBannerProps {
+  className?: string;
+}
+
+export function BlogAIBanner({ className }: BlogAIBannerProps = {}) {
   const handleClick = () => {
     window.open("https://www.alphablogogo.com/", "_blank");
   };
@@ -14,8 +18,9 @@ export function BlogAIBanner() {
     <section
       onClick={handleClick}
       className={cn(
-        "w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white py-6 px-6 cursor-pointer",
-        "hover:opacity-90 transition-all duration-300 select-none"
+        "w-full bg-gradient-to-r from-purple-600 via-pink-600 to-purple-700 text-white py-6 px-6 cursor-pointer rounded-lg shadow-lg",
+        "hover:opacity-90 transition-all duration-300 select-none",
+        className
       )}
       role="button"
       aria-label="블로그 AI 에이전트, 알파블로그 AI 사이트로 이동"

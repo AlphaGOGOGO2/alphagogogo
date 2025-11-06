@@ -83,13 +83,13 @@ export default function OpenChatRoomsPage() {
 
       <Navbar />
 
-      <div className="pt-16">
-        <Banner />
-        <BlogAIBanner />
-      </div>
-
-      <main className="flex-grow pb-12">
+      <main className="flex-grow pb-12 pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-8">
+            <Banner className="mb-4" />
+            <BlogAIBanner />
+          </div>
+
           <div className={`text-center mb-10 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">오픈 채팅방</h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">

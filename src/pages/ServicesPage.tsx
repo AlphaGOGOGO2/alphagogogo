@@ -60,14 +60,14 @@ export default function ServicesPage() {
       />
       <Navbar />
 
-      <div className="pt-16">
-        <Banner />
-        <BlogAIBanner />
-      </div>
-
-      <main className="flex-grow pb-16">
+      <main className="flex-grow pb-16 pt-24">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ease-out ${isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
-          <div className="mb-8 mt-8">
+          <div className="mb-8">
+            <Banner className="mb-4" />
+            <BlogAIBanner />
+          </div>
+
+          <div className="mb-8">
             <Link
               to="/"
               className="inline-flex items-center text-purple-600 hover:text-purple-800 transition-colors"
