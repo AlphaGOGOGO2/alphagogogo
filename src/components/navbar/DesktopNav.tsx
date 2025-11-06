@@ -66,14 +66,13 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
     />
   );
 
-  const renderBlogAILink = () => (
+  const renderMarkdownConverterLink = () => (
     <NavLink
-      name="블로그 AI"
-      path="https://www.alphablogogo.com/"
+      name="마크다운 ↔ HTML 변환"
+      path="https://marcroni.alphagogogo.com/"
       isScrolled={isScrolled}
       isActive={false}
       isExternal={true}
-      isSparkle={true}
     />
   );
 
@@ -100,7 +99,7 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         onOpenChange={handleBlogDropdownChange}
       />
 
-      {renderBlogAILink()}
+      {renderMarkdownConverterLink()}
 
       {renderPremiumLink()}
 

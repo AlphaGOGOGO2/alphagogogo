@@ -12,6 +12,7 @@ import { AIGuide } from "@/components/landing/AIGuide";
 import { Footer } from "@/components/Footer";
 import { SEO } from "@/components/SEO";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 
 // 사이트 기본 도메인
 const SITE_DOMAIN = 'https://alphagogogo.com';
@@ -147,7 +148,9 @@ const Index = () => {
           
           <Hero />
         </section>
-        
+
+        <BlogAIBanner />
+
         <FeaturedPosts />
         <GPTSUsage />
         <Services />
