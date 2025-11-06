@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Code, ExternalLink, RefreshCw } from "lucide-react";
+import { ArrowLeft, Search, Code, ExternalLink, RefreshCw, Edit } from "lucide-react";
 import { Link } from "react-router-dom";
 import { blogPosts as staticBlogPosts } from "@/data/blogPosts";
 import { formatDate } from "@/lib/utils";
@@ -123,11 +123,19 @@ export default function AdminBlog() {
                         )}
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link to={`/blog/${post.slug}`}>
-                        <ExternalLink className="h-4 w-4" />
-                      </Link>
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link to={`/admin/blog/edit/${post.slug}`}>
+                          <Edit className="h-4 w-4 mr-1" />
+                          편집
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" size="sm" asChild>
+                        <Link to={`/blog/${post.slug}`}>
+                          <ExternalLink className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 {post.excerpt && (

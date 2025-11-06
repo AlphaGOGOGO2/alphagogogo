@@ -250,47 +250,131 @@ ${content}`;
 });
 
 /**
- * PUT /api/blog/posts/:id - 블로그 글 수정
+ * PUT /api/blog/posts/:slug - 블로그 글 수정 (Markdown 파일)
  */
-app.put('/api/blog/posts/:id', authenticateAPI, async (req, res) => {
+app.put('/api/blog/posts/:slug', authenticateAPI, async (req, res) => {
   try {
-    const { id } = req.params;
-    const updates = req.body;
+    const { slug } = req.params;
+    const { title, excerpt, content, category, author, coverImage, tags, readTime } = req.body;
 
-    const blogPostsPath = path.join(__dirname, '../src/data/blogPosts.ts');
-    let fileContent = await fs.readFile(blogPostsPath, 'utf-8');
-
-    // 해당 ID의 포스트 찾아서 업데이트
-    const postRegex = new RegExp(`\\{[^}]*id:\\s*"${id}"[^}]*\\}`, 's');
-    const match = fileContent.match(postRegex);
-
-    if (!match) {
-      return res.status(404).json({ error: 'Blog post not found' });
+    if (!title || !content || !category) {
+      return res.status(400).json({ error: 'Required fields missing: title, content, category' });
     }
 
-    // updatedAt 추가
-    updates.updatedAt = new Date().toISOString().split('T')[0];
+    // Markdown 파일 찾기 (slug 기반)
+    const matter = require('gray-matter');
+    const blogDir = path.join(__dirname, '../src/content/blog');
+    const files = await fs.readdir(blogDir);
 
-    // 포스트 객체를 문자열로 변환하여 교체
-    const existingPost = eval(`(${match[0]})`);
-    const updatedPost = { ...existingPost, ...updates };
-    const updatedPostString = JSON.stringify(updatedPost, null, 2).replace(/"(\w+)":/g, '$1:');
+    let targetFile = null;
+    let existingFrontmatter = null;
 
-    fileContent = fileContent.replace(match[0], updatedPostString);
+    // slug와 매칭되는 파일 찾기
+    for (const file of files) {
+      if (!file.endsWith('.md')) continue;
 
-    await fs.writeFile(blogPostsPath, fileContent, 'utf-8');
+      const filePath = path.join(blogDir, file);
+      const fileContent = await fs.readFile(filePath, 'utf-8');
+      const { data: frontmatter } = matter(fileContent);
+
+      const fileSlug = frontmatter.slug || file.replace(/\.md$/, '');
+      if (fileSlug === slug) {
+        targetFile = filePath;
+        existingFrontmatter = frontmatter;
+        break;
+      }
+    }
+
+    if (!targetFile) {
+      return res.status(404).json({ error: `Blog post not found: ${slug}` });
+    }
+
+    // Frontmatter 업데이트 (기존 값 유지하며 덮어쓰기)
+    const updatedFrontmatter = {
+      ...existingFrontmatter,
+      title,
+      excerpt: excerpt || existingFrontmatter.excerpt || '',
+      category,
+      author: author?.name || existingFrontmatter.author || '알파GOGOGO',
+      coverImage: coverImage || existingFrontmatter.coverImage || '',
+      readTime: readTime || Math.max(1, Math.ceil(content.split(/\s+/).length / 200)),
+      tags: Array.isArray(tags) ? tags : (existingFrontmatter.tags || []),
+      slug: slug, // slug는 변경 불가
+      date: existingFrontmatter.date || new Date().toISOString().split('T')[0],
+    };
+
+    // Markdown 내용 재생성
+    const markdownContent = `---
+title: "${updatedFrontmatter.title}"
+date: "${updatedFrontmatter.date}"
+category: "${updatedFrontmatter.category}"
+author: "${updatedFrontmatter.author}"
+excerpt: "${updatedFrontmatter.excerpt}"
+coverImage: "${updatedFrontmatter.coverImage}"
+readTime: ${updatedFrontmatter.readTime}
+slug: "${updatedFrontmatter.slug}"
+tags: ${JSON.stringify(updatedFrontmatter.tags)}
+---
+
+${content}`;
+
+    // 파일 저장
+    await fs.writeFile(targetFile, markdownContent, 'utf-8');
+
+    console.log(`✅ Updated blog post: ${path.basename(targetFile)}`);
+
+    // SEO 파일 자동 재생성 (Sitemap & RSS)
+    try {
+      console.log('🔄 SEO 파일 재생성 중...');
+      await execAsync(`cd "${path.join(__dirname, '..')}" && node scripts/generate-seo.js`);
+      console.log('✅ SEO 파일 재생성 완료');
+    } catch (seoError) {
+      console.error('⚠️  SEO 파일 재생성 실패:', seoError);
+    }
 
     // Git 커밋
     try {
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/data/blogPosts.ts`);
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Update blog post - ${updates.title || existingPost.title}
+      const safeTitle = sanitizeCommitMessage(title);
+      const filename = path.basename(targetFile);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${filename} public/sitemap.xml public/rss.xml`);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Update blog post - ${safeTitle}
 
-🤖 Generated via Admin Panel"`);
+Updated: ${filename}
+
+🤖 Generated via Admin Panel
+📊 SEO files updated automatically"`);
+
+      res.json({
+        success: true,
+        message: 'Blog post updated and committed successfully',
+        post: {
+          id: slug,
+          title,
+          excerpt: updatedFrontmatter.excerpt,
+          content,
+          category,
+          slug,
+          coverImage: updatedFrontmatter.coverImage,
+          tags: updatedFrontmatter.tags,
+        }
+      });
     } catch (gitError) {
       console.error('Git error:', gitError);
+      res.json({
+        success: true,
+        message: 'Blog post updated but git commit failed',
+        gitError: gitError.message,
+        post: {
+          id: slug,
+          title,
+          excerpt: updatedFrontmatter.excerpt,
+          content,
+          category,
+          slug,
+        }
+      });
     }
 
-    res.json({ success: true, post: updatedPost });
   } catch (error) {
     console.error('Error updating blog post:', error);
     res.status(500).json({ error: error.message });

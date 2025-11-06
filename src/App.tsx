@@ -20,6 +20,7 @@ import ResourceDetailPage from "./pages/ResourceDetailPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminBlogWrite from "./pages/admin/AdminBlogWrite";
+import AdminBlogEdit from "./pages/admin/AdminBlogEdit";
 import AdminResources from "./pages/admin/AdminResources";
 import NotFound from "./pages/NotFound";
 import { PerformanceOptimization } from "./components/optimization/PerformanceOptimization";
@@ -91,6 +92,7 @@ function App() {
                         <Route path="/admin" element={<AdminDashboard />} />
                         <Route path="/admin/blog" element={<AdminBlog />} />
                         <Route path="/admin/blog/write" element={<AdminBlogWrite />} />
+                        <Route path="/admin/blog/edit/:slug" element={<AdminBlogEdit />} />
                         <Route path="/admin/resources" element={<AdminResources />} />
                       </>
                     )}
