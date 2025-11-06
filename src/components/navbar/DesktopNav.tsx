@@ -100,11 +100,11 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
         onOpenChange={handleBlogDropdownChange}
       />
 
-      {renderMarkdownConverterLink()}
-
       {renderPremiumLink()}
 
-      <GPTSDropdown 
+      {renderMarkdownConverterLink()}
+
+      <GPTSDropdown
         isScrolled={isScrolled}
         isActive={location.pathname === "/gpts"}
         categories={gptsCategories}

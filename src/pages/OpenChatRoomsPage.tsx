@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
+import { Banner } from "@/components/Banner";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
@@ -78,10 +80,15 @@ export default function OpenChatRoomsPage() {
         <meta property="og:image" content="/images/ogimage.png" />
         <meta property="og:type" content="website" />
       </Helmet>
-      
+
       <Navbar />
-      
-      <main className="flex-grow pt-32 pb-12">
+
+      <div className="pt-16">
+        <Banner />
+        <BlogAIBanner />
+      </div>
+
+      <main className="flex-grow pb-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className={`text-center mb-10 transition-all duration-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">오픈 채팅방</h1>

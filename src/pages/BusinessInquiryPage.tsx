@@ -1,16 +1,23 @@
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
+import { Banner } from "@/components/Banner";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 import { Mail, Handshake, Megaphone, Code, Users, Globe, PenTool, FileText } from "lucide-react";
 import { SEO } from "@/components/SEO";
 export default function BusinessInquiryPage() {
   return <>
       <SEO title="비즈니스 문의 | 알파블로그" description="알파블로그에 비즈니스 제휴 및 협업에 대한 문의를 보내주세요." />
-      
+
       <Navbar />
-      
+
+      <div className="pt-16">
+        <Banner />
+        <BlogAIBanner />
+      </div>
+
       <main className="min-h-screen bg-gradient-to-b from-white via-purple-50/20 to-purple-50/30">
         {/* 헤더 섹션 */}
-        <section className="pt-24 pb-12 md:pt-32 md:pb-16 px-6">
+        <section className="pb-12 md:pb-16 px-6">
           <div className="max-w-5xl mx-auto text-center">
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-700 via-purple-600 to-purple-500 bg-clip-text text-transparent mb-4">
               비즈니스 문의

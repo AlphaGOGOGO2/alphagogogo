@@ -5,6 +5,8 @@ import { Search, Star, LayoutGrid, LayoutList } from "lucide-react";
 import { SEO } from "@/components/SEO";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/Footer";
+import { Banner } from "@/components/Banner";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 import { ResourceCard } from "@/components/resources/ResourceCard";
 import { ResourceTable } from "@/components/resources/ResourceTable";
 import { Input } from "@/components/ui/input";
@@ -90,8 +92,13 @@ export default function ResourcesPage() {
       
       <div className="min-h-screen bg-gray-50">
         <Navbar />
-        
-        <main className="pt-24 pb-16">
+
+        <div className="pt-16">
+          <Banner />
+          <BlogAIBanner />
+        </div>
+
+        <main className="pb-16">
           <div className="max-w-7xl mx-auto px-6 md:px-8">
             {/* 헤더 섹션 */}
             <div className="text-center mb-12">

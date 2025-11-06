@@ -6,6 +6,7 @@ import { Link, useLocation } from "react-router-dom";
 import { blogCategories } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { Banner } from "@/components/Banner";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { BlogLayoutSkeleton } from "./BlogLayoutSkeleton";
 import { PerformanceOptimization } from "@/components/optimization/PerformanceOptimization";
@@ -43,13 +44,17 @@ export function BlogLayout({ children, title, isLoading = false }: BlogLayoutPro
     <PerformanceOptimization>
       <div className="min-h-screen flex flex-col">
         <Navbar />
-        
-        <main className="flex-grow pt-24 pb-16 relative" role="main">
+
+        <div className="pt-24">
+          <BlogAIBanner />
+        </div>
+
+        <main className="flex-grow pb-16 relative" role="main">
           <div className={cn(
             "mx-auto px-4 sm:px-6 lg:px-8",
             isWritePage ? "max-w-[95%] xl:max-w-[90%]" : "max-w-7xl"
           )}>
-            {!isWritePage && <Banner />}
+            {!isWritePage && <Banner className="mb-8" />}
             
             <header className="py-8">
               <div>

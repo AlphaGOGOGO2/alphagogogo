@@ -8,6 +8,7 @@ import { GPTSDownloadSection } from "@/components/gpts/GPTSDownloadSection";
 import { ArrowLeft } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { Banner } from "@/components/Banner";
+import { BlogAIBanner } from "@/components/banner/BlogAIBanner";
 import { SEO } from "@/components/SEO";
 
 const SITE_DOMAIN = 'https://alphagogogo.com';
@@ -76,22 +77,25 @@ export default function GPTSPage() {
         structuredData={structuredData}
       />
       <Navbar />
-      
-      <main className="flex-grow pt-24 pb-16">
+
+      <div className="pt-16">
+        <Banner />
+        <BlogAIBanner />
+      </div>
+
+      <main className="flex-grow pb-16">
         <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 transition-all duration-500 ease-out ${isVisible ? 'opacity-100' : 'opacity-0 translate-y-4'}`}>
-          <div className="mb-8">
-            <Link 
-              to="/" 
+          <div className="mb-8 mt-8">
+            <Link
+              to="/"
               className="inline-flex items-center text-purple-600 hover:text-purple-800 transition-colors"
             >
               <ArrowLeft size={16} className="mr-2" />
               <span>홈으로 돌아가기</span>
             </Link>
           </div>
-          
-          <Banner className="mb-10" />
-          
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">GPTS 이용하기</h1>
+
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6 mt-8">GPTS 이용하기</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-full">
             알파블로그에서 제공하는 다양한 GPTS 도구들을 이용해보세요. 블로그 작성부터 SEO 최적화까지 AI의 도움을 받아보세요.
           </p>
