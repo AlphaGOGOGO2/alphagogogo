@@ -90,25 +90,31 @@ export function CommunityDropdown({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          onOpenChange(!isOpen);
+          if (!isOpen) {
+            // 드롭다운이 닫혀있을 때는 오픈 채팅방으로 이동
+            navigate('/open-chat-rooms');
+          } else {
+            // 드롭다운이 열려있을 때는 닫기
+            onOpenChange(false);
+          }
         }}
         className="inline-flex items-center focus:outline-none"
       >
-        <NavLink 
+        <NavLink
           name="커뮤니티"
-          path="/community"
+          path="/open-chat-rooms"
           isScrolled={isScrolled}
           isActive={isActive}
           iconRight={
-            <ChevronDown 
-              size={16} 
+            <ChevronDown
+              size={16}
               className={cn(
-                "ml-1 transition-transform duration-300", 
+                "ml-1 transition-transform duration-300",
                 isOpen ? "rotate-180" : "rotate-0",
                 isScrolled ? "text-purple-700" : "text-white/80"
               )}
               aria-hidden="true"
-            /> 
+            />
           }
         />
       </button>
