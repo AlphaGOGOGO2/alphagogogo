@@ -40,6 +40,27 @@ export const resourceCategories: ResourceCategory[] = [
 
 export const resources: Resource[] = [
   {
+    id: "8pl52y6ae-mvsg-482r-hml7-7lydiihdv2h",
+    title: "알파뮤직AI",
+    description: "음원 대량생성프로그램",
+    file_url: "/files/AlphaMusic AI-amd64-installer.exe",
+    file_type: "document",
+    file_size: 10266134,
+    category: "음원생성AI",
+    tags: [
+      "수노AI",
+      "음원생성AI",
+      "수노API",
+      "프로그램"
+    ],
+    download_count: 0,
+    is_featured: false,
+    author_name: "알파GOGOGO",
+    created_at: "2025-11-20T13:10:04.227Z",
+    updated_at: "2025-11-20T13:10:04.227Z"
+  },
+
+  {
     id: "c3656634-704a-4435-b3a8-24e2eb2f7fe2",
     title: "유튜브 데이터 수집 + 분석 + ai 챗봇 어시스턴트 프로그램 무료 배포",
     description: "",
