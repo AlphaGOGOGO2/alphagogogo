@@ -1,4 +1,65 @@
-import 
+import { Resource, ResourceCategory } from "@/types/resources";
+
+export const resourceCategories: ResourceCategory[] = [
+  {
+    id: "169f0ffb-604d-4c28-a456-39eae172f28b",
+    name: "이미지",
+    description: "AI 관련 이미지 자료",
+    created_at: "2025-05-26T07:54:48.757158Z",
+    updated_at: "2025-05-26T07:54:48.757158Z"
+  },
+  {
+    id: "050ff620-5de7-4a69-9041-e3b88fcc258b",
+    name: "문서",
+    description: "PDF, 워드 등 문서 자료",
+    created_at: "2025-05-26T07:54:48.757158Z",
+    updated_at: "2025-05-26T07:54:48.757158Z"
+  },
+  {
+    id: "f2c04aba-06d2-4806-880e-ef2de561d5ce",
+    name: "템플릿",
+    description: "활용 가능한 템플릿",
+    created_at: "2025-05-26T07:54:48.757158Z",
+    updated_at: "2025-05-26T07:54:48.757158Z"
+  },
+  {
+    id: "796898f5-0a16-45fb-83a1-f1cfe9983896",
+    name: "가이드",
+    description: "사용 가이드 및 매뉴얼",
+    created_at: "2025-05-26T07:54:48.757158Z",
+    updated_at: "2025-05-26T07:54:48.757158Z"
+  },
+  {
+    id: "62414b0e-b2ea-4106-b445-87e11c2c1d72",
+    name: "기타",
+    description: "기타 자료",
+    created_at: "2025-05-26T07:54:48.757158Z",
+    updated_at: "2025-05-26T07:54:48.757158Z"
+  }
+];
+
+export const resources: Resource[] = [
+  {
+    id: "8pl52y6ae-mvsg-482r-hml7-7lydiihdv2h",
+    title: "알파뮤직AI",
+    description: "음원 대량생성프로그램",
+    file_url: "https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/AlphaMusic.AI-amd64-installer.exe",
+    file_type: "document",
+    file_size: 10266134,
+    category: "음원생성AI",
+    tags: [
+      "수노AI",
+      "음원생성AI",
+      "수노API",
+      "프로그램"
+    ],
+    download_count: 0,
+    is_featured: false,
+    author_name: "알파GOGOGO",
+    created_at: "2025-11-20T13:10:04.227Z",
+    updated_at: "2025-11-20T13:10:04.227Z"
+  },
+
   {
     id: "c3656634-704a-4435-b3a8-24e2eb2f7fe2",
     title: "유튜브 데이터 수집 + 분석 + ai 챗봇 어시스턴트 프로그램 무료 배포",
