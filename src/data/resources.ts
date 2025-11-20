@@ -40,24 +40,24 @@ export const resourceCategories: ResourceCategory[] = [
 
 export const resources: Resource[] = [
   {
-    id: "8pl52y6ae-mvsg-482r-hml7-7lydiihdv2h",
-    title: "알파뮤직AI",
-    description: "음원 대량생성프로그램",
-    file_url: "https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/AlphaMusic.AI-amd64-installer.exe",
+    id: "kpe5fcows-i3ux-6zem-y11q-sahmrgngzn",
+    title: "알파뮤직AI I 음원생성프로그램",
+    description: "",
+    file_url: "https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/AlphaMusic-AI-amd64-installer.exe",
     file_type: "document",
-    file_size: 10266134,
-    category: "음원생성AI",
+    file_size: 10265825,
+    category: "프로그램",
     tags: [
       "수노AI",
-      "음원생성AI",
-      "수노API",
-      "프로그램"
+      "음원생성프로그램",
+      "자동프로그램",
+      "무료"
     ],
     download_count: 0,
     is_featured: false,
     author_name: "알파GOGOGO",
-    created_at: "2025-11-20T13:10:04.227Z",
-    updated_at: "2025-11-20T13:10:04.227Z"
+    created_at: "2025-11-20T19:24:33.094Z",
+    updated_at: "2025-11-20T19:24:33.094Z"
   },
 
   {
