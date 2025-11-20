@@ -46,6 +46,42 @@ export default function AdminDashboard() {
     });
   };
 
+  const handleRestartServer = async () => {
+    try {
+      toast({
+        title: "서버 재시작 중...",
+        description: "잠시만 기다려주세요.",
+      });
+
+      const response = await fetch('http://localhost:3001/api/server/restart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': import.meta.env.VITE_API_KEY || 'alphagogo-admin-2024-secure-key'
+        }
+      });
+
+      if (response.ok) {
+        toast({
+          title: "서버 재시작 완료!",
+          description: "API 서버가 재시작되었습니다.",
+        });
+
+        // 3초 후 상태 확인
+        setTimeout(() => {
+          checkApiStatus();
+        }, 3000);
+      }
+    } catch (error) {
+      console.error('Restart error:', error);
+      toast({
+        title: "재시작 실패",
+        description: "서버 재시작 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <SEO
@@ -117,15 +153,27 @@ export default function AdminDashboard() {
                   </>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleRefreshStatus}
-                className="mt-2 h-7 text-xs"
-              >
-                <RefreshCw className="mr-1 h-3 w-3" />
-                상태 확인
-              </Button>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefreshStatus}
+                  className="h-7 text-xs flex-1"
+                >
+                  <RefreshCw className="mr-1 h-3 w-3" />
+                  상태 확인
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRestartServer}
+                  className="h-7 text-xs flex-1"
+                  disabled={apiStatus === 'offline'}
+                >
+                  <Server className="mr-1 h-3 w-3" />
+                  재시작
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>

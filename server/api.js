@@ -225,14 +225,16 @@ ${content}`;
       // SEO 생성 실패는 치명적이지 않으므로 계속 진행
     }
 
-    // Git 커밋 및 푸시 (마크다운 파일 + SEO 파일)
+    // Git 커밋 및 푸시 (마크다운 파일 + SEO 파일 + 이미지 파일)
     try {
       const safeTitle = sanitizeCommitMessage(title);
-      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename} public/sitemap.xml public/rss.xml`);
+      // 블로그 글과 관련된 모든 파일 추가 (이미지 포함)
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename} public/sitemap.xml public/rss.xml public/images/blog/`);
       await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new blog post - ${safeTitle}
 
 🤖 Generated via Admin Panel
-📊 SEO files updated automatically"`);
+📊 SEO files updated automatically
+📸 Blog images included"`);
 
       // Git Push
       console.log('🚀 Pushing to GitHub...');
@@ -536,6 +538,25 @@ app.get('/api/git/status', async (req, res) => {
     res.json({ success: true, status: stdout });
   } catch (error) {
     console.error('Git status error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+/**
+ * POST /api/server/restart - 서버 재시작
+ */
+app.post('/api/server/restart', async (req, res) => {
+  try {
+    console.log('🔄 서버 재시작 요청...');
+    res.json({ success: true, message: '서버 재시작 중...' });
+
+    // 응답 전송 후 서버 재시작
+    setTimeout(() => {
+      console.log('🔄 서버 재시작 실행...');
+      process.exit(0); // pm2 또는 nodemon이 자동으로 재시작
+    }, 1000);
+  } catch (error) {
+    console.error('Server restart error:', error);
     res.status(500).json({ error: error.message });
   }
 });
