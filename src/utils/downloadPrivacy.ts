@@ -88,10 +88,16 @@ export const buildDownloadFilename = (title: string, fileUrl: string) => {
 };
 
 export const buildDownloadUrl = (fileUrl: string, desiredFilename: string) => {
-  // 로컬 모드: public 폴더의 정적 파일은 쿼리 파라미터 없이 직접 사용
-  // 파일이 /files/ 경로에 있으면 그대로 반환
+  // 로컬 모드: public 폴더의 정적 파일
+  // 파일이 /files/ 경로에 있으면 URL 인코딩하여 반환
   if (fileUrl.startsWith('/files/') || fileUrl.startsWith('./files/')) {
-    return fileUrl;
+    // 파일 경로를 파싱하여 각 부분을 인코딩
+    const parts = fileUrl.split('/');
+    const encodedParts = parts.map((part, index) => {
+      // '/'는 인코딩하지 않고, 파일명만 인코딩
+      return index === parts.length - 1 ? encodeURIComponent(part) : part;
+    });
+    return encodedParts.join('/');
   }
 
   // 외부 URL이거나 Supabase 같은 스토리지 URL인 경우에만 쿼리 파라미터 추가
@@ -100,8 +106,12 @@ export const buildDownloadUrl = (fileUrl: string, desiredFilename: string) => {
     u.searchParams.set('download', desiredFilename);
     return u.toString();
   } catch {
-    // 상대 경로인 경우 그대로 반환
-    return fileUrl;
+    // 상대 경로인 경우 인코딩하여 반환
+    const parts = fileUrl.split('/');
+    const encodedParts = parts.map((part, index) => {
+      return index === parts.length - 1 ? encodeURIComponent(part) : part;
+    });
+    return encodedParts.join('/');
   }
 };
 
