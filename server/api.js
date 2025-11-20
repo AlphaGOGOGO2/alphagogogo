@@ -494,14 +494,21 @@ app.post('/api/resources/upload', upload.single('file'), async (req, res) => {
 
       await fs.writeFile(resourcesPath, newContent, 'utf-8');
 
-      // Git 커밋
+      // Git 커밋 및 푸시
       try {
+        const safeTitle = sanitizeCommitMessage(title || req.file.originalname);
         await execAsync(`cd "${path.join(__dirname, '..')}" && git add public/files/${req.file.filename} src/data/resources.ts`);
-        await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new resource - ${title || req.file.originalname}
+        await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new resource - ${safeTitle}
 
 File: ${req.file.filename} (${(fileInfo.size / 1024 / 1024).toFixed(2)} MB)
 
-🤖 Generated via Admin Panel"`);
+🤖 Generated via Admin Panel
+Co-Authored-By: Claude <noreply@anthropic.com>"`);
+
+        // Git Push
+        console.log('🚀 Pushing to GitHub...');
+        await execAsync(`cd "${path.join(__dirname, '..')}" && git push`);
+        console.log('✅ Pushed to GitHub successfully');
       } catch (gitError) {
         console.error('Git error:', gitError);
       }
