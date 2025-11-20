@@ -547,24 +547,81 @@ app.delete('/api/resources/:id', async (req, res) => {
     const resourcesPath = path.join(__dirname, '../src/data/resources.ts');
     let fileContent = await fs.readFile(resourcesPath, 'utf-8');
 
-    // 삭제할 리소스 찾기
-    const resourceMatch = fileContent.match(new RegExp(`\\{[\\s\\S]*?id:\\s*"${id}"[\\s\\S]*?\\}`, 'm'));
-    if (!resourceMatch) {
+    // JSON 파싱으로 안전하게 삭제
+    // resources 배열 찾기
+    const arrayMatch = fileContent.match(/(export const resources: Resource\[\] = \[)([\s\S]*?)(\];)/);
+    if (!arrayMatch) {
+      return res.status(500).json({ error: 'Resources array not found' });
+    }
+
+    const [, prefix, resourcesContent, suffix] = arrayMatch;
+
+    // 리소스 객체들을 개별적으로 파싱
+    const resourceObjects = [];
+    let currentObject = '';
+    let braceCount = 0;
+    let inString = false;
+    let escapeNext = false;
+    let fileUrl = null;
+
+    for (let i = 0; i < resourcesContent.length; i++) {
+      const char = resourcesContent[i];
+
+      if (escapeNext) {
+        currentObject += char;
+        escapeNext = false;
+        continue;
+      }
+
+      if (char === '\\') {
+        escapeNext = true;
+        currentObject += char;
+        continue;
+      }
+
+      if (char === '"' || char === "'" || char === '`') {
+        inString = !inString;
+        currentObject += char;
+        continue;
+      }
+
+      if (!inString) {
+        if (char === '{') {
+          braceCount++;
+        } else if (char === '}') {
+          braceCount--;
+        }
+      }
+
+      currentObject += char;
+
+      // 객체가 완성되면 저장
+      if (braceCount === 0 && currentObject.trim() && !inString) {
+        const trimmed = currentObject.trim();
+        if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
+          // 이 객체가 삭제 대상인지 확인
+          if (trimmed.includes(`id: "${id}"`)) {
+            // file_url 추출
+            const urlMatch = trimmed.match(/file_url:\s*"([^"]+)"/);
+            fileUrl = urlMatch ? urlMatch[1] : null;
+          } else {
+            resourceObjects.push(trimmed);
+          }
+          currentObject = '';
+        }
+      }
+    }
+
+    if (fileUrl === null) {
       return res.status(404).json({ error: 'Resource not found' });
     }
 
-    // 리소스 정보에서 file_url 추출
-    const fileUrlMatch = resourceMatch[0].match(/file_url:\s*"([^"]+)"/);
-    const fileUrl = fileUrlMatch ? fileUrlMatch[1] : null;
+    // 재구성
+    const newResourcesContent = resourceObjects.length > 0
+      ? '\n' + resourceObjects.join(',\n\n') + '\n'
+      : '\n';
 
-    // resources 배열에서 해당 항목 제거
-    // 객체 전체와 그 뒤의 쉼표까지 제거
-    const resourceBlock = resourceMatch[0];
-    const blockWithComma = fileContent.indexOf(resourceBlock + ',\n') !== -1
-      ? resourceBlock + ',\n'
-      : resourceBlock + ',';
-
-    fileContent = fileContent.replace(blockWithComma, '');
+    fileContent = prefix + newResourcesContent + suffix;
 
     // 파일 저장
     await fs.writeFile(resourcesPath, fileContent, 'utf-8');
