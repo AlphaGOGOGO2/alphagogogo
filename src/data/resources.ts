@@ -43,7 +43,7 @@ export const resources: Resource[] = [
     id: "8pl52y6ae-mvsg-482r-hml7-7lydiihdv2h",
     title: "알파뮤직AI",
     description: "음원 대량생성프로그램",
-    file_url: "https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/AlphaMusic-AI-amd64-installer.exe",
+    file_url: "https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/AlphaMusic.AI-amd64-installer.exe",
     file_type: "document",
     file_size: 10266134,
     category: "음원생성AI",
