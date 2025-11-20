@@ -5,8 +5,8 @@
     <link>https://alphagogogo.com</link>
     <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>
     <language>ko-KR</language>
-    <lastBuildDate>Thu, 20 Nov 2025 10:09:24 GMT</lastBuildDate>
-    <pubDate>Thu, 20 Nov 2025 10:09:24 GMT</pubDate>
+    <lastBuildDate>Thu, 20 Nov 2025 10:59:42 GMT</lastBuildDate>
+    <pubDate>Thu, 20 Nov 2025 10:59:42 GMT</pubDate>
     <ttl>60</ttl>
     <atom:link href="https://alphagogogo.com/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
@@ -33,6 +33,24 @@ API(Application Programming Interface)는 쉽게 말해 &apos;프로그램 간�
       <category>제미나이</category>
       <category>제미나이API</category>
       <category>구글API</category>
+    </item>
+    <item>
+      <title>알파뮤직 AI - 수노(Suno) API 활용 음악 대량 생성 프로그램 완벽 가이드</title>
+      <link>https://alphagogogo.com/blog/알파뮤직-ai---수노suno-api-활용-음악-대량-생성-프로그램-완벽-가이드</link>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/알파뮤직-ai---수노suno-api-활용-음악-대량-생성-프로그램-완벽-가이드</guid>
+      <description>
+## 알파뮤직 AI란?
+
+알파뮤직 AI는 비공식 Suno API(sunoapi.org)를 활용하여 AI 음악을 대량으로 생성할 수 있는 데스크톱 프로그램입니다. ChatGPT와 Gemini 등 여러 AI 모델을 연동하여 프롬프트를 자동 생성하고, 한 번에 최대 15곡까지 음악을 만들 수 있는 강력한 도구입니다.
+
+### 주요 특징
+- 수노 API를 통한 ...</description>
+      <pubDate>Thu, 20 Nov 2025 00:00:00 GMT</pubDate>
+      <author>support@alphagogogo.com (알파GOGOGO)</author>
+      <category>최신 AI소식</category>
+      <category>sunoapi</category>
+      <category>suno</category>
+      <category>유튜브플리채널</category>
     </item>
     <item>
       <title>AI 블로그 자동 작성 도구 무료 체험 | 알파블로그 AI 이벤트</title>
@@ -238,16 +256,6 @@ API(Application Programming Interface)는 쉽게 말해 &apos;프로그램 간�
       <author>support@alphagogogo.com (알파GOGOGO)</author>
       <category>라이프스타일</category>
       <enclosure url="https://alphagogogo.com/blog-images/6eb49c3c-8d50-4487-b8c3-560a456657e2.png" type="image/jpeg" length="100000"/>
-    </item>
-    <item>
-      <title>러버블DEV AI로 SEO 최적화된 웹사이트 만들기: 검색엔진 상위노출 비법</title>
-      <link>https://alphagogogo.com/blog/러버블dev-ai로-seo-최적화된-웹사이트-만들기-검색엔진-상위노출-비법-156231-l32y</link>
-      <guid isPermaLink="true">https://alphagogogo.com/blog/러버블dev-ai로-seo-최적화된-웹사이트-만들기-검색엔진-상위노출-비법-156231-l32y</guid>
-      <description># 러버블DEV AI로 SEO 최적화된 웹사이트 만들기: 검색엔진 상위노출 비법 ![블로그 이미지](/blog-images/c4121168-7999-42cc-be10-8df8e824a3bf.png) 인공지능으로 만든 웹사이트도 검색엔진 최상위...</description>
-      <pubDate>Thu, 22 May 2025 03:00:00 GMT</pubDate>
-      <author>support@alphagogogo.com (알파GOGOGO)</author>
-      <category>라이프스타일</category>
-      <enclosure url="https://alphagogogo.com/blog-images/lovable-dev-seo.jpg" type="image/jpeg" length="100000"/>
     </item>
   </channel>
 </rss>
