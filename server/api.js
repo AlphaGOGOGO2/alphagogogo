@@ -542,25 +542,6 @@ app.get('/api/git/status', async (req, res) => {
   }
 });
 
-/**
- * POST /api/server/restart - 서버 재시작
- */
-app.post('/api/server/restart', async (req, res) => {
-  try {
-    console.log('🔄 서버 재시작 요청...');
-    res.json({ success: true, message: '서버 재시작 중...' });
-
-    // 응답 전송 후 서버 재시작
-    setTimeout(() => {
-      console.log('🔄 서버 재시작 실행...');
-      process.exit(0); // pm2 또는 nodemon이 자동으로 재시작
-    }, 1000);
-  } catch (error) {
-    console.error('Server restart error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // ==================== 헬퍼 함수 ====================
 
 function generateId() {

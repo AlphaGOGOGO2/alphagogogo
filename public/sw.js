@@ -1,7 +1,10 @@
 
 // 서비스 워커 버전
-const CACHE_VERSION = 'v4'; // robots.txt 정적 파일 제공을 확실히 반영하기 위한 버전 업데이트
+const CACHE_VERSION = 'v5'; // 개발 환경 제외 및 소스 파일 캐싱 방지
 const CACHE_NAME = `alphagogogo-cache-${CACHE_VERSION}`;
+
+// 개발 환경 감지
+const isDevelopment = self.location.hostname === 'localhost' || self.location.hostname === '127.0.0.1';
 
 // 사전 캐시할 자산 목록
 const PRECACHE_ASSETS = [
@@ -54,25 +57,36 @@ self.addEventListener('activate', event => {
 // 페치 이벤트 처리
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
-  
+
+  // 개발 환경에서는 서비스 워커 비활성화
+  if (isDevelopment) {
+    return;
+  }
+
   // robots.txt, sitemap.xml, rss.xml은 Service Worker를 완전히 bypass
-  if (url.pathname === '/robots.txt' || 
-      url.pathname === '/sitemap.xml' || 
+  if (url.pathname === '/robots.txt' ||
+      url.pathname === '/sitemap.xml' ||
       url.pathname === '/rss.xml') {
     console.log('[서비스워커] SEO 파일 bypass:', url.pathname);
     return; // Service Worker 완전 우회
   }
 
+  // 소스 파일 (.tsx, .ts, .jsx, .js 등)은 절대 캐싱하지 않음
+  if (url.pathname.match(/\.(tsx|ts|jsx|js|css|scss)$/)) {
+    return;
+  }
+
   // API 요청 및 동적 콘텐츠는 네트워크만 사용
   if (
-    event.request.url.includes('/api/') || 
+    event.request.url.includes('/api/') ||
+    event.request.url.includes('/src/') ||
     event.request.url.includes('sockjs-node') ||
     event.request.url.includes('hot-update.json') ||
     event.request.url.includes('supabase.co')
   ) {
     return;
   }
-  
+
   // 정적 자산 및 HTML 페이지는 네트워크 우선, 캐시 폴백 전략 사용
   event.respondWith(
     fetch(event.request)

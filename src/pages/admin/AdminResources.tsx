@@ -1,20 +1,38 @@
 /**
  * 로컬 모드 자료실 관리 페이지
- * 자료실 파일 목록 확인 및 데이터 파일 편집 안내
+ * 자료실 파일 업로드 및 관리
  */
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { SEO } from "@/components/SEO";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Code, Download, FolderOpen } from "lucide-react";
+import { ArrowLeft, Search, Code, Download, FolderOpen, Upload } from "lucide-react";
 import { Link } from "react-router-dom";
 import { resources } from "@/data/resources";
+import { useToast } from "@/hooks/use-toast";
+
+// API 키 헤더 생성 함수
+const getAPIHeaders = () => ({
+  'x-api-key': import.meta.env.VITE_API_KEY || 'alphagogo-admin-2024-secure-key'
+});
 
 export default function AdminResources() {
+  const { toast } = useToast();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [uploadData, setUploadData] = useState({
+    title: "",
+    description: "",
+    category: "문서",
+    tags: ""
+  });
 
   const filteredResources = resources.filter(resource =>
     resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -26,6 +44,79 @@ export default function AdminResources() {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  const handleFileUpload = async () => {
+    const file = fileInputRef.current?.files?.[0];
+    if (!file) {
+      toast({
+        title: "파일 선택 필요",
+        description: "업로드할 파일을 선택해주세요.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!uploadData.title) {
+      toast({
+        title: "제목 입력 필요",
+        description: "파일 제목을 입력해주세요.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('title', uploadData.title);
+      formData.append('description', uploadData.description);
+      formData.append('category', uploadData.category);
+      formData.append('tags', JSON.stringify(uploadData.tags.split(',').map(t => t.trim()).filter(Boolean)));
+
+      const response = await fetch('http://localhost:3001/api/resources/upload', {
+        method: 'POST',
+        headers: getAPIHeaders(),
+        body: formData
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "업로드 완료!",
+          description: `${file.name} 파일이 성공적으로 업로드되었습니다.`,
+        });
+
+        // 폼 초기화
+        setUploadData({
+          title: "",
+          description: "",
+          category: "문서",
+          tags: ""
+        });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+
+        // 페이지 새로고침 안내
+        toast({
+          title: "페이지 새로고침",
+          description: "업로드된 파일을 확인하려면 페이지를 새로고침하세요.",
+        });
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast({
+        title: "업로드 실패",
+        description: "파일 업로드 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -64,6 +155,79 @@ export default function AdminResources() {
             </Button>
           </div>
         </div>
+
+        {/* 파일 업로드 */}
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader>
+            <CardTitle className="text-green-900">📁 파일 업로드</CardTitle>
+            <CardDescription>자료실에 새 파일 업로드</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="col-span-2">
+                  <Label htmlFor="file" className="text-sm">파일 선택 *</Label>
+                  <Input
+                    id="file"
+                    ref={fileInputRef}
+                    type="file"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Label htmlFor="title" className="text-sm">제목 *</Label>
+                  <Input
+                    id="title"
+                    value={uploadData.title}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, title: e.target.value }))}
+                    placeholder="파일 제목"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="category" className="text-sm">카테고리</Label>
+                  <Input
+                    id="category"
+                    value={uploadData.category}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, category: e.target.value }))}
+                    placeholder="문서, 이미지 등"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="tags" className="text-sm">태그</Label>
+                  <Input
+                    id="tags"
+                    value={uploadData.tags}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, tags: e.target.value }))}
+                    placeholder="태그1, 태그2"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div className="col-span-2">
+                  <Label htmlFor="description" className="text-sm">설명</Label>
+                  <Textarea
+                    id="description"
+                    value={uploadData.description}
+                    onChange={(e) => setUploadData(prev => ({ ...prev, description: e.target.value }))}
+                    placeholder="파일 설명 (선택사항)"
+                    rows={2}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <Button onClick={handleFileUpload} disabled={isUploading} className="w-full bg-green-600 hover:bg-green-700">
+                <Upload className="mr-2 h-4 w-4" />
+                {isUploading ? "업로드 중..." : "파일 업로드"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* 검색 */}
         <Card>

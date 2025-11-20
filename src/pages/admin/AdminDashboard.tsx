@@ -46,42 +46,6 @@ export default function AdminDashboard() {
     });
   };
 
-  const handleRestartServer = async () => {
-    try {
-      toast({
-        title: "서버 재시작 중...",
-        description: "잠시만 기다려주세요.",
-      });
-
-      const response = await fetch('http://localhost:3001/api/server/restart', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': import.meta.env.VITE_API_KEY || 'alphagogo-admin-2024-secure-key'
-        }
-      });
-
-      if (response.ok) {
-        toast({
-          title: "서버 재시작 완료!",
-          description: "API 서버가 재시작되었습니다.",
-        });
-
-        // 3초 후 상태 확인
-        setTimeout(() => {
-          checkApiStatus();
-        }, 3000);
-      }
-    } catch (error) {
-      console.error('Restart error:', error);
-      toast({
-        title: "재시작 실패",
-        description: "서버 재시작 중 오류가 발생했습니다.",
-        variant: "destructive"
-      });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <SEO
@@ -153,27 +117,15 @@ export default function AdminDashboard() {
                   </>
                 )}
               </div>
-              <div className="flex gap-2 mt-2">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRefreshStatus}
-                  className="h-7 text-xs flex-1"
-                >
-                  <RefreshCw className="mr-1 h-3 w-3" />
-                  상태 확인
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRestartServer}
-                  className="h-7 text-xs flex-1"
-                  disabled={apiStatus === 'offline'}
-                >
-                  <Server className="mr-1 h-3 w-3" />
-                  재시작
-                </Button>
-              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleRefreshStatus}
+                className="mt-2 h-7 text-xs w-full"
+              >
+                <RefreshCw className="mr-1 h-3 w-3" />
+                상태 확인
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -190,13 +142,16 @@ export default function AdminDashboard() {
             <CardContent className="text-sm text-orange-800 space-y-3">
               <p>블로그 글 작성 및 파일 업로드 기능을 사용하려면 API 서버를 실행해야 합니다.</p>
               <div className="bg-orange-100 p-3 rounded-md">
-                <p className="font-semibold mb-2">터미널에서 실행 (추천):</p>
+                <p className="font-semibold mb-2">✨ 간편 실행 (추천):</p>
+                <p className="mb-2">바탕화면의 <code className="bg-orange-200 px-2 py-1 rounded font-bold">START-ADMIN.bat</code> 파일을 더블클릭하세요.</p>
+
+                <p className="font-semibold mb-2 mt-3 pt-3 border-t border-orange-200">또는 터미널에서 실행:</p>
                 <code className="block bg-black text-white px-3 py-2 rounded mb-2">npm run dev:all</code>
                 <p className="text-xs text-orange-700">또는 API 서버만 실행:</p>
                 <code className="block bg-black text-white px-3 py-2 rounded">npm run dev:api</code>
               </div>
               <p className="text-xs">
-                💡 <strong>팁:</strong> <code className="bg-orange-200 px-1 rounded">npm run dev:all</code>을 사용하면 프론트엔드와 API 서버가 한 번에 실행됩니다.
+                💡 <strong>팁:</strong> 서버를 재시작하려면 작업 관리자에서 node.exe를 모두 종료한 후 배치 파일을 다시 실행하세요.
               </p>
             </CardContent>
           </Card>

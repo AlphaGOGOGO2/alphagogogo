@@ -30,5 +30,9 @@ public/files/*.exe
 # Local utility scripts (not for GitHub)
 *.bat
 *.ps1
+*.vbs
 관리자페이지-실행.bat
 kill-port-*.ps1
+nul
+README_*.txt
+ADMIN_*.md
