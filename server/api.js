@@ -11,6 +11,7 @@ import { promisify } from 'util';
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import matter from 'gray-matter';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,7 +41,7 @@ const sanitizeCommitMessage = (message) => {
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:8085'],
+  origin: ['http://localhost:5173', 'http://localhost:8080', 'http://localhost:8081', 'http://localhost:8085'],
   credentials: true
 }));
 app.use(express.json({ limit: '50mb' }));
@@ -108,7 +109,6 @@ const uploadImage = multer({
  */
 app.get('/api/blog/posts', async (req, res) => {
   try {
-    const matter = require('gray-matter');
     const blogDir = path.join(__dirname, '../src/content/blog');
     const files = await fs.readdir(blogDir);
 
@@ -116,27 +116,33 @@ app.get('/api/blog/posts', async (req, res) => {
     for (const file of files) {
       if (!file.endsWith('.md')) continue;
 
-      const filePath = path.join(blogDir, file);
-      const fileContent = await fs.readFile(filePath, 'utf-8');
-      const { data: frontmatter, content: markdown } = matter(fileContent);
+      try {
+        const filePath = path.join(blogDir, file);
+        const fileContent = await fs.readFile(filePath, 'utf-8');
+        const { data: frontmatter, content: markdown } = matter(fileContent);
 
-      const slug = frontmatter.slug || file.replace(/\.md$/, '');
-      posts.push({
-        id: slug,
-        title: frontmatter.title || 'Untitled',
-        excerpt: frontmatter.excerpt || markdown.slice(0, 200) + '...',
-        content: markdown,
-        category: frontmatter.category || 'Uncategorized',
-        author: {
-          name: frontmatter.author || 'Anonymous',
-          avatar: '/images/instructor-profile-image.png',
-        },
-        publishedAt: frontmatter.date || new Date().toISOString(),
-        readTime: frontmatter.readTime || Math.ceil(markdown.length / 1000),
-        coverImage: frontmatter.coverImage || '',
-        slug: slug,
-        tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
-      });
+        const slug = frontmatter.slug || file.replace(/\.md$/, '');
+        posts.push({
+          id: slug,
+          title: frontmatter.title || 'Untitled',
+          excerpt: frontmatter.excerpt || markdown.slice(0, 200) + '...',
+          content: markdown,
+          category: frontmatter.category || 'Uncategorized',
+          author: {
+            name: frontmatter.author || 'Anonymous',
+            avatar: '/images/instructor-profile-image.png',
+          },
+          publishedAt: frontmatter.date || new Date().toISOString(),
+          readTime: frontmatter.readTime || Math.ceil(markdown.length / 1000),
+          coverImage: frontmatter.coverImage || '',
+          slug: slug,
+          tags: Array.isArray(frontmatter.tags) ? frontmatter.tags : [],
+        });
+      } catch (fileError) {
+        console.error(`⚠️  Error reading file ${file}:`, fileError.message);
+        // 에러 발생 파일은 건너뛰고 계속 진행
+        continue;
+      }
     }
 
     // 최신순 정렬
@@ -219,7 +225,7 @@ ${content}`;
       // SEO 생성 실패는 치명적이지 않으므로 계속 진행
     }
 
-    // Git 커밋 (마크다운 파일 + SEO 파일)
+    // Git 커밋 및 푸시 (마크다운 파일 + SEO 파일)
     try {
       const safeTitle = sanitizeCommitMessage(title);
       await execAsync(`cd "${path.join(__dirname, '..')}" && git add src/content/blog/${markdownFilename} public/sitemap.xml public/rss.xml`);
@@ -228,16 +234,21 @@ ${content}`;
 🤖 Generated via Admin Panel
 📊 SEO files updated automatically"`);
 
+      // Git Push
+      console.log('🚀 Pushing to GitHub...');
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git push`);
+      console.log('✅ Pushed to GitHub successfully');
+
       res.json({
         success: true,
-        message: 'Blog post created and committed successfully',
+        message: 'Blog post created, committed and pushed successfully',
         post: newPost
       });
     } catch (gitError) {
       console.error('Git error:', gitError);
       res.json({
         success: true,
-        message: 'Blog post created but git commit failed',
+        message: 'Blog post created but git commit/push failed',
         post: newPost,
         gitError: gitError.message
       });
@@ -262,7 +273,6 @@ app.put('/api/blog/posts/:slug', authenticateAPI, async (req, res) => {
     }
 
     // Markdown 파일 찾기 (slug 기반)
-    const matter = require('gray-matter');
     const blogDir = path.join(__dirname, '../src/content/blog');
     const files = await fs.readdir(blogDir);
 
@@ -332,7 +342,7 @@ ${content}`;
       console.error('⚠️  SEO 파일 재생성 실패:', seoError);
     }
 
-    // Git 커밋
+    // Git 커밋 및 푸시
     try {
       const safeTitle = sanitizeCommitMessage(title);
       const filename = path.basename(targetFile);
@@ -344,9 +354,14 @@ Updated: ${filename}
 🤖 Generated via Admin Panel
 📊 SEO files updated automatically"`);
 
+      // Git Push
+      console.log('🚀 Pushing to GitHub...');
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git push`);
+      console.log('✅ Pushed to GitHub successfully');
+
       res.json({
         success: true,
-        message: 'Blog post updated and committed successfully',
+        message: 'Blog post updated, committed and pushed successfully',
         post: {
           id: slug,
           title,
@@ -362,7 +377,7 @@ Updated: ${filename}
       console.error('Git error:', gitError);
       res.json({
         success: true,
-        message: 'Blog post updated but git commit failed',
+        message: 'Blog post updated but git commit/push failed',
         gitError: gitError.message,
         post: {
           id: slug,
@@ -393,6 +408,23 @@ app.post('/api/images/upload', authenticateAPI, uploadImage.single('image'), asy
     }
 
     const imageUrl = `/images/blog/${req.file.filename}`;
+
+    // Git 커밋 및 푸시 (이미지 파일)
+    try {
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git add public/images/blog/${req.file.filename}`);
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Upload blog image - ${req.file.filename}
+
+🤖 Generated via Admin Panel
+📸 Image auto-committed"`);
+
+      // Git Push
+      console.log('🚀 Pushing image to GitHub...');
+      await execAsync(`cd "${path.join(__dirname, '..')}" && git push`);
+      console.log('✅ Image pushed to GitHub successfully');
+    } catch (gitError) {
+      console.error('⚠️  Git commit/push failed for image:', gitError.message);
+      // 이미지는 업로드되었으므로 에러는 무시하고 계속 진행
+    }
 
     res.json({
       success: true,
