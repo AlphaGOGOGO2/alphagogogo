@@ -461,16 +461,20 @@ app.post('/api/resources/upload', upload.single('file'), async (req, res) => {
       originalName: req.file.originalname
     };
 
+    // 파일명에서 공백 제거 (GitHub Release용)
+    const sanitizedFilename = req.file.filename.replace(/\s+/g, '-');
+    const githubReleaseUrl = `https://github.com/AlphaGOGOGO2/alphagogogo/releases/download/files-v1.0/${sanitizedFilename}`;
+
     // resources.ts 업데이트
     const resourcesPath = path.join(__dirname, '../src/data/resources.ts');
     const fileContent = await fs.readFile(resourcesPath, 'utf-8');
 
-    // 새 리소스 객체 생성
+    // 새 리소스 객체 생성 (GitHub Releases URL 사용)
     const newResource = {
       id: generateId(),
       title: title || req.file.originalname,
       description: description || "",
-      file_url: fileInfo.path,
+      file_url: githubReleaseUrl,
       file_type: "document",
       file_size: fileInfo.size,
       category: category || "기타",
@@ -494,23 +498,34 @@ app.post('/api/resources/upload', upload.single('file'), async (req, res) => {
 
       await fs.writeFile(resourcesPath, newContent, 'utf-8');
 
-      // Git 커밋 및 푸시
+      // GitHub Release 업로드 및 Git 커밋
       try {
         const safeTitle = sanitizeCommitMessage(title || req.file.originalname);
-        await execAsync(`cd "${path.join(__dirname, '..')}" && git add public/files/${req.file.filename} src/data/resources.ts`);
-        await execAsync(`cd "${path.join(__dirname, '..')}" && git commit -m "feat: Add new resource - ${safeTitle}
+        const projectRoot = path.join(__dirname, '..');
 
-File: ${req.file.filename} (${(fileInfo.size / 1024 / 1024).toFixed(2)} MB)
+        // 1. GitHub Release에 파일 업로드
+        console.log('📦 Uploading to GitHub Releases...');
+        const uploadCmd = `cd "${projectRoot}" && gh release upload files-v1.0 "public/files/${req.file.filename}#${sanitizedFilename}"`;
+        await execAsync(uploadCmd);
+        console.log('✅ File uploaded to GitHub Releases');
+
+        // 2. resources.ts만 Git에 커밋 (파일은 .gitignore로 제외됨)
+        await execAsync(`cd "${projectRoot}" && git add src/data/resources.ts`);
+        await execAsync(`cd "${projectRoot}" && git commit -m "feat: Add new resource - ${safeTitle}
+
+File: ${sanitizedFilename} (${(fileInfo.size / 1024 / 1024).toFixed(2)} MB)
+GitHub Release: files-v1.0
 
 🤖 Generated via Admin Panel
 Co-Authored-By: Claude <noreply@anthropic.com>"`);
 
-        // Git Push
+        // 3. Git Push
         console.log('🚀 Pushing to GitHub...');
-        await execAsync(`cd "${path.join(__dirname, '..')}" && git push`);
+        await execAsync(`cd "${projectRoot}" && git push`);
         console.log('✅ Pushed to GitHub successfully');
       } catch (gitError) {
-        console.error('Git error:', gitError);
+        console.error('Git/Release error:', gitError);
+        // 에러가 나도 응답은 성공으로 (파일은 로컬에 저장됨)
       }
     }
 
