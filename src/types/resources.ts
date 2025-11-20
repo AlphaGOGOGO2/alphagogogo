@@ -10,6 +10,7 @@ export interface Resource {
   tags: string[];
   download_count: number;
   is_featured: boolean;
+  is_visible?: boolean; // 공개/비공개 (기본값: true)
   author_name: string;
   created_at: string;
   updated_at: string;
