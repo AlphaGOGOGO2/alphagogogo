@@ -5,8 +5,8 @@
     <link>https://alphagogogo.com</link>
     <description>최신 AI 뉴스, 연구 및 인사이트로 업데이트하세요. 알파고고고는 인공지능 발전에 대한 최신 정보를 제공합니다.</description>
     <language>ko-KR</language>
-    <lastBuildDate>Wed, 05 Nov 2025 15:48:05 GMT</lastBuildDate>
-    <pubDate>Wed, 05 Nov 2025 15:48:05 GMT</pubDate>
+    <lastBuildDate>Thu, 20 Nov 2025 10:09:24 GMT</lastBuildDate>
+    <pubDate>Thu, 20 Nov 2025 10:09:24 GMT</pubDate>
     <ttl>60</ttl>
     <atom:link href="https://alphagogogo.com/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>support@alphagogogo.com (알파고고고)</managingEditor>
@@ -17,6 +17,23 @@
       <link>https://alphagogogo.com</link>
     </image>
 
+    <item>
+      <title>제미나이(Gemini) API 키 발급 방법 - 초보자 가이드</title>
+      <link>https://alphagogogo.com/blog/q</link>
+      <guid isPermaLink="true">https://alphagogogo.com/blog/q</guid>
+      <description>
+## API란 무엇인가요?
+
+API(Application Programming Interface)는 쉽게 말해 &apos;프로그램 간의 소통 창구&apos;입니다. 마치 식당에서 손님이 직접 주방에 들어가지 않고 웨이터를 통해 주문하는 것처럼, API는 우리가 구글의 AI 서비스를 우리 프로그램에서 사용할 수 있게 해주는 다리 역할을 합니다.
+
+제미나이 API를 발급받으면...</description>
+      <pubDate>Thu, 20 Nov 2025 00:00:00 GMT</pubDate>
+      <author>support@alphagogogo.com (알파GOGOGO)</author>
+      <category>라이프스타일</category>
+      <category>제미나이</category>
+      <category>제미나이API</category>
+      <category>구글API</category>
+    </item>
     <item>
       <title>AI 블로그 자동 작성 도구 무료 체험 | 알파블로그 AI 이벤트</title>
       <link>https://alphagogogo.com/blog/ai-블로그-자동-작성-도구-무료-체험--알파블로그-ai-이벤트</link>
@@ -231,18 +248,6 @@
       <author>support@alphagogogo.com (알파GOGOGO)</author>
       <category>라이프스타일</category>
       <enclosure url="https://alphagogogo.com/blog-images/lovable-dev-seo.jpg" type="image/jpeg" length="100000"/>
-    </item>
-    <item>
-      <title>러버블DEV AI로 반응형 모바일 웹사이트 구축하기: 모바일 최적화 가이드</title>
-      <link>https://alphagogogo.com/blog/러버블dev-ai로-반응형-모바일-웹사이트-구축하기-모바일-최적화-가이드-275051-g4y3</link>
-      <guid isPermaLink="true">https://alphagogogo.com/blog/러버블dev-ai로-반응형-모바일-웹사이트-구축하기-모바일-최적화-가이드-275051-g4y3</guid>
-      <description># 러버블DEV AI로 반응형 모바일 웹사이트 구축하기: 모바일 최적화 가이드
-![블로그 이미지](/blog-images/0f81a63c-3f89-4be2-9a18-a1f569b8dde8.png)
-모바일 시대가 본격화되면서 웹사이트를 방문...</description>
-      <pubDate>Wed, 21 May 2025 00:27:55 GMT</pubDate>
-      <author>support@alphagogogo.com (알파GOGOGO)</author>
-      <category>라이프스타일</category>
-      <enclosure url="https://alphagogogo.com/blog-images/0f81a63c-3f89-4be2-9a18-a1f569b8dde8.png" type="image/jpeg" length="100000"/>
     </item>
   </channel>
 </rss>
