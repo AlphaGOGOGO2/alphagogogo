@@ -536,6 +536,92 @@ Co-Authored-By: Claude <noreply@anthropic.com>"`);
   }
 });
 
+/**
+ * DELETE /api/resources/:id - 자료 삭제
+ */
+app.delete('/api/resources/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // resources.ts 파일 읽기
+    const resourcesPath = path.join(__dirname, '../src/data/resources.ts');
+    let fileContent = await fs.readFile(resourcesPath, 'utf-8');
+
+    // 삭제할 리소스 찾기
+    const resourceMatch = fileContent.match(new RegExp(`\\{[\\s\\S]*?id:\\s*"${id}"[\\s\\S]*?\\}`, 'm'));
+    if (!resourceMatch) {
+      return res.status(404).json({ error: 'Resource not found' });
+    }
+
+    // 리소스 정보에서 file_url 추출
+    const fileUrlMatch = resourceMatch[0].match(/file_url:\s*"([^"]+)"/);
+    const fileUrl = fileUrlMatch ? fileUrlMatch[1] : null;
+
+    // resources 배열에서 해당 항목 제거
+    // 객체 전체와 그 뒤의 쉼표까지 제거
+    const resourceBlock = resourceMatch[0];
+    const blockWithComma = fileContent.indexOf(resourceBlock + ',\n') !== -1
+      ? resourceBlock + ',\n'
+      : resourceBlock + ',';
+
+    fileContent = fileContent.replace(blockWithComma, '');
+
+    // 파일 저장
+    await fs.writeFile(resourcesPath, fileContent, 'utf-8');
+
+    // 로컬 파일 삭제 (file_url이 /files/ 형식인 경우)
+    let localFileDeleted = false;
+    if (fileUrl && fileUrl.startsWith('/files/')) {
+      try {
+        const filename = fileUrl.replace('/files/', '');
+        const filePath = path.join(__dirname, '../public/files', filename);
+        await fs.unlink(filePath);
+        localFileDeleted = true;
+        console.log(`✅ Deleted local file: ${filename}`);
+      } catch (fileError) {
+        console.warn('Local file deletion failed (may not exist):', fileError.message);
+      }
+    }
+
+    // Git 커밋 및 푸시
+    try {
+      const projectRoot = path.join(__dirname, '..');
+
+      // resources.ts 커밋
+      await execAsync(`cd "${projectRoot}" && git add src/data/resources.ts`);
+
+      // 로컬 파일도 삭제되었다면 포함
+      let commitFiles = 'src/data/resources.ts';
+      if (localFileDeleted && fileUrl) {
+        const filename = fileUrl.replace('/files/', '');
+        commitFiles += ` public/files/${filename}`;
+      }
+
+      await execAsync(`cd "${projectRoot}" && git commit -m "feat: Delete resource - ${id}
+
+${localFileDeleted ? 'Deleted file: ' + fileUrl : 'Removed from resources.ts'}
+
+🤖 Generated via Admin Panel
+Co-Authored-By: Claude <noreply@anthropic.com>"`);
+
+      console.log('🚀 Pushing to GitHub...');
+      await execAsync(`cd "${projectRoot}" && git push`);
+      console.log('✅ Pushed to GitHub successfully');
+    } catch (gitError) {
+      console.error('Git error:', gitError);
+    }
+
+    res.json({
+      success: true,
+      message: 'Resource deleted',
+      localFileDeleted
+    });
+  } catch (error) {
+    console.error('Error deleting resource:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // ==================== Git 작업 API ====================
 
 /**

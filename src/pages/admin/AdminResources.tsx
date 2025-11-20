@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Search, Code, Download, FolderOpen, Upload } from "lucide-react";
+import { ArrowLeft, Search, Code, Download, FolderOpen, Upload, Trash2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { resources } from "@/data/resources";
 import { useToast } from "@/hooks/use-toast";
@@ -44,6 +44,43 @@ export default function AdminResources() {
     if (bytes < 1024) return bytes + " B";
     if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
     return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+  };
+
+  const handleDelete = async (resourceId: string, resourceTitle: string) => {
+    if (!confirm(`정말로 "${resourceTitle}"을(를) 삭제하시겠습니까?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:3001/api/resources/${resourceId}`, {
+        method: 'DELETE',
+        headers: getAPIHeaders()
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        toast({
+          title: "삭제 완료!",
+          description: `"${resourceTitle}"이(가) 삭제되었습니다.`,
+        });
+
+        // 페이지 새로고침 안내
+        setTimeout(() => {
+          toast({
+            title: "페이지 새로고침",
+            description: "변경사항을 확인하려면 페이지를 새로고침하세요.",
+          });
+        }, 1000);
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      toast({
+        title: "삭제 실패",
+        description: "파일 삭제 중 오류가 발생했습니다.",
+        variant: "destructive"
+      });
+    }
   };
 
   const handleFileUpload = async () => {
@@ -266,11 +303,21 @@ export default function AdminResources() {
                         ))}
                       </div>
                     </div>
-                    <Button variant="ghost" size="sm" asChild>
-                      <a href={resource.file_url} download>
-                        <Download className="h-4 w-4" />
-                      </a>
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button variant="ghost" size="sm" asChild>
+                        <a href={resource.file_url} download>
+                          <Download className="h-4 w-4" />
+                        </a>
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDelete(resource.id, resource.title)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
