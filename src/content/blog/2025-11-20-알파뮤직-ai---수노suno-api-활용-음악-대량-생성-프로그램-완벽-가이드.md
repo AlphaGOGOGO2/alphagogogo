@@ -178,3 +178,11 @@ API 키가 정상적으로 작동하면 체크 표시가 나타납니다.
 - API 키는 안전하게 보관하고 공유하지 마세요
 
 알파뮤직 AI로 여러분만의 독특한 AI 음악을 대량으로 생성해보세요!
+
+## 더 알아보기
+
+영상 확인하기:
+https://youtu.be/uqgleZq04SM
+
+프로그램 다운로드:
+https://alphagogogo.com/resources
