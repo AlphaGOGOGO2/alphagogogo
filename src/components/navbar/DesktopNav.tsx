@@ -114,9 +114,10 @@ export function DesktopNav({ isScrolled }: DesktopNavProps) {
 
       <NavLink
         name="자료실"
-        path="/resources"
+        path="https://autoschool.alphagogogo.com/"
         isScrolled={isScrolled}
-        isActive={location.pathname.startsWith("/resources")}
+        isActive={false}
+        isExternal={true}
       />
 
       <ServicesDropdown
