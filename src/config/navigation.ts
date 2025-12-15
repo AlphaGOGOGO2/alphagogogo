@@ -21,7 +21,7 @@ export const mainNavItems: NavItem[] = [
   { name: "블로그 AI", path: "https://www.alphablogogo.com/", isExternal: true, isSparkle: true },
   { name: "프리미엄", path: "https://alphademy.co.kr/", isExternal: true },
   { name: "GPTS 이용하기", path: "/gpts" },
-  { name: "자료실", path: "/resources" },
+  { name: "자료실", path: "https://autoschool.alphagogogo.com/", isExternal: true },
   { name: "유튜브", path: "https://youtube.com/channel/UCH-9UIZghFuwOoCoqVMmuhg?si=FWWmImgwwD9T-oET", isExternal: true },
   { name: "커뮤니티", path: "/open-chat-rooms" }
 ];

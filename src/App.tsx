@@ -15,8 +15,6 @@ import GPTSPage from "./pages/GPTSPage";
 import OpenChatRoomsPage from "./pages/OpenChatRoomsPage";
 import BlogButtonCreatorPage from "./pages/BlogButtonCreatorPage";
 import BusinessInquiryPage from "./pages/BusinessInquiryPage";
-import ResourcesPage from "./pages/ResourcesPage";
-import ResourceDetailPage from "./pages/ResourceDetailPage";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBlog from "./pages/admin/AdminBlog";
 import AdminBlogWrite from "./pages/admin/AdminBlogWrite";
@@ -83,8 +81,6 @@ function App() {
                     <Route path="/open-chat-rooms" element={<OpenChatRoomsPage />} />
                     <Route path="/blog-button-creator" element={<BlogButtonCreatorPage />} />
                     <Route path="/business-inquiry" element={<BusinessInquiryPage />} />
-                    <Route path="/resources" element={<ResourcesPage />} />
-                    <Route path="/resources/:id" element={<ResourceDetailPage />} />
 
                     {/* Admin routes - only available in development */}
                     {import.meta.env.DEV && (
