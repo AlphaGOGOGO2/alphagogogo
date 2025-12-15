@@ -185,4 +185,4 @@ API 키가 정상적으로 작동하면 체크 표시가 나타납니다.
 https://youtu.be/uqgleZq04SM
 
 프로그램 다운로드:
-https://alphagogogo.com/resources
+https://autoschool.alphagogogo.com/
